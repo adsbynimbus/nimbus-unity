@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54d21f6ece3b46479f0c328f8c6007e0, type: 3}
-  m_Name: NimbusGradient
+  m_Script: {fileID: 11500000, guid: 485368386d18468b8de233661999ecf7, type: 3}
+  m_Name: NimbusSDKDevExample
   m_EditorClassIdentifier: 
-  colorMode: 3
-  topLeft: {r: 1, g: 1, b: 1, a: 1}
-  topRight: {r: 1, g: 1, b: 1, a: 1}
-  bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-  bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  publisherKey: dev-sdk
+  apiKey: d352cac1-cae2-4774-97ba-4e15c6276be0
+  appName: Nimbus Demo
+  appStoreURL: https://www.adsbynimbus.com
+  enableSDKInTestMode: 1
