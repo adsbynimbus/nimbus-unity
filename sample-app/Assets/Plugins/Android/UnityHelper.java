@@ -31,23 +31,25 @@ public class UnityHelper {
         RequestManager.setApp(app);
     }
 
-    public static void showInterstitialAd(Object obj) {
+    public static void showInterstitialAd(Object obj, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             activity.runOnUiThread(() -> manager.showBlockingAd(
-                    NimbusRequest.forInterstitialAd("test_interstitial"), activity, LoggingListener));
+                    NimbusRequest.forInterstitialAd("test_interstitial"), activity,
+                    (NimbusAdManager.Listener) listener));
         }
     }
 
-    public static void showRewardedVideoAd(Object obj) {
+    public static void showRewardedVideoAd(Object obj, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             activity.runOnUiThread(() -> manager.showRewardedVideoAd(
-                    NimbusRequest.forRewardedVideo("test_rewarded"), 5000, activity, LoggingListener));
+                    NimbusRequest.forRewardedVideo("test_rewarded"), 5000, activity,
+                    (NimbusAdManager.Listener) listener));
         }
     }
 
-    public static void showBannerAd(Object obj) {
+    public static void showBannerAd(Object obj, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             activity.runOnUiThread(() -> {
@@ -60,25 +62,8 @@ public class UnityHelper {
                 };
                 activity.addContentView(adFrame, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
                 manager.showAd(NimbusRequest.forBannerAd("test_banner", Format.BANNER_320_50, Position.FOOTER),
-                        adFrame, LoggingListener);
+                        adFrame, (NimbusAdManager.Listener) listener);
             });
         }
     }
-
-    public static final NimbusAdManager.Listener LoggingListener = new NimbusAdManager.Listener() {
-        @Override
-        public void onAdRendered(AdController controller) {
-            Log.i("Nimbus", "Ad Rendered");
-        }
-
-        @Override
-        public void onError(NimbusError error) {
-            Log.e("Error", error.getMessage());
-        }
-
-        @Override
-        public void onAdResponse(NimbusResponse nimbusResponse) {
-            Log.i("Nimbus", "Successful response " + nimbusResponse.auction_id);
-        }
-    };
 }
