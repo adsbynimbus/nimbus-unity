@@ -1,16 +1,27 @@
+using System;
 using Nimbus.Internal;
 using Nimbus.ScriptableObjects;
 using UnityEngine;
 
+
 namespace Nimbus {
 	public class NimbusManager : MonoBehaviour {
 		public NimbusSDKConfiguration configuration;
-
 		public static NimbusManager Instance;
-		private readonly NimbusLogger _logger = new NimbusLogger();
 		private NimbusAPI _nimbusPlatformAPI;
 
+		#region NimbusEvents
+
+		public AdEvents NimbusEvents;
+		
+
+		#endregion
+
 		private void Awake() {
+			if (configuration == null) {
+				throw new Exception("The configuration object cannot be null");
+			}
+			
 			if (Instance == null) {
 				_nimbusPlatformAPI ??= new
 #if UNITY_EDITOR
@@ -22,8 +33,10 @@ namespace Nimbus {
                 Android
 #endif
 					();
-			
-				_nimbusPlatformAPI.InitializeSDK(_logger, configuration);
+				
+				NimbusEvents = new AdEvents();
+				Debug.unityLogger.logEnabled = configuration.enableUnityLogs;
+				_nimbusPlatformAPI.InitializeSDK(Debug.unityLogger, configuration);
 				Instance = this;
 				DontDestroyOnLoad(gameObject);
 			}
@@ -31,17 +44,20 @@ namespace Nimbus {
 				Destroy(gameObject);
 			}
 		}
-
-		public void LoadAndShowBannerAd() {
-			_nimbusPlatformAPI.LoadAndShowBannerAd(_logger);
+		
+		public NimbusAdUnit LoadAndShowBannerAd() {
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, ref NimbusEvents);
+			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
-		public void LoadAndShowInterstitialAd() {
-			_nimbusPlatformAPI.LoadAndShowInterstitialAd(_logger);
+		public NimbusAdUnit LoadAndShowInterstitialAd() {
+			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, ref NimbusEvents);
+			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
-		public void LoadAndShowRewardedVideoAd() {
-			_nimbusPlatformAPI.LoadAndShowRewardedVideoAd(_logger);
+		public NimbusAdUnit LoadAndShowRewardedVideoAd() {
+			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, ref NimbusEvents);
+			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 	}
 }

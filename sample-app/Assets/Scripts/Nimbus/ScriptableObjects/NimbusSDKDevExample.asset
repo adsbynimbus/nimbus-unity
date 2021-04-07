@@ -17,3 +17,4 @@ MonoBehaviour:
   appName: Nimbus Demo
   appStoreURL: https://www.adsbynimbus.com
   enableSDKInTestMode: 1
+  enableUnityLogs: 1

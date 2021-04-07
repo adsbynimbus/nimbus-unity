@@ -12,5 +12,7 @@ namespace Nimbus.ScriptableObjects {
 		public string appStoreURL;
 		[Header("SDK Flags")]
 		public bool enableSDKInTestMode;
+		[Header("Enable Unity Logs")]
+		public bool enableUnityLogs;
 	}
 }

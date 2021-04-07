@@ -66,4 +66,10 @@ public class UnityHelper {
             });
         }
     }
+    
+    public static void addListener(Object controller, Object listener) {
+        if (controller instanceof AdController) {
+            ((AdController) controller).listeners().add((AdController.Listener) listener);
+        }
+    }
 }
