@@ -44,39 +44,33 @@ namespace Nimbus.Internal {
 	}
 
 	public class AdManagerListener : AndroidJavaProxy {
-		private ILogger _logger;
 
-		public AdManagerListener(ILogger logger) : base("com.adsbynimbus.NimbusAdManager$Listener") {
-			_logger = logger;
+		public AdManagerListener() : base("com.adsbynimbus.NimbusAdManager$Listener") {}
+
+		void onAdResponse(AndroidJavaClass response) {
+			//_logger.Log("Responded with ad type " + response.Call<string>("type"));
 		}
 
-		void onAdResponse(AndroidJavaObject response) {
-			_logger.Log("Responded with ad type " + response.Call<string>("type"));
-		}
-
-        void onAdRendered(AndroidJavaObject controller) {
-			_logger.Log("Ad Rendered");
+        void onAdRendered(AndroidJavaClass controller) {
+			//_logger.Log("Ad Rendered");
 			controller.Call<AndroidJavaClass>("listeners").Call("add", new AdControllerListener(_logger));
 		}
 
-		void onError(AndroidJavaObject adError) { 
-			_logger.Log("Ad error " + adError.Call<string>("getMessage"));
+		void onError(AndroidJavaClass adError) { 
+			//_logger.Log("Ad error " + adError.Call<string>("getMessage"));
 		}
 	}
 
 	public class AdControllerListener : AndroidJavaProxy {
-		private ILogger _logger;
 
-		public AdControllerListener(ILogger logger) : base("com.adsbynimbus.render.AdController$Listener") {
-			_logger = logger;
+		public AdControllerListener() : base("com.adsbynimbus.render.AdController$Listener") { }
+
+		void onAdEvent(AndroidJavaClass adEvent) {
+		//	_logger.Log("Ad event " + adEvent.Call<string>("name"));
 		}
 
-		void onAdEvent(AndroidJavaObject adEvent) {
-			_logger.Log("Ad event " + adEvent.Call<string>("name"));
-		}
-
-		void onError(AndroidJavaObject adError) { 
-			_logger.Log("Ad error " + adError.Call<string>("getMessage"));
+		void onError(AndroidJavaClass adError) { 
+		//	_logger.Log("Ad error " + adError.Call<string>("getMessage"));
 		}
 	}
 }
