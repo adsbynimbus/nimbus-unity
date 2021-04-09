@@ -13,6 +13,7 @@ namespace Nimbus.Internal {
 		public readonly AdUnityType AdType;
 		public readonly int InstanceID;
 		private readonly AdEvents _adEvents;
+		private AndroidJavaObject _androidController;
 
 		public NimbusAdUnit(AdUnityType adType, ref AdEvents adEvents) {
 			this.AdType = adType;
@@ -39,6 +40,16 @@ namespace Nimbus.Internal {
 		
 		public void EmitOnAdEvent(NimbusAdUnit obj) {
 			_adEvents.EmitOnAdEvent(obj);
+		}
+
+		public void Destroy() {
+			if (_androidController == null) return;
+			_androidController.Call("destroy");
+			_androidController = null;
+		}
+
+		public void SetAndroidController(ref AndroidJavaObject controller) {
+			_androidController = controller;
 		}
 	}
 	

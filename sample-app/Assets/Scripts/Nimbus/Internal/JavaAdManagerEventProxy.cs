@@ -22,6 +22,7 @@ namespace Nimbus.Internal {
 		private void onAdRendered(AndroidJavaObject controller) {
 			_helper.CallStatic("addListener", controller, new AdControllerListener(_logger, ref _adUnit));
 			_logger.Log("Ad was rendered");
+			_adUnit.SetAndroidController(ref controller);
 			_adUnit.EmitOnAdRendered(_adUnit);
 		}
 

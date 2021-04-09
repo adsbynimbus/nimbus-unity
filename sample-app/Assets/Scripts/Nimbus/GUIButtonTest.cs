@@ -1,15 +1,21 @@
 using System;
 using Nimbus.Internal;
+using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 namespace Nimbus {
 	public class GUIButtonTest: MonoBehaviour {
+		public TextMeshProUGUI bannerButtonText;
+
+		private string _currentBannerButtonText;
+		private bool _shouldDestroyBanner;
 		private NimbusManager _manager;
 		private NimbusAdUnit _adUnit;
 		private void Start() {
 			var obj = GameObject.FindWithTag("NimbusAdsManager");
 			_manager = obj.GetComponent<NimbusManager>();
+			_currentBannerButtonText = bannerButtonText.text;
 		}
 
 
@@ -22,9 +28,21 @@ namespace Nimbus {
 			                      $"Instance ID {_adUnit.InstanceID}");
 		}
 		
+
 		public void LoadBanner() {
-			_adUnit = _manager.LoadAndShowBannerAd();
+			if (!_shouldDestroyBanner) {
+				_shouldDestroyBanner = true;
+				bannerButtonText.text = "Destroy Banner";
+				_adUnit = _manager.LoadAndShowBannerAd();
+				return;
+			}
+			_adUnit.Destroy();
+			_adUnit = null;
+			_shouldDestroyBanner = false;
+			bannerButtonText.text = _currentBannerButtonText;
 		}
+		
+		
 		
 		public void LoadInterstitial() {
 			_adUnit = _manager.LoadAndShowInterstitialAd();
