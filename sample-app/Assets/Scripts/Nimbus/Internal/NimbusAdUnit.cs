@@ -9,17 +9,25 @@ namespace Nimbus.Internal {
 		public AdError AdListenerError;
 		public AdError AdControllerError;
 		public AdEventTypes CurrentAdState;
-
+		
 		public readonly AdUnityType AdType;
 		public readonly int InstanceID;
 		private readonly AdEvents _adEvents;
-		private AndroidJavaObject _androidController;
 
-		public NimbusAdUnit(AdUnityType adType, ref AdEvents adEvents) {
-			this.AdType = adType;
-			_adEvents = adEvents;
+		#region Android Objects
+		private AndroidJavaObject _androidController;
+		private AndroidJavaClass _androidHelper;
+		#endregion
+		
+		public NimbusAdUnit(AdUnityType adType, in AdEvents adEvents) {
+			AdType = adType;
 			InstanceID = GetHashCode();
 			CurrentAdState = AdEventTypes.NOT_LOADED;
+			_adEvents = adEvents;
+		}
+
+		~NimbusAdUnit() {
+			Destroy();
 		}
 
 		public bool DidHaveAnError() {
@@ -27,7 +35,14 @@ namespace Nimbus.Internal {
 		}
 
 		public string ErrorMessage() {
-			return $"AdListener Error: {AdListenerError?.Message} AdController Error: {AdControllerError?.Message}";
+			var message = ""; 
+			if (AdListenerError != null) {
+				message = $"AdListener Error: {AdListenerError?.Message} ";
+			}
+			if (AdControllerError != null) {
+				message += $"AdController Error: {AdControllerError?.Message}";
+			}
+			return message;
 		}
 
 		public void EmitOnAdRendered(NimbusAdUnit obj) {
@@ -43,16 +58,26 @@ namespace Nimbus.Internal {
 		}
 
 		public void Destroy() {
-			if (_androidController == null) return;
-			_androidController.Call("destroy");
+#if UNITY_ANDROID
+			if (_androidController == null || _androidHelper == null) return;
+			var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+			var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+			_androidHelper.CallStatic("destroyController", currentActivity, _androidController);
 			_androidController = null;
+			_androidHelper = null;
+#endif
 		}
 
-		public void SetAndroidController(ref AndroidJavaObject controller) {
+		public void SetAndroidController(AndroidJavaObject controller) {
+			if (_androidController != null) return;
 			_androidController = controller;
 		}
+		
+		public void SetAndroidHelper(AndroidJavaClass helper) {
+			if (_androidHelper != null) return;
+			_androidHelper = helper;
+		}
 	}
-	
 	
 	
 	// ReSharper disable MemberCanBePrivate.Global

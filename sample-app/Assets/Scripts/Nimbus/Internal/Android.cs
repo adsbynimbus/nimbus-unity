@@ -33,7 +33,7 @@ namespace Nimbus.Internal {
 		}
 		
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
-			var listener = new AdManagerListener(logger, ref _helper, ref nimbusAdUnit);
+			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
 			var functionCall = nimbusAdUnit.AdType switch {
 				AdUnityType.Banner => "showBannerAd",
 				AdUnityType.Interstitial => "showInterstitialAd",

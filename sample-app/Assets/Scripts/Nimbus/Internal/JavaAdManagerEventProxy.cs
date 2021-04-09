@@ -7,11 +7,12 @@ namespace Nimbus.Internal {
 		private readonly ILogger _logger;
 		private readonly AndroidJavaClass _helper;
 		private  NimbusAdUnit _adUnit;
+		
 
-		public AdManagerListener(ILogger logger, ref AndroidJavaClass helper, ref NimbusAdUnit adUnit) : base("com.adsbynimbus.NimbusAdManager$Listener") {
-			_logger = logger;
-			_helper = helper;
+		public AdManagerListener(ILogger logger, in AndroidJavaClass helper, ref NimbusAdUnit adUnit) : base("com.adsbynimbus.NimbusAdManager$Listener") {
 			_adUnit = adUnit;
+			_helper = helper;
+			_logger = logger;
 		}
 
 		private void onAdResponse(AndroidJavaObject response) {
@@ -22,7 +23,8 @@ namespace Nimbus.Internal {
 		private void onAdRendered(AndroidJavaObject controller) {
 			_helper.CallStatic("addListener", controller, new AdControllerListener(_logger, ref _adUnit));
 			_logger.Log("Ad was rendered");
-			_adUnit.SetAndroidController(ref controller);
+			_adUnit.SetAndroidController(controller);
+			_adUnit.SetAndroidHelper(_helper);
 			_adUnit.EmitOnAdRendered(_adUnit);
 		}
 

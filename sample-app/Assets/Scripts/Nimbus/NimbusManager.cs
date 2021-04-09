@@ -46,17 +46,17 @@ namespace Nimbus {
 		}
 		
 		public NimbusAdUnit LoadAndShowBannerAd() {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, ref NimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
 		public NimbusAdUnit LoadAndShowInterstitialAd() {
-			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, ref NimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
 		public NimbusAdUnit LoadAndShowRewardedVideoAd() {
-			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, ref NimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 	}

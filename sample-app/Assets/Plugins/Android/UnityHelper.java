@@ -69,6 +69,15 @@ public final class UnityHelper {
             ((AdController) controller).listeners().add((AdController.Listener) listener);
         }
     }
+    
+    public static void destroyController(Object obj, Object controller) {
+        if (obj instanceof Activity) {
+            final Activity activity = (Activity) obj;
+            if (controller instanceof AdController) {
+                activity.runOnUiThread(() -> ((AdController)controller).destroy());
+            }
+        }
+    }
 
     public static void destroy(Object obj, Object controller) {
         if (obj instanceof Activity) {
