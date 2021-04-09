@@ -3,24 +3,26 @@ package com.nimbus.demo;
 import static android.view.ViewGroup.LayoutParams.*;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.adsbynimbus.NimbusAdManager;
-import com.adsbynimbus.NimbusError;
 import com.adsbynimbus.openrtb.request.App;
 import com.adsbynimbus.openrtb.request.Format;
 import com.adsbynimbus.openrtb.request.Position;
 import com.adsbynimbus.render.AdController;
+import com.adsbynimbus.render.BlockingAdRenderer;
 import com.adsbynimbus.request.NimbusRequest;
-import com.adsbynimbus.request.NimbusResponse;
 import com.adsbynimbus.request.RequestManager;
 
 public class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
+
+    static {
+        BlockingAdRenderer.setDismissOnComplete(true);
+    }
 
     public static void setApp(Object bundleId, Object appName, Object domain) {
         final App app = new App();
@@ -66,7 +68,7 @@ public class UnityHelper {
             });
         }
     }
-    
+
     public static void addListener(Object controller, Object listener) {
         if (controller instanceof AdController) {
             ((AdController) controller).listeners().add((AdController.Listener) listener);
