@@ -70,6 +70,15 @@ public final class UnityHelper {
         }
     }
 
+    public static void destroy(Object obj, Object controller) {
+        if (obj instanceof Activity) {
+            final Activity activity = (Activity) obj;
+            if (controller instanceof AdController) {
+                activity.runOnUiThread(() -> ((AdController)controller).destroy());
+            }
+        }
+    }
+
     static final class BannerHandler implements Runnable, NimbusAdManager.Listener,
         AdController.Listener {
 
