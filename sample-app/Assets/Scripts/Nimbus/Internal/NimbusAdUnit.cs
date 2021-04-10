@@ -1,14 +1,11 @@
-using System;
-using JetBrains.Annotations;
 using UnityEngine;
-
 
 namespace Nimbus.Internal {
 	public sealed class NimbusAdUnit {
-		public bool AdWasRendered;
-		public AdError AdListenerError;
-		public AdError AdControllerError;
-		public AdEventTypes CurrentAdState;
+		internal bool AdWasRendered;
+		internal AdError AdListenerError;
+		internal AdError AdControllerError;
+		internal AdEventTypes CurrentAdState;
 		
 		public readonly AdUnityType AdType;
 		public readonly int InstanceID;

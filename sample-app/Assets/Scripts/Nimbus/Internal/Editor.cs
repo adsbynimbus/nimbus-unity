@@ -9,6 +9,7 @@ namespace Nimbus.Internal {
 		}
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			nimbusAdUnit.AdWasRendered = true;
 			var functionCall = nimbusAdUnit.AdType switch {
 				AdUnityType.Banner => "BannerAd()",
 				AdUnityType.Interstitial => "InterstitialAd()",

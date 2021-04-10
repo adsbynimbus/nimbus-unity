@@ -1,10 +1,9 @@
-using System;
+using Nimbus;
 using Nimbus.Internal;
 using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
-namespace Nimbus {
+namespace Examples {
 	public class GUIButtonTest: MonoBehaviour {
 		public TextMeshProUGUI bannerButtonText;
 

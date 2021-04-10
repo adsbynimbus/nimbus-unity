@@ -8,7 +8,6 @@ namespace Nimbus.Internal {
 		private readonly AndroidJavaClass _helper;
 		private  NimbusAdUnit _adUnit;
 		
-
 		public AdManagerListener(ILogger logger, in AndroidJavaClass helper, ref NimbusAdUnit adUnit) : base("com.adsbynimbus.NimbusAdManager$Listener") {
 			_adUnit = adUnit;
 			_helper = helper;
@@ -23,6 +22,7 @@ namespace Nimbus.Internal {
 		private void onAdRendered(AndroidJavaObject controller) {
 			_helper.CallStatic("addListener", controller, new AdControllerListener(_logger, ref _adUnit));
 			_logger.Log("Ad was rendered");
+			_adUnit.AdWasRendered = true;
 			_adUnit.SetAndroidController(controller);
 			_adUnit.SetAndroidHelper(_helper);
 			_adUnit.EmitOnAdRendered(_adUnit);
@@ -30,7 +30,7 @@ namespace Nimbus.Internal {
 
 		private void onError(AndroidJavaObject adError) {
 			var errMessage = adError.Call<string>("getMessage");
-			_logger.Log("Ad error " + errMessage);
+			_logger.Log($"Listener Ad error: {errMessage}" );
 			_adUnit.AdListenerError = new AdError(errMessage);
 			_adUnit.EmitOnAdError(_adUnit);
 		}
@@ -55,7 +55,7 @@ namespace Nimbus.Internal {
 			
 		private void onError(AndroidJavaObject adError) { 
 			var errMessage = adError.Call<string>("getMessage");
-			_logger.Log("Ad error " + errMessage);
+			_logger.Log($"Controller ad error: {errMessage}" );
 			_adUnit.AdControllerError = new AdError(errMessage);
 			_adUnit.EmitOnAdError(_adUnit);
 		}

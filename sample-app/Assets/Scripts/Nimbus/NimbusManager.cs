@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Linq;
 using Nimbus.Internal;
 using Nimbus.ScriptableObjects;
 using UnityEngine;
@@ -7,15 +9,12 @@ using UnityEngine;
 namespace Nimbus {
 	public class NimbusManager : MonoBehaviour {
 		public NimbusSDKConfiguration configuration;
+		// ReSharper disable once MemberCanBePrivate.Global
 		public static NimbusManager Instance;
-		private NimbusAPI _nimbusPlatformAPI;
-
-		#region NimbusEvents
-
+		public bool shouldSubscribeToIAdEvents;
+		// ReSharper disable once MemberCanBePrivate.Global
 		public AdEvents NimbusEvents;
-		
-
-		#endregion
+		private NimbusAPI _nimbusPlatformAPI;
 
 		private void Awake() {
 			if (configuration == null) {
@@ -33,7 +32,6 @@ namespace Nimbus {
                 Android
 #endif
 					();
-				
 				NimbusEvents = new AdEvents();
 				Debug.unityLogger.logEnabled = configuration.enableUnityLogs;
 				_nimbusPlatformAPI.InitializeSDK(Debug.unityLogger, configuration);
@@ -44,7 +42,30 @@ namespace Nimbus {
 				Destroy(gameObject);
 			}
 		}
-		
+
+		private IEnumerator Start() {
+			if (!shouldSubscribeToIAdEvents) yield return null;
+			yield return new WaitForEndOfFrame();
+			// find any mono behaviours that implement IAdEvents
+			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
+			foreach (var iAdEvent in iAdEvents) {
+				Instance.NimbusEvents.OnAdRendered += iAdEvent.AdWasRendered;
+				Instance.NimbusEvents.OnAdError += iAdEvent.AdError;
+				Instance.NimbusEvents.OnAdEvent += iAdEvent.AdEvent;	
+			}
+			yield return null;
+		}
+
+		private void OnDestroy() {
+			if (!shouldSubscribeToIAdEvents) return;
+			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
+			foreach (var iAdEvent in iAdEvents) {
+				Instance.NimbusEvents.OnAdRendered -= iAdEvent.AdWasRendered;
+				Instance.NimbusEvents.OnAdError -= iAdEvent.AdError;
+				Instance.NimbusEvents.OnAdEvent -= iAdEvent.AdEvent;	
+			}
+		}
+
 		public NimbusAdUnit LoadAndShowBannerAd() {
 			var adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
