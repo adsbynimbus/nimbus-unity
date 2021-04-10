@@ -8,7 +8,7 @@ namespace Nimbus.Internal {
 		private readonly AndroidJavaClass _helper;
 		private  NimbusAdUnit _adUnit;
 		
-		public AdManagerListener(ILogger logger, in AndroidJavaClass helper, ref NimbusAdUnit adUnit) : base("com.adsbynimbus.NimbusAdManager$Listener") {
+		internal AdManagerListener(ILogger logger, in AndroidJavaClass helper, ref NimbusAdUnit adUnit) : base("com.adsbynimbus.NimbusAdManager$Listener") {
 			_adUnit = adUnit;
 			_helper = helper;
 			_logger = logger;

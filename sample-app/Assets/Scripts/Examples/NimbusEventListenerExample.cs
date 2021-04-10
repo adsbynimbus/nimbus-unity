@@ -14,12 +14,12 @@ namespace Examples {
 
 		// ReSharper disable SwitchStatementMissingSomeEnumCasesNoDefault
 		public void AdEvent(NimbusAdUnit nimbusAdUnit) {
-			Debug.unityLogger.Log($"NimbusEventListenerExample AdEvent {nimbusAdUnit.CurrentAdState} for ad of type {nimbusAdUnit.AdType}");
+			Debug.unityLogger.Log($"NimbusEventListenerExample AdEvent {nimbusAdUnit.GetCurrentAdState()} for ad of type {nimbusAdUnit.AdType}");
 			switch (nimbusAdUnit.AdType) {
 				// Handle Events for Banner and Interstitial ads
 				case AdUnityType.Banner:
 				case AdUnityType.Interstitial:
-					switch (nimbusAdUnit.CurrentAdState) {
+					switch (nimbusAdUnit.GetCurrentAdState()) {
 						case AdEventTypes.NOT_LOADED:
 							break;
 						case AdEventTypes.LOADED:
@@ -34,7 +34,7 @@ namespace Examples {
 					break;
 				// Handle Events for Rewarded video ads
 				case AdUnityType.Rewarded:
-					switch (nimbusAdUnit.CurrentAdState) {
+					switch (nimbusAdUnit.GetCurrentAdState()) {
 						case AdEventTypes.NOT_LOADED:
 							break;
 						case AdEventTypes.LOADED:

@@ -2,19 +2,19 @@ using System;
 
 namespace Nimbus.Internal {
 	public class AdEvents {
-		public event Action<NimbusAdUnit> OnAdRendered;
-		public event Action<NimbusAdUnit> OnAdError;
+		internal event Action<NimbusAdUnit> OnAdRendered;
+		internal event Action<NimbusAdUnit> OnAdError;
 		
-		public event Action<NimbusAdUnit> OnAdEvent;
+		internal event Action<NimbusAdUnit> OnAdEvent;
 		
 		
-		public void EmitOnAdError(NimbusAdUnit obj) {
+		internal void EmitOnAdError(NimbusAdUnit obj) {
 			OnAdError?.Invoke(obj);
 		}
-		public void EmitOnAdEvent(NimbusAdUnit obj) {
+		internal void EmitOnAdEvent(NimbusAdUnit obj) {
 			OnAdEvent?.Invoke(obj);
 		}
-		public void EmitOnAdRendered(NimbusAdUnit obj) {
+		internal void EmitOnAdRendered(NimbusAdUnit obj) {
 			OnAdRendered?.Invoke(obj);
 		}
 	}

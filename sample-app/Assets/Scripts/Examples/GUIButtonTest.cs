@@ -9,6 +9,7 @@ namespace Examples {
 
 		private string _currentBannerButtonText;
 		private bool _shouldDestroyBanner;
+		private bool _isUnique;
 		private NimbusManager _manager;
 		private NimbusAdUnit _adUnit;
 		private void Start() {
@@ -16,14 +17,13 @@ namespace Examples {
 			_manager = obj.GetComponent<NimbusManager>();
 			_currentBannerButtonText = bannerButtonText.text;
 		}
-
-
+		
 		private void Update() {
-			if (_adUnit == null) return;
+			if (_adUnit == null||!_isUnique ) return;
+			_isUnique = false;
 			Debug.unityLogger.Log($"AD OF TYPE {_adUnit.AdType}, " +
-			                      $"Was Ad rendered {_adUnit.AdWasRendered} " +
-			                      $"Current Ad State {_adUnit.CurrentAdState} " +
-			                      // $"Was there an Error Message {_adUnit?.AdListenerError.Message} " +
+			                      $"Was Ad rendered {_adUnit.WasAdRendered()} " +
+			                      $"Current Ad State {_adUnit.GetCurrentAdState()} " +
 			                      $"Instance ID {_adUnit.InstanceID}");
 		}
 		
@@ -33,6 +33,7 @@ namespace Examples {
 				_shouldDestroyBanner = true;
 				bannerButtonText.text = "Destroy Banner";
 				_adUnit = _manager.LoadAndShowBannerAd();
+				_isUnique = true;
 				return;
 			}
 			_adUnit.Destroy();
@@ -45,10 +46,12 @@ namespace Examples {
 		
 		public void LoadInterstitial() {
 			_adUnit = _manager.LoadAndShowInterstitialAd();
+			_isUnique = true;
 		}
 		
 		public void LoadRewardedVideoAd() {
 			_adUnit = _manager.LoadAndShowRewardedVideoAd();
+			_isUnique = true;
 		}
 	}
 }

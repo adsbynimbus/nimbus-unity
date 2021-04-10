@@ -65,12 +65,20 @@ namespace Nimbus.Internal {
 #endif
 		}
 
-		public void SetAndroidController(AndroidJavaObject controller) {
+		public AdEventTypes GetCurrentAdState() {
+			return CurrentAdState;
+		}
+		
+		public bool WasAdRendered() {
+			return AdWasRendered;
+		}
+
+		internal void SetAndroidController(AndroidJavaObject controller) {
 			if (_androidController != null) return;
 			_androidController = controller;
 		}
 		
-		public void SetAndroidHelper(AndroidJavaClass helper) {
+		internal void SetAndroidHelper(AndroidJavaClass helper) {
 			if (_androidHelper != null) return;
 			_androidHelper = helper;
 		}
