@@ -8,6 +8,7 @@ using UnityEngine;
 
 
 namespace Nimbus {
+	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
 		public NimbusSDKConfiguration configuration;
 		// ReSharper disable once MemberCanBePrivate.Global
@@ -23,6 +24,7 @@ namespace Nimbus {
 			if (configuration == null) {
 				throw new Exception("The configuration object cannot be null");
 			}
+			configuration.ValidateMobileData();
 			
 			if (Instance == null) {
 				_nimbusPlatformAPI ??= new
@@ -69,28 +71,46 @@ namespace Nimbus {
 			}
 		}
 
-		public NimbusAdUnit LoadAndShowBannerAd() {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
+		
+		/// <summary>
+		/// Calls to Nimbus for a 320x50 banner ad and loads the ad if an ad is returned from the auction
+		/// </summary>
+		/// <param name="position">This is a Nimbus specific field, it must not be empty and it represents a generic placement name can be used by the Nimbus dashboard to breakout data</param>
+		public NimbusAdUnit LoadAndShowBannerAd(string position) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
-		public NimbusAdUnit LoadAndShowInterstitialAd() {
-			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, in NimbusEvents);
+		/// <summary>
+		/// Calls to Nimbus for a full screen ad, this can either be a static or video ad depending on which wins the auction, and loads the ad if an ad is returned from the auction
+		/// </summary>
+		/// <param name="position">This is a Nimbus specific field, it must not be empty and it represents a generic placement name can be used by the Nimbus dashboard to breakout data</param>
+		public NimbusAdUnit LoadAndShowInterstitialAd(string position) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial,   position, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
-		public NimbusAdUnit LoadAndShowRewardedVideoAd() {
-			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, in NimbusEvents);
+		/// <summary>
+		/// Calls to Nimbus for a video only ad and loads the ad if an ad is returned from the auction
+		/// </summary>
+		/// <param name="position">This is a Nimbus specific field, it must not be empty and it represents a generic placement name can be used by the Nimbus dashboard to breakout data</param>
+		public NimbusAdUnit LoadAndShowRewardedVideoAd(string position) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 		
-		public IEnumerator LoadAndShowBannerAdWithRefresh(float refreshIntervalInSeconds) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
+		/// <summary>
+		/// Calls to Nimbus on a set timer for a 320x50 banner ad and loads the ad if an ad is returned from the auction
+		/// </summary>
+		/// <param name="position">This is a Nimbus specific field, it must not be empty and it represents a generic placement name can be used by the Nimbus dashboard to breakout data</param>
+		/// <param name="refreshIntervalInSeconds">Specifies the rate at which banner ads should be called for. This defaults to the industry standard and best practice of 30 seconds</param>
+		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float refreshIntervalInSeconds=30f) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, in NimbusEvents);
 			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			while (true) {
 				yield return new WaitForSeconds(refreshIntervalInSeconds);
 				adUnit?.Destroy();
-				adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
+				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, in NimbusEvents);
 				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			}
 		}

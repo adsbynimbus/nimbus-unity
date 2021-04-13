@@ -1,8 +1,6 @@
-using System;
 using Nimbus;
 using Nimbus.Internal;
 using UnityEngine;
-using System.Collections;
 using Unity.Mathematics;
 
 namespace Examples {
@@ -39,7 +37,7 @@ namespace Examples {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.LoadAndShowBannerAd();
+			_ad = NimbusManager.Instance.LoadAndShowBannerAd("unity_demo_banner_position");
 			_alreadyTriggered = true;
 		}
 		

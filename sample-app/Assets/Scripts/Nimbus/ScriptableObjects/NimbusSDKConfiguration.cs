@@ -1,4 +1,5 @@
-using UnityEditor;
+using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Nimbus.ScriptableObjects {
@@ -12,6 +13,8 @@ namespace Nimbus.ScriptableObjects {
 		[Header("Application Data")]
 		[Tooltip("Must be the name of the application has defined by the app store publication")]
 		public string appName;
+		[Tooltip("Website point to information about your app")]
+		public string appDomain;
 		[Header("Android Data")]
 		public string androidAppStoreURL;
 		[Tooltip("The android bundle can be found at the end of the appstore URL, eg if the URL is https://play.google.com/store/apps/details?id=com.timehop, the bundle id is com.timehop")]
@@ -24,5 +27,51 @@ namespace Nimbus.ScriptableObjects {
 		public bool enableSDKInTestMode;
 		[Header("Enable Unity Logs")]
 		public bool enableUnityLogs;
+		
+		private void OnValidate() {
+			if (publisherKey.Trim().Length == 0) {
+				throw new Exception("Publisher key cannot be empty");
+			}
+			
+			if (apiKey.Trim().Length == 0) {
+				throw new Exception("Apikey cannot be empty");
+			}
+			
+			if (appName.Trim().Length == 0) {
+				throw new Exception("Application name cannot be empty");
+			}
+			
+			if (appDomain.Trim().Length == 0) {
+				throw new Exception("Application Domain cannot be empty");
+			}
+		}
+
+		public void ValidateMobileData() {
+#if UNITY_ANDROID
+			if (androidAppStoreURL.Trim().Length == 0) {
+				throw new Exception("Android store link cannot be empty");
+			}
+			
+			if (androidBundleID.Trim().Length == 0) {
+				throw new Exception("Android bundle cannot be empty");
+			}
+#elif UNITY_IOS
+			if (iosAppStoreURL.Trim().Length == 0) {
+				throw new Exception("Ios store link cannot be empty");
+			}
+			
+			if (iosBundleID.Trim().Length == 0) {
+				throw new Exception("Ios bundle cannot be empty");
+			}
+			
+			if (!IsDigitsOnly(iosBundleID.Trim()) {
+				throw new Exception("The ios bundle should only consists of numeric values");
+			}
+#endif
+		}
+		
+		private bool IsDigitsOnly(string str) {
+			return str.All(c => c >= '0' && c <= '9');
+		}
 	}
 }

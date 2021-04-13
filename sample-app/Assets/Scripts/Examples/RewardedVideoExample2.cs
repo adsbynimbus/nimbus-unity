@@ -1,4 +1,3 @@
-using System;
 using Nimbus;
 using Nimbus.Internal;
 using UnityEngine;
@@ -14,7 +13,7 @@ namespace Examples {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.LoadAndShowRewardedVideoAd();
+			_ad = NimbusManager.Instance.LoadAndShowRewardedVideoAd("unity_demo_rewarded_video2_position");
 			_alreadyTriggered = true;
 			
 			while (true) {

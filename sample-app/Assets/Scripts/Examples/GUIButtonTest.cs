@@ -32,7 +32,7 @@ namespace Examples {
 			if (!_shouldDestroyBanner) {
 				_shouldDestroyBanner = true;
 				bannerButtonText.text = "Destroy Banner";
-				_adUnit = _manager.LoadAndShowBannerAd();
+				_adUnit = _manager.LoadAndShowBannerAd("unity_demo_banner_position");
 				_isUnique = true;
 				return;
 			}
@@ -45,12 +45,12 @@ namespace Examples {
 		
 		
 		public void LoadInterstitial() {
-			_adUnit = _manager.LoadAndShowInterstitialAd();
+			_adUnit = _manager.LoadAndShowInterstitialAd("unity_demo_interstitial_position");
 			_isUnique = true;
 		}
 		
 		public void LoadRewardedVideoAd() {
-			_adUnit = _manager.LoadAndShowRewardedVideoAd();
+			_adUnit = _manager.LoadAndShowRewardedVideoAd("unity_demo_video_position");
 			_isUnique = true;
 		}
 	}

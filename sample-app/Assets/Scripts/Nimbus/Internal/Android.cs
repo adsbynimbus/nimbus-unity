@@ -15,7 +15,7 @@ namespace Nimbus.Internal {
 		private const string HelperClass = "com.nimbus.demo.UnityHelper";
 		private const string AndroidLogger = "com.adsbynimbus.Nimbus$Logger$Default";
 
-		
+
 		internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration) {
 			logger.Log("Initializing Android SDK");
 			_unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -28,15 +28,11 @@ namespace Nimbus.Internal {
 			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
 			_nimbus.CallStatic("setTestMode", configuration.enableSDKInTestMode);
-			_helper.CallStatic("setApp", Application.identifier, configuration.appName.Trim(),
-<<<<<<< HEAD
-				configuration.androidAppStoreURL.Trim());
-=======
-				configureation.appDomain.Trim(), configuration.appStoreURL.Trim());
->>>>>>> 1be26897... Added position pass through for ad requests.
+			_helper.CallStatic("setApp", configuration.androidBundleID.Trim(), 
+				configuration.appName.Trim(), configuration.appDomain.Trim(), configuration.androidAppStoreURL.Trim());
 		}
 		
-		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, string position, ref NimbusAdUnit nimbusAdUnit) {
+		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
 			var functionCall = nimbusAdUnit.AdType switch {
 				AdUnityType.Banner => "showBannerAd",
@@ -44,7 +40,7 @@ namespace Nimbus.Internal {
 				AdUnityType.Rewarded => "showRewardedVideoAd",
 				_ => throw new Exception("ad type not supported")
 			};
-			_helper.CallStatic(functionCall, _currentActivity, position, listener);
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position, listener);
 			return nimbusAdUnit;
 		}
 	}
