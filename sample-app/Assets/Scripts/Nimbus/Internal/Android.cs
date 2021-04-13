@@ -29,10 +29,14 @@ namespace Nimbus.Internal {
 				configuration.apiKey.Trim());
 			_nimbus.CallStatic("setTestMode", configuration.enableSDKInTestMode);
 			_helper.CallStatic("setApp", Application.identifier, configuration.appName.Trim(),
+<<<<<<< HEAD
 				configuration.androidAppStoreURL.Trim());
+=======
+				configureation.appDomain.Trim(), configuration.appStoreURL.Trim());
+>>>>>>> 1be26897... Added position pass through for ad requests.
 		}
 		
-		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, string position, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
 			var functionCall = nimbusAdUnit.AdType switch {
 				AdUnityType.Banner => "showBannerAd",
@@ -40,7 +44,7 @@ namespace Nimbus.Internal {
 				AdUnityType.Rewarded => "showRewardedVideoAd",
 				_ => throw new Exception("ad type not supported")
 			};
-			_helper.CallStatic(functionCall, _currentActivity, listener);
+			_helper.CallStatic(functionCall, _currentActivity, position, listener);
 			return nimbusAdUnit;
 		}
 	}
