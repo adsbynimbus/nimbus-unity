@@ -29,7 +29,7 @@ namespace Nimbus.Internal {
 				configuration.apiKey.Trim());
 			_nimbus.CallStatic("setTestMode", configuration.enableSDKInTestMode);
 			_helper.CallStatic("setApp", Application.identifier, configuration.appName.Trim(),
-				configuration.appStoreURL.Trim());
+				configuration.androidAppStoreURL.Trim());
 		}
 		
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {

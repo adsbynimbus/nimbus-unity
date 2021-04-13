@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Nimbus.Internal;
 using Nimbus.ScriptableObjects;
@@ -15,6 +16,8 @@ namespace Nimbus {
 		// ReSharper disable once MemberCanBePrivate.Global
 		public AdEvents NimbusEvents;
 		private NimbusAPI _nimbusPlatformAPI;
+		
+		private readonly Dictionary<string, Queue<NimbusAdUnit>> _refreshedBanners = new Dictionary<string, Queue<NimbusAdUnit>>();
 
 		private void Awake() {
 			if (configuration == null) {
@@ -79,6 +82,17 @@ namespace Nimbus {
 		public NimbusAdUnit LoadAndShowRewardedVideoAd() {
 			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+		}
+		
+		public IEnumerator LoadAndShowBannerAdWithRefresh(float refreshIntervalInSeconds) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
+			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+			while (true) {
+				yield return new WaitForSeconds(refreshIntervalInSeconds);
+				adUnit?.Destroy();
+				adUnit = new NimbusAdUnit(AdUnityType.Banner, in NimbusEvents);
+				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+			}
 		}
 	}
 }

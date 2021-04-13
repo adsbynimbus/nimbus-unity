@@ -15,6 +15,9 @@ MonoBehaviour:
   publisherKey: dev-sdk
   apiKey: d352cac1-cae2-4774-97ba-4e15c6276be0
   appName: Nimbus Demo
-  appStoreURL: https://www.adsbynimbus.com
+  androidAppStoreURL: https://play.google.com/store/apps/details?id=com.demo
+  androidBundleID: com.demo
+  iosAppStoreURL: https://apps.apple.com/us/app/my_app/id123
+  iosBundleID: 132
   enableSDKInTestMode: 1
   enableUnityLogs: 1
