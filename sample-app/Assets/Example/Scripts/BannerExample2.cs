@@ -14,7 +14,7 @@ namespace Example.Scripts {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
 			_bannerRoutine =
-				NimbusManager.Instance.LoadAndShowBannerAdWithRefresh("unity_demo_banner_position2",
+				NimbusManager.Instance.LoadAndShowBannerAdWithRefresh("unity_demo_banner_position2", 0.0f,
 					SetAdUnitFromCoroutine);
 			StartCoroutine(_bannerRoutine);
 			_alreadyTriggered = true;

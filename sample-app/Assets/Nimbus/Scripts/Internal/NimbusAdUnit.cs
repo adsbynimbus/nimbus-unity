@@ -2,23 +2,34 @@ using UnityEngine;
 
 namespace Nimbus.Scripts.Internal {
 	public sealed class NimbusAdUnit {
-		private readonly AdEvents _adEvents;
-
 		public readonly AdUnityType AdType;
 		public readonly int InstanceID;
 		public readonly string Position;
+
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
+		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
 		internal MetaData MetaData;
+		
+		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
+		// where setting a value higher than the video length forces the x to show up at the end of the video
+		internal readonly int CloseButtonDelayMillis;
+		
+		private readonly AdEvents _adEvents;
+		
+		
 
-		public NimbusAdUnit(AdUnityType adType, string position, in AdEvents adEvents) {
+		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor, in AdEvents adEvents) {
 			AdType = adType;
 			InstanceID = GetHashCode();
 			CurrentAdState = AdEventTypes.NOT_LOADED;
 			Position = position;
 			_adEvents = adEvents;
+			BidFloors = new BidFloors(bannerFloor, videoFloor);
+			// leave this at MaxValue for now
+			CloseButtonDelayMillis = int.MaxValue;
 		}
 
 		~NimbusAdUnit() {
@@ -44,7 +55,7 @@ namespace Nimbus.Scripts.Internal {
 		///     was an error at any step
 		/// </summary>
 		public bool DidHaveAnError() {
-			return AdListenerError != null || AdControllerError != null;
+			return AdListenerError.Message.Length > 0 || AdControllerError.Message.Length > 0;
 		}
 
 		/// <summary>
@@ -52,8 +63,8 @@ namespace Nimbus.Scripts.Internal {
 		/// </summary>
 		public string ErrorMessage() {
 			var message = "";
-			if (AdListenerError != null) message = $"AdListener Error: {AdListenerError?.Message} ";
-			if (AdControllerError != null) message += $"AdController Error: {AdControllerError?.Message}";
+			if (AdListenerError.Message.Length > 0) message = $"AdListener Error: {AdListenerError.Message} ";
+			if (AdControllerError.Message.Length > 0) message += $"AdController Error: {AdControllerError.Message}";
 			return message;
 		}
 
@@ -62,14 +73,14 @@ namespace Nimbus.Scripts.Internal {
 		///     a particular auction event
 		/// </summary>
 		public string GetAuctionID() {
-			return MetaData?.AuctionID ?? "";
+			return MetaData.AuctionID;
 		}
 
 		/// <summary>
 		///     Return the Ecpm value associated to the winning ad
 		/// </summary>
 		public double GetBidValue() {
-			return MetaData?.Bid ?? 0.0;
+			return MetaData.Bid;
 		}
 
 		/// <summary>
@@ -83,7 +94,7 @@ namespace Nimbus.Scripts.Internal {
 		///     Returns the name of the demand source that won the auction
 		/// </summary>
 		public string GetNetwork() {
-			return MetaData?.Network ?? "";
+			return MetaData.Network;
 		}
 
 
@@ -126,7 +137,7 @@ namespace Nimbus.Scripts.Internal {
 
 
 	// ReSharper disable MemberCanBePrivate.Global
-	internal class AdError {
+	internal readonly struct AdError {
 		public readonly string Message;
 
 		public AdError(string errMessage) {
@@ -134,17 +145,24 @@ namespace Nimbus.Scripts.Internal {
 		}
 	}
 
-	internal class MetaData {
+	internal readonly struct BidFloors {
+		internal readonly float BannerFloor;
+		internal readonly float VideoFloor;
+		public BidFloors(float bannerFloor, float videoFloor) {
+			BannerFloor = bannerFloor;
+			VideoFloor = videoFloor;
+		}
+	}
+	
+	internal readonly struct MetaData {
 		public readonly string AuctionID;
 		public readonly double Bid;
 		public readonly string Network;
-
-#if UNITY_ANDROID
+		
 		public MetaData(in AndroidJavaObject response) {
 			AuctionID = response.Get<string>("auction_id");
 			Bid = response.Get<double>("bid_raw");
 			Network = response.Get<string>("network");
 		}
-#endif
 	}
 }

@@ -8,6 +8,11 @@ using UnityEngine;
 namespace Nimbus.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
+		#region Editor Values
+		public NimbusSDKConfiguration configuration;
+		public bool shouldSubscribeToIAdEvents;
+		#endregion
+		
 		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
 
 		public static NimbusManager Instance;
@@ -72,8 +77,11 @@ namespace Nimbus.Scripts {
 		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
 		///     can be used by the Nimbus dashboard to breakout data
 		/// </param>
-		public NimbusAdUnit LoadAndShowBannerAd(string position) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, in _nimbusEvents);
+		/// <param name="bannerBidFloor">
+		///     Represents your asking price for banner ads during the auction
+		/// </param>
+		public NimbusAdUnit LoadAndShowBannerAd(string position, float bannerBidFloor) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in _nimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -85,8 +93,14 @@ namespace Nimbus.Scripts {
 		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
 		///     can be used by the Nimbus dashboard to breakout data
 		/// </param>
-		public NimbusAdUnit LoadAndShowFullScreenAd(string position) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, in _nimbusEvents);
+		/// <param name="bannerBidFloor">
+		///     Represents your asking price for banner ads during the auction
+		/// </param>
+		/// <param name="videoBidFloor">
+		///     Represents your asking price for video ads during the auction
+		/// </param>
+		public NimbusAdUnit LoadAndShowFullScreenAd(string position, float bannerBidFloor, float videoBidFloor) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor, in _nimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -97,8 +111,11 @@ namespace Nimbus.Scripts {
 		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
 		///     can be used by the Nimbus dashboard to breakout data
 		/// </param>
-		public NimbusAdUnit LoadAndShowRewardedVideoAd(string position) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, in _nimbusEvents);
+		/// <param name="videoBidFloor">
+		///     Represents your asking price for video ads during the auction
+		/// </param>
+		public NimbusAdUnit LoadAndShowRewardedVideoAd(string position, float videoBidFloor) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, 0, videoBidFloor, in _nimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -109,29 +126,27 @@ namespace Nimbus.Scripts {
 		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
 		///     can be used by the Nimbus dashboard to breakout data
 		/// </param>
+		/// <param name="bannerBidFloor">
+		///     Represents your asking price for banner ads during the auction
+		/// </param>
 		/// <param name="currentAdUnit">Provides the ability to pass the current ad unit back out of the coroutine</param>
 		/// <param name="refreshIntervalInSeconds">
 		///     Specifies the rate at which banner ads should be called for. This defaults to
 		///     the industry standard and best practice of 30 seconds
 		/// </param>
-		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, SetAdUnitFromCoroutine currentAdUnit,
+		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor, SetAdUnitFromCoroutine currentAdUnit,
 			float refreshIntervalInSeconds = 30f) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, in _nimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in _nimbusEvents);
 			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			while (true) {
 				yield return new WaitForSeconds(refreshIntervalInSeconds);
 				adUnit?.Destroy();
-				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, in _nimbusEvents);
+				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in _nimbusEvents);
 				currentAdUnit(adUnit);
 				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			}
 		}
 
-		#region Editor Values
-
-		public NimbusSDKConfiguration configuration;
-		public bool shouldSubscribeToIAdEvents;
-
-		#endregion
+	
 	}
 }

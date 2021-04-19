@@ -4,7 +4,7 @@ using Nimbus.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
-	public class RewardedVideoExample2 : MonoBehaviour {
+	public class FullScreenExample : MonoBehaviour {
 		public GameObject cloud;
 		private NimbusAdUnit _ad;
 		private bool _alreadyTriggered;
@@ -16,7 +16,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_rewarded_fullscreen_position");
+			_ad = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_rewarded_fullscreen_position", 0.0f, 0.0f);
 			_alreadyTriggered = true;
 
 			var loaded = false;

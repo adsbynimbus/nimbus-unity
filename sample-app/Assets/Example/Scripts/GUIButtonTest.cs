@@ -35,7 +35,7 @@ namespace Example.Scripts {
 			if (!_shouldDestroyBanner) {
 				_shouldDestroyBanner = true;
 				bannerButtonText.text = "Destroy Banner";
-				_adUnit = NimbusManager.Instance.LoadAndShowBannerAd("unity_demo_banner_position");
+				_adUnit = NimbusManager.Instance.LoadAndShowBannerAd("unity_demo_banner_position", 0.0f);
 				_isUnique = true;
 				return;
 			}
@@ -48,12 +48,12 @@ namespace Example.Scripts {
 
 
 		public void LoadInterstitial() {
-			_adUnit = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_interstitial_position");
+			_adUnit = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_interstitial_position",0.0f, 0.0f);
 			_isUnique = true;
 		}
 
 		public void LoadRewardedVideoAd() {
-			_adUnit = NimbusManager.Instance.LoadAndShowRewardedVideoAd("unity_demo_video_position");
+			_adUnit = NimbusManager.Instance.LoadAndShowRewardedVideoAd("unity_demo_video_position", 0.0f);
 			_isUnique = true;
 		}
 	}

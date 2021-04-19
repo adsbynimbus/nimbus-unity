@@ -39,7 +39,7 @@ namespace Nimbus.Scripts.Internal {
 				AdUnityType.Rewarded => "showRewardedVideoAd",
 				_ => throw new Exception("ad type not supported")
 			};
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position, listener);
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, nimbusAdUnit.CloseButtonDelayMillis, listener);
 			return nimbusAdUnit;
 		}
 	}

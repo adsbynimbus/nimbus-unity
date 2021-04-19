@@ -27,7 +27,7 @@ public final class UnityHelper {
         BlockingAdRenderer.setDismissOnComplete(true);
     }
 
-    public static void setApp(Object bundleId, Object appName, Object domain, Object storeUrl) {
+    public static void setApp(Object bundleId, String appName, String domain, String storeUrl) {
         final App app = new App();
         app.bundle = bundleId.toString();
         app.name = appName.toString();
@@ -36,40 +36,37 @@ public final class UnityHelper {
         RequestManager.setApp(app);
     }
 
-    public static void showInterstitialAd(Object obj, Object position, Object listener) {
+    public static void showInterstitialAd(Object obj, String position, float bannerFloor, float videoFloor,
+            int closeButtonDelay, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
-            activity.runOnUiThread(() -> manager.showBlockingAd(
-                NimbusRequest.forInterstitialAd(position.toString()), activity,
+            final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
+            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
+            request.request.imp[0].video.bidfloor = (Float) videoFloor;
+            activity.runOnUiThread(() -> manager.showBlockingAd(request, activity,
+                    (NimbusAdManager.Listener) listener));
+        }
+    }
+
+    public static void showRewardedVideoAd(Object obj, String position, float bannerFloor, float videoFloor,
+            int closeButtonDelay, Object listener) {
+        if (obj instanceof Activity) {
+            final Activity activity = (Activity) obj;
+            final NimbusRequest request = NimbusRequest.forRewardedVideo(position);
+            request.request.imp[0].video.bidfloor = (Float) videoFloor;
+            activity.runOnUiThread(() -> manager.showRewardedVideoAd(request, (Integer) closeButtonDelay, activity,
                 (NimbusAdManager.Listener) listener));
         }
     }
 
-    public static void showRewardedAd(Object obj, Object position, Object listener) {
+    public static void showBannerAd(Object obj, String position, float bannerFloor, float videoFloor,
+            int closeButtonDelay, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
-            activity.runOnUiThread(() -> manager.showRewardedVideoAd(
-                NimbusRequest.forInterstitialAd(position.toString()), 5000, activity,
-                (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void showRewardedVideoAd(Object obj, Object position, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            activity.runOnUiThread(() -> manager.showRewardedVideoAd(
-                NimbusRequest.forRewardedVideo(position.toString()), 5000, activity,
-                (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void showBannerAd(Object obj, Object position, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-
-            activity.runOnUiThread(new BannerHandler(activity,
-                NimbusRequest.forBannerAd(position.toString(), Format.BANNER_320_50, Position.FOOTER),
-                (NimbusAdManager.Listener) listener));
+            final NimbusRequest request =
+                    NimbusRequest.forBannerAd(position, Format.BANNER_320_50, Position.FOOTER);
+            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
+            activity.runOnUiThread(new BannerHandler(activity, request, (NimbusAdManager.Listener) listener));
         }
     }
 
@@ -80,15 +77,6 @@ public final class UnityHelper {
     }
     
     public static void destroyController(Object obj, Object controller) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            if (controller instanceof AdController) {
-                activity.runOnUiThread(() -> ((AdController)controller).destroy());
-            }
-        }
-    }
-
-    public static void destroy(Object obj, Object controller) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             if (controller instanceof AdController) {
