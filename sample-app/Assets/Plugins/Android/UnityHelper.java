@@ -43,7 +43,7 @@ public final class UnityHelper {
             final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
             request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
             request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            activity.runOnUiThread(() -> manager.showBlockingAd(request, activity,
+            activity.runOnUiThread(() -> manager.showRewardedVideoAd(request, (Integer) closeButtonDelay, activity,
                     (NimbusAdManager.Listener) listener));
         }
     }

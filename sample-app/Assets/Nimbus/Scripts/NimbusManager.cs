@@ -49,13 +49,18 @@ namespace Nimbus.Scripts {
 		private IEnumerator Start() {
 			if (!shouldSubscribeToIAdEvents) yield return null;
 			yield return new WaitForEndOfFrame();
+			var eventsFound = false;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance._nimbusEvents.OnAdRendered += iAdEvent.AdWasRendered;
 				Instance._nimbusEvents.OnAdError += iAdEvent.AdError;
 				Instance._nimbusEvents.OnAdEvent += iAdEvent.AdEvent;
+				eventsFound = true;
 			}
 
+			if (!eventsFound) {
+				Debug.unityLogger.LogWarning("Manager is set to auto subscribe to listeners, however there are no instances of IAdEvents in the scene", this);
+			}
 			yield return null;
 		}
 
@@ -137,6 +142,7 @@ namespace Nimbus.Scripts {
 		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor, SetAdUnitFromCoroutine currentAdUnit,
 			float refreshIntervalInSeconds = 30f) {
 			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in _nimbusEvents);
+			currentAdUnit(adUnit);
 			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			while (true) {
 				yield return new WaitForSeconds(refreshIntervalInSeconds);

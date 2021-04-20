@@ -63,8 +63,8 @@ namespace Nimbus.Scripts.Internal {
 		/// </summary>
 		public string ErrorMessage() {
 			var message = "";
-			if (AdListenerError.Message.Length > 0) message = $"AdListener Error: {AdListenerError.Message} ";
-			if (AdControllerError.Message.Length > 0) message += $"AdController Error: {AdControllerError.Message}";
+			if (AdListenerError != null) message = $"AdListener Error: {AdListenerError.Message} ";
+			if (AdControllerError != null) message += $"AdController Error: {AdControllerError.Message}";
 			return message;
 		}
 
@@ -137,7 +137,7 @@ namespace Nimbus.Scripts.Internal {
 
 
 	// ReSharper disable MemberCanBePrivate.Global
-	internal readonly struct AdError {
+	internal class AdError {
 		public readonly string Message;
 
 		public AdError(string errMessage) {
@@ -154,7 +154,7 @@ namespace Nimbus.Scripts.Internal {
 		}
 	}
 	
-	internal readonly struct MetaData {
+	internal class MetaData {
 		public readonly string AuctionID;
 		public readonly double Bid;
 		public readonly string Network;

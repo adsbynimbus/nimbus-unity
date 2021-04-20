@@ -33,13 +33,23 @@ namespace Nimbus.Scripts.Internal {
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
-			var functionCall = nimbusAdUnit.AdType switch {
-				AdUnityType.Banner => "showBannerAd",
-				AdUnityType.Interstitial => "showInterstitialAd",
-				AdUnityType.Rewarded => "showRewardedVideoAd",
-				_ => throw new Exception("ad type not supported")
-			};
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, nimbusAdUnit.CloseButtonDelayMillis, listener);
+			var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayMillis;
+			string functionCall;
+			switch (nimbusAdUnit.AdType) {
+				case AdUnityType.Banner:
+					functionCall = "showBannerAd";
+					break;
+				case AdUnityType.Interstitial:
+					closeButtonDelayMillis= 5000;
+					functionCall = "showInterstitialAd";
+					break;
+				case AdUnityType.Rewarded:
+					functionCall = "showRewardedVideoAd";
+					break;
+				default:
+					throw new Exception("ad type not supported");
+			}
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis, listener);
 			return nimbusAdUnit;
 		}
 	}
