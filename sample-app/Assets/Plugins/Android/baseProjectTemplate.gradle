@@ -19,10 +19,10 @@ allprojects {
         google()
         jcenter()
         maven {
-            url "https://timehop.bintray.com/nimbus-android"
-        }
-        maven {
-            url "https://timehop.bintray.com/nimbus-openrtb"
+            url = uri("https://adsbynimbus-public.s3.amazonaws.com/android/sdks")
+            credentials {
+                username = "*"
+            }
         }
         flatDir {
             dirs "${project(':unityLibrary').projectDir}/libs"

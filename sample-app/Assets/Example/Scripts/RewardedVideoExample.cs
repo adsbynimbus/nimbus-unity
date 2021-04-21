@@ -27,7 +27,7 @@ namespace Example.Scripts {
 
 		public void AdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, bid value: {nimbusAdUnit.GetBidValue()}, network: {nimbusAdUnit.GetNetwork()}");
+				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, bid value: {nimbusAdUnit.GetBidValue()}, network: {nimbusAdUnit.GetNetwork()}, auction_id: {nimbusAdUnit.GetAuctionID()}");
 		}
 
 		public void AdError(NimbusAdUnit nimbusAdUnit) {

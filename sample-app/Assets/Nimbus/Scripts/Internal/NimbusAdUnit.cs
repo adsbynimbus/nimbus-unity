@@ -55,7 +55,7 @@ namespace Nimbus.Scripts.Internal {
 		///     was an error at any step
 		/// </summary>
 		public bool DidHaveAnError() {
-			return AdListenerError.Message.Length > 0 || AdControllerError.Message.Length > 0;
+			return AdListenerError != null || AdControllerError != null;
 		}
 
 		/// <summary>

@@ -29,7 +29,7 @@ namespace Example.Scripts {
 				if (_ad.GetCurrentAdState() == AdEventTypes.LOADED ||
 				    _ad.GetCurrentAdState() == AdEventTypes.IMPRESSION && !loaded) {
 					Debug.unityLogger.Log(
-						$"NimbusEventListenerExample Ad was rendered for ad instance {_ad.InstanceID}, bid value: {_ad.GetBidValue()}, network: {_ad.GetNetwork()}");
+						$"NimbusEventListenerExample Ad was rendered for ad instance {_ad.InstanceID}, bid value: {_ad.GetBidValue()}, network: {_ad.GetNetwork()}, auction_id: {_ad.GetAuctionID()}");
 					loaded = true;
 				}
 
