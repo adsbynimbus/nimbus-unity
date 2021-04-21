@@ -1,0 +1,6295 @@
+fileFormatVersion: 2
+guid: 7810966f0f690954c87305933cabf2b0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: TX Village Props Crate Large
+  - first:
+      213: 21300002
+    second: TX Village Props Crate Small
+  - first:
+      213: 21300004
+    second: TX Village Props Chest
+  - first:
+      213: 21300006
+    second: TX Village Props Chest Opened
+  - first:
+      213: 21300008
+    second: TX Village Props Barrel
+  - first:
+      213: 21300010
+    second: TX Village Props Pot A
+  - first:
+      213: 21300012
+    second: TX Village Props Pot B
+  - first:
+      213: 21300014
+    second: TX Village Props Pot C
+  - first:
+      213: 21300016
+    second: TX Village Props Road Lamp
+  - first:
+      213: 21300018
+    second: TX Village Props Road Lamp Light Off
+  - first:
+      213: 21300020
+    second: TX Village Props Road Lamp Light On
+  - first:
+      213: 21300022
+    second: TX Village Props Torch
+  - first:
+      213: 21300024
+    second: TX Village Props Fence A Pillar A
+  - first:
+      213: 21300026
+    second: TX Village Props Fence A Pillar B
+  - first:
+      213: 21300028
+    second: TX Village Props Fence A Pillar C
+  - first:
+      213: 21300030
+    second: TX Village Props Fence A Rail A
+  - first:
+      213: 21300032
+    second: TX Village Props Fence A Rail B
+  - first:
+      213: 21300034
+    second: TX Village Props Fence A Rail C
+  - first:
+      213: 21300036
+    second: TX Village Props Fence A Nail
+  - first:
+      213: 21300038
+    second: TX Village Props Fence B Pillar
+  - first:
+      213: 21300040
+    second: TX Village Props Fence B Rail
+  - first:
+      213: 21300042
+    second: TX Village Props Road Sign A
+  - first:
+      213: 21300044
+    second: TX Village Props Road Sign B
+  - first:
+      213: 21300046
+    second: TX Village Props Road Sign Text A
+  - first:
+      213: 21300048
+    second: TX Village Props Road Sign Text B
+  - first:
+      213: 21300050
+    second: TX Village Props Road Sign Text C
+  - first:
+      213: 21300052
+    second: TX Village Props Billboard
+  - first:
+      213: 21300054
+    second: TX Village Props Billboard Noti A
+  - first:
+      213: 21300056
+    second: TX Village Props Billboard Noti D
+  - first:
+      213: 21300058
+    second: TX Village Props Billboard Noti B
+  - first:
+      213: 21300060
+    second: TX Village Props Billboard Noti C
+  - first:
+      213: 21300062
+    second: TX Village Props Stump
+  - first:
+      213: 21300064
+    second: TX Village Props Axe
+  - first:
+      213: 21300066
+    second: TX Village Props Well
+  - first:
+      213: 21300068
+    second: TX Village Props Bucket
+  - first:
+      213: 21300070
+    second: TX Village Props Ladder T
+  - first:
+      213: 21300072
+    second: TX Village Props Ladder M
+  - first:
+      213: 21300074
+    second: TX Village Props B
+  - first:
+      213: 21300076
+    second: TX Village Props Hay Bale
+  - first:
+      213: 21300078
+    second: TX Village Props Hay Pile
+  - first:
+      213: 21300080
+    second: TX Village Props Hay Fork
+  - first:
+      213: 21300082
+    second: TX Village Props Scarecrow
+  - first:
+      213: 21300084
+    second: TX Village Props Anvil
+  - first:
+      213: 21300086
+    second: TX Village Props Gravestone A
+  - first:
+      213: 21300088
+    second: TX Village Props Gravestone B
+  - first:
+      213: 21300090
+    second: TX Village Props Gravestone C
+  - first:
+      213: 21300092
+    second: TX Village Props Gravestone D
+  - first:
+      213: 21300094
+    second: TX Village Props Grass A
+  - first:
+      213: 21300096
+    second: TX Village Props Grass B
+  - first:
+      213: 21300098
+    second: TX Village Props Grass C
+  - first:
+      213: 21300100
+    second: TX Village Props Flower A
+  - first:
+      213: 21300102
+    second: TX Village Props Grass D
+  - first:
+      213: 21300104
+    second: TX Village Props Grass E
+  - first:
+      213: 21300106
+    second: TX Village Props Grass F
+  - first:
+      213: 21300108
+    second: TX Village Props Flower B
+  - first:
+      213: 21300110
+    second: TX Village Props Bush A
+  - first:
+      213: 21300112
+    second: TX Village Props Bush B
+  - first:
+      213: 21300114
+    second: TX Village Props Bush C
+  - first:
+      213: 21300116
+    second: TX Village Props Wheelbarrow
+  - first:
+      213: 21300118
+    second: TX Village Props Wheelbarrow Wheel
+  - first:
+      213: 21300120
+    second: TX Village Props Tree A
+  - first:
+      213: 21300122
+    second: TX Village Props Banner Pillar
+  - first:
+      213: 21300124
+    second: TX Village Props Banner
+  - first:
+      213: 21300126
+    second: TX Village Props Wood Logs
+  - first:
+      213: 21300128
+    second: TX Village Props Campfire
+  - first:
+      213: 21300130
+    second: TX Village Props Gunny Bag A
+  - first:
+      213: 21300132
+    second: TX Village Props Gunny Bag B
+  - first:
+      213: 21300134
+    second: TX Village Props Rock A
+  - first:
+      213: 21300136
+    second: TX Village Props Rock B
+  - first:
+      213: 21300138
+    second: TX Village Props Rock C
+  - first:
+      213: 21300140
+    second: TX Village Props Wheat A
+  - first:
+      213: 21300142
+    second: TX Village Props Wheat B
+  - first:
+      213: 21300144
+    second: TX Village Props Wheat C
+  - first:
+      213: 21300146
+    second: TX Village Props Wheat D
+  - first:
+      213: 21300148
+    second: TX Village Props Wheat E
+  - first:
+      213: 21300150
+    second: TX Village Props Statue
+  - first:
+      213: 21300152
+    second: TX Village Props Statue Bouquet
+  - first:
+      213: 21300154
+    second: TX Village Props Archert Target
+  - first:
+      213: 21300156
+    second: TX Village Props Arrow
+  - first:
+      213: 21300158
+    second: TX Village Props Arrow Hit
+  - first:
+      213: 21300160
+    second: TX Village Props Brick Wall
+  - first:
+      213: 21300162
+    second: TX Village Props Weapon Rack
+  - first:
+      213: 21300164
+    second: TX Village Props Spear
+  - first:
+      213: 21300166
+    second: TX Village Props Sword
+  - first:
+      213: 21300168
+    second: TX Village Props Heavy Sword
+  - first:
+      213: 21300170
+    second: TX Village Props Log Bench
+  - first:
+      213: 21300172
+    second: TX Village Props Table
+  - first:
+      213: 21300174
+    second: TX Village Props Chair
+  - first:
+      213: 21300176
+    second: TX Village Props Wine Bottle
+  - first:
+      213: 21300178
+    second: TX Village Props Apple
+  - first:
+      213: 21300180
+    second: TX Village Props Cup
+  - first:
+      213: 21300182
+    second: TX Village Props Bread
+  - first:
+      213: 21300184
+    second: TX Village Props Training Dummy
+  - first:
+      213: 21300186
+    second: TX Village Props Hammer
+  - first:
+      213: 21300188
+    second: TX Village Props Stall Tent
+  - first:
+      213: 21300190
+    second: TX Village Props Stall Tent Pillar
+  - first:
+      213: 21300192
+    second: TX Village Props Hanging Bag
+  - first:
+      213: 21300194
+    second: TX Village Props Stall Table
+  - first:
+      213: 21300196
+    second: TX Village Props Basket
+  - first:
+      213: 21300198
+    second: TX Village Props Cauldron
+  - first:
+      213: 21300200
+    second: TX Village Props Grain Box
+  - first:
+      213: 21300202
+    second: TX Village Props Kettle
+  - first:
+      213: 21300204
+    second: TX Village Props White Bottle
+  - first:
+      213: 21300206
+    second: TX Village Props Stall Fruit A
+  - first:
+      213: 21300208
+    second: TX Village Props Stall Fruit B
+  - first:
+      213: 21300210
+    second: TX Village Props Stall Fruit C
+  - first:
+      213: 21300212
+    second: TX Village Props Stall Fruit D
+  - first:
+      213: 21300214
+    second: TX Village Props Barricade
+  - first:
+      213: 21300216
+    second: TX Village Props Platform S
+  - first:
+      213: 21300218
+    second: TX Village Props Platform W
+  - first:
+      213: 21300220
+    second: TX Village Props Platform L
+  - first:
+      213: 21300222
+    second: TX Village Props Platform M
+  - first:
+      213: 21300224
+    second: TX Village Props Platform R
+  - first:
+      213: 21300226
+    second: TX Village Props Tree B
+  - first:
+      213: 21300228
+    second: TX Village Props Spike
+  - first:
+      213: 21300230
+    second: TX Village Props Clother Hanger Pillar A
+  - first:
+      213: 21300232
+    second: TX Village Props Clother Hanger Pillar B
+  - first:
+      213: 21300234
+    second: TX Village Props Clother Hanger Rope A
+  - first:
+      213: 21300236
+    second: TX Village Props Cloth A
+  - first:
+      213: 21300238
+    second: TX Village Props Cloth B
+  - first:
+      213: 21300240
+    second: TX Village Props Cloth C
+  - first:
+      213: 21300242
+    second: TX Village Props Cloth D
+  - first:
+      213: 21300244
+    second: TX Village Props Clother Hanger Clip
+  - first:
+      213: 21300246
+    second: TX Village Props Clother Hanger Rope B
+  - first:
+      213: 21300248
+    second: TX Village Props Cloth E
+  - first:
+      213: 21300250
+    second: TX Village Props Cloth F
+  - first:
+      213: 21300252
+    second: TX Village Props Cloth G
+  - first:
+      213: 21300254
+    second: TX Village Props Cloth H
+  - first:
+      213: 21300256
+    second: TX Village Props Pumpkin A
+  - first:
+      213: 21300258
+    second: TX Village Props Pumpkin B
+  - first:
+      213: 21300260
+    second: TX Village Props Spike Ball
+  - first:
+      213: 21300262
+    second: TX Village Props Sunflower A
+  - first:
+      213: 21300264
+    second: TX Village Props Sunflower B
+  - first:
+      213: 21300266
+    second: TX Village Props Sunflower C
+  - first:
+      213: 21300268
+    second: TX Village Props Fire Bowl
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TX Village Props Crate Large
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 462
+        width: 45
+        height: 45
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a6c8b481291c6e4abac51c26b2c9fa5
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Crate Small
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 462
+        width: 35
+        height: 35
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 142ed9bb862ce1d44bb1d29a93d81fdb
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Chest
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 462
+        width: 38
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52cb85ba5741db549a28b2918489ac7d
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Chest Opened
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 462
+        width: 38
+        height: 40
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55befdc912403f1478aabcf3dfdb78dd
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Barrel
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 461
+        width: 27
+        height: 35
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffce8924fd405494cbd864054dba4ce3
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Pot A
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 460
+        width: 17
+        height: 29
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 893bb0346aa502b468f17ac609d39538
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Pot B
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 460
+        width: 21
+        height: 19
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcf9606a5827b904d86a3c6dbbff5a18
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Pot C
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 460
+        width: 19
+        height: 29
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb39ff5f6a177eb4aad387d788c080a3
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Lamp
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 412
+        width: 42
+        height: 97
+      alignment: 9
+      pivot: {x: 0.2, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cd581d29ae721143b8d48a661dd1714
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Lamp Light Off
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 492
+        width: 13
+        height: 18
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de6f0300554460643aab1dd12a885989
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Lamp Light On
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 472
+        width: 13
+        height: 18
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b58c250cfaef2d444a07023034018381
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Torch
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 484
+        width: 8
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37769124641d76342821d36783fc0b15
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Pillar A
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 416
+        width: 8
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b0f9f1ffa75fd247a007921e2d5bd3a
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Pillar B
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 416
+        width: 8
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8d948a163ab31d429b38aa059717638
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Pillar C
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 416
+        width: 9
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f367465cd082cf48bdb07252c7e8d8e
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Rail A
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 439
+        width: 40
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c025b37596f99e548b0626175283b294
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Rail B
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 427
+        width: 39
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4691580762d89234ea8f43cc1f3ce57c
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Rail C
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 415
+        width: 41
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ee293e361cd7fb4496b3673322afa35
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence A Nail
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 455
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b04b37d2650c403428f4885706f882ab
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence B Pillar
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 416
+        width: 9
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0c3296875b0ad84494dfbdf11550eac
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Fence B Rail
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 432
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26484b1297956ce4aa876cb570b315d1
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Sign A
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 416
+        width: 27
+        height: 41
+      alignment: 9
+      pivot: {x: 0.44, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 768fa4522e9b9ac418570e80c01c8bab
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Sign B
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 403
+        width: 31
+        height: 53
+      alignment: 9
+      pivot: {x: 0.515, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c842c590ea5920c49ac0fb592bdacb44
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Sign Text A
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 451
+        width: 15
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b90a2214dd96ce42b021104177cd79a
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Sign Text B
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 444
+        width: 15
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 648ae28acea5a264190759e50ba343f5
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Road Sign Text C
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 437
+        width: 15
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3aebb6efc17c9c42925a52ec07894fe
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Billboard
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 395
+        width: 68
+        height: 61
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ad6a88d3ce249146b539d2381adc0e8
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Billboard Noti A
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 438
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c167c87e4c419c645b7e88d8fbb20db1
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Billboard Noti D
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 435
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55f517dbdea03164f9b7e2792e3faaf9
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Billboard Noti B
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 422
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e436d746b3f537248964f85aa7075bb9
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Billboard Noti C
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 406
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1269a6ee74083a4b9e29f2030d71bfd
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stump
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 458
+        width: 31
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89766e8ec6d21ab48a6fceb419b54071
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Axe
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 431
+        width: 37
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d39210a6a7ad9234e8cd59788fb4eb74
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Well
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 277
+        width: 87
+        height: 91
+      alignment: 9
+      pivot: {x: 0.56458426, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4df5fb70a1c128f459a02960861830eb
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Bucket
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 301
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8af77171e371ed146bb85eb5f5e66dbe
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Ladder T
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 368
+        width: 34
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5709638327d47174ea75ef6443d08841
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Ladder M
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 336
+        width: 34
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6322ae02fb7a3e4d9fba28c2e47df44
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props B
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 304
+        width: 34
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f328774bd2b94cf4ab4c5bbaca6708b0
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Hay Bale
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 301
+        width: 41
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b9b302a55ff485418e67a388be3e6b4
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Hay Pile
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 336
+        width: 62
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22d2f469048164940893c8bbe4658c92
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Hay Fork
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 418
+        width: 49
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c37791835bdb4d47a52001bd6509c05
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Scarecrow
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 300
+        width: 64
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones:
+      - name: bone_1
+        position: {x: 33.02426, y: 1.4000549, z: 0}
+        rotation: {x: 0, y: 0, z: 0.718599, w: 0.6954247}
+        length: 22.877779
+        parentId: -1
+      - name: bone_2
+        position: {x: 22.877779, y: -0.00000087021135, z: 0}
+        rotation: {x: 0, y: 0, z: 0.013576721, w: 0.99990785}
+        length: 18.775993
+        parentId: 0
+      - name: bone_3
+        position: {x: 18.775997, y: 0.0000058045316, z: 0}
+        rotation: {x: 0, y: 0, z: -0.014818351, w: 0.9998902}
+        length: 12.375485
+        parentId: 1
+      - name: bone_4
+        position: {x: 12.375484, y: -0.000007376974, z: 0}
+        rotation: {x: 0, y: 0, z: -0.027333943, w: 0.9996264}
+        length: 15.373174
+        parentId: 2
+      - name: bone_5
+        position: {x: 15.37317, y: -0.0000036333777, z: 0}
+        rotation: {x: 0, y: 0, z: -0.021844713, w: 0.99976146}
+        length: 16.531454
+        parentId: 3
+      - name: bone_6
+        position: {x: 7.958882, y: -9.616584, z: 0}
+        rotation: {x: 0, y: 0, z: -0.690484, w: 0.72334766}
+        length: 14.662145
+        parentId: 2
+      - name: bone_7
+        position: {x: 14.662144, y: 0.0000054826774, z: 0}
+        rotation: {x: 0, y: 0, z: -0.038376547, w: 0.9992634}
+        length: 7.4968863
+        parentId: 5
+      - name: bone_8
+        position: {x: 8.526524, y: 9.117035, z: 0}
+        rotation: {x: 0, y: 0, z: 0.6859953, w: 0.72760606}
+        length: 13.124907
+        parentId: 2
+      - name: bone_9
+        position: {x: 13.124906, y: -0.0000015939526, z: 0}
+        rotation: {x: 0, y: 0, z: -0.10109164, w: 0.99487716}
+        length: 6.5463824
+        parentId: 7
+      spriteID: ecfa6cc8366b6804e893ad86feff23e5
+      internalID: 21300082
+      vertices:
+      - {x: 37, y: 10.742004}
+      - {x: 37, y: 13}
+      - {x: 45.757004, y: 16.757996}
+      - {x: 46.367996, y: 26.964996}
+      - {x: 45.300995, y: 37.14499}
+      - {x: 45.018997, y: 46}
+      - {x: 54.890015, y: 44.31299}
+      - {x: 63.142, y: 48.142}
+      - {x: 64, y: 52.52899}
+      - {x: 57.557007, y: 58}
+      - {x: 44.33, y: 57.669006}
+      - {x: 47.472992, y: 67.07501}
+      - {x: 52, y: 75.944}
+      - {x: 42.190002, y: 77.13199}
+      - {x: 40.964996, y: 85.104004}
+      - {x: 33.796005, y: 89.619995}
+      - {x: 28, y: 90}
+      - {x: 22.671997, y: 81.268005}
+      - {x: 17.304, y: 74.76199}
+      - {x: 12, y: 69.629}
+      - {x: 18, y: 62.544006}
+      - {x: 13.958008, y: 58.81601}
+      - {x: 4.8829956, y: 56.537994}
+      - {x: 0, y: 54.40399}
+      - {x: 0.23800659, y: 48.761993}
+      - {x: 7.9069977, y: 44.333008}
+      - {x: 19.039993, y: 45.519012}
+      - {x: 19.485, y: 36.924988}
+      - {x: 18.798004, y: 26.79599}
+      - {x: 20.453003, y: 17.024994}
+      - {x: 22.987, y: 12.42099}
+      - {x: 27.278, y: 6.2609863}
+      - {x: 29.130997, y: 0}
+      - {x: 37, y: 0}
+      - {x: 32.4404, y: 38.881165}
+      - {x: 30.55275, y: 74.42401}
+      - {x: 30.39952, y: 51.944153}
+      - {x: 32.664062, y: 63.72827}
+      - {x: 32.470505, y: 25.688507}
+      indices: 1a0000001900000015000000010000002600000002000000210000001f00000000000000260000000400000003000000040000002200000005000000090000000600000005000000030000000200000026000000240000000a000000050000001600000018000000170000000b000000250000000d0000000f0000000e000000230000000e0000000d000000230000000b0000000a0000002500000025000000230000000d0000000900000008000000070000000d0000000c0000000b00000009000000050000000a0000001b0000002200000026000000010000001e00000026000000260000002200000004000000000000001f0000000100000021000000200000001f0000001e0000001d000000260000001c0000001b000000260000001c000000260000001d0000001b0000001a000000220000001a00000024000000220000001e000000010000001f0000001500000019000000160000000900000007000000060000000a00000024000000250000001400000013000000120000001500000014000000240000000f000000110000001000000023000000120000001100000023000000110000000f0000002500000024000000140000001400000012000000230000001a0000001500000024000000180000001600000019000000250000001400000023000000050000002200000024000000
+      edges:
+      - {x: 1, y: 0}
+      - {x: 2, y: 1}
+      - {x: 2, y: 3}
+      - {x: 4, y: 3}
+      - {x: 4, y: 5}
+      - {x: 6, y: 5}
+      - {x: 7, y: 6}
+      - {x: 8, y: 7}
+      - {x: 8, y: 9}
+      - {x: 10, y: 9}
+      - {x: 10, y: 11}
+      - {x: 12, y: 11}
+      - {x: 13, y: 12}
+      - {x: 13, y: 14}
+      - {x: 15, y: 14}
+      - {x: 16, y: 15}
+      - {x: 16, y: 17}
+      - {x: 18, y: 17}
+      - {x: 19, y: 18}
+      - {x: 19, y: 20}
+      - {x: 21, y: 20}
+      - {x: 22, y: 21}
+      - {x: 23, y: 22}
+      - {x: 24, y: 23}
+      - {x: 25, y: 24}
+      - {x: 26, y: 25}
+      - {x: 27, y: 26}
+      - {x: 28, y: 27}
+      - {x: 29, y: 28}
+      - {x: 29, y: 30}
+      - {x: 31, y: 30}
+      - {x: 32, y: 31}
+      - {x: 33, y: 32}
+      - {x: 0, y: 33}
+      weights:
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8884878
+        weight[1]: 0.111512184
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5917079
+        weight[1]: 0.3618422
+        weight[2]: 0.046449978
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 5
+        boneIndex[3]: 0
+      - weight[0]: 0.6733049
+        weight[1]: 0.25626418
+        weight[2]: 0.07043096
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 5
+        boneIndex[2]: 2
+        boneIndex[3]: 0
+      - weight[0]: 0.83585674
+        weight[1]: 0.12183495
+        weight[2]: 0.04230834
+        weight[3]: 0
+        boneIndex[0]: 5
+        boneIndex[1]: 1
+        boneIndex[2]: 2
+        boneIndex[3]: 0
+      - weight[0]: 0.5164336
+        weight[1]: 0.48356637
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 6
+        boneIndex[1]: 5
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 6
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 6
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7375248
+        weight[1]: 0.2624752
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 6
+        boneIndex[1]: 5
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.72318625
+        weight[1]: 0.24149634
+        weight[2]: 0.035317414
+        weight[3]: 0
+        boneIndex[0]: 5
+        boneIndex[1]: 3
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.3983725
+        weight[1]: 0.3973603
+        weight[2]: 0.20426723
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 5
+        boneIndex[3]: 0
+      - weight[0]: 0.6003374
+        weight[1]: 0.27770814
+        weight[2]: 0.12195444
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 5
+        boneIndex[3]: 0
+      - weight[0]: 0.79679
+        weight[1]: 0.14266722
+        weight[2]: 0.06054276
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 5
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.80597544
+        weight[1]: 0.17039618
+        weight[2]: 0.023628367
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 7
+        boneIndex[3]: 0
+      - weight[0]: 0.5633595
+        weight[1]: 0.32101345
+        weight[2]: 0.11562713
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 4
+        boneIndex[2]: 7
+        boneIndex[3]: 0
+      - weight[0]: 0.66742533
+        weight[1]: 0.16646144
+        weight[2]: 0.16611323
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 7
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.5712875
+        weight[1]: 0.39462656
+        weight[2]: 0.034085933
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 7
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.73719275
+        weight[1]: 0.1738154
+        weight[2]: 0.08899182
+        weight[3]: 0
+        boneIndex[0]: 7
+        boneIndex[1]: 3
+        boneIndex[2]: 8
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 8
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 8
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 8
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6930711
+        weight[1]: 0.30692887
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 7
+        boneIndex[1]: 8
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.83382636
+        weight[1]: 0.10592298
+        weight[2]: 0.060250685
+        weight[3]: 0
+        boneIndex[0]: 7
+        boneIndex[1]: 1
+        boneIndex[2]: 2
+        boneIndex[3]: 0
+      - weight[0]: 0.7989123
+        weight[1]: 0.16933893
+        weight[2]: 0.031748712
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 7
+        boneIndex[2]: 2
+        boneIndex[3]: 0
+      - weight[0]: 0.7319621
+        weight[1]: 0.2523531
+        weight[2]: 0.01568487
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 7
+        boneIndex[3]: 0
+      - weight[0]: 0.78997386
+        weight[1]: 0.21002614
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.94676656
+        weight[1]: 0.053233445
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9849047
+        weight[1]: 0.015095312
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 5
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.99999994
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.97879446
+        weight[1]: 0.021205619
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 7
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9704818
+        weight[1]: 0.029518211
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 5
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9207144
+        weight[1]: 0.0792856
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+    - serializedVersion: 2
+      name: TX Village Props Anvil
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 489
+        width: 42
+        height: 20
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ebd5d33d7edd1d4390798a2f33da814
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Gravestone A
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 363
+        width: 34
+        height: 25
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c67f952347b5714fb480ecde8a7afeb
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Gravestone B
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 351
+        width: 35
+        height: 47
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba0989e44bb31874c9b2437a47b7c55b
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Gravestone C
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 351
+        width: 27
+        height: 45
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b20cf243fe3b49d4c9495cbed1fca91f
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Gravestone D
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 351
+        width: 27
+        height: 43
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40764695d1944c543a3064e6097a2425
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grass A
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 31
+        width: 17
+        height: 10
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06b794576efc87b49b5cc62c48e0bb3a
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grass B
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 31
+        width: 23
+        height: 11
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a44fcc7dcd5ee404d9e276e158396ff7
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grass C
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 31
+        width: 11
+        height: 7
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cba8aa1df6753d4e953f4cb6fb72e1b
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Flower A
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 46
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b4990b171621614697871f0b9b6e09a
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grass D
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 4
+        width: 19
+        height: 12
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf3836c0710db5d419003b51198f0b8b
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grass E
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 4
+        width: 24
+        height: 9
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 576c975f090bda94d9147715850cb8c6
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grass F
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 4
+        width: 17
+        height: 11
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7858e95213dac634aa2f5728996b3ce1
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Flower B
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 46
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a254dadff1f26b44af3bf63ad84a39f
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Bush A
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 64
+        width: 57
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 022aa7b019d3395439c0ccc53cab90b4
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Bush B
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 64
+        width: 89
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89b520a66768cd84c9ab98d3a693cb24
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Bush C
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 64
+        width: 95
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b39f25bbd6c29b4490f4c5ca2a8d9ab
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheelbarrow
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 231
+        width: 96
+        height: 40
+      alignment: 9
+      pivot: {x: 0.6772346, y: 0.3914589}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 051187d006f416143aff1ee949eb70b6
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheelbarrow Wheel
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 263
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1b06638b5cc7bb458badf0ef34b2168
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Tree A
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 3
+        width: 153
+        height: 161
+      alignment: 9
+      pivot: {x: 0.52360046, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones:
+      - name: bone_1
+        position: {x: 79.68475, y: 2.668098, z: 0}
+        rotation: {x: 0, y: 0, z: 0.7039147, w: 0.71028453}
+        length: 40.75816
+        parentId: -1
+      - name: bone_2
+        position: {x: 40.758156, y: -0.0000018026883, z: 0}
+        rotation: {x: 0, y: 0, z: 0.0045017307, w: 0.99998987}
+        length: 30.475567
+        parentId: 0
+      - name: bone_3
+        position: {x: 30.475565, y: -0.000011570632, z: 0}
+        rotation: {x: 0, y: 0, z: 0.007697209, w: 0.9999704}
+        length: 23.86923
+        parentId: 1
+      - name: bone_4
+        position: {x: 23.869236, y: -0.000026452984, z: 0}
+        rotation: {x: 0, y: 0, z: 0.00563378, w: 0.99998415}
+        length: 27.547968
+        parentId: 2
+      - name: bone_5
+        position: {x: 27.547976, y: 0.000018736402, z: 0}
+        rotation: {x: 0, y: 0, z: -0.005261743, w: 0.99998623}
+        length: 22.767836
+        parentId: 3
+      - name: bone_6
+        position: {x: 7.77162, y: -11.593674, z: 0}
+        rotation: {x: 0, y: 0, z: -0.27976388, w: 0.9600689}
+        length: 10.705094
+        parentId: 3
+      - name: bone_7
+        position: {x: 10.705082, y: 0.0000017486927, z: 0}
+        rotation: {x: 0, y: 0, z: -0.13004486, w: 0.9915081}
+        length: 16.358896
+        parentId: 5
+      - name: bone_8
+        position: {x: 0.28388938, y: -16.903639, z: 0}
+        rotation: {x: 0, y: 0, z: -0.5146604, w: 0.8573941}
+        length: 15.621091
+        parentId: 3
+      - name: bone_9
+        position: {x: 15.621093, y: -0.00000037495738, z: 0}
+        rotation: {x: 0, y: 0, z: 0.2825501, w: 0.9592526}
+        length: 18.229813
+        parentId: 7
+      - name: bone_10
+        position: {x: 18.229815, y: -0.0000016754711, z: 0}
+        rotation: {x: 0, y: 0, z: -0.5701948, w: 0.8215096}
+        length: 11.841098
+        parentId: 8
+      - name: bone_11
+        position: {x: -13.693188, y: -17.63288, z: 0}
+        rotation: {x: 0, y: 0, z: -0.64583874, w: 0.76347387}
+        length: 17.21032
+        parentId: 3
+      - name: bone_12
+        position: {x: 17.21032, y: 0.0000050715694, z: 0}
+        rotation: {x: 0, y: 0, z: 0.39229453, w: 0.9198397}
+        length: 12.222059
+        parentId: 10
+      - name: bone_13
+        position: {x: 12.222062, y: -0.0000018355959, z: 0}
+        rotation: {x: 0, y: 0, z: -0.57778233, w: 0.81619096}
+        length: 14.338658
+        parentId: 11
+      - name: bone_14
+        position: {x: -1.762364, y: -19.068125, z: 0}
+        rotation: {x: 0, y: 0, z: -0.6177745, w: 0.7863553}
+        length: 18.969204
+        parentId: 2
+      - name: bone_15
+        position: {x: 18.969208, y: 0.0000031569646, z: 0}
+        rotation: {x: 0, y: 0, z: 0.014364131, w: 0.9998968}
+        length: 21.031803
+        parentId: 13
+      - name: bone_16
+        position: {x: 2.0390775, y: 13.188654, z: 0}
+        rotation: {x: 0, y: -0, z: 0.9605098, w: 0.2782462}
+        length: 7.745527
+        parentId: 2
+      - name: bone_17
+        position: {x: 7.745533, y: -0.000005727917, z: 0}
+        rotation: {x: 0, y: 0, z: -0.28491288, w: 0.95855343}
+        length: 17.080622
+        parentId: 15
+      - name: bone_18
+        position: {x: -6.670469, y: 11.56436, z: 0}
+        rotation: {x: 0, y: -0, z: 0.7731595, w: 0.63421166}
+        length: 16.567732
+        parentId: 3
+      - name: bone_19
+        position: {x: 16.567736, y: -0.000004524588, z: 0}
+        rotation: {x: 0, y: 0, z: 0.003374091, w: 0.99999434}
+        length: 24.136003
+        parentId: 17
+      - name: bone_20
+        position: {x: 24.136005, y: -0.000007749514, z: 0}
+        rotation: {x: 0, y: 0, z: 0.124995925, w: 0.99215734}
+        length: 9.5253525
+        parentId: 18
+      - name: bone_21
+        position: {x: 1.1842794, y: 16.864508, z: 0}
+        rotation: {x: 0, y: 0, z: 0.66724145, w: 0.7448416}
+        length: 13.264164
+        parentId: 3
+      - name: bone_22
+        position: {x: 13.264164, y: -0.0000018264296, z: 0}
+        rotation: {x: 0, y: 0, z: -0.031430203, w: 0.99950594}
+        length: 12.618213
+        parentId: 20
+      - name: bone_23
+        position: {x: 12.618216, y: -0.00000090463277, z: 0}
+        rotation: {x: 0, y: 0, z: 0.098248444, w: 0.99516195}
+        length: 21.691345
+        parentId: 21
+      - name: bone_24
+        position: {x: 10.937909, y: 10.727565, z: 0}
+        rotation: {x: 0, y: 0, z: 0.50393695, w: 0.86374044}
+        length: 20.367393
+        parentId: 3
+      - name: bone_25
+        position: {x: 20.367397, y: -0.0000086898735, z: 0}
+        rotation: {x: 0, y: 0, z: -0.08649453, w: 0.99625236}
+        length: 16.745815
+        parentId: 23
+      - name: bone_26
+        position: {x: 0.9948915, y: 16.141853, z: 0}
+        rotation: {x: 0, y: 0, z: 0.3451699, w: 0.9385402}
+        length: 16.130695
+        parentId: 4
+      - name: bone_27
+        position: {x: 16.130695, y: -0.0000021891465, z: 0}
+        rotation: {x: 0, y: 0, z: -0.0787488, w: 0.9968945}
+        length: 8.25122
+        parentId: 25
+      - name: bone_28
+        position: {x: 14.483837, y: 10.048655, z: 0}
+        rotation: {x: 0, y: 0, z: 0.09629468, w: 0.99535286}
+        length: 12.386389
+        parentId: 4
+      - name: bone_29
+        position: {x: -3.8490033, y: -10.954512, z: 0}
+        rotation: {x: 0, y: 0, z: -0.40845028, w: 0.9127806}
+        length: 12.992
+        parentId: 4
+      - name: bone_30
+        position: {x: 12.991994, y: 0.0000012907958, z: 0}
+        rotation: {x: 0, y: 0, z: 0.2670434, w: 0.96368456}
+        length: 15.685742
+        parentId: 28
+      spriteID: 8fb7ddbf20d66fd4cbd6a7865c328e7a
+      internalID: 21300120
+      vertices:
+      - {x: 87.78699, y: 4.977997}
+      - {x: 86.991, y: 9.584999}
+      - {x: 86.211, y: 14.195}
+      - {x: 86.031006, y: 19.173}
+      - {x: 86.03201, y: 24.172}
+      - {x: 86.28601, y: 29.131}
+      - {x: 87.323, y: 33.745}
+      - {x: 88.306, y: 38.614}
+      - {x: 92.36499, y: 39.567}
+      - {x: 96.23801, y: 41.237}
+      - {x: 99, y: 44.711}
+      - {x: 101.88199, y: 44}
+      - {x: 105.69501, y: 46.809}
+      - {x: 109.02301, y: 49.93}
+      - {x: 110.537994, y: 53.582}
+      - {x: 112.24399, y: 55.801003}
+      - {x: 116.505005, y: 58.147}
+      - {x: 120.65201, y: 60.736}
+      - {x: 124.22699, y: 63.229996}
+      - {x: 128.225, y: 66.226}
+      - {x: 131.85199, y: 64.85}
+      - {x: 136.17499, y: 65.176}
+      - {x: 138.29599, y: 68.704}
+      - {x: 142.177, y: 66}
+      - {x: 146.051, y: 68.801}
+      - {x: 150.07501, y: 71.076004}
+      - {x: 150.76001, y: 75.707}
+      - {x: 150.85999, y: 79.772}
+      - {x: 151.70099, y: 83.971}
+      - {x: 151.883, y: 88.059}
+      - {x: 151.64099, y: 92.186}
+      - {x: 150.301, y: 96.301}
+      - {x: 152.396, y: 100.351}
+      - {x: 152.663, y: 104.67}
+      - {x: 152.534, y: 109.421}
+      - {x: 150.82199, y: 113.594}
+      - {x: 149.81201, y: 117.353}
+      - {x: 146.844, y: 121.155}
+      - {x: 148, y: 124.977005}
+      - {x: 144.892, y: 128.462}
+      - {x: 140.992, y: 130.776}
+      - {x: 136.88501, y: 132.719}
+      - {x: 133.116, y: 135.883}
+      - {x: 129.00299, y: 134.006}
+      - {x: 130, y: 138.77}
+      - {x: 126.38501, y: 142.115}
+      - {x: 122.645996, y: 145.43399}
+      - {x: 118.603, y: 144.204}
+      - {x: 114.51599, y: 142}
+      - {x: 112.744995, y: 145.926}
+      - {x: 109.931, y: 149.703}
+      - {x: 106.41501, y: 153}
+      - {x: 102.138, y: 151.75}
+      - {x: 98.61499, y: 152.15799}
+      - {x: 94.221985, y: 152.222}
+      - {x: 91.914, y: 148.196}
+      - {x: 89.36099, y: 144.69}
+      - {x: 86.98901, y: 143.01}
+      - {x: 84.15201, y: 146.87}
+      - {x: 81.729004, y: 150.707}
+      - {x: 78.733, y: 154.07199}
+      - {x: 77.61099, y: 158.58301}
+      - {x: 73.774994, y: 160.556}
+      - {x: 68.90201, y: 160.927}
+      - {x: 63.906006, y: 160.956}
+      - {x: 58.979004, y: 160.618}
+      - {x: 54.98999, y: 158.94101}
+      - {x: 52.660004, y: 155.466}
+      - {x: 51.363007, y: 151.362}
+      - {x: 48.153015, y: 154.397}
+      - {x: 44.34201, y: 157}
+      - {x: 40.494995, y: 154.736}
+      - {x: 36.764008, y: 151.89801}
+      - {x: 33.135986, y: 148.67}
+      - {x: 29.391998, y: 145.806}
+      - {x: 26.243988, y: 142.047}
+      - {x: 24.557983, y: 137.908}
+      - {x: 24.787994, y: 135}
+      - {x: 20.729004, y: 132.728}
+      - {x: 20.886993, y: 128.338}
+      - {x: 21.306, y: 124.796005}
+      - {x: 20.378998, y: 120.697}
+      - {x: 24.28299, y: 117.573}
+      - {x: 21.524994, y: 115}
+      - {x: 16.975006, y: 115.516}
+      - {x: 13.212006, y: 114.641}
+      - {x: 9.455994, y: 112.527}
+      - {x: 7.0169983, y: 108.816}
+      - {x: 5.054016, y: 104.871}
+      - {x: 3.071991, y: 101.852}
+      - {x: 1.0589905, y: 97.725}
+      - {x: 0.23999023, y: 94.124}
+      - {x: 0.34799194, y: 90.057}
+      - {x: 1.8540039, y: 85.841}
+      - {x: 4.950012, y: 82.05}
+      - {x: 9.101013, y: 84}
+      - {x: 8.501007, y: 80.517}
+      - {x: 7.9110107, y: 76.383}
+      - {x: 8.437988, y: 72.529}
+      - {x: 10.557007, y: 68.444}
+      - {x: 14.971008, y: 68.971}
+      - {x: 18.506989, y: 65.494}
+      - {x: 22.636993, y: 66.59}
+      - {x: 27.001007, y: 67.306}
+      - {x: 31.209991, y: 66.441}
+      - {x: 35.462006, y: 67.814}
+      - {x: 39.882996, y: 68.883}
+      - {x: 37.373993, y: 64.911}
+      - {x: 36.388, y: 61.198997}
+      - {x: 35.962006, y: 57.176003}
+      - {x: 39.506012, y: 53.711998}
+      - {x: 42.063995, y: 49.997}
+      - {x: 44.862, y: 46.139}
+      - {x: 49.332, y: 47.008}
+      - {x: 53.345, y: 46.57}
+      - {x: 57.384003, y: 47.617}
+      - {x: 61.299988, y: 45}
+      - {x: 65.40701, y: 47.174}
+      - {x: 69.936005, y: 48.984}
+      - {x: 71.356995, y: 44.391}
+      - {x: 72.85599, y: 39.735}
+      - {x: 73.767, y: 35.162}
+      - {x: 73.96799, y: 30.189}
+      - {x: 73.984985, y: 25.189999}
+      - {x: 73.88199, y: 20.196}
+      - {x: 73.449005, y: 15.425003}
+      - {x: 73.073, y: 10.599998}
+      - {x: 72.79999, y: 5.6259995}
+      - {x: 72, y: 1.0179977}
+      - {x: 73.983, y: 0}
+      - {x: 80.981995, y: 0}
+      - {x: 85.981995, y: 0}
+      - {x: 88, y: 0}
+      - {x: 96.16135, y: 100.05065}
+      - {x: 113.81363, y: 82.35254}
+      - {x: 67.7258, y: 68.01492}
+      - {x: 86.0296, y: 59.09184}
+      - {x: 49.53, y: 59.737988}
+      - {x: 65.76279, y: 149.02393}
+      - {x: 101.20117, y: 141.20909}
+      - {x: 96.358795, y: 55.19162}
+      - {x: 87.82187, y: 78.56285}
+      - {x: 93.28076, y: 68.2722}
+      - {x: 104.01581, y: 64.52715}
+      - {x: 80.48822, y: 68.91229}
+      - {x: 113.28354, y: 70.79235}
+      - {x: 101.43384, y: 77.86656}
+      - {x: 104.5755, y: 90.29207}
+      - {x: 92.73581, y: 88.67723}
+      - {x: 128.6553, y: 97.78692}
+      - {x: 139.88367, y: 101.63967}
+      - {x: 133.37726, y: 121.95709}
+      - {x: 116.729095, y: 93.86088}
+      - {x: 126.769714, y: 86.63504}
+      - {x: 63.621124, y: 108.5802}
+      - {x: 112.148834, y: 115.244446}
+      - {x: 107.94971, y: 102.46822}
+      - {x: 124.61005, y: 75.99428}
+      - {x: 75.45923, y: 109.641716}
+      - {x: 119.16086, y: 105.89309}
+      - {x: 129.6243, y: 109.698006}
+      - {x: 117.88107, y: 129.1876}
+      - {x: 84.046265, y: 99.169525}
+      - {x: 74.40839, y: 58.476234}
+      - {x: 139.23828, y: 90.03848}
+      - {x: 137.39304, y: 79.300224}
+      - {x: 56.158936, y: 129.50067}
+      - {x: 36.118988, y: 135.65674}
+      - {x: 92.17175, y: 121.05203}
+      - {x: 88.04706, y: 109.91366}
+      - {x: 100.19202, y: 111.59099}
+      - {x: 104.42886, y: 122.88614}
+      - {x: 107.71478, y: 132.81065}
+      - {x: 95.45624, y: 132.1398}
+      - {x: 67.41138, y: 87.905525}
+      - {x: 80.059204, y: 88.573814}
+      - {x: 74.77081, y: 78.40957}
+      - {x: 61.058838, y: 59.3031}
+      - {x: 56.49991, y: 141.40996}
+      - {x: 45.25403, y: 141.1009}
+      - {x: 45.39093, y: 127.90271}
+      - {x: 33.852875, y: 124.16256}
+      - {x: 54.89081, y: 117.92685}
+      - {x: 47.766174, y: 93.531494}
+      - {x: 23.678253, y: 90.11336}
+      - {x: 51.803528, y: 106.06062}
+      - {x: 40.726288, y: 102.84663}
+      - {x: 59.508667, y: 96.798645}
+      - {x: 20.41626, y: 79.244194}
+      - {x: 43.422333, y: 115.61286}
+      - {x: 71.80417, y: 98.61942}
+      - {x: 36.304718, y: 90.62117}
+      - {x: 44.193573, y: 80.50583}
+      - {x: 31.964996, y: 79.50053}
+      - {x: 53.109467, y: 70.92977}
+      - {x: 62.73752, y: 77.226585}
+      - {x: 55.047607, y: 84.7715}
+      - {x: 83.519165, y: 48.32452}
+      - {x: 140.10434, y: 112.33246}
+      - {x: 122.68271, y: 119.295616}
+      - {x: 80.20926, y: 119.65977}
+      - {x: 65.40753, y: 135.1138}
+      - {x: 66.65469, y: 120.519875}
+      - {x: 73.91739, y: 128.9675}
+      - {x: 74.96576, y: 141.08307}
+      - {x: 84.41229, y: 131.4779}
+      - {x: 29.203888, y: 100.447136}
+      - {x: 12.816254, y: 94.28975}
+      - {x: 18.686981, y: 103.59933}
+      - {x: 32.649902, y: 111.29372}
+      indices: bc00000067000000660000005e0000005d0000005f000000620000006100000064000000bc000000610000006000000069000000c10000006a000000c0000000c20000006a00000087000000b000000090000000af000000ae000000be000000c300000087000000c20000006e000000890000006f000000890000006e0000006c000000c1000000690000006800000067000000c100000068000000640000006600000065000000a30000008700000090000000c3000000b000000087000000bc000000c100000067000000b80000005f000000cf0000005f0000005d0000005c0000006c0000006b000000890000006b0000006a000000890000006c0000006e0000006d00000064000000bc0000006600000057000000d000000058000000730000007500000074000000020000007e0000007d000000b8000000c1000000bc000000600000005f000000bc000000cf0000005f0000005c000000b8000000bc0000005f000000c0000000bf000000b7000000c1000000b8000000bf000000c1000000bf000000c00000007e000000010000007f000000030000007d0000007c0000007a00000079000000060000006400000061000000bc0000006f000000890000007100000087000000b1000000c2000000890000006a000000c2000000c2000000c4000000c3000000b100000089000000c200000081000000800000007f000000bf000000b8000000ce000000700000006f000000710000008900000073000000720000008900000072000000710000007800000077000000c5000000050000007b0000007a000000790000007800000007000000640000006300000062000000c50000007700000076000000b100000087000000a3000000040000007c0000007b0000007f0000008200000081000000ae000000c4000000bb00000059000000cf0000005a000000cf000000590000005800000056000000d000000057000000c4000000ae000000c3000000c4000000c0000000b7000000b10000007600000075000000c1000000c00000006a00000076000000a3000000c50000007500000073000000b1000000c0000000c4000000c2000000b10000007300000089000000b1000000a300000076000000b0000000c3000000ae0000005a000000cf0000005b000000cf000000d0000000b8000000d0000000ce000000b8000000d1000000ce000000d00000005600000055000000d000000054000000d00000005500000052000000d10000005300000053000000d00000005400000053000000d1000000d0000000d1000000ba000000ce000000cf00000058000000d00000005b000000cf0000005c000000500000005200000051000000500000004f000000b50000004e0000004d0000004f000000b50000005200000050000000a7000000b50000004d0000004f0000004d000000b50000003f0000008a0000004000000002000000010000007e0000004a000000a70000004b00000049000000a70000004a00000048000000b300000049000000b3000000a7000000490000004d0000004c000000a7000000b5000000d100000052000000bd000000d1000000b5000000c4000000b7000000bb000000bf000000ce000000ba000000bb000000b7000000b9000000bd000000b9000000ba000000b4000000b6000000bd000000b9000000bd000000b6000000a6000000b6000000b4000000bd000000b5000000b4000000460000004500000047000000b9000000b7000000ba0000009a000000be000000bb0000004c0000004b000000a70000009e0000009a000000ca0000009a000000b6000000ca000000b3000000a6000000b4000000ca000000a6000000c9000000c9000000cb000000ca000000ca000000cb000000c8000000a6000000ca000000b6000000cc000000cb000000c9000000be0000009a0000009e000000bb000000b90000009a000000bb000000be000000ae000000c9000000a6000000b20000004500000044000000b3000000b2000000b3000000440000004700000045000000b3000000ae000000af000000b0000000b60000009a000000b90000008a0000004400000043000000b30000004800000047000000b20000008a000000c9000000a6000000b3000000b20000003c0000008a0000003e00000042000000410000008a000000400000008a00000041000000a7000000b3000000b40000003f0000003e0000008a0000003c000000cc0000008a000000b2000000440000008a000000c90000008a000000cc000000cc000000cd000000cb000000ba000000d1000000bd000000b7000000bf000000ba000000b5000000a7000000b400000043000000420000008a000000830000008200000000000000a1000000300000002f0000008e000000900000008d0000008c000000c50000008800000088000000c5000000a30000009000000088000000a3000000c50000000700000078000000a50000001b0000001a000000a40000009900000095000000a50000001c0000001b0000008400000083000000000000000100000000000000820000007a0000000600000005000000030000007c00000004000000040000007b000000050000001d000000a40000001e0000009100000092000000860000008d0000009400000092000000940000009300000092000000940000008d000000af000000c500000008000000070000000900000008000000c50000000600000079000000070000008d000000b0000000af000000a2000000be0000009e000000a40000001c000000a5000000940000008500000093000000af000000a20000009400000088000000900000008e0000008d00000090000000b00000000a0000008c0000000c000000c50000008c0000000a00000009000000c50000000a0000000e0000008c0000008f000000be000000a2000000af0000008c0000000e0000000d0000000e0000008f0000000f000000930000008600000092000000860000009d0000009100000099000000a50000009d00000012000000910000009d0000009d000000a50000001600000013000000120000009d0000000b0000000a0000000c0000008f0000008c0000008e0000008e0000008d000000920000001600000014000000130000009d00000016000000130000001600000015000000140000000f0000008f000000100000001000000091000000110000008f0000009200000091000000880000008e0000008c00000098000000950000009900000091000000100000008f00000019000000180000001a0000001e000000a40000001f0000008c0000000d0000000c000000930000009c00000098000000a9000000a20000009e0000009300000098000000860000001a00000018000000a5000000a40000001d0000001c0000008f0000008e000000920000009d0000008600000099000000160000001800000017000000120000001100000091000000a50000001800000016000000980000009900000086000000a4000000a50000009900000085000000a2000000a9000000c8000000a90000009e000000cd000000a8000000c8000000a9000000c8000000a8000000ad000000a8000000cd000000c8000000cb000000cd000000a8000000aa000000a900000039000000cd000000cc000000aa0000009c000000850000009c00000093000000850000009b0000009c000000aa000000aa000000a8000000ab000000ac000000ab000000ad000000ab000000a8000000ad000000ac0000008b00000030000000ac000000a1000000ab0000009b000000aa000000ab0000008b000000ac000000ad0000009700000027000000250000007d0000000300000002000000a2000000850000009400000039000000ad000000cd0000003b0000003a000000cc00000038000000ad000000390000003c0000003e0000003d0000003c0000003b000000cc0000003a00000039000000cc000000980000009c0000009f00000038000000370000008b0000008b0000003200000031000000320000008b0000003400000035000000370000003600000032000000340000003300000035000000340000008b000000380000008b000000ad00000025000000c6000000970000008b0000003700000035000000950000009f000000a000000085000000a9000000aa00000096000000a4000000950000009600000095000000a0000000a0000000c7000000970000009f000000c7000000a000000096000000a0000000c6000000a000000097000000c6000000c600000022000000960000009b000000a1000000c700000096000000210000002000000021000000960000002200000024000000c6000000250000002400000023000000c6000000c6000000230000002200000096000000200000001f00000095000000980000009f000000a4000000960000001f0000009b000000ab000000a10000008b00000031000000300000002b000000c7000000a10000002b000000a10000002d0000002f0000002e0000002d0000002d000000a10000002f0000002d0000002c0000002b00000030000000a1000000ac000000c80000009e000000ca0000002600000025000000270000002800000027000000970000009700000029000000280000002a000000290000002b00000029000000970000002b0000002b00000097000000c7000000c70000009f0000009b0000009b0000009f0000009c0000007f0000000100000082000000
+      edges:
+      - {x: 0, y: 1}
+      - {x: 1, y: 2}
+      - {x: 2, y: 3}
+      - {x: 3, y: 4}
+      - {x: 4, y: 5}
+      - {x: 5, y: 6}
+      - {x: 6, y: 7}
+      - {x: 8, y: 7}
+      - {x: 9, y: 8}
+      - {x: 9, y: 10}
+      - {x: 10, y: 11}
+      - {x: 12, y: 11}
+      - {x: 13, y: 12}
+      - {x: 13, y: 14}
+      - {x: 14, y: 15}
+      - {x: 16, y: 15}
+      - {x: 17, y: 16}
+      - {x: 18, y: 17}
+      - {x: 19, y: 18}
+      - {x: 20, y: 19}
+      - {x: 21, y: 20}
+      - {x: 21, y: 22}
+      - {x: 23, y: 22}
+      - {x: 23, y: 24}
+      - {x: 24, y: 25}
+      - {x: 26, y: 25}
+      - {x: 27, y: 26}
+      - {x: 28, y: 27}
+      - {x: 29, y: 28}
+      - {x: 30, y: 29}
+      - {x: 30, y: 31}
+      - {x: 32, y: 31}
+      - {x: 33, y: 32}
+      - {x: 34, y: 33}
+      - {x: 34, y: 35}
+      - {x: 35, y: 36}
+      - {x: 36, y: 37}
+      - {x: 38, y: 37}
+      - {x: 39, y: 38}
+      - {x: 39, y: 40}
+      - {x: 41, y: 40}
+      - {x: 42, y: 41}
+      - {x: 43, y: 42}
+      - {x: 43, y: 44}
+      - {x: 44, y: 45}
+      - {x: 45, y: 46}
+      - {x: 46, y: 47}
+      - {x: 47, y: 48}
+      - {x: 49, y: 48}
+      - {x: 49, y: 50}
+      - {x: 51, y: 50}
+      - {x: 51, y: 52}
+      - {x: 53, y: 52}
+      - {x: 53, y: 54}
+      - {x: 54, y: 55}
+      - {x: 56, y: 55}
+      - {x: 56, y: 57}
+      - {x: 58, y: 57}
+      - {x: 58, y: 59}
+      - {x: 59, y: 60}
+      - {x: 60, y: 61}
+      - {x: 61, y: 62}
+      - {x: 63, y: 62}
+      - {x: 64, y: 63}
+      - {x: 65, y: 64}
+      - {x: 66, y: 65}
+      - {x: 67, y: 66}
+      - {x: 68, y: 67}
+      - {x: 68, y: 69}
+      - {x: 69, y: 70}
+      - {x: 71, y: 70}
+      - {x: 72, y: 71}
+      - {x: 73, y: 72}
+      - {x: 74, y: 73}
+      - {x: 75, y: 74}
+      - {x: 76, y: 75}
+      - {x: 77, y: 76}
+      - {x: 77, y: 78}
+      - {x: 79, y: 78}
+      - {x: 80, y: 79}
+      - {x: 80, y: 81}
+      - {x: 82, y: 81}
+      - {x: 82, y: 83}
+      - {x: 83, y: 84}
+      - {x: 84, y: 85}
+      - {x: 85, y: 86}
+      - {x: 86, y: 87}
+      - {x: 87, y: 88}
+      - {x: 88, y: 89}
+      - {x: 90, y: 89}
+      - {x: 91, y: 90}
+      - {x: 92, y: 91}
+      - {x: 93, y: 92}
+      - {x: 94, y: 93}
+      - {x: 95, y: 94}
+      - {x: 96, y: 95}
+      - {x: 97, y: 96}
+      - {x: 98, y: 97}
+      - {x: 99, y: 98}
+      - {x: 100, y: 99}
+      - {x: 100, y: 101}
+      - {x: 101, y: 102}
+      - {x: 103, y: 102}
+      - {x: 104, y: 103}
+      - {x: 104, y: 105}
+      - {x: 105, y: 106}
+      - {x: 107, y: 106}
+      - {x: 107, y: 108}
+      - {x: 108, y: 109}
+      - {x: 110, y: 109}
+      - {x: 111, y: 110}
+      - {x: 112, y: 111}
+      - {x: 112, y: 113}
+      - {x: 114, y: 113}
+      - {x: 114, y: 115}
+      - {x: 116, y: 115}
+      - {x: 117, y: 116}
+      - {x: 117, y: 118}
+      - {x: 118, y: 119}
+      - {x: 120, y: 119}
+      - {x: 121, y: 120}
+      - {x: 122, y: 121}
+      - {x: 123, y: 122}
+      - {x: 124, y: 123}
+      - {x: 125, y: 124}
+      - {x: 126, y: 125}
+      - {x: 127, y: 126}
+      - {x: 128, y: 127}
+      - {x: 129, y: 128}
+      - {x: 130, y: 129}
+      - {x: 131, y: 130}
+      - {x: 132, y: 131}
+      - {x: 132, y: 0}
+      weights:
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9345321
+        weight[1]: 0.038742863
+        weight[2]: 0.026725031
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 13
+        boneIndex[3]: 0
+      - weight[0]: 0.7068953
+        weight[1]: 0.2117055
+        weight[2]: 0.0813992
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 13
+        boneIndex[3]: 0
+      - weight[0]: 0.41407338
+        weight[1]: 0.41038316
+        weight[2]: 0.17554344
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 13
+        boneIndex[3]: 0
+      - weight[0]: 0.4608277
+        weight[1]: 0.2712456
+        weight[2]: 0.26792666
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.46692818
+        weight[1]: 0.38106927
+        weight[2]: 0.15200256
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.44570416
+        weight[1]: 0.43816438
+        weight[2]: 0.11613144
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.53207064
+        weight[1]: 0.3895096
+        weight[2]: 0.07841981
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.62682223
+        weight[1]: 0.32212228
+        weight[2]: 0.05105549
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7068596
+        weight[1]: 0.24973047
+        weight[2]: 0.032645017
+        weight[3]: 0.0107650105
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 14
+      - weight[0]: 0.76162815
+        weight[1]: 0.18389153
+        weight[2]: 0.03337306
+        weight[3]: 0.021107234
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 14
+        boneIndex[3]: 0
+      - weight[0]: 0.7833134
+        weight[1]: 0.12150119
+        weight[2]: 0.09518539
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 14
+        boneIndex[2]: 1
+        boneIndex[3]: 0
+      - weight[0]: 0.6663705
+        weight[1]: 0.2903504
+        weight[2]: 0.04327909
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 14
+        boneIndex[2]: 1
+        boneIndex[3]: 0
+      - weight[0]: 0.52348596
+        weight[1]: 0.45978257
+        weight[2]: 0.016731538
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 13
+        boneIndex[2]: 1
+        boneIndex[3]: 0
+      - weight[0]: 0.85768
+        weight[1]: 0.14231996
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9484699
+        weight[1]: 0.051530108
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9843991
+        weight[1]: 0.01560092
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9755096
+        weight[1]: 0.024490437
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.91285026
+        weight[1]: 0.08714972
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7581653
+        weight[1]: 0.24183467
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.57035977
+        weight[1]: 0.40907198
+        weight[2]: 0.020568235
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 12
+        boneIndex[2]: 9
+        boneIndex[3]: 0
+      - weight[0]: 0.5505582
+        weight[1]: 0.39250472
+        weight[2]: 0.056937095
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 14
+        boneIndex[2]: 9
+        boneIndex[3]: 0
+      - weight[0]: 0.6742102
+        weight[1]: 0.2010475
+        weight[2]: 0.124742284
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 14
+        boneIndex[2]: 9
+        boneIndex[3]: 0
+      - weight[0]: 0.69874156
+        weight[1]: 0.21923241
+        weight[2]: 0.08202604
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 9
+        boneIndex[2]: 14
+        boneIndex[3]: 0
+      - weight[0]: 0.6687506
+        weight[1]: 0.30481184
+        weight[2]: 0.026437555
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 9
+        boneIndex[2]: 14
+        boneIndex[3]: 0
+      - weight[0]: 0.58515364
+        weight[1]: 0.4148464
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 9
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5197016
+        weight[1]: 0.48029837
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6281961
+        weight[1]: 0.37180385
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7759793
+        weight[1]: 0.22402072
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8493631
+        weight[1]: 0.15063688
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.92101485
+        weight[1]: 0.078985095
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9691993
+        weight[1]: 0.030800724
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9751424
+        weight[1]: 0.02485763
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9162783
+        weight[1]: 0.06266534
+        weight[2]: 0.021056358
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.8557134
+        weight[1]: 0.10175727
+        weight[2]: 0.0425293
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.75387055
+        weight[1]: 0.17642033
+        weight[2]: 0.06970913
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.6513439
+        weight[1]: 0.24987079
+        weight[2]: 0.09878531
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.5618642
+        weight[1]: 0.3267287
+        weight[2]: 0.11140709
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.48369852
+        weight[1]: 0.39136487
+        weight[2]: 0.1249366
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 29
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.56267565
+        weight[1]: 0.30044866
+        weight[2]: 0.13687569
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 9
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.80455375
+        weight[1]: 0.13636781
+        weight[2]: 0.059078444
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 9
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 0.9488102
+        weight[1]: 0.03854413
+        weight[2]: 0.012645666
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 9
+        boneIndex[2]: 6
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9800192
+        weight[1]: 0.019980786
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 4
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9304491
+        weight[1]: 0.06955096
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 4
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8357507
+        weight[1]: 0.14612804
+        weight[2]: 0.018121267
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 4
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 0.7206349
+        weight[1]: 0.23577781
+        weight[2]: 0.04358729
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 4
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 0.48695293
+        weight[1]: 0.42024902
+        weight[2]: 0.092798054
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 4
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 0.64363104
+        weight[1]: 0.26939273
+        weight[2]: 0.08697622
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 29
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 0.9181871
+        weight[1]: 0.060649272
+        weight[2]: 0.021163665
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 29
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.69313794
+        weight[1]: 0.30686203
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 27
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.51719016
+        weight[1]: 0.48280984
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 27
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6793218
+        weight[1]: 0.32067817
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 4
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8798997
+        weight[1]: 0.12010033
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 4
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.918069
+        weight[1]: 0.063538685
+        weight[2]: 0.018392336
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 26
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.827637
+        weight[1]: 0.172363
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 26
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.70204157
+        weight[1]: 0.2979584
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 26
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.55547136
+        weight[1]: 0.4445286
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 26
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.72742087
+        weight[1]: 0.27257913
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 27
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9442958
+        weight[1]: 0.055704165
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 27
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9562451
+        weight[1]: 0.022962695
+        weight[2]: 0.020792179
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 24
+        boneIndex[2]: 27
+        boneIndex[3]: 0
+      - weight[0]: 0.9431343
+        weight[1]: 0.056865677
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8400873
+        weight[1]: 0.15991269
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.67247516
+        weight[1]: 0.32752487
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5116215
+        weight[1]: 0.48837858
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6470704
+        weight[1]: 0.35292962
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 26
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7416801
+        weight[1]: 0.22764114
+        weight[2]: 0.030678773
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 26
+        boneIndex[2]: 22
+        boneIndex[3]: 0
+      - weight[0]: 0.79400605
+        weight[1]: 0.14811465
+        weight[2]: 0.057879277
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 26
+        boneIndex[2]: 22
+        boneIndex[3]: 0
+      - weight[0]: 0.8221241
+        weight[1]: 0.10242885
+        weight[2]: 0.07544702
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 22
+        boneIndex[2]: 26
+        boneIndex[3]: 0
+      - weight[0]: 0.8225111
+        weight[1]: 0.1518699
+        weight[2]: 0.025619
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 22
+        boneIndex[2]: 26
+        boneIndex[3]: 0
+      - weight[0]: 0.77106297
+        weight[1]: 0.22893703
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6658384
+        weight[1]: 0.3341616
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5328802
+        weight[1]: 0.46711984
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.70660913
+        weight[1]: 0.29339087
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8366584
+        weight[1]: 0.16334157
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.90245426
+        weight[1]: 0.09754576
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.94524735
+        weight[1]: 0.05475262
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.97587353
+        weight[1]: 0.024126446
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.96601874
+        weight[1]: 0.033981297
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.91970444
+        weight[1]: 0.08029553
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8379966
+        weight[1]: 0.16200338
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7742922
+        weight[1]: 0.22570781
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.69268787
+        weight[1]: 0.30731213
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5849804
+        weight[1]: 0.41501957
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.51017106
+        weight[1]: 0.48982894
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5919526
+        weight[1]: 0.40804735
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.77735037
+        weight[1]: 0.22264963
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.89870256
+        weight[1]: 0.10129744
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.95755255
+        weight[1]: 0.04244742
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.984273
+        weight[1]: 0.015726991
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9893464
+        weight[1]: 0.010653655
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 16
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9451737
+        weight[1]: 0.03008246
+        weight[2]: 0.02474385
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 18
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.8102449
+        weight[1]: 0.117838316
+        weight[2]: 0.07191677
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 18
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.61662805
+        weight[1]: 0.2271198
+        weight[2]: 0.15625213
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 18
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.4008525
+        weight[1]: 0.30653065
+        weight[2]: 0.29261684
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 18
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.52568847
+        weight[1]: 0.336364
+        weight[2]: 0.13794754
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 18
+        boneIndex[2]: 19
+        boneIndex[3]: 0
+      - weight[0]: 0.8231858
+        weight[1]: 0.12994976
+        weight[2]: 0.04686443
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 18
+        boneIndex[2]: 19
+        boneIndex[3]: 0
+      - weight[0]: 0.9263462
+        weight[1]: 0.055465765
+        weight[2]: 0.018188052
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 18
+        boneIndex[2]: 19
+        boneIndex[3]: 0
+      - weight[0]: 0.97622913
+        weight[1]: 0.023770941
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 18
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.97453165
+        weight[1]: 0.025468362
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9451122
+        weight[1]: 0.054887746
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.914842
+        weight[1]: 0.08515799
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8579282
+        weight[1]: 0.14207181
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.77251136
+        weight[1]: 0.22748864
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.66441834
+        weight[1]: 0.33558163
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5543097
+        weight[1]: 0.44569027
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6837385
+        weight[1]: 0.3162615
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 16
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7528961
+        weight[1]: 0.13177969
+        weight[2]: 0.11532422
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.6120362
+        weight[1]: 0.35967436
+        weight[2]: 0.028289406
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.90291935
+        weight[1]: 0.09708065
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9851387
+        weight[1]: 0.014861286
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.89123833
+        weight[1]: 0.10876171
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 7
+        boneIndex[1]: 5
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5791016
+        weight[1]: 0.3809372
+        weight[2]: 0.039961275
+        weight[3]: 0
+        boneIndex[0]: 10
+        boneIndex[1]: 13
+        boneIndex[2]: 14
+        boneIndex[3]: 0
+      - weight[0]: 0.6783407
+        weight[1]: 0.20496407
+        weight[2]: 0.11669524
+        weight[3]: 0
+        boneIndex[0]: 15
+        boneIndex[1]: 1
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.83124685
+        weight[1]: 0.16875312
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.98474854
+        weight[1]: 0.015251451
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9836453
+        weight[1]: 0.016354747
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 26
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.97142136
+        weight[1]: 0.017665884
+        weight[2]: 0.010912785
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 4
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 0.5082561
+        weight[1]: 0.45198485
+        weight[2]: 0.039759066
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5397522
+        weight[1]: 0.2199734
+        weight[2]: 0.15084818
+        weight[3]: 0.08942626
+        boneIndex[0]: 2
+        boneIndex[1]: 10
+        boneIndex[2]: 13
+        boneIndex[3]: 1
+      - weight[0]: 0.5920882
+        weight[1]: 0.37347537
+        weight[2]: 0.020598294
+        weight[3]: 0.013838107
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 2
+        boneIndex[3]: 10
+      - weight[0]: 0.85204816
+        weight[1]: 0.14795181
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9687637
+        weight[1]: 0.016648723
+        weight[2]: 0.014587571
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 14
+        boneIndex[2]: 1
+        boneIndex[3]: 0
+      - weight[0]: 0.62124497
+        weight[1]: 0.37875503
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 13
+        boneIndex[1]: 10
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7251402
+        weight[1]: 0.23357826
+        weight[2]: 0.041281532
+        weight[3]: 0
+        boneIndex[0]: 10
+        boneIndex[1]: 7
+        boneIndex[2]: 11
+        boneIndex[3]: 0
+      - weight[0]: 0.5294093
+        weight[1]: 0.27204126
+        weight[2]: 0.19854946
+        weight[3]: 0
+        boneIndex[0]: 10
+        boneIndex[1]: 2
+        boneIndex[2]: 7
+        boneIndex[3]: 0
+      - weight[0]: 0.984129
+        weight[1]: 0.015871024
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 9
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.81234866
+        weight[1]: 0.18765137
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 9
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.98770845
+        weight[1]: 0.012291566
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.92957234
+        weight[1]: 0.03794201
+        weight[2]: 0.032485645
+        weight[3]: 0
+        boneIndex[0]: 11
+        boneIndex[1]: 7
+        boneIndex[2]: 10
+        boneIndex[3]: 0
+      - weight[0]: 0.55543
+        weight[1]: 0.23546696
+        weight[2]: 0.20910302
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 12
+        boneIndex[2]: 11
+        boneIndex[3]: 0
+      - weight[0]: 0.8679032
+        weight[1]: 0.13209687
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 23
+        boneIndex[1]: 20
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.86636245
+        weight[1]: 0.11786059
+        weight[2]: 0.015776992
+        weight[3]: 0
+        boneIndex[0]: 8
+        boneIndex[1]: 6
+        boneIndex[2]: 7
+        boneIndex[3]: 0
+      - weight[0]: 0.88564503
+        weight[1]: 0.07921718
+        weight[2]: 0.022910135
+        weight[3]: 0.01222768
+        boneIndex[0]: 7
+        boneIndex[1]: 11
+        boneIndex[2]: 10
+        boneIndex[3]: 8
+      - weight[0]: 0.98580366
+        weight[1]: 0.01419632
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.71642315
+        weight[1]: 0.28357688
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 23
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.52124625
+        weight[1]: 0.3125428
+        weight[2]: 0.12040337
+        weight[3]: 0.045807555
+        boneIndex[0]: 8
+        boneIndex[1]: 12
+        boneIndex[2]: 11
+        boneIndex[3]: 9
+      - weight[0]: 0.45990172
+        weight[1]: 0.43987957
+        weight[2]: 0.10021871
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 9
+        boneIndex[2]: 8
+        boneIndex[3]: 0
+      - weight[0]: 0.5960127
+        weight[1]: 0.22256818
+        weight[2]: 0.10101499
+        weight[3]: 0.08040411
+        boneIndex[0]: 9
+        boneIndex[1]: 6
+        boneIndex[2]: 29
+        boneIndex[3]: 8
+      - weight[0]: 0.5433046
+        weight[1]: 0.2197707
+        weight[2]: 0.11947443
+        weight[3]: 0.11745023
+        boneIndex[0]: 3
+        boneIndex[1]: 2
+        boneIndex[2]: 5
+        boneIndex[3]: 7
+      - weight[0]: 0.7741992
+        weight[1]: 0.14338972
+        weight[2]: 0.08241109
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 16
+        boneIndex[2]: 15
+        boneIndex[3]: 0
+      - weight[0]: 0.54919904
+        weight[1]: 0.45080093
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 12
+        boneIndex[1]: 14
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 14
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8877169
+        weight[1]: 0.09506942
+        weight[2]: 0.017213682
+        weight[3]: 0
+        boneIndex[0]: 25
+        boneIndex[1]: 24
+        boneIndex[2]: 23
+        boneIndex[3]: 0
+      - weight[0]: 0.70411575
+        weight[1]: 0.29588425
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 26
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.83776444
+        weight[1]: 0.11915997
+        weight[2]: 0.0430756
+        weight[3]: 0
+        boneIndex[0]: 28
+        boneIndex[1]: 6
+        boneIndex[2]: 5
+        boneIndex[3]: 0
+      - weight[0]: 0.69968086
+        weight[1]: 0.2667866
+        weight[2]: 0.03353255
+        weight[3]: 0
+        boneIndex[0]: 5
+        boneIndex[1]: 3
+        boneIndex[2]: 28
+        boneIndex[3]: 0
+      - weight[0]: 0.48359957
+        weight[1]: 0.2742218
+        weight[2]: 0.17800336
+        weight[3]: 0.06417525
+        boneIndex[0]: 5
+        boneIndex[1]: 6
+        boneIndex[2]: 7
+        boneIndex[3]: 8
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 6
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5569982
+        weight[1]: 0.37032166
+        weight[2]: 0.072680175
+        weight[3]: 0
+        boneIndex[0]: 29
+        boneIndex[1]: 6
+        boneIndex[2]: 9
+        boneIndex[3]: 0
+      - weight[0]: 0.5494455
+        weight[1]: 0.3516946
+        weight[2]: 0.09885989
+        weight[3]: 0
+        boneIndex[0]: 28
+        boneIndex[1]: 29
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.8732093
+        weight[1]: 0.07631483
+        weight[2]: 0.05047586
+        weight[3]: 0
+        boneIndex[0]: 17
+        boneIndex[1]: 15
+        boneIndex[2]: 2
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5644834
+        weight[1]: 0.32769623
+        weight[2]: 0.05878137
+        weight[3]: 0.04903896
+        boneIndex[0]: 2
+        boneIndex[1]: 15
+        boneIndex[2]: 1
+        boneIndex[3]: 17
+      - weight[0]: 0.81946903
+        weight[1]: 0.18053097
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 16
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.51883465
+        weight[1]: 0.2697118
+        weight[2]: 0.21145354
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 27
+        boneIndex[2]: 25
+        boneIndex[3]: 0
+      - weight[0]: 0.8819699
+        weight[1]: 0.11803014
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 26
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7781522
+        weight[1]: 0.14464347
+        weight[2]: 0.077204324
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 25
+        boneIndex[2]: 26
+        boneIndex[3]: 0
+      - weight[0]: 0.8738238
+        weight[1]: 0.12617616
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 24
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.90339553
+        weight[1]: 0.09660446
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 23
+        boneIndex[1]: 25
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.39271584
+        weight[1]: 0.33919346
+        weight[2]: 0.22388971
+        weight[3]: 0.044200983
+        boneIndex[0]: 18
+        boneIndex[1]: 21
+        boneIndex[2]: 20
+        boneIndex[3]: 17
+      - weight[0]: 0.490739
+        weight[1]: 0.37103152
+        weight[2]: 0.1382295
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 18
+        boneIndex[3]: 0
+      - weight[0]: 0.43334666
+        weight[1]: 0.31398454
+        weight[2]: 0.23049034
+        weight[3]: 0.022178436
+        boneIndex[0]: 20
+        boneIndex[1]: 23
+        boneIndex[2]: 21
+        boneIndex[3]: 24
+      - weight[0]: 0.90940416
+        weight[1]: 0.047390357
+        weight[2]: 0.033191934
+        weight[3]: 0.010013573
+        boneIndex[0]: 21
+        boneIndex[1]: 22
+        boneIndex[2]: 24
+        boneIndex[3]: 23
+      - weight[0]: 0.85429096
+        weight[1]: 0.14570905
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 20
+        boneIndex[1]: 17
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.97282815
+        weight[1]: 0.027171837
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 19
+        boneIndex[1]: 22
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7401461
+        weight[1]: 0.17273371
+        weight[2]: 0.069452055
+        weight[3]: 0.017668149
+        boneIndex[0]: 24
+        boneIndex[1]: 21
+        boneIndex[2]: 22
+        boneIndex[3]: 23
+      - weight[0]: 0.38794446
+        weight[1]: 0.25344583
+        weight[2]: 0.19801311
+        weight[3]: 0.16059661
+        boneIndex[0]: 3
+        boneIndex[1]: 17
+        boneIndex[2]: 20
+        boneIndex[3]: 23
+      - weight[0]: 0.6416423
+        weight[1]: 0.18886106
+        weight[2]: 0.16949669
+        weight[3]: 0
+        boneIndex[0]: 18
+        boneIndex[1]: 21
+        boneIndex[2]: 22
+        boneIndex[3]: 0
+      - weight[0]: 0.86418617
+        weight[1]: 0.10364925
+        weight[2]: 0.019329038
+        weight[3]: 0.012835519
+        boneIndex[0]: 18
+        boneIndex[1]: 16
+        boneIndex[2]: 15
+        boneIndex[3]: 17
+      - weight[0]: 0.732936
+        weight[1]: 0.24043328
+        weight[2]: 0.026630696
+        weight[3]: 0
+        boneIndex[0]: 18
+        boneIndex[1]: 19
+        boneIndex[2]: 16
+        boneIndex[3]: 0
+      - weight[0]: 0.6547845
+        weight[1]: 0.17032151
+        weight[2]: 0.12598544
+        weight[3]: 0.048908558
+        boneIndex[0]: 16
+        boneIndex[1]: 18
+        boneIndex[2]: 15
+        boneIndex[3]: 17
+      - weight[0]: 0.7533328
+        weight[1]: 0.20635056
+        weight[2]: 0.023531653
+        weight[3]: 0.016784998
+        boneIndex[0]: 15
+        boneIndex[1]: 17
+        boneIndex[2]: 16
+        boneIndex[3]: 18
+      - weight[0]: 0.8337868
+        weight[1]: 0.073211364
+        weight[2]: 0.072570845
+        weight[3]: 0.020430978
+        boneIndex[0]: 17
+        boneIndex[1]: 18
+        boneIndex[2]: 15
+        boneIndex[3]: 16
+      - weight[0]: 0.95090884
+        weight[1]: 0.049091157
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 13
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.56972194
+        weight[1]: 0.43027803
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 12
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7783957
+        weight[1]: 0.20428708
+        weight[2]: 0.017317228
+        weight[3]: 0
+        boneIndex[0]: 9
+        boneIndex[1]: 8
+        boneIndex[2]: 12
+        boneIndex[3]: 0
+      - weight[0]: 0.9381756
+        weight[1]: 0.049102847
+        weight[2]: 0.012721507
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 28
+        boneIndex[2]: 5
+        boneIndex[3]: 0
+      - weight[0]: 0.5698939
+        weight[1]: 0.41650885
+        weight[2]: 0.013597253
+        weight[3]: 0
+        boneIndex[0]: 27
+        boneIndex[1]: 25
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.45754996
+        weight[1]: 0.367551
+        weight[2]: 0.16121602
+        weight[3]: 0.013683017
+        boneIndex[0]: 25
+        boneIndex[1]: 23
+        boneIndex[2]: 3
+        boneIndex[3]: 4
+      - weight[0]: 0.65153176
+        weight[1]: 0.21812308
+        weight[2]: 0.070020996
+        weight[3]: 0.060324185
+        boneIndex[0]: 4
+        boneIndex[1]: 25
+        boneIndex[2]: 27
+        boneIndex[3]: 3
+      - weight[0]: 0.6395008
+        weight[1]: 0.36049923
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 27
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6998665
+        weight[1]: 0.25627378
+        weight[2]: 0.04385976
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 28
+        boneIndex[2]: 29
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.77970636
+        weight[1]: 0.22029364
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 19
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9778167
+        weight[1]: 0.0221833
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.577851
+        weight[1]: 0.36890066
+        weight[2]: 0.05324836
+        weight[3]: 0
+        boneIndex[0]: 22
+        boneIndex[1]: 24
+        boneIndex[2]: 21
+        boneIndex[3]: 0
+    - serializedVersion: 2
+      name: TX Village Props Banner Pillar
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 303
+        width: 46
+        height: 89
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b997e8a7f4e0a24449cecb230b5529df
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Banner
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 237
+        width: 28
+        height: 61
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd956e49227663246b9a71ec59020265
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wood Logs
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 178
+        width: 90
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 631bdef9d1d6ade45be4f582b310f0db
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Campfire
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 317
+        width: 61
+        height: 23
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4cfda05df9b5ee4da7eb1d44e52f4d6
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Gunny Bag A
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 263
+        width: 25
+        height: 34
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ee9ffbc88e45d047bf6b5525d2b2c89
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Gunny Bag B
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 263
+        width: 29
+        height: 31
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19a6a21508ecf2c46931f8e5db0ee233
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Rock A
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 2
+        width: 33
+        height: 19
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c442641416de5be48870e2405b72df6c
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Rock B
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 2
+        width: 46
+        height: 26
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a76f07fbc29c9f47bf09c4aeed4e790
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Rock C
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 2
+        width: 21
+        height: 15
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 241717c87eb722b409d278bce14284c6
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheat A
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 1
+        width: 28
+        height: 50
+      alignment: 9
+      pivot: {x: 0.66071427, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9a0202334ea11441b94f8e22121a1ef
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheat B
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 1
+        width: 28
+        height: 59
+      alignment: 9
+      pivot: {x: 0.58928573, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7eb5bed04e4196c43a75de305f16ba75
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheat C
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 1
+        width: 24
+        height: 57
+      alignment: 9
+      pivot: {x: 0.4375, y: -0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53fa0f8582fabbf4b9ada98e5c33fa7d
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheat D
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 1
+        width: 23
+        height: 54
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91aacfb1d7c072c4383c0617962c4953
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wheat E
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 1
+        width: 25
+        height: 48
+      alignment: 9
+      pivot: {x: 0.35999998, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6d91e8264ce20346b8d3f59f4ed4618
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Statue
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 332
+        width: 35
+        height: 77
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b288cee680cbc634e8d080df70387e90
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Statue Bouquet
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 338
+        width: 19
+        height: 10
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b29eb72891417e84c81214518c0a53b0
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Archert Target
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 458
+        width: 38
+        height: 44
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 793433b4be83f9b4d8bdaaae7afff3bb
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Arrow
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 502
+        width: 35
+        height: 9
+      alignment: 9
+      pivot: {x: 0.79, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec7be4155f0afb54db992e45341b9751
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Arrow Hit
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 502
+        width: 28
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43ed2bc486b3f33469d9f6eb8945964f
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Brick Wall
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 103
+        width: 136
+        height: 43
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8e393e6083a3fc4f84782dd246a9b9b
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Weapon Rack
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 377
+        width: 68
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bc7953f9d96ccf459301426a2a15bda
+      internalID: 21300162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Spear
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 450
+        width: 61
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63c897be0ad27c04b93b659fc6cd7d04
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Sword
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 458
+        width: 35
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ce0e85b7c3ae4a49bb9ed02ae1222ab
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Heavy Sword
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 470
+        width: 36
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b50d3d2507795ad4db3b9efcc5bb2798
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Log Bench
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 373
+        width: 85
+        height: 39
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9840ab687957e844813176680b76f24
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Table
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 403
+        width: 73
+        height: 28
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaa54e38510290b43b258e02ec289017
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Chair
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 448
+        width: 22
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 293633ea87412e048b8e6b3a09c1abb9
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Wine Bottle
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 435
+        width: 7
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5858d536736d8b4eabdd004841c241e
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Apple
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 447
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b0acb7a73f29be47a0dd54f033517d7
+      internalID: 21300178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cup
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 435
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 695ff356bc44c5c4bb6a2d6522bd7132
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Bread
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 435
+        width: 17
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b3eb058e5525ac468cfb3b93a8acb21
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Training Dummy
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 256
+        width: 47
+        height: 67
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64afc2f461d8cb64ba84b4402eb66c11
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Hammer
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 401
+        width: 33
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20d62e70093c46f429a3bfe452948f53
+      internalID: 21300186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Tent
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 277
+        width: 90
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b691b5472a118c44a7e610e4eb8a2ee
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Tent Pillar
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 245
+        width: 20
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4863a275cd67024ab14e0ed9e76c382
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Hanging Bag
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 279
+        width: 10
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee3fd9a3512a65740bb421184ac36c31
+      internalID: 21300192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Table
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 239
+        width: 85
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c14eaee3cd65c2a449d7ff6275dfdb3f
+      internalID: 21300194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Basket
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 284
+        width: 22
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f77d55303c7d7143bb4ff494a75ab1a
+      internalID: 21300196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cauldron
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 284
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e4b3dc5edec14b4badf2be4ac268a91
+      internalID: 21300198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Grain Box
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 264
+        width: 20
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bccad902f10c244fa4fda95bd523b9f
+      internalID: 21300200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Kettle
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 264
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2e5c38c4e76b114596c0d1716db8754
+      internalID: 21300202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props White Bottle
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 264
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e11e675dd29601a4cafabb22fe7e325c
+      internalID: 21300204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Fruit A
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 247
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42c9ad8aa2a1fc64bb0ecca0a02f8263
+      internalID: 21300206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Fruit B
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 247
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95e30e1585c7ef645a539ce2c3ce696c
+      internalID: 21300208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Fruit C
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 247
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f81be647261b384a99dea9d9ec42a2d
+      internalID: 21300210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Stall Fruit D
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 247
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0ed67ae374d30148b2375563ad96987
+      internalID: 21300212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Barricade
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 178
+        width: 45
+        height: 44
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c0f1bdbc7ccc9d46a38483728504c58
+      internalID: 21300214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Platform S
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 149
+        width: 32
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab55c216594bdcb4f827b5d11676ddae
+      internalID: 21300216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Platform W
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 149
+        width: 32
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: accaeb7ce097b8a4ab6161a8ed7bedc9
+      internalID: 21300218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Platform L
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 149
+        width: 32
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbfcd939275b0374dbec8d4ce13ad271
+      internalID: 21300220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Platform M
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 149
+        width: 32
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9915010674bb3e4db19ae8110a2cf19
+      internalID: 21300222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Platform R
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 149
+        width: 32
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1bf0f924edea09d4e9f7ed338d81529c
+      internalID: 21300224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Tree B
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 101
+        width: 120
+        height: 137
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 771e6c6706e58134eaec95b0d48e4ede
+      internalID: 21300226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Spike
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 245
+        width: 33
+        height: 11
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cbc07a6962a24134f95807544e7b0e9c
+      internalID: 21300228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Clother Hanger Pillar A
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 163
+        width: 6
+        height: 73
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 157587bba3c52014bb6e1a45c7ff0469
+      internalID: 21300230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Clother Hanger Pillar B
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 163
+        width: 6
+        height: 73
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48d507df42ff3f44ea0ad9763d894920
+      internalID: 21300232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Clother Hanger Rope A
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 226
+        width: 92
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d3e6f98117f42043a9aaaed472ae3c9
+      internalID: 21300234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth A
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 226
+        width: 15
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df8591b0d2c4d1f4596c8b490d784e42
+      internalID: 21300236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth B
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 222
+        width: 15
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe92524004eb5394e8c2e5781d53767c
+      internalID: 21300238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth C
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 199
+        width: 18
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 749c950fd1a340d419ea0e35ac8fd097
+      internalID: 21300240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth D
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 201
+        width: 8
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd76259fee6ebbb43b9eb211f44298b1
+      internalID: 21300242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Clother Hanger Clip
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 241
+        width: 3
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e320ddc85aa5dc4f85f8a3f86adcf9e
+      internalID: 21300244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Clother Hanger Rope B
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 206
+        width: 83
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25730cdb284790a46879d70290b2c72b
+      internalID: 21300246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth E
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 178
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fd359c98d9ee2244a3467e22ab50186
+      internalID: 21300248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth F
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 173
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc721f8f780cdc04f86af7716bd59633
+      internalID: 21300250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth G
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 207
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3abf1bcfeece6a441a717166fe9838af
+      internalID: 21300252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Cloth H
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 194
+        width: 27
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2298b0a3d6d06b1489cfd49adb6b8c5a
+      internalID: 21300254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Pumpkin A
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 168
+        width: 31
+        height: 31
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c755ce91a2d8d7e4681f502b116ba8c6
+      internalID: 21300256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Pumpkin B
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 168
+        width: 23
+        height: 23
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5dcc808d05f44c948b71e30163cfe7bf
+      internalID: 21300258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Spike Ball
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 233
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b19ac59dbc67e2b479207916b007a51b
+      internalID: 21300260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Sunflower A
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 31
+        width: 27
+        height: 59
+      alignment: 9
+      pivot: {x: 0.4197964, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2782466e0189c949b2bfe3c617f1c78
+      internalID: 21300262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Sunflower B
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 31
+        width: 26
+        height: 63
+      alignment: 9
+      pivot: {x: 0.5964696, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f5cb3388d47af545a060028b40a60b3
+      internalID: 21300264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Village Props Sunflower C
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 31
+        width: 22
+        height: 58
+      alignment: 9
+      pivot: {x: 0.57723445, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones:
+      - name: bone_1
+        position: {x: 12.866608, y: 2.368641, z: 0}
+        rotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+        length: 12.808016
+        parentId: -1
+      - name: bone_2
+        position: {x: 12.808018, y: -0.0000033748197, z: 0}
+        rotation: {x: 0, y: 0, z: 0.00925805, w: 0.99995714}
+        length: 12.810211
+        parentId: 0
+      - name: bone_3
+        position: {x: 12.81021, y: 0.000039800438, z: 0}
+        rotation: {x: 0, y: 0, z: -0.028114889, w: 0.9996047}
+        length: 12.579778
+        parentId: 1
+      - name: bone_4
+        position: {x: 12.579777, y: 0.00000078136543, z: 0}
+        rotation: {x: 0, y: 0, z: 0.06414769, w: 0.9979404}
+        length: 7.859404
+        parentId: 2
+      - name: bone_5
+        position: {x: 7.8594074, y: -0.000009642186, z: 0}
+        rotation: {x: 0, y: 0, z: -0.013117969, w: 0.999914}
+        length: 7.368038
+        parentId: 3
+      spriteID: 703a17db8956d7842aa77335cf49fcef
+      internalID: 21300266
+      vertices:
+      - {x: 16, y: 6.083}
+      - {x: 16, y: 12}
+      - {x: 21.026001, y: 15.079002}
+      - {x: 21.132996, y: 20.816002}
+      - {x: 18.888, y: 25.852001}
+      - {x: 17.437988, y: 30.157001}
+      - {x: 21.584991, y: 34.585}
+      - {x: 21.299988, y: 40.073997}
+      - {x: 21.756989, y: 45.936996}
+      - {x: 21.158997, y: 51.705}
+      - {x: 17.886993, y: 55.869003}
+      - {x: 12.824005, y: 57.545998}
+      - {x: 6.898987, y: 57.548996}
+      - {x: 1.6870117, y: 55.686005}
+      - {x: 0.4630127, y: 51.227997}
+      - {x: 0.39898682, y: 44.351997}
+      - {x: 3.755005, y: 39.495003}
+      - {x: 8.690002, y: 38.309998}
+      - {x: 6.4859924, y: 35.378998}
+      - {x: 3.1610107, y: 30.480999}
+      - {x: 4.821991, y: 25.179}
+      - {x: 9, y: 25.413002}
+      - {x: 8.445007, y: 19.474998}
+      - {x: 6.520996, y: 15.036999}
+      - {x: 4, y: 9.931999}
+      - {x: 6.4890137, y: 4.958}
+      - {x: 8.727997, y: 2.2579994}
+      - {x: 9.661011, y: 0}
+      - {x: 16, y: 0}
+      - {x: 10.309753, y: 48.448067}
+      - {x: 14.491394, y: 19.475231}
+      - {x: 14.735748, y: 40.92263}
+      indices: 01000000180000001700000019000000180000000100000019000000000000001a00000016000000150000001e000000050000001500000012000000160000001e000000170000001300000015000000140000000e0000001d0000000f0000000e0000000d0000000c0000001500000013000000120000000f0000001d000000100000001d0000000e0000000c000000100000001d000000110000001100000005000000120000001a0000001c0000001b00000000000000190000000100000002000000010000001e00000001000000170000001e00000015000000040000001e0000001e000000040000000300000005000000040000001500000003000000020000001e000000110000001f00000005000000090000001d0000000a0000001f000000110000001d0000001d0000000b0000000a000000080000001f0000001d0000000c0000000b0000001d0000001f0000000700000006000000080000001d00000009000000070000001f0000000800000006000000050000001f000000000000001c0000001a000000
+      edges:
+      - {x: 0, y: 1}
+      - {x: 2, y: 1}
+      - {x: 3, y: 2}
+      - {x: 3, y: 4}
+      - {x: 4, y: 5}
+      - {x: 6, y: 5}
+      - {x: 7, y: 6}
+      - {x: 8, y: 7}
+      - {x: 9, y: 8}
+      - {x: 10, y: 9}
+      - {x: 11, y: 10}
+      - {x: 12, y: 11}
+      - {x: 13, y: 12}
+      - {x: 14, y: 13}
+      - {x: 15, y: 14}
+      - {x: 15, y: 16}
+      - {x: 16, y: 17}
+      - {x: 17, y: 18}
+      - {x: 19, y: 18}
+      - {x: 20, y: 19}
+      - {x: 21, y: 20}
+      - {x: 22, y: 21}
+      - {x: 23, y: 22}
+      - {x: 24, y: 23}
+      - {x: 25, y: 24}
+      - {x: 26, y: 25}
+      - {x: 27, y: 26}
+      - {x: 28, y: 27}
+      - {x: 0, y: 28}
+      weights:
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.90322006
+        weight[1]: 0.09677995
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.85713804
+        weight[1]: 0.142862
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8351318
+        weight[1]: 0.16486816
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 2
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.85903424
+        weight[1]: 0.14096573
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9413815
+        weight[1]: 0.058618423
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5939557
+        weight[1]: 0.40604427
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.737677
+        weight[1]: 0.18689331
+        weight[2]: 0.07542969
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 4
+        boneIndex[2]: 2
+        boneIndex[3]: 0
+      - weight[0]: 0.6104632
+        weight[1]: 0.38953677
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.95789695
+        weight[1]: 0.04210303
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.974231
+        weight[1]: 0.02576899
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.8477381
+        weight[1]: 0.15226193
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6766698
+        weight[1]: 0.32333022
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.68524355
+        weight[1]: 0.31475648
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 4
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7660843
+        weight[1]: 0.121304885
+        weight[2]: 0.112610854
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 2
+        boneIndex[2]: 4
+        boneIndex[3]: 0
+      - weight[0]: 0.58974284
+        weight[1]: 0.41025716
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.93331826
+        weight[1]: 0.0666818
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.82505274
+        weight[1]: 0.17494728
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5842665
+        weight[1]: 0.41573358
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 2
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.7746971
+        weight[1]: 0.22530292
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 2
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9538988
+        weight[1]: 0.046101246
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.61265594
+        weight[1]: 0.38734406
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.9649954
+        weight[1]: 0.035004694
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 1
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 0
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.5655686
+        weight[1]: 0.43443134
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 4
+        boneIndex[1]: 3
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 1
+        weight[1]: 0
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 1
+        boneIndex[1]: 0
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+      - weight[0]: 0.6571455
+        weight[1]: 0.34285456
+        weight[2]: 0
+        weight[3]: 0
+        boneIndex[0]: 3
+        boneIndex[1]: 2
+        boneIndex[2]: 0
+        boneIndex[3]: 0
+    - serializedVersion: 2
+      name: TX Village Props Fire Bowl
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 127
+        width: 39
+        height: 31
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98b2dc3f6ac9c564db2803d6f443ce49
+      internalID: 21300268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 13a6e8642e5ca22428475a9f0dd602ba
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures:
+    - texture: {fileID: 2800000, guid: a188254b86ec240c5922007a01563fc4, type: 3}
+      name: _Emission
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
