@@ -78,3 +78,6 @@ crashlytics-build.properties
 *.DS_Store
 **/*.DS_store
 
+*.DotSettings
+**/*.DotSettings
+
