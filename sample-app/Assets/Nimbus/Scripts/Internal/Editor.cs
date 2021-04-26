@@ -10,12 +10,21 @@ namespace Nimbus.Scripts.Internal {
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			nimbusAdUnit.AdWasRendered = true;
-			var functionCall = nimbusAdUnit.AdType switch {
-				AdUnityType.Banner => "BannerAd()",
-				AdUnityType.Interstitial => "InterstitialAd()",
-				AdUnityType.Rewarded => "RewardedAd()",
-				_ => throw new Exception("ad type not supported")
-			};
+			var functionCall = "";
+			switch (nimbusAdUnit.AdType) {
+				case AdUnityType.Banner:
+					functionCall = "BannerAd()";
+					break;
+				case AdUnityType.Interstitial:
+					functionCall = "InterstitialAd()";
+					break;
+				case AdUnityType.Rewarded:
+					functionCall = "RewardedAd()";
+					break;
+				default:
+					throw new Exception("ad type not supported");
+			}
+
 			switch (nimbusAdUnit.AdType) {
 				case AdUnityType.Banner:
 					nimbusAdUnit.CurrentAdState = AdEventTypes.IMPRESSION;

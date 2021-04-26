@@ -25,7 +25,7 @@ namespace Nimbus.Scripts {
 			configuration.ValidateMobileData();
 
 			if (Instance == null) {
-				_nimbusPlatformAPI ??= new
+				_nimbusPlatformAPI = _nimbusPlatformAPI ?? new
 #if UNITY_EDITOR
 					Editor
 #elif UNITY_ANDROID
