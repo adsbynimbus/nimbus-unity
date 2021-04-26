@@ -2,7 +2,7 @@
 
 ## NimbusUnity.unitypackage
 
-The latest NimbusUnity.unitypackage can be downloaded from the [Release page](https://github.com/timehop/nimbus-unity/releases)
+The latest NimbusUnity.unitypackage can be downloaded from the [Releases](https://github.com/timehop/nimbus-unity/releases) page
 
 ## Nimbus Sample App
 
