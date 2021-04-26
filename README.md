@@ -1,20 +1,9 @@
 # nimbus-unity
 
-## Required Build Tools
+## NimbusUnity.unitypackage
 
-- Android NDK: 21.3.6528147
+The latest NimbusUnity.unitypackage can be downloaded from the [Release page](https://github.com/timehop/nimbus-unity/releases)
 
-## Tested Build Tools
+## Nimbus Sample App
 
-- Android Gradle Plugin: 4.1.3
-- Gradle: 6.8.3
-
-## Tested Unity Versions
-
-- 2021.1
-- 2020.3
-
-## Android Notes
-
-For some reason there is an issue intantiating the OpenRTB package objects
-that is fixed by including the kotlin-reflect module as a dependency.
+Tested against Unity 2018.4
