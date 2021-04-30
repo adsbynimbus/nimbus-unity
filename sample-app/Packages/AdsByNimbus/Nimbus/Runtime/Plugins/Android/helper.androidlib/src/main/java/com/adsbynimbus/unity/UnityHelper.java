@@ -1,4 +1,4 @@
-package com.nimbus.demo;
+package com.adsbynimbus.unity;
 
 import static android.view.ViewGroup.LayoutParams.*;
 
