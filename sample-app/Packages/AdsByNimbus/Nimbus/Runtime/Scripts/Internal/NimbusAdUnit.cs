@@ -1,8 +1,14 @@
+using System;
 using UnityEngine;
 
 namespace Nimbus.Runtime.Scripts.Internal {
 	public sealed class NimbusAdUnit {
+		private readonly AdEvents _adEvents;
 		public readonly AdUnityType AdType;
+
+		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
+		// where setting a value higher than the video length forces the x to show up at the end of the video
+		internal readonly int CloseButtonDelayMillis;
 		public readonly int InstanceID;
 		public readonly string Position;
 
@@ -12,16 +18,10 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
 		internal MetaData MetaData;
-		
-		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
-		// where setting a value higher than the video length forces the x to show up at the end of the video
-		internal readonly int CloseButtonDelayMillis;
-		
-		private readonly AdEvents _adEvents;
-		
-		
 
-		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor, in AdEvents adEvents) {
+
+		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor,
+			in AdEvents adEvents) {
 			AdType = adType;
 			InstanceID = GetHashCode();
 			CurrentAdState = AdEventTypes.NOT_LOADED;
@@ -113,8 +113,36 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_adEvents.EmitOnAdError(obj);
 		}
 
-		internal void EmitOnAdEvent(NimbusAdUnit obj) {
-			_adEvents.EmitOnAdEvent(obj);
+		internal void EmitOnAdEvent(AdEventTypes e) {
+			switch (e) {
+				case AdEventTypes.LOADED:
+					_adEvents.EmitOnOnAdLoaded(this);
+					break;
+				case AdEventTypes.IMPRESSION:
+					_adEvents.EmitOnOnAdImpression(this);
+					break;
+				case AdEventTypes.CLICKED:
+					_adEvents.EmitOnOnAdClicked(this);
+					break;
+				case AdEventTypes.PAUSED:
+					_adEvents.EmitOnOnVideoAdPaused(this);
+					break;
+				case AdEventTypes.RESUME:
+					_adEvents.EmitOnOnVideoAdResume(this);
+					break;
+				case AdEventTypes.COMPLETED:
+					_adEvents.EmitOnOnVideoAdCompleted(this);
+					break;
+				case AdEventTypes.DESTROYED:
+					// when Interstitial ads are destroyed by the user clicking the x button
+					// the ad viewing is also technically completed, adding this if check in-case the user is expecting
+					// a completed event to be fired
+					if (AdType == AdUnityType.Interstitial) _adEvents.EmitOnOnVideoAdCompleted(this);
+					_adEvents.EmitOnOnAdDestroyed(this);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(e), e, null);
+			}
 		}
 
 		internal void SetAndroidController(AndroidJavaObject controller) {
@@ -148,17 +176,18 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	internal readonly struct BidFloors {
 		internal readonly float BannerFloor;
 		internal readonly float VideoFloor;
+
 		public BidFloors(float bannerFloor, float videoFloor) {
 			BannerFloor = bannerFloor;
 			VideoFloor = videoFloor;
 		}
 	}
-	
+
 	internal class MetaData {
 		public readonly string AuctionID;
 		public readonly double Bid;
 		public readonly string Network;
-		
+
 		public MetaData(in AndroidJavaObject response) {
 			AuctionID = response.Get<string>("auction_id");
 			Bid = response.Get<double>("bid_raw");

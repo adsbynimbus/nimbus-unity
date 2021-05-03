@@ -49,9 +49,10 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		private void onAdEvent(AndroidJavaObject adEvent) {
 			_logger.Log("Ad event " + adEvent.Call<string>("name"));
 			var eventState = adEvent.Call<string>("name");
-			Enum.TryParse(eventState, out AdEventTypes state);
+
+			if (!Enum.TryParse(eventState, out AdEventTypes state)) return;
 			_adUnit.CurrentAdState = state;
-			_adUnit.EmitOnAdEvent(_adUnit);
+			_adUnit.EmitOnAdEvent(state);
 		}
 
 		private void onError(AndroidJavaObject adError) {
