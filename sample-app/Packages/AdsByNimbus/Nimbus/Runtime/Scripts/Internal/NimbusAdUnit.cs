@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nimbus.Scripts.Internal {
+namespace Nimbus.Runtime.Scripts.Internal {
 	public sealed class NimbusAdUnit {
 		public readonly AdUnityType AdType;
 		public readonly int InstanceID;

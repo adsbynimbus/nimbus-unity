@@ -1,12 +1,12 @@
 using System;
-using Nimbus.Scripts.Internal;
+using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
 	public class NimbusEventListenerExample : MonoBehaviour, IAdEvents {
 		public void AdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}"); 
+				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}");
 		}
 
 		public void AdError(NimbusAdUnit nimbusAdUnit) {

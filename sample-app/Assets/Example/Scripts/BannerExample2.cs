@@ -1,6 +1,6 @@
 using System.Collections;
-using Nimbus.Scripts;
-using Nimbus.Scripts.Internal;
+using Nimbus.Runtime.Scripts;
+using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {

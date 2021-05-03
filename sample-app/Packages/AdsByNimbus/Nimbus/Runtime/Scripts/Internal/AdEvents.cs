@@ -1,6 +1,6 @@
 using System;
 
-namespace Nimbus.Scripts.Internal {
+namespace Nimbus.Runtime.Scripts.Internal {
 	public class AdEvents {
 		internal event Action<NimbusAdUnit> OnAdRendered;
 		internal event Action<NimbusAdUnit> OnAdError;

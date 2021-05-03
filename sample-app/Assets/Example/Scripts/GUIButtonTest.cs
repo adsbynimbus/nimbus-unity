@@ -1,5 +1,5 @@
-using Nimbus.Scripts;
-using Nimbus.Scripts.Internal;
+using Nimbus.Runtime.Scripts;
+using Nimbus.Runtime.Scripts.Internal;
 using TMPro;
 using UnityEngine;
 
@@ -48,7 +48,7 @@ namespace Example.Scripts {
 
 
 		public void LoadInterstitial() {
-			_adUnit = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_interstitial_position",0.0f, 0.0f);
+			_adUnit = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_interstitial_position", 0.0f, 0.0f);
 			_isUnique = true;
 		}
 

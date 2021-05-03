@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Nimbus.Scripts.Internal;
-using Nimbus.Scripts.ScriptableObjects;
+using Nimbus.Runtime.Scripts.Internal;
+using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace Nimbus.Scripts {
+namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
 		#region Editor Values

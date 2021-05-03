@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
-namespace Nimbus.Scripts.Internal {
+namespace Nimbus.Runtime.Scripts.Internal {
 	internal class AdManagerListener : AndroidJavaProxy {
 		private readonly AndroidJavaClass _helper;
 		private readonly ILogger _logger;

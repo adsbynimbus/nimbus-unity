@@ -1,10 +1,10 @@
 using System;
-using Nimbus.Scripts.ScriptableObjects;
+using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
-namespace Nimbus.Scripts.Internal {
+namespace Nimbus.Runtime.Scripts.Internal {
 	public class Android : NimbusAPI {
 		private const string NimbusPackage = "com.adsbynimbus.Nimbus";
 		private const string HelperClass = "com.adsbynimbus.unity.UnityHelper";

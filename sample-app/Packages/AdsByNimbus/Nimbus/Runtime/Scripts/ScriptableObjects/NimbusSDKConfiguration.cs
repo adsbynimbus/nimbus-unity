@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace Nimbus.Scripts.ScriptableObjects {
+namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 	[CreateAssetMenu(fileName = "Nimbus SDK Configuration", menuName = "Nimbus/Create SDK Configuration", order = 0)]
 	public class NimbusSDKConfiguration : ScriptableObject {
 		[Header("Publisher Credentials")] [Tooltip("Typically your applications name")]
