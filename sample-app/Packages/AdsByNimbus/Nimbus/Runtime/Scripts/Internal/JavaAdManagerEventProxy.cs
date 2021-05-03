@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
-namespace Nimbus.Scripts.Internal {
+namespace Nimbus.Runtime.Scripts.Internal {
 	internal class AdManagerListener : AndroidJavaProxy {
 		private readonly AndroidJavaClass _helper;
 		private readonly ILogger _logger;
@@ -49,9 +49,10 @@ namespace Nimbus.Scripts.Internal {
 		private void onAdEvent(AndroidJavaObject adEvent) {
 			_logger.Log("Ad event " + adEvent.Call<string>("name"));
 			var eventState = adEvent.Call<string>("name");
-			Enum.TryParse(eventState, out AdEventTypes state);
+
+			if (!Enum.TryParse(eventState, out AdEventTypes state)) return;
 			_adUnit.CurrentAdState = state;
-			_adUnit.EmitOnAdEvent(_adUnit);
+			_adUnit.EmitOnAdEvent(state);
 		}
 
 		private void onError(AndroidJavaObject adError) {

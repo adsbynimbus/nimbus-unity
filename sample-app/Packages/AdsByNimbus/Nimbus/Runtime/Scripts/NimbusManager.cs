@@ -1,18 +1,13 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Nimbus.Scripts.Internal;
-using Nimbus.Scripts.ScriptableObjects;
+using Nimbus.Runtime.Scripts.Internal;
+using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace Nimbus.Scripts {
+namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
-		#region Editor Values
-		public NimbusSDKConfiguration configuration;
-		public bool shouldSubscribeToIAdEvents;
-		#endregion
-		
 		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
 
 		public static NimbusManager Instance;
@@ -52,15 +47,23 @@ namespace Nimbus.Scripts {
 			var eventsFound = false;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
-				Instance._nimbusEvents.OnAdRendered += iAdEvent.AdWasRendered;
-				Instance._nimbusEvents.OnAdError += iAdEvent.AdError;
-				Instance._nimbusEvents.OnAdEvent += iAdEvent.AdEvent;
+				Instance._nimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
+				Instance._nimbusEvents.OnAdError += iAdEvent.OnAdError;
+				Instance._nimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
+				Instance._nimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
+				Instance._nimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
+				Instance._nimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
+				Instance._nimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
+				Instance._nimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
+				Instance._nimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
 				eventsFound = true;
 			}
 
-			if (!eventsFound) {
-				Debug.unityLogger.LogWarning("Manager is set to auto subscribe to listeners, however there are no instances of IAdEvents in the scene", this);
-			}
+			if (!eventsFound)
+				Debug.unityLogger.LogWarning(
+					"Manager is set to auto subscribe to listeners, however there are no instances of IAdEvents in the scene",
+					this);
+
 			yield return null;
 		}
 
@@ -68,9 +71,15 @@ namespace Nimbus.Scripts {
 			if (!shouldSubscribeToIAdEvents) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
-				Instance._nimbusEvents.OnAdRendered -= iAdEvent.AdWasRendered;
-				Instance._nimbusEvents.OnAdError -= iAdEvent.AdError;
-				Instance._nimbusEvents.OnAdEvent -= iAdEvent.AdEvent;
+				Instance._nimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
+				Instance._nimbusEvents.OnAdError -= iAdEvent.OnAdError;
+				Instance._nimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
+				Instance._nimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
+				Instance._nimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
+				Instance._nimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
+				Instance._nimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
+				Instance._nimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
+				Instance._nimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
 			}
 		}
 
@@ -105,7 +114,8 @@ namespace Nimbus.Scripts {
 		///     Represents your asking price for video ads during the auction
 		/// </param>
 		public NimbusAdUnit LoadAndShowFullScreenAd(string position, float bannerBidFloor, float videoBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor, in _nimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor,
+				in _nimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -139,7 +149,8 @@ namespace Nimbus.Scripts {
 		///     Specifies the rate at which banner ads should be called for. This defaults to
 		///     the industry standard and best practice of 30 seconds
 		/// </param>
-		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor, SetAdUnitFromCoroutine currentAdUnit,
+		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor,
+			SetAdUnitFromCoroutine currentAdUnit,
 			float refreshIntervalInSeconds = 30f) {
 			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in _nimbusEvents);
 			currentAdUnit(adUnit);
@@ -153,6 +164,11 @@ namespace Nimbus.Scripts {
 			}
 		}
 
-	
+		#region Editor Values
+
+		public NimbusSDKConfiguration configuration;
+		public bool shouldSubscribeToIAdEvents;
+
+		#endregion
 	}
 }

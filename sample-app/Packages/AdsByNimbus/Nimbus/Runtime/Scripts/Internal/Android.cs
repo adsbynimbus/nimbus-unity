@@ -1,10 +1,10 @@
 using System;
-using Nimbus.Scripts.ScriptableObjects;
+using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
-namespace Nimbus.Scripts.Internal {
+namespace Nimbus.Runtime.Scripts.Internal {
 	public class Android : NimbusAPI {
 		private const string NimbusPackage = "com.adsbynimbus.Nimbus";
 		private const string HelperClass = "com.adsbynimbus.unity.UnityHelper";
@@ -40,7 +40,7 @@ namespace Nimbus.Scripts.Internal {
 					functionCall = "showBannerAd";
 					break;
 				case AdUnityType.Interstitial:
-					closeButtonDelayMillis= 5000;
+					closeButtonDelayMillis = 5000;
 					functionCall = "showInterstitialAd";
 					break;
 				case AdUnityType.Rewarded:
@@ -49,7 +49,10 @@ namespace Nimbus.Scripts.Internal {
 				default:
 					throw new Exception("ad type not supported");
 			}
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis, listener);
+
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position,
+				nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis,
+				listener);
 			return nimbusAdUnit;
 		}
 	}

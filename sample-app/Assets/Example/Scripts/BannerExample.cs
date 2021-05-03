@@ -1,5 +1,5 @@
-using Nimbus.Scripts;
-using Nimbus.Scripts.Internal;
+using Nimbus.Runtime.Scripts;
+using Nimbus.Runtime.Scripts.Internal;
 using Unity.Mathematics;
 using UnityEngine;
 

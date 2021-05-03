@@ -1,69 +1,43 @@
-using System;
-using Nimbus.Scripts.Internal;
+using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
 	public class NimbusEventListenerExample : MonoBehaviour, IAdEvents {
-		public void AdWasRendered(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}"); 
+				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}");
 		}
 
-		public void AdError(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log($"NimbusEventListenerExample Err {nimbusAdUnit.ErrorMessage()}");
-		} // ReSharper disable SwitchStatementMissingSomeEnumCasesNoDefault
-		public void AdEvent(NimbusAdUnit nimbusAdUnit) {
-			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample AdEvent {nimbusAdUnit.GetCurrentAdState()} for ad of type {nimbusAdUnit.AdType}");
-			switch (nimbusAdUnit.AdType) {
-				// Handle Events for Banner and Interstitial ads
-				case AdUnityType.Banner:
-				case AdUnityType.Interstitial:
-					switch (nimbusAdUnit.GetCurrentAdState()) {
-						case AdEventTypes.NOT_LOADED:
-							break;
-						case AdEventTypes.LOADED:
-							break;
-						case AdEventTypes.CLICKED:
-							break;
-						case AdEventTypes.IMPRESSION:
-							break;
-						case AdEventTypes.DESTROYED:
-							break;
-					}
+		}
 
-					break;
-				// Handle Events for Rewarded video ads
-				case AdUnityType.Rewarded:
-					switch (nimbusAdUnit.GetCurrentAdState()) {
-						case AdEventTypes.NOT_LOADED:
-							break;
-						case AdEventTypes.LOADED:
-							break;
-						case AdEventTypes.PAUSED:
-							break;
-						case AdEventTypes.RESUME:
-							break;
-						case AdEventTypes.CLICKED:
-							break;
-						case AdEventTypes.FIRST_QUARTILE:
-							break;
-						case AdEventTypes.MIDPOINT:
-							break;
-						case AdEventTypes.THIRD_QUARTILE:
-							break;
-						case AdEventTypes.COMPLETED:
-							break;
-						case AdEventTypes.IMPRESSION:
-							break;
-						case AdEventTypes.DESTROYED:
-							break;
-					}
+		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
 
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnVideoAdPaused(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnVideoAdResume(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit) {
+			// TODO
 		}
 	}
 }
