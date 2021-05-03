@@ -26,6 +26,7 @@ namespace Example.Scripts {
 					break;
 				}
 
+				// this is an example that uses the internal state of the ad and requires 0 event notifications
 				if (_ad.GetCurrentAdState() == AdEventTypes.LOADED ||
 				    _ad.GetCurrentAdState() == AdEventTypes.IMPRESSION && !loaded) {
 					Debug.unityLogger.Log(

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Runtime.Scripts.Internal;
@@ -25,44 +24,42 @@ namespace Example.Scripts {
 			_alreadyTriggered = true;
 		}
 
-		public void AdWasRendered(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, bid value: {nimbusAdUnit.GetBidValue()}, network: {nimbusAdUnit.GetNetwork()}, auction_id: {nimbusAdUnit.GetAuctionID()}");
 		}
 
-		public void AdError(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log($"NimbusEventListenerExample Err {nimbusAdUnit.ErrorMessage()}");
-		} // ReSharper disable SwitchStatementMissingSomeEnumCasesNoDefault
-		public void AdEvent(NimbusAdUnit nimbusAdUnit) {
-			if (nimbusAdUnit.AdType != AdUnityType.Rewarded) return;
-			switch (nimbusAdUnit.GetCurrentAdState()) {
-				case AdEventTypes.NOT_LOADED:
-					break;
-				case AdEventTypes.LOADED:
-					break;
-				case AdEventTypes.PAUSED:
-					break;
-				case AdEventTypes.RESUME:
-					break;
-				case AdEventTypes.CLICKED:
-					break;
-				case AdEventTypes.FIRST_QUARTILE:
-					break;
-				case AdEventTypes.MIDPOINT:
-					break;
-				case AdEventTypes.THIRD_QUARTILE:
-					break;
-				case AdEventTypes.COMPLETED:
-					Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
-					UnityThread.ExecuteInUpdate(RewardUser);
-					break;
-				case AdEventTypes.IMPRESSION:
-					break;
-				case AdEventTypes.DESTROYED:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+		}
+
+		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnVideoAdPaused(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnVideoAdResume(NimbusAdUnit nimbusAdUnit) {
+			// TODO
+		}
+
+		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit) {
+			Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
+			UnityThread.ExecuteInUpdate(RewardUser);
 		}
 
 		private IEnumerator MakeItRain() {
