@@ -42,7 +42,7 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		private IEnumerator Start() {
-			if (!shouldSubscribeToIAdEvents) yield return null;
+			if (!shouldSubscribeToIAdEvents) yield break;
 			yield return new WaitForEndOfFrame();
 			var eventsFound = false;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
