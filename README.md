@@ -1,8 +1,6 @@
 # nimbus-unity
 
-## NimbusUnity.unitypackage
-
-The latest NimbusUnity.unitypackage can be downloaded from the [Releases](https://github.com/timehop/nimbus-unity/releases) page
+The latest [package](package) can be downloaded from the [Releases](https://github.com/timehop/nimbus-unity/releases) page
 
 ## Minimum Requirements
 
