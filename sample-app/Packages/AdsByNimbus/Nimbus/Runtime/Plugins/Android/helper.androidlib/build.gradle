@@ -7,10 +7,6 @@ rootProject.allprojects {
             }
         }
     }
-    ext {
-        setProperty("android.useAndroidX", true)
-        setProperty("android.enableJetifier", true)
-    }
 }
 
 apply plugin: 'com.android.library'
