@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Nimbus.Scripts.Internal {
 	public class Android : NimbusAPI {
 		private const string NimbusPackage = "com.adsbynimbus.Nimbus";
-		private const string HelperClass = "com.nimbus.demo.UnityHelper";
+		private const string HelperClass = "com.adsbynimbus.unity.UnityHelper";
 		private const string AndroidLogger = "com.adsbynimbus.Nimbus$Logger$Default";
 		private static AndroidJavaClass _helper;
 		private AndroidJavaObject _currentActivity;

@@ -1,0 +1,14 @@
+{
+  "name": "com.nimbus",
+  "version": "0.0.1",
+  "displayName": "Ads By Nimbus",
+  "description": "This package allows for Unity games to access ads driven by Nimbus",
+  "unity": "2018.4",
+  "dependencies": {},
+ "keywords": ["ads", "adsbynimbus", "nimbus"],
+  "author": {
+    "name": "Marc Santaigo",
+    "email": "marc@timehop.com",
+    "url": "https://www.adsbynimbus.com"
+  }
+}
