@@ -27,8 +27,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 				default:
 					throw new Exception("ad type not supported");
 			}
-
-			// nimbusAdUnit.EmitOnAdEvent(nimbusAdUnit);
 			logger.Log($"In Editor mode, {functionCall} was called, however ads cannot be shown in the editor");
 			return nimbusAdUnit;
 		}
