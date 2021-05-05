@@ -11,9 +11,9 @@ namespace Nimbus.Runtime.Scripts {
 		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
 
 		public static NimbusManager Instance;
+		private NimbusAPI _nimbusPlatformAPI;
 
 		public AdEvents NimbusEvents;
-		private NimbusAPI _nimbusPlatformAPI;
 
 		private void Awake() {
 			if (configuration == null) throw new Exception("The configuration object cannot be null");
@@ -163,6 +163,18 @@ namespace Nimbus.Runtime.Scripts {
 				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			}
 		}
+
+		// ReSharper disable once InconsistentNaming
+		/// <summary>
+		///     Allows the TCF GDPR consent string to be set globally on all request to Nimbus
+		/// </summary>
+		/// <param name="consent">
+		///     This is the TCF GDRP consent string
+		/// </param>
+		public void SetGDPRConsentString(string consent) {
+			_nimbusPlatformAPI.SetGDPRConsentString(consent);
+		}
+
 
 		#region Editor Values
 

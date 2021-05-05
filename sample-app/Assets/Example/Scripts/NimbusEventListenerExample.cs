@@ -3,10 +3,6 @@ using UnityEngine;
 
 namespace Example.Scripts {
 	public class NimbusEventListenerExample : MonoBehaviour, IAdEvents {
-		public void OnSDKInitialize(string gdprConsentString) {
-			// TODO
-		}
-
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}");
