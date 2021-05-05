@@ -23,6 +23,10 @@ namespace Example.Scripts {
 			_ad = NimbusManager.Instance.LoadAndShowRewardedVideoAd("unity_demo_rewarded_video_position", 0.0f);
 			_alreadyTriggered = true;
 		}
+		
+		public void OnSDKInitialize(string gdprConsentString) {
+			// TODO
+		}
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(

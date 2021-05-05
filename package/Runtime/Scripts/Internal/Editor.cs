@@ -30,5 +30,9 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			logger.Log($"In Editor mode, {functionCall} was called, however ads cannot be shown in the editor");
 			return nimbusAdUnit;
 		}
+		
+		internal override void SetGDPRConsentString(string consent) {
+			Debug.unityLogger.Log("Mock SDK consent string cannot be added");
+		}
 	}
 }

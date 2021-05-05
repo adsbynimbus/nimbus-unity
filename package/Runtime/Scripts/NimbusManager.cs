@@ -12,7 +12,7 @@ namespace Nimbus.Runtime.Scripts {
 
 		public static NimbusManager Instance;
 
-		private AdEvents _nimbusEvents;
+		public AdEvents NimbusEvents;
 		private NimbusAPI _nimbusPlatformAPI;
 
 		private void Awake() {
@@ -30,7 +30,7 @@ namespace Nimbus.Runtime.Scripts {
                 Android
 #endif
 					();
-				_nimbusEvents = new AdEvents();
+				NimbusEvents = new AdEvents();
 				Debug.unityLogger.logEnabled = configuration.enableUnityLogs;
 				_nimbusPlatformAPI.InitializeSDK(Debug.unityLogger, configuration);
 				Instance = this;
@@ -47,15 +47,15 @@ namespace Nimbus.Runtime.Scripts {
 			var eventsFound = false;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
-				Instance._nimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
-				Instance._nimbusEvents.OnAdError += iAdEvent.OnAdError;
-				Instance._nimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
-				Instance._nimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
-				Instance._nimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
-				Instance._nimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
-				Instance._nimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
-				Instance._nimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
-				Instance._nimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
+				Instance.NimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
+				Instance.NimbusEvents.OnAdError += iAdEvent.OnAdError;
+				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
+				Instance.NimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
+				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
+				Instance.NimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
+				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
+				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
+				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
 				eventsFound = true;
 			}
 
@@ -71,15 +71,15 @@ namespace Nimbus.Runtime.Scripts {
 			if (!shouldSubscribeToIAdEvents) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
-				Instance._nimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
-				Instance._nimbusEvents.OnAdError -= iAdEvent.OnAdError;
-				Instance._nimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
-				Instance._nimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
-				Instance._nimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
-				Instance._nimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
-				Instance._nimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
-				Instance._nimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
-				Instance._nimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
+				Instance.NimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
+				Instance.NimbusEvents.OnAdError -= iAdEvent.OnAdError;
+				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
+				Instance.NimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
+				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
+				Instance.NimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
+				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
+				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
+				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace Nimbus.Runtime.Scripts {
 		///     Represents your asking price for banner ads during the auction
 		/// </param>
 		public NimbusAdUnit LoadAndShowBannerAd(string position, float bannerBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in _nimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -115,7 +115,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public NimbusAdUnit LoadAndShowFullScreenAd(string position, float bannerBidFloor, float videoBidFloor) {
 			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor,
-				in _nimbusEvents);
+				in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -130,7 +130,7 @@ namespace Nimbus.Runtime.Scripts {
 		///     Represents your asking price for video ads during the auction
 		/// </param>
 		public NimbusAdUnit LoadAndShowRewardedVideoAd(string position, float videoBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, 0, videoBidFloor, in _nimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, 0, videoBidFloor, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
@@ -152,13 +152,13 @@ namespace Nimbus.Runtime.Scripts {
 		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor,
 			SetAdUnitFromCoroutine currentAdUnit,
 			float refreshIntervalInSeconds = 30f) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in _nimbusEvents);
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
 			currentAdUnit(adUnit);
 			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			while (true) {
 				yield return new WaitForSeconds(refreshIntervalInSeconds);
 				adUnit?.Destroy();
-				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in _nimbusEvents);
+				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
 				currentAdUnit(adUnit);
 				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 			}
