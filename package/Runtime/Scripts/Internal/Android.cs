@@ -57,7 +57,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 
 		internal override void SetGDPRConsentString(string consent) {
-			//TODO
+			_helper.CallStatic("setUser", consent);
 		}
 	}
 }

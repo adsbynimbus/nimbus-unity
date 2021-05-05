@@ -13,6 +13,7 @@ import com.adsbynimbus.NimbusError;
 import com.adsbynimbus.openrtb.request.App;
 import com.adsbynimbus.openrtb.request.Format;
 import com.adsbynimbus.openrtb.request.Position;
+import com.adsbynimbus.openrtb.request.User;
 import com.adsbynimbus.render.AdController;
 import com.adsbynimbus.render.AdEvent;
 import com.adsbynimbus.render.BlockingAdRenderer;
@@ -27,13 +28,20 @@ public final class UnityHelper {
         BlockingAdRenderer.setDismissOnComplete(true);
     }
 
-    public static void setApp(Object bundleId, String appName, String domain, String storeUrl) {
+    public static void setApp(String bundleId, String appName, String domain, String storeUrl) {
         final App app = new App();
-        app.bundle = bundleId.toString();
-        app.name = appName.toString();
-        app.domain = domain.toString();
-        app.storeurl = storeUrl.toString();
+        app.bundle = bundleId;
+        app.name = appName;
+        app.domain = domain;
+        app.storeurl = storeUrl;
         RequestManager.setApp(app);
+    }
+
+    public static void setUser(String gdprConsent) {
+        final User user = new User();
+        user.ext = new User.Extension();
+        user.ext.consent = gdprConsent;
+        RequestManager.setUser(user);
     }
 
     public static void showInterstitialAd(Object obj, String position, float bannerFloor, float videoFloor,
