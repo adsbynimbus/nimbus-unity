@@ -58,7 +58,7 @@ namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 				throw new Exception("Ios bundle cannot be empty");
 			}
 			
-			if (!IsDigitsOnly(iosBundleID.Trim()) {
+			if (!IsDigitsOnly(iosBundleID.Trim())) {
 				throw new Exception("The ios bundle should only consists of numeric values");
 			}
 #endif
