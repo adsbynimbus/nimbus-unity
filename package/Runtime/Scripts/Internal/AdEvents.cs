@@ -2,15 +2,15 @@ using System;
 
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class AdEvents {
-		internal event Action<NimbusAdUnit> OnAdRendered;
-		internal event Action<NimbusAdUnit> OnAdError;
-		internal event Action<NimbusAdUnit> OnAdLoaded;
-		internal event Action<NimbusAdUnit> OnAdImpression;
-		internal event Action<NimbusAdUnit> OnAdClicked;
-		internal event Action<NimbusAdUnit> OnAdDestroyed;
-		internal event Action<NimbusAdUnit> OnVideoAdPaused;
-		internal event Action<NimbusAdUnit> OnVideoAdResume;
-		internal event Action<NimbusAdUnit> OnVideoAdCompleted;
+		public event Action<NimbusAdUnit> OnAdRendered;
+		public event Action<NimbusAdUnit> OnAdError;
+		public event Action<NimbusAdUnit> OnAdLoaded;
+		public event Action<NimbusAdUnit> OnAdImpression;
+		public event Action<NimbusAdUnit> OnAdClicked;
+		public event Action<NimbusAdUnit> OnAdDestroyed;
+		public event Action<NimbusAdUnit> OnVideoAdPaused;
+		public event Action<NimbusAdUnit> OnVideoAdResume;
+		public event Action<NimbusAdUnit> OnVideoAdCompleted;
 
 		internal void EmitOnAdError(NimbusAdUnit obj) {
 			OnAdError?.Invoke(obj);

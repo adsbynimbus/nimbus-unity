@@ -140,8 +140,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					if (AdType == AdUnityType.Interstitial) _adEvents.EmitOnOnVideoAdCompleted(this);
 					_adEvents.EmitOnOnAdDestroyed(this);
 					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(e), e, null);
 			}
 		}
 
