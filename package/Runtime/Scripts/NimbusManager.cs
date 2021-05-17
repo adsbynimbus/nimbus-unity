@@ -25,9 +25,8 @@ namespace Nimbus.Runtime.Scripts {
 					Editor
 #elif UNITY_ANDROID
                 Android
-#else
-   //TODO swap for IOS
-                Android
+#else   
+                IOS
 #endif
 					();
 				NimbusEvents = new AdEvents();
