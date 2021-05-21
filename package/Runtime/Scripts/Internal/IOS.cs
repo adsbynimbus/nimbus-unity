@@ -1,39 +1,92 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
-#if UNITY_IOS && !UNITY_EDITOR
-using System.Runtime.InteropServices;
-#endif
 
-namespace Nimbus.Runtime.Scripts.Internal {
-    public class IOS : NimbusAPI {
+namespace Nimbus.Runtime.Scripts.Internal
+{
+    public class IOS : NimbusAPI
+    {
 
-#region Declare external C interface    
-#if UNITY_IOS && !UNITY_EDITOR
+        #region Declare external C interface    
+        [DllImport("__Internal")]
+        private static extern void _initializeSDKWithPublisher(string publisher,
+            string apiKey,
+            bool enableSDKInTestMode,
+            int logLevel,
+            string appName,
+            string appDomain,
+            string bundleId,
+            string storeUrl,
+            bool showMuteButton);
 
         [DllImport("__Internal")]
-        private static extern void _initializeSDKWithPublisher(string publisher, string apiKey);
+        private static extern void _showBannerAd(string position);
 
-#endif
-#endregion
+        [DllImport("__Internal")]
+        private static extern void _showInterstitialAd(string position);
 
-#region Wrapped methods and properties
+        [DllImport("__Internal")]
+        private static extern void _showRewardedVideoAd(string position);
 
-        internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration) {
-#if UNITY_IOS && !UNITY_EDITOR
-            _initializeSDKWithPublisher("name", "key");
-#endif
+        [DllImport("__Internal")]
+        private static extern void _setGDPRConsentString(string consent);
+        #endregion
+
+        #region Wrapped methods and properties
+
+        private readonly IOSAdManager iOSAdManager;
+
+        public IOS()
+        {
+            iOSAdManager = new IOSAdManager();
         }
 
-        internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
-            throw new NotImplementedException();
+        internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration)
+        {
+            _initializeSDKWithPublisher(configuration.publisherKey,
+                configuration.apiKey,
+                true, // TODO: enableSDKInTestMode is enabled
+                2, // TODO: logLevel is hardcoded to DEBUG
+                configuration.appName,
+                configuration.appDomain,
+                configuration.iosBundleID,
+                configuration.iosAppStoreURL,
+                true); // TODO: showMuteButton is hardcoded to true
+        }
+
+        internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit)
+        {
+            iOSAdManager.SetAdUnit(nimbusAdUnit);
+            //var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
+            //var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayMillis;
+            //string functionCall;
+            switch (nimbusAdUnit.AdType)
+            {
+                case AdUnityType.Banner:
+                    _showBannerAd(nimbusAdUnit.Position);
+                    break;
+                case AdUnityType.Interstitial:
+                    //closeButtonDelayMillis = 5000;
+                    _showInterstitialAd(nimbusAdUnit.Position);
+                    break;
+                case AdUnityType.Rewarded:
+                    _showRewardedVideoAd(nimbusAdUnit.Position);
+                    break;
+                default:
+                    throw new Exception("ad type not supported");
+            }
+            //_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position,
+            //	nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis,
+            //	listener);
+            return nimbusAdUnit;
         }
 
         internal override void SetGDPRConsentString(string consent)
         {
-            throw new NotImplementedException();
+            _setGDPRConsentString(consent);
         }
 
-#endregion
+        #endregion
     }
 }
