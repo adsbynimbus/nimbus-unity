@@ -39,7 +39,7 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         public IOS()
         {
-            iOSAdManager = new IOSAdManager();
+            iOSAdManager = IOSAdManager.Instance;
         }
 
         internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration)

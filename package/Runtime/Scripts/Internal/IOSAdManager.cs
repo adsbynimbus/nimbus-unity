@@ -2,13 +2,34 @@
 
 namespace Nimbus.Runtime.Scripts.Internal
 {
-    internal class IOSAdManager
+    public class IOSAdManager : MonoBehaviour
     {
         private NimbusAdUnit adUnit;
 
-        public IOSAdManager()
+        private static IOSAdManager instance;
+
+        public static IOSAdManager Instance
         {
-            new GameObject("IOSAdManager", typeof(IOSAdManager));
+            get
+            {
+                if (instance == null)
+                {
+                    var obj = new GameObject("IOSAdManager");
+                    instance = (IOSAdManager)obj.AddComponent(typeof(IOSAdManager));
+                }
+                return instance;
+            }
+        }
+
+        private void Awake()
+        {
+            if (instance != null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            DontDestroyOnLoad(gameObject);
         }
 
         public void SetAdUnit(NimbusAdUnit adUnit)
@@ -18,14 +39,10 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         #region iOS Event Callbacks
 
-        public void OnIOSEventReceived(string argsJson)
-        {
-            Debug.unityLogger.Log("OnIOSEventReceived params: " + argsJson);
-        }
-
         public void OnAdRendered(string param)
         {
             Debug.unityLogger.Log("OnAdRendered");
+            adUnit.AdWasRendered = true;
             adUnit.EmitOnAdRendered(adUnit);
         }
 
@@ -37,44 +54,9 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         public void OnAdEvent(string param)
         {
-            Debug.unityLogger.Log("OnAdRendered");
+            Debug.unityLogger.Log("OnAdEvent");
             AdEventTypes eventType = (AdEventTypes)System.Enum.Parse(typeof(AdEventTypes), param, true);
             adUnit.EmitOnAdEvent(eventType);
-
-            //var args = JsonUtility.FromJson<Dictionary<string, dynamic>>(argsJson);
-            
-            //switch (eventType)
-            //{
-            //    case AdEventTypes.NOT_LOADED:
-            //        break;
-            //    case AdEventTypes.LOADED:
-                    
-            //        break;
-            //    case AdEventTypes.IMPRESSION:
-            //        break;
-            //    case AdEventTypes.CLICKED:
-            //        break;
-            //    case AdEventTypes.PAUSED:
-            //        break;
-            //    case AdEventTypes.RESUME:
-            //        break;
-            //    case AdEventTypes.FIRST_QUARTILE:
-            //        break;
-            //    case AdEventTypes.MIDPOINT:
-            //        break;
-            //    case AdEventTypes.THIRD_QUARTILE:
-            //        break;
-            //    case AdEventTypes.COMPLETED:
-            //        break;
-            //    case AdEventTypes.DESTROYED:
-            //        break;
-            //}
-
-            
-            //if (activeAdUnit != null)
-            //{
-            //    NimbusEvents.EmitOnAdRendered(activeAdUnit);
-            //}
         }
         #endregion
     }
