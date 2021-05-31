@@ -21,16 +21,19 @@ namespace Nimbus.Runtime.Scripts.Internal
             bool showMuteButton);
 
         [DllImport("__Internal")]
-        private static extern void _showBannerAd(string position);
+        private static extern void _showBannerAd(string position, float bannerFloor);
 
         [DllImport("__Internal")]
-        private static extern void _showInterstitialAd(string position);
+        private static extern void _showInterstitialAd(string position, float bannerFloor, float videoFloor, double closeButtonDelay);
 
         [DllImport("__Internal")]
-        private static extern void _showRewardedVideoAd(string position);
+        private static extern void _showRewardedVideoAd(string position, float videoFloor, double closeButtonDelay);
 
         [DllImport("__Internal")]
         private static extern void _setGDPRConsentString(string consent);
+
+        [DllImport("__Internal")]
+        private static extern void _destroyAd();
         #endregion
 
         #region Wrapped methods and properties
@@ -89,5 +92,10 @@ namespace Nimbus.Runtime.Scripts.Internal
         }
 
         #endregion
+
+        public void OnDestroyAd()
+        {
+            _destroyAd();
+        }
     }
 }
