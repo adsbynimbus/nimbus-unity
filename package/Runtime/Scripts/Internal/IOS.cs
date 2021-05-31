@@ -8,7 +8,7 @@ namespace Nimbus.Runtime.Scripts.Internal
     public class IOS : NimbusAPI
     {
 
-        #region Declare external C interface    
+        #region Declare external C interface
         [DllImport("__Internal")]
         private static extern void _initializeSDKWithPublisher(string publisher,
             string apiKey,
@@ -61,28 +61,25 @@ namespace Nimbus.Runtime.Scripts.Internal
         internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit)
         {
             iOSAdManager.SetAdUnit(nimbusAdUnit);
-            //var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
-            //var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayMillis;
-            //string functionCall;
             nimbusAdUnit.DestroyAd += this.OnDestroyAd; // TODO: do we need to remove this at some point?
+
+            // iOS uses seconds
+            var closeButtonDelaySeconds = nimbusAdUnit.CloseButtonDelayMillis / 1000;
             switch (nimbusAdUnit.AdType)
             {
                 case AdUnityType.Banner:
-                    _showBannerAd(nimbusAdUnit.Position);
+                    _showBannerAd(nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor);
                     break;
                 case AdUnityType.Interstitial:
-                    //closeButtonDelayMillis = 5000;
-                    _showInterstitialAd(nimbusAdUnit.Position);
+                    closeButtonDelaySeconds = 5;
+                    _showInterstitialAd(nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelaySeconds);
                     break;
                 case AdUnityType.Rewarded:
-                    _showRewardedVideoAd(nimbusAdUnit.Position);
+                    _showRewardedVideoAd(nimbusAdUnit.Position, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelaySeconds);
                     break;
                 default:
                     throw new Exception("ad type not supported");
             }
-            //_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position,
-            //	nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis,
-            //	listener);
             return nimbusAdUnit;
         }
 
