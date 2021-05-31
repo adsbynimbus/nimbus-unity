@@ -49,13 +49,13 @@ namespace Nimbus.Runtime.Scripts.Internal
         {
             _initializeSDKWithPublisher(configuration.publisherKey,
                 configuration.apiKey,
-                true, // TODO: enableSDKInTestMode is enabled
-                2, // TODO: logLevel is hardcoded to DEBUG
+                configuration.enableSDKInTestMode,
+                (int)configuration.nimbusLogLevel,
                 configuration.appName,
                 configuration.appDomain,
                 configuration.iosBundleID,
                 configuration.iosAppStoreURL,
-                true); // TODO: showMuteButton is hardcoded to true
+                configuration.showMuteButton);
         }
 
         internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit)
