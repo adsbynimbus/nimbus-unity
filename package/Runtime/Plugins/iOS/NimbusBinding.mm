@@ -64,4 +64,8 @@ extern "C" {
         [[NimbusManager shared] setGDPRConsentStringWithConsent: consentString];
     }
 
+    void _destroyAd() {
+        [[NimbusManager shared] destroyExistingAd];
+    }
+
 }

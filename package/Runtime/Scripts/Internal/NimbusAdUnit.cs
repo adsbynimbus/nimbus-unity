@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 
 namespace Nimbus.Runtime.Scripts.Internal {
+
+	public delegate void DestroyAdDelegate();
+
 	public sealed class NimbusAdUnit {
 		private readonly AdEvents _adEvents;
 		public readonly AdUnityType AdType;
@@ -11,6 +14,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal readonly int CloseButtonDelayMillis;
 		public readonly int InstanceID;
 		public readonly string Position;
+
+		public event DestroyAdDelegate DestroyAd;
 
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
@@ -48,6 +53,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_androidController = null;
 			_androidHelper = null;
 #endif
+			DestroyAd?.Invoke();
 		}
 
 		/// <summary>

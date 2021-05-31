@@ -61,6 +61,7 @@ namespace Nimbus.Runtime.Scripts.Internal
             //var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
             //var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayMillis;
             //string functionCall;
+            nimbusAdUnit.DestroyAd += this.OnDestroyAd; // TODO: do we need to remove this at some point?
             switch (nimbusAdUnit.AdType)
             {
                 case AdUnityType.Banner:
