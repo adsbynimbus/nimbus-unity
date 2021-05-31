@@ -11,14 +11,16 @@ import NimbusRenderVideoKit
 import NimbusKit
 
 @objc public class NimbusManager: NSObject {
-
+    
     @objc public static let shared = NimbusManager()
-
+    
     private let kCallbackTarget = "IOSAdManager"
-
-    private lazy var nimbusAdManager: NimbusAdManager? = nil
-    private lazy var adController: AdController? = nil
-
+    
+    private var nimbusAdManager: NimbusAdManager?
+    private var adController: AdController?
+    
+    private var adView: AdView?
+    
     @objc public func initializeNimbusSDK(publisher: String,
                                           apiKey: String,
                                           enableSDKInTestMode: Bool,
@@ -29,26 +31,25 @@ import NimbusKit
                                           storeUrlString: String,
                                           showMuteButton: Bool) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
-        print("initializeNimbusSDK called in the swift code with publisher: \(publisher) - apiKey: \(apiKey)")
-
+        
         Nimbus.shared.logLevel = NimbusLogLevel(rawValue: logLevel) ?? .off
         Nimbus.shared.testMode = enableSDKInTestMode
         // Nimbus.shared.logger = // TODO: add logged
-
-
+        
+        
         let videoRenderer = NimbusVideoAdRenderer()
         videoRenderer.showMuteButton = showMuteButton
         Nimbus.shared.renderers = [
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): videoRenderer
         ]
-
+        
         guard let domainUrl = URL(string: appDomain),
               let storeUrl = URL(string: storeUrlString) else {
             print("Error initializing Nimbus SDK. A valid URL is required for app domain and store url. Received appDomain: \(appDomain) | storeUrl: \(storeUrlString)")
             return
         }
-
+        
         NimbusAdManager.app = NimbusApp(
             name: appName,
             domain: domainUrl,
@@ -56,107 +57,140 @@ import NimbusKit
             storeUrl: storeUrl
         )
         NimbusAdManager.user = NimbusUser(age: 20, gender: .male)
-
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
     }
-
+    
     @objc public func unityViewController() -> UIViewController? {
         return UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
     }
-
-    @objc public func showBannerAd(position: String) {
+    
+    @objc public func showBannerAd(position: String, bannerFloor: Float) {
         guard let viewController = unityViewController() else { return }
-
-        nimbusAdManager?.showAd(request: NimbusRequest.forBannerAd(position: position),
-                                container: viewController.view,
+        
+        let adFormat = NimbusAdFormat.banner320x50
+        let adPosition = NimbusPosition.footer
+        
+        let request = NimbusRequest.forBannerAd(position: position,
+                                                format: adFormat,
+                                                adPosition: adPosition)
+        request.impressions[0].bidFloor = bannerFloor
+        
+        self.destroyExistingAd() // TODO: confirm if this is the expected
+        
+        let view = AdView(bannerFormat: adFormat)
+        self.adView = view
+        
+        view.attachToView(parentView: viewController.view, position: adPosition)
+        
+        nimbusAdManager = NimbusAdManager()
+        nimbusAdManager?.delegate = self
+        nimbusAdManager?.showAd(request: request,
+                                container: view,
                                 adPresentingViewController: viewController)
     }
-
-    @objc public func showInterstitialAd(position: String) {
+    
+    @objc public func showInterstitialAd(position: String, bannerFloor: Float, videoFloor: Float, closeButtonDelay: Double) {
         guard let viewController = unityViewController() else { return }
-
-        nimbusAdManager?.showAd(request: NimbusRequest.forInterstitialAd(position: position),
-                                container: viewController.view,
-                                adPresentingViewController: viewController)
+        
+        self.destroyExistingAd() // TODO: confirm if this is the expected
+        
+        let request = NimbusRequest.forInterstitialAd(position: position)
+        request.impressions[0].banner?.bidFloor = bannerFloor
+        request.impressions[0].video?.bidFloor = videoFloor
+        
+        nimbusAdManager = NimbusAdManager()
+        nimbusAdManager?.delegate = self
+        nimbusAdManager?.showRewardedVideoAd(request: request,
+                                             closeButtonDelay: closeButtonDelay,
+                                             adPresentingViewController: viewController)        
     }
-
-    @objc public func showRewardedVideoAd(position: String) {
+    
+    @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
         guard let viewController = unityViewController() else { return }
-
-        nimbusAdManager?.showRewardedVideoAd(request: NimbusRequest.forRewardedVideo(position: position),
-                                             adPresentingViewController:viewController)
+        
+        self.destroyExistingAd() // TODO: confirm if this is the expected
+        
+        let request = NimbusRequest.forRewardedVideo(position: position)
+        request.impressions[0].video?.bidFloor = videoFloor
+        
+        nimbusAdManager = NimbusAdManager()
+        nimbusAdManager?.delegate = self
+        nimbusAdManager?.showRewardedVideoAd(request: request,
+                                             closeButtonDelay: closeButtonDelay,
+                                             adPresentingViewController: viewController)
     }
-
+    
     @objc public func setGDPRConsentString(consent: String) {
         var user = NimbusRequestManager.user ?? NimbusUser()
         user.configureGdprConsent(didConsent: true, consentString: consent)
         NimbusRequestManager.user = user
     }
-
-    func sendEvent() {
-        UnitySendMessage(kCallbackTarget, "OnIOSEventReceived", "params");
+    
+    @objc public func destroyExistingAd() {
+        adController?.destroy()
+        adView?.removeFromSuperview()
+        adView = nil
     }
+    
 }
 
+// MARK: - NimbusAdManagerDelegate implementation
+
 extension NimbusManager: NimbusAdManagerDelegate {
-
+    
     public func didCompleteNimbusRequest(request: NimbusRequest, ad: NimbusAd) {
-        print("didCompleteNimbusRequest")
+        // do nothing
     }
-
+    
     public func didFailNimbusRequest(request: NimbusRequest, error: NimbusError) {
-        print("didFailNimbusRequest: \(error.localizedDescription)")
+        UnitySendMessage(kCallbackTarget, "OnError", error.localizedDescription);
     }
-
+    
     public func didRenderAd(request: NimbusRequest, ad: NimbusAd, controller: AdController) {
         self.adController = controller
         self.adController?.delegate = self
         UnitySendMessage(kCallbackTarget, "OnAdRendered", "");
     }
-
+    
 }
 
-extension NimbusManager: AdControllerDelegate {
+// MARK: - AdControllerDelegate implementation
 
+extension NimbusManager: AdControllerDelegate {
+    
     public func didReceiveNimbusEvent(controller: AdController, event: NimbusEvent) {
         var method = "OnAdEvent", eventName = ""
         switch event {
         case .loaded:
-            eventName = "loaded"
+            eventName = "LOADED"
         case .loadedCompanionAd(width: _, height: _):
-            eventName = "loadedCompanionAd"
+            eventName = "LOADED_COMPANION_AD"
         case .impression:
-            eventName = "impression"
+            eventName = "IMPRESSION"
         case .clicked:
-            eventName = "clicked"
+            eventName = "CLICKED"
         case .paused:
-            eventName = "paused"
+            eventName = "PAUSED"
         case .resumed:
-            eventName = "resumed"
+            eventName = "RESUME"
         case .firstQuartile:
-            eventName = "firstQuartile"
+            eventName = "FIRST_QUARTILE"
         case .midpoint:
-            eventName = "midpoint"
+            eventName = "MIDPOINT"
         case .thirdQuartile:
-            eventName = "thirdQuartile"
+            eventName = "THIRD_QUARTILE"
         case .completed:
-            eventName = "completed"
+            eventName = "COMPLETED"
         case .destroyed:
-            eventName = "destroyed"
+            eventName = "DESTROYED"
         @unknown default:
             print("Ad Event not sent: \(event)")
         }
-        UnitySendMessage(kCallbackTarget, method, eventName.uppercased());
+        UnitySendMessage(kCallbackTarget, method, eventName);
     }
-
+    
     /// Received an error for the ad
     public func didReceiveNimbusError(controller: AdController, error: NimbusError) {
-        // Errors thrown related to ad rendering
-        print("localizedDescription: \(error.localizedDescription)")
-        print("    errorDescription: \(error.errorDescription)")
-        print("       failureReason: \(error.failureReason)")
-        print("  recoverySuggestion: \(error.recoverySuggestion)")
         UnitySendMessage(kCallbackTarget, "OnError", error.localizedDescription);
+        destroyExistingAd()
     }
 }
