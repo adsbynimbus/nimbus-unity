@@ -44,19 +44,24 @@ extern "C" {
                                                   showMuteButton: showMuteButton];
     }
 
-    void _showBannerAd(const char* position) {
+    void _showBannerAd(const char* position, float bannerFloor) {
         NSString* positionString = GetStringParam(position);
-        [[NimbusManager shared] showBannerAdWithPosition: positionString];
+        [[NimbusManager shared] showBannerAdWithPosition:positionString bannerFloor:bannerFloor];
     }
 
-    void _showInterstitialAd(const char* position) {
+    void _showInterstitialAd(const char* position, float bannerFloor, float videoFloor, double closeButtonDelay) {
         NSString* positionString = GetStringParam(position);
-        [[NimbusManager shared] showInterstitialAdWithPosition: positionString];
+        [[NimbusManager shared] showInterstitialAdWithPosition:positionString
+                                                   bannerFloor:bannerFloor
+                                                    videoFloor:videoFloor
+                                              closeButtonDelay:closeButtonDelay];
     }
 
-    void _showRewardedVideoAd(const char* position) {
+    void _showRewardedVideoAd(const char* position, float videoFloor, double closeButtonDelay) {
         NSString* positionString = GetStringParam(position);
-        [[NimbusManager shared] showRewardedVideoAdWithPosition: positionString];
+        [[NimbusManager shared] showRewardedVideoAdWithPosition:positionString
+                                                     videoFloor:videoFloor
+                                               closeButtonDelay:closeButtonDelay];
     }
 
     void _setGDPRConsentString(const char* consent) {
