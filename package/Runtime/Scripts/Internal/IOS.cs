@@ -14,10 +14,6 @@ namespace Nimbus.Runtime.Scripts.Internal
             string apiKey,
             bool enableSDKInTestMode,
             int logLevel,
-            string appName,
-            string appDomain,
-            string bundleId,
-            string storeUrl,
             bool showMuteButton);
 
         [DllImport("__Internal")]
@@ -51,10 +47,6 @@ namespace Nimbus.Runtime.Scripts.Internal
                 configuration.apiKey,
                 configuration.enableSDKInTestMode,
                 (int)configuration.nimbusLogLevel,
-                configuration.appName,
-                configuration.appDomain,
-                configuration.iosBundleID,
-                configuration.iosAppStoreURL,
                 configuration.showMuteButton);
         }
 

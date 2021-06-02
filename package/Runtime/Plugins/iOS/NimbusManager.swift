@@ -25,10 +25,6 @@ import NimbusKit
                                           apiKey: String,
                                           enableSDKInTestMode: Bool,
                                           logLevel: Int,
-                                          appName: String,
-                                          appDomain: String,
-                                          bundleId: String,
-                                          storeUrlString: String,
                                           showMuteButton: Bool) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         
@@ -44,18 +40,6 @@ import NimbusKit
             .forAuctionType(.video): videoRenderer
         ]
         
-        guard let domainUrl = URL(string: appDomain),
-              let storeUrl = URL(string: storeUrlString) else {
-            print("Error initializing Nimbus SDK. A valid URL is required for app domain and store url. Received appDomain: \(appDomain) | storeUrl: \(storeUrlString)")
-            return
-        }
-        
-        NimbusAdManager.app = NimbusApp(
-            name: appName,
-            domain: domainUrl,
-            bundle: bundleId,
-            storeUrl: storeUrl
-        )
         NimbusAdManager.user = NimbusUser(age: 20, gender: .male)
     }
     

@@ -21,26 +21,14 @@ extern "C" {
                                      const char* apikey,
                                      bool enableSDKInTestMode,
                                      int logLevel,
-                                     const char* appName,
-                                     const char* appDomain,
-                                     const char* bundleId,
-                                     const char* storeUrl,
                                      bool showMuteButton) {
         NSString* publishString = GetStringParam(publisher);
         NSString* apiKeyString = GetStringParam(apikey);
-        NSString* appNameString = GetStringParam(appName);
-        NSString* appDomainString = GetStringParam(appDomain);
-        NSString* bundleIdString = GetStringParam(bundleId);
-        NSString* storeUrlString = GetStringParam(storeUrl);
         
         [[NimbusManager shared] initializeNimbusSDKWithPublisher: publishString
                                                           apiKey: apiKeyString
                                              enableSDKInTestMode: enableSDKInTestMode
                                                         logLevel: logLevel
-                                                         appName: appNameString
-                                                       appDomain: appDomainString
-                                                        bundleId: bundleIdString
-                                                  storeUrlString: storeUrlString
                                                   showMuteButton: showMuteButton];
     }
 
