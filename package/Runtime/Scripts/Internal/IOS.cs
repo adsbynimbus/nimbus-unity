@@ -33,11 +33,11 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         #region Wrapped methods and properties
 
-        private readonly IOSAdManager iOSAdManager;
+        private readonly NimbusIOSAdManager iOSAdManager;
 
         public IOS()
         {
-            iOSAdManager = IOSAdManager.Instance;
+            iOSAdManager = NimbusIOSAdManager.Instance;
         }
 
         internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration)

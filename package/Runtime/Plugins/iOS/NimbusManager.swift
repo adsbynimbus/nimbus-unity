@@ -14,7 +14,7 @@ import NimbusKit
     
     @objc public static let shared = NimbusManager()
     
-    private let kCallbackTarget = "IOSAdManager"
+    private let kCallbackTarget = "NimbusIOSAdManager"
     
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
@@ -71,7 +71,7 @@ import NimbusKit
         let request = NimbusRequest.forInterstitialAd(position: position)
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
-        
+            
         (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = true // true by default
         
         nimbusAdManager = NimbusAdManager()

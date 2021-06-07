@@ -2,20 +2,20 @@
 
 namespace Nimbus.Runtime.Scripts.Internal
 {
-    internal class IOSAdManager : MonoBehaviour
+    internal class NimbusIOSAdManager : MonoBehaviour
     {
         private NimbusAdUnit adUnit;
 
-        private static IOSAdManager instance;
+        private static NimbusIOSAdManager instance;
 
-        internal static IOSAdManager Instance
+        internal static NimbusIOSAdManager Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    var obj = new GameObject("IOSAdManager");
-                    instance = (IOSAdManager)obj.AddComponent(typeof(IOSAdManager));
+                    var obj = new GameObject("NimbusIOSAdManager");
+                    instance = (NimbusIOSAdManager)obj.AddComponent(typeof(NimbusIOSAdManager));
                 }
                 return instance;
             }
