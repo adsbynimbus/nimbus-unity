@@ -29,13 +29,10 @@ import NimbusKit
         
         Nimbus.shared.logLevel = NimbusLogLevel(rawValue: logLevel) ?? .off
         Nimbus.shared.testMode = enableSDKInTestMode
-        // Nimbus.shared.logger = // TODO: add logged
         
-        
-        let videoRenderer = NimbusVideoAdRenderer()
         Nimbus.shared.renderers = [
             .forAuctionType(.static): NimbusStaticAdRenderer(),
-            .forAuctionType(.video): videoRenderer
+            .forAuctionType(.video): NimbusVideoAdRenderer()
         ]
         
         NimbusAdManager.user = NimbusUser(age: 20, gender: .male)
