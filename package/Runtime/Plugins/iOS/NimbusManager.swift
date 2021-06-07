@@ -53,8 +53,6 @@ import NimbusKit
                                                 adPosition: adPosition)
         request.impressions[0].bidFloor = bannerFloor
         
-        self.destroyExistingAd() // TODO: confirm if this is the expected
-        
         let view = AdView(bannerFormat: adFormat)
         self.adView = view
         
@@ -69,8 +67,6 @@ import NimbusKit
     
     @objc public func showInterstitialAd(position: String, bannerFloor: Float, videoFloor: Float, closeButtonDelay: Double) {
         guard let viewController = unityViewController() else { return }
-        
-        self.destroyExistingAd() // TODO: confirm if this is the expected
         
         let request = NimbusRequest.forInterstitialAd(position: position)
         request.impressions[0].banner?.bidFloor = bannerFloor
@@ -87,8 +83,6 @@ import NimbusKit
     
     @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
         guard let viewController = unityViewController() else { return }
-        
-        self.destroyExistingAd() // TODO: confirm if this is the expected
         
         let request = NimbusRequest.forRewardedVideo(position: position)
         request.impressions[0].video?.bidFloor = videoFloor
