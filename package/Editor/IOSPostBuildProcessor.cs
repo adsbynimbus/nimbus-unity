@@ -1,4 +1,5 @@
-﻿#if UNITY_IOS
+﻿#if UNITY_EDITOR
+
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;

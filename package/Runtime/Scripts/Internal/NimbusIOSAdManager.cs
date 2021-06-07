@@ -54,7 +54,7 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         internal void OnAdEvent(string param)
         {
-            Debug.unityLogger.Log("OnAdEvent");
+            Debug.unityLogger.Log("OnAdEvent: " + param);
             AdEventTypes eventType = (AdEventTypes)System.Enum.Parse(typeof(AdEventTypes), param, true);
             adUnit.EmitOnAdEvent(eventType);
         }
