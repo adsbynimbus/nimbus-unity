@@ -13,7 +13,7 @@ namespace Nimbus.Runtime.Scripts.Internal
         private static extern void _initializeSDKWithPublisher(string publisher,
             string apiKey,
             bool enableSDKInTestMode,
-            int logLevel);
+            bool enableUnityLogs);
 
         [DllImport("__Internal")]
         private static extern void _showBannerAd(string position, float bannerFloor);
@@ -45,7 +45,7 @@ namespace Nimbus.Runtime.Scripts.Internal
             _initializeSDKWithPublisher(configuration.publisherKey,
                 configuration.apiKey,
                 configuration.enableSDKInTestMode,
-                (int)configuration.nimbusLogLevel);
+                configuration.enableUnityLogs);
         }
 
         internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit)

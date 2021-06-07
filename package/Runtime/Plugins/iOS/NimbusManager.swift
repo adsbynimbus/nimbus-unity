@@ -24,10 +24,10 @@ import NimbusKit
     @objc public func initializeNimbusSDK(publisher: String,
                                           apiKey: String,
                                           enableSDKInTestMode: Bool,
-                                          logLevel: Int) {
+                                          enableUnityLogs: Bool) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         
-        Nimbus.shared.logLevel = NimbusLogLevel(rawValue: logLevel) ?? .off
+        Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
         Nimbus.shared.testMode = enableSDKInTestMode
         
         Nimbus.shared.renderers = [

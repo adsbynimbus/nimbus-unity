@@ -34,9 +34,6 @@ namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 
 		[Header("Enable Unity Logs")] public bool enableUnityLogs;
 
-#if UNITY_IOS
-		[Header("iOS log level")] public NimbusLogLevel nimbusLogLevel;
-#endif
 		private void OnValidate() {
 			if (publisherKey.Trim().Length == 0) throw new Exception("Publisher key cannot be empty");
 
@@ -70,13 +67,5 @@ namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 		private bool IsDigitsOnly(string str) {
 			return str.All(c => c >= '0' && c <= '9');
 		}
-	}
-
-	public enum NimbusLogLevel
-	{
-		OFF,
-		ERROR,
-		DEBUG,
-		INFO
 	}
 }

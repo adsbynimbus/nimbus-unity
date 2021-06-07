@@ -20,14 +20,14 @@ extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
                                      bool enableSDKInTestMode,
-                                     int logLevel) {
+                                     bool enableUnityLogs) {
         NSString* publishString = GetStringParam(publisher);
         NSString* apiKeyString = GetStringParam(apikey);
         
         [[NimbusManager shared] initializeNimbusSDKWithPublisher: publishString
                                                           apiKey: apiKeyString
                                              enableSDKInTestMode: enableSDKInTestMode
-                                                        logLevel: logLevel];
+                                                 enableUnityLogs: enableUnityLogs];
     }
 
     void _showBannerAd(const char* position, float bannerFloor) {
