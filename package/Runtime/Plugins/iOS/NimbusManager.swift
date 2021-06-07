@@ -24,8 +24,7 @@ import NimbusKit
     @objc public func initializeNimbusSDK(publisher: String,
                                           apiKey: String,
                                           enableSDKInTestMode: Bool,
-                                          logLevel: Int,
-                                          showMuteButton: Bool) {
+                                          logLevel: Int) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         
         Nimbus.shared.logLevel = NimbusLogLevel(rawValue: logLevel) ?? .off
@@ -34,7 +33,6 @@ import NimbusKit
         
         
         let videoRenderer = NimbusVideoAdRenderer()
-        videoRenderer.showMuteButton = showMuteButton
         Nimbus.shared.renderers = [
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): videoRenderer
@@ -81,6 +79,8 @@ import NimbusKit
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
         
+        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = true // true by default
+        
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
         nimbusAdManager?.showRewardedVideoAd(request: request,
@@ -95,6 +95,8 @@ import NimbusKit
         
         let request = NimbusRequest.forRewardedVideo(position: position)
         request.impressions[0].video?.bidFloor = videoFloor
+        
+        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = true // true by default
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self

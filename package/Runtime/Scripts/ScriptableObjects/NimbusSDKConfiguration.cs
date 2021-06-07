@@ -34,7 +34,6 @@ namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 
 		[Header("Enable Unity Logs")] public bool enableUnityLogs;
 
-		[Header("Show/Hide mute button for videos")] public bool showMuteButton;
 #if UNITY_IOS
 		[Header("iOS log level")] public NimbusLogLevel nimbusLogLevel;
 #endif

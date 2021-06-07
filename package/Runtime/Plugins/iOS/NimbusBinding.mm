@@ -20,16 +20,14 @@ extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
                                      bool enableSDKInTestMode,
-                                     int logLevel,
-                                     bool showMuteButton) {
+                                     int logLevel) {
         NSString* publishString = GetStringParam(publisher);
         NSString* apiKeyString = GetStringParam(apikey);
         
         [[NimbusManager shared] initializeNimbusSDKWithPublisher: publishString
                                                           apiKey: apiKeyString
                                              enableSDKInTestMode: enableSDKInTestMode
-                                                        logLevel: logLevel
-                                                  showMuteButton: showMuteButton];
+                                                        logLevel: logLevel];
     }
 
     void _showBannerAd(const char* position, float bannerFloor) {
