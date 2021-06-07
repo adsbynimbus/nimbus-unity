@@ -140,7 +140,7 @@ extension NimbusManager: AdControllerDelegate {
         case .loaded:
             eventName = "LOADED"
         case .loadedCompanionAd(width: _, height: _):
-            eventName = "LOADED_COMPANION_AD"
+            return // Unity doesn't handle this event
         case .impression:
             eventName = "IMPRESSION"
         case .clicked:
@@ -161,6 +161,7 @@ extension NimbusManager: AdControllerDelegate {
             eventName = "DESTROYED"
         @unknown default:
             print("Ad Event not sent: \(event)")
+            return
         }
         UnitySendMessage(kCallbackTarget, method, eventName);
     }
