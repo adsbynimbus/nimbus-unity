@@ -71,29 +71,29 @@ import NimbusKit
         let request = NimbusRequest.forInterstitialAd(position: position)
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
-            
+        
         (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedVideoAd(request: request,
-                                             closeButtonDelay: closeButtonDelay,
-                                             adPresentingViewController: viewController)        
+        nimbusAdManager?.showRewardedAd(request: request,
+                                        closeButtonDelay: closeButtonDelay,
+                                        adPresentingViewController: viewController)
     }
     
     @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
         guard let viewController = unityViewController() else { return }
         
-        let request = NimbusRequest.forRewardedVideo(position: position)
+        let request = NimbusRequest.forVideoAd(position: position)
         request.impressions[0].video?.bidFloor = videoFloor
         
         (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedVideoAd(request: request,
-                                             closeButtonDelay: closeButtonDelay,
-                                             adPresentingViewController: viewController)
+        nimbusAdManager?.showRewardedAd(request: request,
+                                        closeButtonDelay: closeButtonDelay,
+                                        adPresentingViewController: viewController)
     }
     
     @objc public func setGDPRConsentString(consent: String) {
