@@ -72,7 +72,7 @@ import NimbusKit
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
             
-        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = true // true by default
+        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
@@ -87,7 +87,7 @@ import NimbusKit
         let request = NimbusRequest.forRewardedVideo(position: position)
         request.impressions[0].video?.bidFloor = videoFloor
         
-        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = true // true by default
+        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
