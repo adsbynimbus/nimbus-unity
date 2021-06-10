@@ -8,17 +8,23 @@ using UnityEngine;
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
-		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
+		#region Editor Values
 
+		public NimbusSDKConfiguration configuration;
+		public bool shouldSubscribeToIAdEvents;
+
+		#endregion
+		
+		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
+		// ReSharper disable once MemberCanBePrivate.Global
+		public AdEvents NimbusEvents;
+		
 		public static NimbusManager Instance;
 		private NimbusAPI _nimbusPlatformAPI;
-
-		public AdEvents NimbusEvents;
-
+		
 		private void Awake() {
 			if (configuration == null) throw new Exception("The configuration object cannot be null");
-			configuration.ValidateMobileData();
-
+			
 			if (Instance == null) {
 				_nimbusPlatformAPI = _nimbusPlatformAPI ?? new
 #if UNITY_EDITOR
@@ -173,13 +179,5 @@ namespace Nimbus.Runtime.Scripts {
 		public void SetGDPRConsentString(string consent) {
 			_nimbusPlatformAPI.SetGDPRConsentString(consent);
 		}
-
-
-		#region Editor Values
-
-		public NimbusSDKConfiguration configuration;
-		public bool shouldSubscribeToIAdEvents;
-
-		#endregion
 	}
 }

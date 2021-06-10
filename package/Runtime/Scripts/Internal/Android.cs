@@ -27,8 +27,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
 			_nimbus.CallStatic("setTestMode", configuration.enableSDKInTestMode);
-			_helper.CallStatic("setApp", configuration.androidBundleID.Trim(),
-				configuration.appName.Trim(), configuration.appDomain.Trim(), configuration.androidAppStoreURL.Trim());
 		}
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {

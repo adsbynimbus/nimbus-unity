@@ -14,15 +14,30 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal readonly int CloseButtonDelayMillis;
 		public readonly int InstanceID;
 		public readonly string Position;
-
-		public event DestroyAdDelegate DestroyAd;
-
+		
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
 		internal MetaData MetaData;
+		
+		# region IOS specific
+		internal event DestroyAdDelegate DestroyIOSAd;
+		private void OnDestroyIOSAd() {
+			DestroyIOSAd?.Invoke();
+		}
+		
+		#endregion
+	
+
+		#region Android Specific
+
+		private AndroidJavaObject _androidController;
+		private AndroidJavaClass _androidHelper;
+
+		#endregion
+
 
 
 		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor,
@@ -52,8 +67,9 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_androidHelper.CallStatic("destroyController", currentActivity, _androidController);
 			_androidController = null;
 			_androidHelper = null;
+# elif UNITY_IOS
+			OnDestroyIOSAd();
 #endif
-			DestroyAd?.Invoke();
 		}
 
 		/// <summary>
@@ -159,12 +175,9 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_androidHelper = helper;
 		}
 
-		#region Android Objects
-
-		private AndroidJavaObject _androidController;
-		private AndroidJavaClass _androidHelper;
-
-		#endregion
+		
+		
+		
 	}
 
 
