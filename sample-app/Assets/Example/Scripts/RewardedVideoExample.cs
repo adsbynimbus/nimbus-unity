@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Runtime.Scripts.Internal;
@@ -26,7 +27,12 @@ namespace Example.Scripts {
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, bid value: {nimbusAdUnit.GetBidValue()}, network: {nimbusAdUnit.GetNetwork()}, auction_id: {nimbusAdUnit.GetAuctionID()}");
+				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, " +
+				$"bid value: {nimbusAdUnit.ResponseMetaData.BidRaw}, " +
+				$"bid value in cents: {nimbusAdUnit.ResponseMetaData.BidInCents}, " +
+				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
+				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
+				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
 		}
 
 		public void OnAdError(NimbusAdUnit nimbusAdUnit) {

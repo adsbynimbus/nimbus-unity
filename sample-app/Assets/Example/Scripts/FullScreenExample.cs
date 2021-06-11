@@ -30,7 +30,12 @@ namespace Example.Scripts {
 				if (_ad.GetCurrentAdState() == AdEventTypes.LOADED ||
 				    _ad.GetCurrentAdState() == AdEventTypes.IMPRESSION && !loaded) {
 					Debug.unityLogger.Log(
-						$"NimbusEventListenerExample Ad was rendered for ad instance {_ad.InstanceID}, bid value: {_ad.GetBidValue()}, network: {_ad.GetNetwork()}, auction_id: {_ad.GetAuctionID()}");
+						$"NimbusEventListenerExample Ad was rendered for ad instance {_ad.InstanceID}, " +
+						$"bid value: {_ad.ResponseMetaData.BidRaw}, " +
+						$"bid value in cents: {_ad.ResponseMetaData.BidInCents}, " +
+						$"network: {_ad.ResponseMetaData.Network}, " +
+						$"placement_id: {_ad.ResponseMetaData.PlacementID}, " +
+						$"auction_id: {_ad.ResponseMetaData.AuctionID}");;
 					loaded = true;
 				}
 
