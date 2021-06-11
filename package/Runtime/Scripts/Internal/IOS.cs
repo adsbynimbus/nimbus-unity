@@ -33,15 +33,15 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         #region Wrapped methods and properties
 
-        private readonly NimbusIOSAdManager iOSAdManager;
-
+        private readonly NimbusIOSAdManager _iOSAdManager;
         public IOS()
         {
-            iOSAdManager = NimbusIOSAdManager.Instance;
+            _iOSAdManager = NimbusIOSAdManager.Instance;
         }
 
         internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration)
         {
+            logger.Log("Initializing IOS SDK");
             _initializeSDKWithPublisher(configuration.publisherKey,
                 configuration.apiKey,
                 configuration.enableSDKInTestMode,
@@ -50,8 +50,8 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit)
         {
-            iOSAdManager.SetAdUnit(nimbusAdUnit);
-            nimbusAdUnit.DestroyAd += this.OnDestroyAd; // TODO: do we need to remove this at some point?
+            _iOSAdManager.SetAdUnit(nimbusAdUnit);
+            nimbusAdUnit.DestroyIOSAd += OnDestroyIOSAd;
 
             // iOS uses seconds
             var closeButtonDelaySeconds = nimbusAdUnit.CloseButtonDelayMillis / 1000;
@@ -72,6 +72,7 @@ namespace Nimbus.Runtime.Scripts.Internal
             }
             return nimbusAdUnit;
         }
+        
 
         internal override void SetGDPRConsentString(string consent)
         {
@@ -80,7 +81,7 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         #endregion
 
-        public void OnDestroyAd()
+        private static void OnDestroyIOSAd()
         {
             _destroyAd();
         }

@@ -4,26 +4,24 @@ namespace Nimbus.Runtime.Scripts.Internal
 {
     internal class NimbusIOSAdManager : MonoBehaviour
     {
-        private NimbusAdUnit adUnit;
+        private NimbusAdUnit _adUnit;
 
-        private static NimbusIOSAdManager instance;
+        private static NimbusIOSAdManager _instance;
 
         internal static NimbusIOSAdManager Instance
         {
             get
             {
-                if (instance == null)
-                {
-                    var obj = new GameObject("NimbusIOSAdManager");
-                    instance = (NimbusIOSAdManager)obj.AddComponent(typeof(NimbusIOSAdManager));
-                }
-                return instance;
+                if (_instance != null) return _instance;
+                var obj = new GameObject("NimbusIOSAdManager");
+                _instance = (NimbusIOSAdManager)obj.AddComponent(typeof(NimbusIOSAdManager));
+                return _instance;
             }
         }
 
         private void Awake()
         {
-            if (instance != null)
+            if (_instance != null)
             {
                 Destroy(gameObject);
                 return;
@@ -34,7 +32,7 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         internal void SetAdUnit(NimbusAdUnit adUnit)
         {
-            this.adUnit = adUnit;
+            _adUnit = adUnit;
         }
 
         #region iOS Event Callbacks
@@ -42,21 +40,21 @@ namespace Nimbus.Runtime.Scripts.Internal
         internal void OnAdRendered(string param)
         {
             Debug.unityLogger.Log("OnAdRendered");
-            adUnit.AdWasRendered = true;
-            adUnit.EmitOnAdRendered(adUnit);
+            _adUnit.AdWasRendered = true;
+            _adUnit.EmitOnAdRendered(_adUnit);
         }
 
         internal void OnError(string param)
         {
             Debug.unityLogger.Log("OnError: " + param);
-            adUnit.EmitOnAdError(adUnit);
+            _adUnit.EmitOnAdError(_adUnit);
         }
 
         internal void OnAdEvent(string param)
         {
             Debug.unityLogger.Log("OnAdEvent: " + param);
-            AdEventTypes eventType = (AdEventTypes)System.Enum.Parse(typeof(AdEventTypes), param, true);
-            adUnit.EmitOnAdEvent(eventType);
+            var eventType = (AdEventTypes)System.Enum.Parse(typeof(AdEventTypes), param, true);
+            _adUnit.EmitOnAdEvent(eventType);
         }
         #endregion
     }
