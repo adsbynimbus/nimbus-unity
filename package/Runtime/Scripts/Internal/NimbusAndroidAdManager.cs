@@ -51,7 +51,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			var eventState = adEvent.Call<string>("name");
 
 			if (!Enum.TryParse(eventState, out AdEventTypes state)) return;
-			handleSkippedEventCompat(state);
 			_adUnit.CurrentAdState = state;
 			_adUnit.EmitOnAdEvent(state);
 		}
@@ -61,15 +60,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_logger.Log($"Controller ad error: {errMessage}");
 			_adUnit.AdControllerError = new AdError(errMessage);
 			_adUnit.EmitOnAdError(_adUnit);
-		}
-
-		// This method provides a compatibility layer as the Skipped event isn't supported on Nimbus Ads yet
-		private void handleSkippedEventCompat(AdEventTypes sdkState) {
-			if(sdkState == AdEventTypes.DESTROYED && _adUnit.CurrentAdState != AdEventTypes.COMPLETED && 
-			    _adUnit.CurrentAdState != AdEventTypes.DESTROYED) {
-				    _adUnit.CurrentAdState = AdEventTypes.SKIPPED;
-				    _adUnit.EmitOnAdEvent(AdEventTypes.SKIPPED);
-			} 
 		}
 	}
 }

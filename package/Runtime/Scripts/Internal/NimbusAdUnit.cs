@@ -135,7 +135,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					break;
 				case AdEventTypes.DESTROYED:
 					if (AdType == AdUnityType.Rewarded) {
-						_adEvents.EmitOnOnVideoAdCompleted(this, AdCompleted); 
+						_adEvents.EmitOnOnVideoAdCompleted(this, !AdCompleted); 
 					} else {
 					    _adEvents.EmitOnOnAdDestroyed(this);
 					}
