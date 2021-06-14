@@ -36,7 +36,7 @@ namespace Example.Scripts {
 			// TODO
 		}
 
-		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit) {
+		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
 			// TODO
 		}
 	}

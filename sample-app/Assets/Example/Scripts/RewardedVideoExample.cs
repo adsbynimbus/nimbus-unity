@@ -52,10 +52,7 @@ namespace Example.Scripts {
 		}
 
 		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
-			if (nimbusAdUnit.ShouldRewardUser()) {
-			    Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
-			    UnityThread.ExecuteInUpdate(RewardUser);
-			}
+			// Todo
 		}
 
 		public void OnVideoAdPaused(NimbusAdUnit nimbusAdUnit) {
@@ -66,8 +63,11 @@ namespace Example.Scripts {
 			// TODO
 		}
 
-		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit) {
-
+		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
+			if (!skipped) {
+			    Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
+			    UnityThread.ExecuteInUpdate(RewardUser);
+			}
 		}
 
 		private IEnumerator MakeItRain() {

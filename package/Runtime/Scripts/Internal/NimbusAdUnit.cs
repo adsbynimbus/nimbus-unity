@@ -105,10 +105,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return AdWasRendered;
 		}
 
-		public bool ShouldRewardUser() {
-			return AdType == AdUnityType.Rewarded && AdCompleted;
-		}
-
 		internal void EmitOnAdRendered(NimbusAdUnit obj) {
 			_adEvents.EmitOnAdRendered(obj);
 		}
@@ -136,13 +132,13 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					break;
 				case AdEventTypes.COMPLETED:
 					AdCompleted = true;
-					_adEvents.EmitOnOnVideoAdCompleted(this);
-					break;
-				case AdEventTypes.SKIPPED:
-					AdCompleted = false;
 					break;
 				case AdEventTypes.DESTROYED:
-					_adEvents.EmitOnOnAdDestroyed(this);
+					if (AdType == AdUnityType.Rewarded) {
+						_adEvents.EmitOnOnVideoAdCompleted(this, AdCompleted); 
+					} else {
+					    _adEvents.EmitOnOnAdDestroyed(this);
+					}
 					break;
 			}
 		}
