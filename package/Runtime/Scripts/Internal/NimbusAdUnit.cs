@@ -47,7 +47,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_adEvents = adEvents;
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
 			// leave this at MaxValue for now
-			CloseButtonDelayMillis = int.MaxValue;
+			CloseButtonDelayMillis = 3600;
 			AdCompleted = false;
 		}
 
