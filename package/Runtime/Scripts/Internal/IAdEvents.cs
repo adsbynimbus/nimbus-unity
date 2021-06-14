@@ -14,6 +14,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		// video specific events
 		void OnVideoAdPaused(NimbusAdUnit nimbusAdUnit);
 		void OnVideoAdResume(NimbusAdUnit nimbusAdUnit);
-		void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit);
+		void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped);
 	}
 }

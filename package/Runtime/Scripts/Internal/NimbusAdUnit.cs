@@ -15,6 +15,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
+		internal bool AdCompleted;
+		
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
 		
@@ -45,7 +47,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_adEvents = adEvents;
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
 			// leave this at MaxValue for now
-			CloseButtonDelayMillis = int.MaxValue;
+			CloseButtonDelayMillis = 3600;
+			AdCompleted = false;
 		}
 
 		~NimbusAdUnit() {
@@ -128,14 +131,14 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					_adEvents.EmitOnOnVideoAdResume(this);
 					break;
 				case AdEventTypes.COMPLETED:
-					_adEvents.EmitOnOnVideoAdCompleted(this);
+					AdCompleted = true;
 					break;
 				case AdEventTypes.DESTROYED:
-					// when Interstitial ads are destroyed by the user clicking the x button
-					// the ad viewing is also technically completed, adding this if check in-case the user is expecting
-					// a completed event to be fired
-					if (AdType == AdUnityType.Interstitial) _adEvents.EmitOnOnVideoAdCompleted(this);
-					_adEvents.EmitOnOnAdDestroyed(this);
+					if (AdType == AdUnityType.Rewarded) {
+						_adEvents.EmitOnOnVideoAdCompleted(this, !AdCompleted); 
+					} else {
+					    _adEvents.EmitOnOnAdDestroyed(this);
+					}
 					break;
 			}
 		}
