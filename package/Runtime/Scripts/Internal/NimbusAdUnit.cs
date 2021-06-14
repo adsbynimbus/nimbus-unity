@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Nimbus.Runtime.Scripts.Internal {
@@ -8,20 +7,20 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	public sealed class NimbusAdUnit {
 		private readonly AdEvents _adEvents;
 		public readonly AdUnityType AdType;
-
-		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
-		// where setting a value higher than the video length forces the x to show up at the end of the video
-		internal readonly int CloseButtonDelayMillis;
+		
 		public readonly int InstanceID;
 		public readonly string Position;
-		
+		public MetaData ResponseMetaData;
+
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
-		internal MetaData MetaData;
 		
+		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
+		// where setting a value higher than the video length forces the x to show up at the end of the video
+		internal readonly int CloseButtonDelayMillis;
 		# region IOS specific
 		internal event DestroyAdDelegate DestroyIOSAd;
 		private void OnDestroyIOSAd() {
@@ -29,17 +28,14 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 		
 		#endregion
-	
-
+		
 		#region Android Specific
 
 		private AndroidJavaObject _androidController;
 		private AndroidJavaClass _androidHelper;
 
 		#endregion
-
-
-
+		
 		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor,
 			in AdEvents adEvents) {
 			AdType = adType;
@@ -77,6 +73,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		///     was an error at any step
 		/// </summary>
 		public bool DidHaveAnError() {
+			// TODO capture errors for IOS
 			return AdListenerError != null || AdControllerError != null;
 		}
 
@@ -84,42 +81,20 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		///     Returns the combined error output from the ad listener and controller error
 		/// </summary>
 		public string ErrorMessage() {
+			// TODO capture errors for IOS
 			var message = "";
 			if (AdListenerError != null) message = $"AdListener Error: {AdListenerError.Message} ";
 			if (AdControllerError != null) message += $"AdController Error: {AdControllerError.Message}";
 			return message;
 		}
-
-		/// <summary>
-		///     Returns the unique auction id associated to the request to Nimbus, can be used by the Nimbus team to debug
-		///     a particular auction event
-		/// </summary>
-		public string GetAuctionID() {
-			return MetaData.AuctionID;
-		}
-
-		/// <summary>
-		///     Return the Ecpm value associated to the winning ad
-		/// </summary>
-		public double GetBidValue() {
-			return MetaData.Bid;
-		}
-
+		
 		/// <summary>
 		///     Returns the current state of the ad, this can be used instead of event listeners to execute conditional code
 		/// </summary>
 		public AdEventTypes GetCurrentAdState() {
 			return CurrentAdState;
 		}
-
-		/// <summary>
-		///     Returns the name of the demand source that won the auction
-		/// </summary>
-		public string GetNetwork() {
-			return MetaData.Network;
-		}
-
-
+		
 		/// <summary>
 		///     Returns returns true of the ad was rendered even if the ad has already been destroyed
 		/// </summary>
@@ -174,10 +149,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			if (_androidHelper != null) return;
 			_androidHelper = helper;
 		}
-
-		
-		
-		
 	}
 
 
@@ -200,15 +171,36 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 	}
 
-	internal class MetaData {
+	// ReSharper disable IdentifierTypo
+	// ReSharper disable StringLiteralTypo
+	public class MetaData {
+		/// <summary>
+		///     Returns the nimbus auction id, used for debugging
+		/// </summary>
 		public readonly string AuctionID;
-		public readonly double Bid;
+		/// <summary>
+		///     Returns returns the network bid as a floating integer 
+		/// </summary>
+		public readonly double BidRaw;
+		/// <summary>
+		///     Returns returns the network bid as a integer converted from dollars to cents 
+		/// </summary>
+		public readonly int BidInCents;
+		/// <summary>
+		///     Returns the name of the winning network
+		/// </summary>
 		public readonly string Network;
-
-		public MetaData(in AndroidJavaObject response) {
+		/// <summary>
+		///     Returns the winning network's placement id
+		/// </summary>
+		public readonly string PlacementID;
+		// TODO pull in response data from IOS
+		internal MetaData(in AndroidJavaObject response) {
 			AuctionID = response.Get<string>("auction_id");
-			Bid = response.Get<double>("bid_raw");
+			BidRaw = response.Get<double>("bid_raw");
+			BidInCents = response.Get<int>("bid_in_cents");
 			Network = response.Get<string>("network");
+			PlacementID = response.Get<string>("placement_id");
 		}
 	}
 }

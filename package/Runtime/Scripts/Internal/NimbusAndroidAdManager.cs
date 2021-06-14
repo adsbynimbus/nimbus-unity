@@ -16,7 +16,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 
 		private void onAdResponse(AndroidJavaObject response) {
-			_adUnit.MetaData = new MetaData(response);
+			_adUnit.ResponseMetaData = new MetaData(response);
 		}
 
 		private void onAdRendered(AndroidJavaObject controller) {

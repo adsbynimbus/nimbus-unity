@@ -37,6 +37,11 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         #region iOS Event Callbacks
 
+        // TODO missing response data, i need to the Nimbus response object back
+        // private void onAdResponse(....) {
+        //     
+        // }
+        
         internal void OnAdRendered(string param)
         {
             Debug.unityLogger.Log("OnAdRendered");
@@ -46,6 +51,8 @@ namespace Nimbus.Runtime.Scripts.Internal
 
         internal void OnError(string param)
         {
+            // TODO pass through error message like Android
+            // e.g 	var errMessage = adError.Call<string>("getMessage");
             Debug.unityLogger.Log("OnError: " + param);
             _adUnit.EmitOnAdError(_adUnit);
         }
