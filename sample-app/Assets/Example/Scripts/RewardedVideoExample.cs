@@ -9,7 +9,6 @@ namespace Example.Scripts {
 		public GameObject cloud;
 		private NimbusAdUnit _ad;
 		private bool _alreadyTriggered;
-		private bool _shouldRewardUser;
 
 		private void Awake() {
 			UnityThread.InitUnityThread();
@@ -24,7 +23,6 @@ namespace Example.Scripts {
 			if (player == null || _alreadyTriggered) return;
 			_ad = NimbusManager.Instance.LoadAndShowRewardedVideoAd("unity_demo_rewarded_video_position", 0.0f);
 			_alreadyTriggered = true;
-			_shouldRewardUser = false;
 		}
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
@@ -54,7 +52,7 @@ namespace Example.Scripts {
 		}
 
 		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
-			if (_shouldRewardUser) {
+			if (nimbusAdUnit.ShouldRewardUser()) {
 			    Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
 			    UnityThread.ExecuteInUpdate(RewardUser);
 			}
@@ -69,11 +67,7 @@ namespace Example.Scripts {
 		}
 
 		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit) {
-			_shouldRewardUser = true;
-		}
 
-		public void OnVideoAdSkipped(NimbusAdUnit nimbusAdUnit) {
-			_shouldRewardUser = false;
 		}
 
 		private IEnumerator MakeItRain() {

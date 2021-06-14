@@ -39,9 +39,5 @@ namespace Example.Scripts {
 		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit) {
 			// TODO
 		}
-
-		public void OnVideoAdSkipped(NimbusAdUnit nimbusAdUnit) {
-			// TODO
-		}
 	}
 }

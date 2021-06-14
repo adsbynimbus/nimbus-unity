@@ -15,6 +15,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
+		internal bool AdCompleted;
+		
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
 		
@@ -46,6 +48,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
 			// leave this at MaxValue for now
 			CloseButtonDelayMillis = int.MaxValue;
+			AdCompleted = false;
 		}
 
 		~NimbusAdUnit() {
@@ -102,6 +105,10 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return AdWasRendered;
 		}
 
+		public bool ShouldRewardUser() {
+			return AdType == AdUnityType.Rewarded && AdCompleted;
+		}
+
 		internal void EmitOnAdRendered(NimbusAdUnit obj) {
 			_adEvents.EmitOnAdRendered(obj);
 		}
@@ -128,12 +135,11 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					_adEvents.EmitOnOnVideoAdResume(this);
 					break;
 				case AdEventTypes.COMPLETED:
+					AdCompleted = true;
 					_adEvents.EmitOnOnVideoAdCompleted(this);
 					break;
 				case AdEventTypes.SKIPPED:
-					if (AdType == AdUnityType.Rewarded) {
-					    _adEvents.EmitOnOnVideoAdSkipped(this);
-					}
+					AdCompleted = false;
 					break;
 				case AdEventTypes.DESTROYED:
 					_adEvents.EmitOnOnAdDestroyed(this);
