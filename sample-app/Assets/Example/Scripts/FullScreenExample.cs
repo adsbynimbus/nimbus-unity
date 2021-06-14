@@ -39,8 +39,7 @@ namespace Example.Scripts {
 					loaded = true;
 				}
 
-				if (_ad.GetCurrentAdState() != AdEventTypes.COMPLETED &&
-				    _ad.GetCurrentAdState() != AdEventTypes.DESTROYED) continue;
+				if (_ad.GetCurrentAdState() != AdEventTypes.DESTROYED) continue;
 
 				RewardUser();
 				break;

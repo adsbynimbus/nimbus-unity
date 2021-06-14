@@ -130,11 +130,12 @@ namespace Nimbus.Runtime.Scripts.Internal {
 				case AdEventTypes.COMPLETED:
 					_adEvents.EmitOnOnVideoAdCompleted(this);
 					break;
+				case AdEventTypes.SKIPPED:
+					if (AdType == AdUnityType.Rewarded) {
+					    _adEvents.EmitOnOnVideoAdSkipped(this);
+					}
+					break;
 				case AdEventTypes.DESTROYED:
-					// when Interstitial ads are destroyed by the user clicking the x button
-					// the ad viewing is also technically completed, adding this if check in-case the user is expecting
-					// a completed event to be fired
-					if (AdType == AdUnityType.Interstitial) _adEvents.EmitOnOnVideoAdCompleted(this);
 					_adEvents.EmitOnOnAdDestroyed(this);
 					break;
 			}

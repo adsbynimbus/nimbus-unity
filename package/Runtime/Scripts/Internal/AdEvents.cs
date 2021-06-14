@@ -11,6 +11,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		public event Action<NimbusAdUnit> OnVideoAdPaused;
 		public event Action<NimbusAdUnit> OnVideoAdResume;
 		public event Action<NimbusAdUnit> OnVideoAdCompleted;
+		public event Action<NimbusAdUnit> OnVideoAdSkipped;
 
 		internal void EmitOnAdError(NimbusAdUnit obj) {
 			OnAdError?.Invoke(obj);
@@ -47,6 +48,10 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal void EmitOnOnVideoAdCompleted(NimbusAdUnit obj) {
 			OnVideoAdCompleted?.Invoke(obj);
 		}
+
+		internal void EmitOnOnVideoAdSkipped(NimbusAdUnit obj) {
+			OnVideoAdSkipped?.Invoke(obj);
+		}
 	}
 
 
@@ -62,7 +67,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		MIDPOINT,
 		THIRD_QUARTILE,
 		COMPLETED,
-
+		SKIPPED,
 		// VOLUME_CHANGED
 		DESTROYED
 	}
