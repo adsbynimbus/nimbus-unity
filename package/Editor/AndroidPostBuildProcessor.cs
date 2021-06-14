@@ -18,9 +18,9 @@ allprojects {
 	}
 }";
 		private static string dependencies = @"dependencies {
-	implementation ""com.adsbynimbus.android:nimbus:1.10.0""
-	implementation ""com.adsbynimbus.android:extension-okhttp:1.10.0""
-	implementation ""org.jetbrains.kotlin:kotlin-reflect:1.4.31""
+	implementation ""com.adsbynimbus.android:nimbus:1.10.3""
+	implementation ""com.adsbynimbus.android:extension-okhttp:1.10.3""
+	implementation ""org.jetbrains.kotlin:kotlin-reflect:1.3.61""
 }";
 
 		private static string keepRules = @"

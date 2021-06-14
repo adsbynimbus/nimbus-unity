@@ -25,16 +25,7 @@ public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
 
     static {
-        BlockingAdRenderer.setDismissOnComplete(true);
-    }
-
-    public static void setApp(String bundleId, String appName, String domain, String storeUrl) {
-        final App app = new App();
-        app.bundle = bundleId;
-        app.name = appName;
-        app.domain = domain;
-        app.storeurl = storeUrl;
-        RequestManager.setApp(app);
+        BlockingAdRenderer.setStaticDismissTimeout(10000);
     }
 
     public static void setUser(String gdprConsent) {
@@ -45,24 +36,24 @@ public final class UnityHelper {
     }
 
     public static void showInterstitialAd(Object obj, String position, float bannerFloor, float videoFloor,
-            int closeButtonDelay, Object listener) {
+            int closeButtonDelaySeconds, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
             request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
             request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            activity.runOnUiThread(() -> manager.showRewardedVideoAd(request, (Integer) closeButtonDelay, activity,
+            activity.runOnUiThread(() -> manager.showBlockingAd(request, activity,
                     (NimbusAdManager.Listener) listener));
         }
     }
 
     public static void showRewardedVideoAd(Object obj, String position, float bannerFloor, float videoFloor,
-            int closeButtonDelay, Object listener) {
+            int closeButtonDelaySeconds, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusRequest request = NimbusRequest.forRewardedVideo(position);
             request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            activity.runOnUiThread(() -> manager.showRewardedVideoAd(request, (Integer) closeButtonDelay, activity,
+            activity.runOnUiThread(() -> manager.showRewardedAd(request, (Integer) closeButtonDelaySeconds, activity,
                 (NimbusAdManager.Listener) listener));
         }
     }

@@ -38,7 +38,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					functionCall = "showBannerAd";
 					break;
 				case AdUnityType.Interstitial:
-					closeButtonDelayMillis = 5000;
 					functionCall = "showInterstitialAd";
 					break;
 				case AdUnityType.Rewarded:
