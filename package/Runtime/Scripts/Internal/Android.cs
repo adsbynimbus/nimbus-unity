@@ -31,7 +31,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
-			var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayInSeconds;
+			var closeButtonDelayInSeconds = nimbusAdUnit.CloseButtonDelayInSeconds;
 			string functionCall;
 			switch (nimbusAdUnit.AdType) {
 				case AdUnityType.Banner:
@@ -48,7 +48,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			}
 
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position,
-				nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis,
+				nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayInSeconds,
 				listener);
 			return nimbusAdUnit;
 		}

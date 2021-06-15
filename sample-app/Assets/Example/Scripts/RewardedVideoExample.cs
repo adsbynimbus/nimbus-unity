@@ -1,12 +1,17 @@
-using System;
 using System.Collections;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
+	/// <summary>
+	///     This demonstrates how to call for a rewarded ad by implementing the IAdEvents interface which the NimbusManager
+	///     auto subscribes to
+	/// </summary>
 	public class RewardedVideoExample : MonoBehaviour, IAdEvents {
 		public GameObject cloud;
+
+		// keep a reference of the returned ad so that it can be safely cleaned up
 		private NimbusAdUnit _ad;
 		private bool _alreadyTriggered;
 
@@ -64,10 +69,9 @@ namespace Example.Scripts {
 		}
 
 		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
-			if (!skipped) {
-			    Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
-			    UnityThread.ExecuteInUpdate(RewardUser);
-			}
+			if (skipped) return;
+			Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
+			UnityThread.ExecuteInUpdate(RewardUser);
 		}
 
 		private IEnumerator MakeItRain() {

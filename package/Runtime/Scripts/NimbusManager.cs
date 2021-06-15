@@ -117,7 +117,7 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		/// <summary>
-		///     Calls to Nimbus for a full screen ad, this can either be a static or video ad depending on which wins the auction,
+		///     Calls to Nimbus for a full screen interstitial ad, this can either be a static or video ad depending on which wins the auction,
 		///     and loads the ad if an ad is returned from the auction
 		/// </summary>
 		/// <param name="position">

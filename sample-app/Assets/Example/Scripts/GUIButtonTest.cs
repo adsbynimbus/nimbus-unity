@@ -26,7 +26,6 @@ namespace Example.Scripts {
 			_isUnique = false;
 			Debug.unityLogger.Log($"AD OF TYPE {_adUnit.AdType}, " +
 			                      $"Was Ad rendered {_adUnit.WasAdRendered()} " +
-			                      $"Current Ad State {_adUnit.GetCurrentAdState()} " +
 			                      $"Instance ID {_adUnit.InstanceID}");
 		}
 

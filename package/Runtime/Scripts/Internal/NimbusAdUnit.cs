@@ -92,13 +92,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 		
 		/// <summary>
-		///     Returns the current state of the ad, this can be used instead of event listeners to execute conditional code
-		/// </summary>
-		public AdEventTypes GetCurrentAdState() {
-			return CurrentAdState;
-		}
-		
-		/// <summary>
 		///     Returns returns true of the ad was rendered even if the ad has already been destroyed
 		/// </summary>
 		public bool WasAdRendered() {
