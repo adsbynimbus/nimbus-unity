@@ -4,6 +4,9 @@ using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
+	/// <summary>
+	///     This demonstrates how to call for a refreshing banner ad as well as how to properly stop ad refreshing
+	/// </summary>
 	public class RefreshingBannerExample : MonoBehaviour {
 		private bool _alreadyTriggered;
 		private IEnumerator _bannerRoutine;

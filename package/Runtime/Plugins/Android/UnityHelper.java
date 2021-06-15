@@ -57,7 +57,8 @@ public final class UnityHelper {
             int closeButtonDelaySeconds, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
-            final NimbusRequest request = NimbusRequest.forRewardedVideo(position);
+            final NimbusRequest request = NimbusRequest.forRewardedVideo(position, 
+                activity.getResources().getConfiguration().orientation);
             request.request.imp[0].video.bidfloor = (Float) videoFloor;
             activity.runOnUiThread(() -> manager.showRewardedAd(request, (Integer) closeButtonDelaySeconds, activity,
                 (NimbusAdManager.Listener) listener));

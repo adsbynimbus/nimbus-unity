@@ -129,7 +129,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 						_adEvents.EmitOnOnAdCompleted(this, !_adCompleted);
 					}
 					else if (AdType == AdUnityType.Interstitial) {
-						// fired the completed event for interstitial ads force skipped to false everytime, since 
+						// fired the completed event for interstitial ads force skipped to false everytime, since you 
+						// can skip after a set time
 						_adEvents.EmitOnOnAdCompleted(this, false);
 					}
 

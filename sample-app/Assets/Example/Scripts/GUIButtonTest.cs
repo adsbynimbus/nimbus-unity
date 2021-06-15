@@ -4,7 +4,10 @@ using TMPro;
 using UnityEngine;
 
 namespace Example.Scripts {
-	public class GUIButtonTest : MonoBehaviour, IAdEvents {
+	/// <summary>
+	///     This demonstrates how to call for various different ad types within the demo app context 
+	/// </summary>
+	public class GUIButtonTest : MonoBehaviour, IAdEventsExtended {
 		public TextMeshProUGUI bannerButtonText;
 		private NimbusAdUnit _adUnit;
 
@@ -47,6 +50,10 @@ namespace Example.Scripts {
 
 		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log($"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.ResponseMetaData.AuctionID} fired it's impression pixel");
+		}
+
+		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
+			Debug.unityLogger.Log($"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.ResponseMetaData.AuctionID} ad was destroyed");
 		}
 
 		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
