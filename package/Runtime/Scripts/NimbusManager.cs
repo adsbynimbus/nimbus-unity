@@ -9,18 +9,17 @@ namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
 		#region Editor Values
-
 		public NimbusSDKConfiguration configuration;
 		public bool shouldSubscribeToIAdEvents;
-
 		#endregion
 		
-		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
 		// ReSharper disable once MemberCanBePrivate.Global
 		public AdEvents NimbusEvents;
 		
 		public static NimbusManager Instance;
 		private NimbusAPI _nimbusPlatformAPI;
+		private NimbusAdUnit _refreshAd;
+		private bool _canStartBannerRefreshing =  true;
 		
 		private void Awake() {
 			if (configuration == null) throw new Exception("The configuration object cannot be null");
@@ -140,7 +139,8 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		/// <summary>
-		///     Calls to Nimbus on a set timer for a 320x50 banner ad and loads the ad if an ad is returned from the auction
+		///     Calls to Nimbus on a set timer for a 320x50 banner ad and loads the ad if an ad is returned from the auction.
+		///     Note: there can only be 1 refreshing banner ad per application session
 		/// </summary>
 		/// <param name="position">
 		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
@@ -149,24 +149,36 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerBidFloor">
 		///     Represents your asking price for banner ads during the auction
 		/// </param>
-		/// <param name="currentAdUnit">Provides the ability to pass the current ad unit back out of the coroutine</param>
 		/// <param name="refreshIntervalInSeconds">
 		///     Specifies the rate at which banner ads should be called for. This defaults to
 		///     the industry standard and best practice of 30 seconds
 		/// </param>
-		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor,
-			SetAdUnitFromCoroutine currentAdUnit,
-			float refreshIntervalInSeconds = 30f) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
-			currentAdUnit(adUnit);
-			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor, float refreshIntervalInSeconds = 30f) {
+			if (!_canStartBannerRefreshing) throw new Exception("LoadAndShowBannerAdWithRefresh() is currently running a coroutine, only 1 running coroutine can be called at a time");
+			_canStartBannerRefreshing = false;
+			_refreshAd = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
+			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref _refreshAd);
 			while (true) {
 				yield return new WaitForSeconds(refreshIntervalInSeconds);
-				adUnit?.Destroy();
-				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
-				currentAdUnit(adUnit);
-				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+				_refreshAd?.Destroy();
+				_refreshAd = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
+				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref _refreshAd);
 			}
+			// ReSharper disable once IteratorNeverReturns
+		}
+		
+		/// <summary>
+		///     Cleans up any ads that were created as a result of refreshing banner ads on a timer.
+		///     This also resets the internal state and allows the LoadAndShowBannerAdWithRefresh to called again
+		///     without throwing an exception
+		/// </summary>
+		/// <param name="refreshBannerCoroutine">
+		///     The coroutine that was returned from calling LoadAndShowBannerAdWithRefresh
+		/// </param>
+		public void StopRefreshBannerAd(IEnumerator refreshBannerCoroutine) {
+			StopCoroutine(refreshBannerCoroutine);
+			_refreshAd?.Destroy();
+			_canStartBannerRefreshing = true;
 		}
 
 		// ReSharper disable once InconsistentNaming
@@ -174,7 +186,7 @@ namespace Nimbus.Runtime.Scripts {
 		///     Allows the TCF GDPR consent string to be set globally on all request to Nimbus
 		/// </summary>
 		/// <param name="consent">
-		///     This is the TCF GDRP consent string
+		///     This is the TCF GDPR consent string
 		/// </param>
 		public void SetGDPRConsentString(string consent) {
 			_nimbusPlatformAPI.SetGDPRConsentString(consent);
