@@ -3,6 +3,7 @@ package com.adsbynimbus.unity;
 import static android.view.ViewGroup.LayoutParams.*;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.adsbynimbus.openrtb.request.User;
 import com.adsbynimbus.render.AdController;
 import com.adsbynimbus.render.AdEvent;
 import com.adsbynimbus.render.BlockingAdRenderer;
+import com.adsbynimbus.render.CompanionAd;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
 import com.adsbynimbus.request.RequestManager;
@@ -42,6 +44,10 @@ public final class UnityHelper {
             final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
             request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
             request.request.imp[0].video.bidfloor = (Float) videoFloor;
+            request.setCompanionAds(
+                new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
+                        Configuration.ORIENTATION_LANDSCAPE ?
+                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)});
             activity.runOnUiThread(() -> manager.showBlockingAd(request, activity,
                     (NimbusAdManager.Listener) listener));
         }
