@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Nimbus.Runtime.Scripts.Internal {
@@ -5,9 +6,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	public delegate void DestroyAdDelegate();
 
 	public sealed class NimbusAdUnit {
-		private readonly AdEvents _adEvents;
 		public readonly AdUnityType AdType;
-		
 		public readonly int InstanceID;
 		public readonly string Position;
 		public MetaData ResponseMetaData;
@@ -15,14 +14,15 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
-		internal bool AdCompleted;
-		
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
 		
+		private readonly AdEvents _adEvents;
+		private bool _adCompleted;
+		
 		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
 		// where setting a value higher than the video length forces the x to show up at the end of the video
-		internal readonly int CloseButtonDelayMillis;
+		internal readonly int CloseButtonDelayInSeconds;
 		# region IOS specific
 		internal event DestroyAdDelegate DestroyIOSAd;
 		private void OnDestroyIOSAd() {
@@ -41,14 +41,14 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor,
 			in AdEvents adEvents) {
 			AdType = adType;
-			InstanceID = GetHashCode();
-			CurrentAdState = AdEventTypes.NOT_LOADED;
-			Position = position;
-			_adEvents = adEvents;
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
-			// leave this at MaxValue for now
-			CloseButtonDelayMillis = 3600;
-			AdCompleted = false;
+			CurrentAdState = AdEventTypes.NOT_LOADED;
+			CloseButtonDelayInSeconds = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+			InstanceID = GetHashCode();
+			Position = position;
+			
+			_adEvents = adEvents;
+			_adCompleted = false;
 		}
 
 		~NimbusAdUnit() {
@@ -131,11 +131,11 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					_adEvents.EmitOnOnVideoAdResume(this);
 					break;
 				case AdEventTypes.COMPLETED:
-					AdCompleted = true;
+					_adCompleted = true;
 					break;
 				case AdEventTypes.DESTROYED:
 					if (AdType == AdUnityType.Rewarded) {
-						_adEvents.EmitOnOnVideoAdCompleted(this, !AdCompleted); 
+						_adEvents.EmitOnOnVideoAdCompleted(this, !_adCompleted); 
 					} else {
 					    _adEvents.EmitOnOnAdDestroyed(this);
 					}

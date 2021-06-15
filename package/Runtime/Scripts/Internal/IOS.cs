@@ -54,7 +54,7 @@ namespace Nimbus.Runtime.Scripts.Internal
             nimbusAdUnit.DestroyIOSAd += OnDestroyIOSAd;
 
             // iOS uses seconds
-            var closeButtonDelaySeconds = nimbusAdUnit.CloseButtonDelayMillis / 1000;
+            var closeButtonDelaySeconds = nimbusAdUnit.CloseButtonDelayInSeconds;
             switch (nimbusAdUnit.AdType)
             {
                 case AdUnityType.Banner:

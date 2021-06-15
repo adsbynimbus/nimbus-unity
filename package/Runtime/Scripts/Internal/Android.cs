@@ -31,7 +31,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
-			var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayMillis;
+			var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayInSeconds;
 			string functionCall;
 			switch (nimbusAdUnit.AdType) {
 				case AdUnityType.Banner:
