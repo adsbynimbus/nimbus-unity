@@ -12,15 +12,17 @@ namespace Example.Scripts {
 		private NimbusAdUnit _ad;
 		private bool _alreadyTriggered;
 
-
+		private void Awake() {
+			UnityThread.InitUnityThread();
+		}
 		private void Start() {
-			NimbusManager.Instance.NimbusEvents.OnVideoAdCompleted += RewardUser;
+			NimbusManager.Instance.NimbusEvents.OnAdCompleted += RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError += LogError;
 		}
 		
 		// called as for extra safety. Ensures all resources are released
 		private void OnDestroy() {
-			NimbusManager.Instance.NimbusEvents.OnVideoAdCompleted -= RewardUser;
+			NimbusManager.Instance.NimbusEvents.OnAdCompleted -= RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError -= LogError;
 			_ad?.Destroy();
 		}
@@ -39,6 +41,7 @@ namespace Example.Scripts {
 		}
 
 		private void RewardUser(NimbusAdUnit ad, bool skipped) {
+			if (_ad?.InstanceID != ad.InstanceID) return;
 			if (!skipped) {
 				Debug.unityLogger.Log(
 					$"NimbusEventListenerExample Ad was rendered for ad instance {ad.InstanceID}, " +
@@ -47,7 +50,9 @@ namespace Example.Scripts {
 					$"network: {ad.ResponseMetaData.Network}, " +
 					$"placement_id: {ad.ResponseMetaData.PlacementID}, " +
 					$"auction_id: {ad.ResponseMetaData.AuctionID}");
-				StartCoroutine(MakeItRain());
+				// ensures that this coroutine starts on the Unity Main thread since this is called within an event callback
+				UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
+				return;
 			}
 			Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad was rendered for ad instance, however the user skipped the ad {ad.InstanceID}, " +
@@ -59,10 +64,12 @@ namespace Example.Scripts {
 		}
 
 		private void LogError(NimbusAdUnit ad) {
+			if (_ad?.InstanceID != ad.InstanceID) return;
 			Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +
 				$"Error Message Ad failed to load {ad.ErrorMessage()}, " +
 				$"auction_id: {ad.ResponseMetaData.AuctionID}");
 		}
+		
 	}
 }

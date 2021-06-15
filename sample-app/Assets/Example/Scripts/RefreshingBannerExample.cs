@@ -4,7 +4,7 @@ using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
-	public class BannerExample2 : MonoBehaviour {
+	public class RefreshingBannerExample : MonoBehaviour {
 		private bool _alreadyTriggered;
 		private IEnumerator _bannerRoutine;
 		

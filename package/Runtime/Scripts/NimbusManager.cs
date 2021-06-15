@@ -67,13 +67,19 @@ namespace Nimbus.Runtime.Scripts {
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError += iAdEvent.OnAdError;
-				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
-				Instance.NimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
 				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
-				Instance.NimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
-				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
-				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
-				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
+				Instance.NimbusEvents.OnAdCompleted += iAdEvent.OnAdCompleted;
+				
+				switch (iAdEvent) {
+					case IAdEventsExtended iAdEventExt:
+						Instance.NimbusEvents.OnAdImpression += iAdEventExt.OnAdImpression;
+						Instance.NimbusEvents.OnAdDestroyed += iAdEventExt.OnAdDestroyed;
+						break;
+					case IAdEventsVideoExtended iAdEventVideoExt:
+						Instance.NimbusEvents.OnVideoAdPaused += iAdEventVideoExt.OnVideoAdPaused;
+						Instance.NimbusEvents.OnVideoAdResume += iAdEventVideoExt.OnVideoAdResume;
+						break;
+				}
 			}
 		}
 		
@@ -82,13 +88,19 @@ namespace Nimbus.Runtime.Scripts {
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError -= iAdEvent.OnAdError;
-				Instance.NimbusEvents.OnAdLoaded -= iAdEvent.OnAdLoaded;
-				Instance.NimbusEvents.OnAdImpression -= iAdEvent.OnAdImpression;
 				Instance.NimbusEvents.OnAdClicked -= iAdEvent.OnAdClicked;
-				Instance.NimbusEvents.OnAdDestroyed -= iAdEvent.OnAdDestroyed;
-				Instance.NimbusEvents.OnVideoAdPaused -= iAdEvent.OnVideoAdPaused;
-				Instance.NimbusEvents.OnVideoAdResume -= iAdEvent.OnVideoAdResume;
-				Instance.NimbusEvents.OnVideoAdCompleted -= iAdEvent.OnVideoAdCompleted;
+				Instance.NimbusEvents.OnAdCompleted -= iAdEvent.OnAdCompleted;
+				
+				switch (iAdEvent) {
+					case IAdEventsExtended iAdEventExt:
+						Instance.NimbusEvents.OnAdImpression -= iAdEventExt.OnAdImpression;
+						Instance.NimbusEvents.OnAdDestroyed -= iAdEventExt.OnAdDestroyed;
+						break;
+					case IAdEventsVideoExtended iAdEventVideoExt:
+						Instance.NimbusEvents.OnVideoAdPaused -= iAdEventVideoExt.OnVideoAdPaused;
+						Instance.NimbusEvents.OnVideoAdResume -= iAdEventVideoExt.OnVideoAdResume;
+						break;
+				}
 			}
 		}
 		

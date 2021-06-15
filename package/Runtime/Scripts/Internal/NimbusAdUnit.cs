@@ -108,9 +108,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal void EmitOnAdEvent(AdEventTypes e) {
 			switch (e) {
-				case AdEventTypes.LOADED:
-					_adEvents.EmitOnOnAdLoaded(this);
-					break;
 				case AdEventTypes.IMPRESSION:
 					_adEvents.EmitOnOnAdImpression(this);
 					break;
@@ -127,11 +124,17 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					_adCompleted = true;
 					break;
 				case AdEventTypes.DESTROYED:
+					// ReSharper disable once ConvertIfStatementToSwitchStatement
 					if (AdType == AdUnityType.Rewarded) {
-						_adEvents.EmitOnOnVideoAdCompleted(this, !_adCompleted); 
-					} else {
-					    _adEvents.EmitOnOnAdDestroyed(this);
+						_adEvents.EmitOnOnAdCompleted(this, !_adCompleted);
 					}
+					else if (AdType == AdUnityType.Interstitial) {
+						// fired the completed event for interstitial ads force skipped to false everytime, since 
+						_adEvents.EmitOnOnAdCompleted(this, false);
+					}
+
+					// always call destroyed the destroyed event
+					_adEvents.EmitOnOnAdDestroyed(this);
 					break;
 			}
 		}
