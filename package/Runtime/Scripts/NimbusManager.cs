@@ -10,7 +10,6 @@ namespace Nimbus.Runtime.Scripts {
 	public class NimbusManager : MonoBehaviour {
 		#region Editor Values
 		public NimbusSDKConfiguration configuration;
-		public bool shouldSubscribeToIAdEvents;
 		#endregion
 		
 		// ReSharper disable once MemberCanBePrivate.Global
@@ -20,7 +19,7 @@ namespace Nimbus.Runtime.Scripts {
 		private NimbusAPI _nimbusPlatformAPI;
 		private NimbusAdUnit _refreshAd;
 		private bool _canStartBannerRefreshing =  true;
-		
+
 		private void Awake() {
 			if (configuration == null) throw new Exception("The configuration object cannot be null");
 			
@@ -46,9 +45,24 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		private IEnumerator Start() {
-			if (!shouldSubscribeToIAdEvents) yield break;
 			yield return new WaitForEndOfFrame();
-			var eventsFound = false;
+			AutoSubscribe();
+			yield return null;
+		}
+
+		private void OnDestroy() {
+			AutoUnsubscribe();
+		}
+
+		private void OnEnable() {
+			AutoSubscribe();
+		}
+
+		private void OnDisable() {
+			AutoUnsubscribe();
+		}
+
+		private static void AutoSubscribe() {
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
@@ -60,33 +74,24 @@ namespace Nimbus.Runtime.Scripts {
 				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
 				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
 				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
-				eventsFound = true;
 			}
-
-			if (!eventsFound)
-				Debug.unityLogger.LogWarning(
-					"Manager is set to auto subscribe to listeners, however there are no instances of IAdEvents in the scene",
-					this);
-
-			yield return null;
 		}
-
-		private void OnDestroy() {
-			if (!shouldSubscribeToIAdEvents) return;
+		
+		private static void AutoUnsubscribe() {
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError -= iAdEvent.OnAdError;
-				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
-				Instance.NimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
-				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
-				Instance.NimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
-				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
-				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
-				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
+				Instance.NimbusEvents.OnAdLoaded -= iAdEvent.OnAdLoaded;
+				Instance.NimbusEvents.OnAdImpression -= iAdEvent.OnAdImpression;
+				Instance.NimbusEvents.OnAdClicked -= iAdEvent.OnAdClicked;
+				Instance.NimbusEvents.OnAdDestroyed -= iAdEvent.OnAdDestroyed;
+				Instance.NimbusEvents.OnVideoAdPaused -= iAdEvent.OnVideoAdPaused;
+				Instance.NimbusEvents.OnVideoAdResume -= iAdEvent.OnVideoAdResume;
+				Instance.NimbusEvents.OnVideoAdCompleted -= iAdEvent.OnVideoAdCompleted;
 			}
 		}
-
+		
 
 		/// <summary>
 		///     Calls to Nimbus for a 320x50 banner ad and loads the ad if an ad is returned from the auction
@@ -99,6 +104,14 @@ namespace Nimbus.Runtime.Scripts {
 		///     Represents your asking price for banner ads during the auction
 		/// </param>
 		public NimbusAdUnit LoadAndShowBannerAd(string position, float bannerBidFloor) {
+			// if there is a refreshing banner ad, kill the coroutine and clean up the refreshing banner ad
+			// before allowing a static call of the banner ad to start
+			if (!_canStartBannerRefreshing) {
+				// stopping the coroutine by method name since we don't have a reference to the started coroutine
+				StopCoroutine($"LoadAndShowBannerAdWithRefresh");
+				_refreshAd?.Destroy();
+				_canStartBannerRefreshing = true;
+			}
 			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
