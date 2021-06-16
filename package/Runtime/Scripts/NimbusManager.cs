@@ -1,37 +1,40 @@
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Nimbus.Runtime.Scripts.Internal;
 using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
+		public static NimbusManager Instance;
+
 		#region Editor Values
 
 		public NimbusSDKConfiguration configuration;
-		public bool shouldSubscribeToIAdEvents;
 
 		#endregion
-		
-		public delegate void SetAdUnitFromCoroutine(NimbusAdUnit adUnit);
+
+		private bool _canStartBannerRefreshing = true;
+		private NimbusAPI _nimbusPlatformAPI;
+		private NimbusAdUnit _refreshAd;
+
 		// ReSharper disable once MemberCanBePrivate.Global
 		public AdEvents NimbusEvents;
-		
-		public static NimbusManager Instance;
-		private NimbusAPI _nimbusPlatformAPI;
-		
+
 		private void Awake() {
 			if (configuration == null) throw new Exception("The configuration object cannot be null");
-			
+
 			if (Instance == null) {
 				_nimbusPlatformAPI = _nimbusPlatformAPI ?? new
 #if UNITY_EDITOR
 					Editor
 #elif UNITY_ANDROID
                 Android
-#else   
+#else
                 IOS
 #endif
 					();
@@ -47,44 +50,66 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		private IEnumerator Start() {
-			if (!shouldSubscribeToIAdEvents) yield break;
 			yield return new WaitForEndOfFrame();
-			var eventsFound = false;
+			AutoUnsubscribe();
+			AutoSubscribe();
+			yield return null;
+		}
+
+		private void OnEnable() {
+			AutoUnsubscribe();
+			AutoSubscribe();
+		}
+
+		private void OnDisable() {
+			AutoUnsubscribe();
+		}
+
+		private void OnDestroy() {
+			AutoUnsubscribe();
+		}
+
+		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
+		[SuppressMessage("ReSharper", "InvertIf")]
+		private static void AutoSubscribe() {
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError += iAdEvent.OnAdError;
-				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
-				Instance.NimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
 				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
-				Instance.NimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
-				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
-				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
-				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
-				eventsFound = true;
+				Instance.NimbusEvents.OnAdCompleted += iAdEvent.OnAdCompleted;
+
+				if (iAdEvent is IAdEventsExtended iAdEventExt) {
+					Instance.NimbusEvents.OnAdImpression += iAdEventExt.OnAdImpression;
+					Instance.NimbusEvents.OnAdDestroyed += iAdEventExt.OnAdDestroyed;
+				}
+
+				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt) {
+					Instance.NimbusEvents.OnVideoAdPaused += iAdEventVideoExt.OnVideoAdPaused;
+					Instance.NimbusEvents.OnVideoAdResume += iAdEventVideoExt.OnVideoAdResume;
+				}
 			}
-
-			if (!eventsFound)
-				Debug.unityLogger.LogWarning(
-					"Manager is set to auto subscribe to listeners, however there are no instances of IAdEvents in the scene",
-					this);
-
-			yield return null;
 		}
 
-		private void OnDestroy() {
-			if (!shouldSubscribeToIAdEvents) return;
+		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
+		[SuppressMessage("ReSharper", "InvertIf")]
+		private static void AutoUnsubscribe() {
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError -= iAdEvent.OnAdError;
-				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
-				Instance.NimbusEvents.OnAdImpression += iAdEvent.OnAdImpression;
-				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
-				Instance.NimbusEvents.OnAdDestroyed += iAdEvent.OnAdDestroyed;
-				Instance.NimbusEvents.OnVideoAdPaused += iAdEvent.OnVideoAdPaused;
-				Instance.NimbusEvents.OnVideoAdResume += iAdEvent.OnVideoAdResume;
-				Instance.NimbusEvents.OnVideoAdCompleted += iAdEvent.OnVideoAdCompleted;
+				Instance.NimbusEvents.OnAdClicked -= iAdEvent.OnAdClicked;
+				Instance.NimbusEvents.OnAdCompleted -= iAdEvent.OnAdCompleted;
+
+				if (iAdEvent is IAdEventsExtended iAdEventExt) {
+					Instance.NimbusEvents.OnAdImpression -= iAdEventExt.OnAdImpression;
+					Instance.NimbusEvents.OnAdDestroyed -= iAdEventExt.OnAdDestroyed;
+				}
+
+				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt) {
+					Instance.NimbusEvents.OnVideoAdPaused -= iAdEventVideoExt.OnVideoAdPaused;
+					Instance.NimbusEvents.OnVideoAdResume -= iAdEventVideoExt.OnVideoAdResume;
+				}
 			}
 		}
 
@@ -100,12 +125,22 @@ namespace Nimbus.Runtime.Scripts {
 		///     Represents your asking price for banner ads during the auction
 		/// </param>
 		public NimbusAdUnit LoadAndShowBannerAd(string position, float bannerBidFloor) {
+			// if there is a refreshing banner ad, kill the coroutine and clean up the refreshing banner ad
+			// before allowing a static call of the banner ad to start
+			if (!_canStartBannerRefreshing) {
+				// stopping the coroutine by method name since we don't have a reference to the started coroutine
+				StopCoroutine("LoadAndShowBannerAdWithRefresh");
+				_refreshAd?.Destroy();
+				_canStartBannerRefreshing = true;
+			}
+
 			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in NimbusEvents);
 			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
 		}
 
 		/// <summary>
-		///     Calls to Nimbus for a full screen ad, this can either be a static or video ad depending on which wins the auction,
+		///     Calls to Nimbus for a full screen interstitial ad, this can either be a static or video ad depending on which wins
+		///     the auction,
 		///     and loads the ad if an ad is returned from the auction
 		/// </summary>
 		/// <param name="position">
@@ -140,7 +175,8 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		/// <summary>
-		///     Calls to Nimbus on a set timer for a 320x50 banner ad and loads the ad if an ad is returned from the auction
+		///     Calls to Nimbus on a set timer for a 320x50 banner ad and loads the ad if an ad is returned from the auction.
+		///     Note: there can only be 1 refreshing banner ad per application session
 		/// </summary>
 		/// <param name="position">
 		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
@@ -149,24 +185,39 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerBidFloor">
 		///     Represents your asking price for banner ads during the auction
 		/// </param>
-		/// <param name="currentAdUnit">Provides the ability to pass the current ad unit back out of the coroutine</param>
 		/// <param name="refreshIntervalInSeconds">
 		///     Specifies the rate at which banner ads should be called for. This defaults to
 		///     the industry standard and best practice of 30 seconds
 		/// </param>
 		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor,
-			SetAdUnitFromCoroutine currentAdUnit,
 			float refreshIntervalInSeconds = 30f) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
-			currentAdUnit(adUnit);
-			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+			if (!_canStartBannerRefreshing)
+				throw new Exception(
+					"LoadAndShowBannerAdWithRefresh() is currently running a coroutine, only 1 running coroutine can be called at a time");
+			_canStartBannerRefreshing = false;
+			_refreshAd = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
+			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref _refreshAd);
 			while (true) {
 				yield return new WaitForSeconds(refreshIntervalInSeconds);
-				adUnit?.Destroy();
-				adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
-				currentAdUnit(adUnit);
-				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+				_refreshAd?.Destroy();
+				_refreshAd = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
+				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref _refreshAd);
 			}
+			// ReSharper disable once IteratorNeverReturns
+		}
+
+		/// <summary>
+		///     Cleans up any ads that were created as a result of refreshing banner ads on a timer.
+		///     This also resets the internal state and allows the LoadAndShowBannerAdWithRefresh to called again
+		///     without throwing an exception
+		/// </summary>
+		/// <param name="refreshBannerCoroutine">
+		///     The coroutine that was returned from calling LoadAndShowBannerAdWithRefresh
+		/// </param>
+		public void StopRefreshBannerAd(IEnumerator refreshBannerCoroutine) {
+			StopCoroutine(refreshBannerCoroutine);
+			_refreshAd?.Destroy();
+			_canStartBannerRefreshing = true;
 		}
 
 		// ReSharper disable once InconsistentNaming
@@ -174,7 +225,7 @@ namespace Nimbus.Runtime.Scripts {
 		///     Allows the TCF GDPR consent string to be set globally on all request to Nimbus
 		/// </summary>
 		/// <param name="consent">
-		///     This is the TCF GDRP consent string
+		///     This is the TCF GDPR consent string
 		/// </param>
 		public void SetGDPRConsentString(string consent) {
 			_nimbusPlatformAPI.SetGDPRConsentString(consent);

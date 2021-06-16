@@ -2,6 +2,7 @@ using System;
 using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class Editor : NimbusAPI {
 		internal override void InitializeSDK(ILogger logger, NimbusSDKConfiguration configuration) {
@@ -27,10 +28,11 @@ namespace Nimbus.Runtime.Scripts.Internal {
 				default:
 					throw new Exception("ad type not supported");
 			}
+
 			logger.Log($"In Editor mode, {functionCall} was called, however ads cannot be shown in the editor");
 			return nimbusAdUnit;
 		}
-		
+
 		internal override void SetGDPRConsentString(string consent) {
 			Debug.unityLogger.Log("Mock SDK consent string cannot be added");
 		}

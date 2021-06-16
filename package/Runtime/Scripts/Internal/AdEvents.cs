@@ -1,16 +1,16 @@
 using System;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class AdEvents {
 		public event Action<NimbusAdUnit> OnAdRendered;
 		public event Action<NimbusAdUnit> OnAdError;
-		public event Action<NimbusAdUnit> OnAdLoaded;
 		public event Action<NimbusAdUnit> OnAdImpression;
 		public event Action<NimbusAdUnit> OnAdClicked;
 		public event Action<NimbusAdUnit> OnAdDestroyed;
 		public event Action<NimbusAdUnit> OnVideoAdPaused;
 		public event Action<NimbusAdUnit> OnVideoAdResume;
-		public event Action<NimbusAdUnit, bool> OnVideoAdCompleted;
+		public event Action<NimbusAdUnit, bool> OnAdCompleted;
 
 		internal void EmitOnAdError(NimbusAdUnit obj) {
 			OnAdError?.Invoke(obj);
@@ -18,10 +18,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal void EmitOnAdRendered(NimbusAdUnit obj) {
 			OnAdRendered?.Invoke(obj);
-		}
-
-		internal void EmitOnOnAdLoaded(NimbusAdUnit obj) {
-			OnAdLoaded?.Invoke(obj);
 		}
 
 		internal void EmitOnOnAdImpression(NimbusAdUnit obj) {
@@ -44,8 +40,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			OnVideoAdResume?.Invoke(obj);
 		}
 
-		internal void EmitOnOnVideoAdCompleted(NimbusAdUnit obj, bool skipped) {
-			OnVideoAdCompleted?.Invoke(obj, skipped);
+		internal void EmitOnOnAdCompleted(NimbusAdUnit obj, bool skipped) {
+			OnAdCompleted?.Invoke(obj, skipped);
 		}
 	}
 
@@ -53,16 +49,19 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	// ReSharper disable InconsistentNaming
 	public enum AdEventTypes {
 		NOT_LOADED,
-		LOADED,
+
+		// LOADED,
 		IMPRESSION,
 		CLICKED,
 		PAUSED,
 		RESUME,
-		FIRST_QUARTILE,
-		MIDPOINT,
-		THIRD_QUARTILE,
+
+		// FIRST_QUARTILE,
+		// MIDPOINT,
+		// THIRD_QUARTILE,
 		COMPLETED,
-		SKIPPED,
+
+		// SKIPPED,
 		// VOLUME_CHANGED
 		DESTROYED
 	}

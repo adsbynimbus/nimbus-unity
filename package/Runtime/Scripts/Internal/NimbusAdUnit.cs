@@ -1,54 +1,39 @@
+using System;
 using UnityEngine;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
-
 	public delegate void DestroyAdDelegate();
 
 	public sealed class NimbusAdUnit {
 		private readonly AdEvents _adEvents;
 		public readonly AdUnityType AdType;
-		
+
+		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
+		// where setting a value higher than the video length forces the x to show up at the end of the video
+		internal readonly int CloseButtonDelayInSeconds;
 		public readonly int InstanceID;
 		public readonly string Position;
-		public MetaData ResponseMetaData;
+		private bool _adCompleted;
 
 		internal AdError AdControllerError;
 		internal AdError AdListenerError;
 		internal bool AdWasRendered;
-		internal bool AdCompleted;
-		
 		internal BidFloors BidFloors;
 		internal AdEventTypes CurrentAdState;
-		
-		// Delay before close button is shown in milliseconds, set to max value to only show close button after video completion
-		// where setting a value higher than the video length forces the x to show up at the end of the video
-		internal readonly int CloseButtonDelayMillis;
-		# region IOS specific
-		internal event DestroyAdDelegate DestroyIOSAd;
-		private void OnDestroyIOSAd() {
-			DestroyIOSAd?.Invoke();
-		}
-		
-		#endregion
-		
-		#region Android Specific
+		public MetaData ResponseMetaData;
 
-		private AndroidJavaObject _androidController;
-		private AndroidJavaClass _androidHelper;
-
-		#endregion
-		
 		public NimbusAdUnit(AdUnityType adType, string position, float bannerFloor, float videoFloor,
 			in AdEvents adEvents) {
 			AdType = adType;
-			InstanceID = GetHashCode();
-			CurrentAdState = AdEventTypes.NOT_LOADED;
-			Position = position;
-			_adEvents = adEvents;
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
-			// leave this at MaxValue for now
-			CloseButtonDelayMillis = 3600;
-			AdCompleted = false;
+			CurrentAdState = AdEventTypes.NOT_LOADED;
+			CloseButtonDelayInSeconds = (int) TimeSpan.FromMinutes(60).TotalSeconds;
+			InstanceID = GetHashCode();
+			Position = position;
+
+			_adEvents = adEvents;
+			_adCompleted = false;
 		}
 
 		~NimbusAdUnit() {
@@ -90,14 +75,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			if (AdControllerError != null) message += $"AdController Error: {AdControllerError.Message}";
 			return message;
 		}
-		
-		/// <summary>
-		///     Returns the current state of the ad, this can be used instead of event listeners to execute conditional code
-		/// </summary>
-		public AdEventTypes GetCurrentAdState() {
-			return CurrentAdState;
-		}
-		
+
 		/// <summary>
 		///     Returns returns true of the ad was rendered even if the ad has already been destroyed
 		/// </summary>
@@ -115,9 +93,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal void EmitOnAdEvent(AdEventTypes e) {
 			switch (e) {
-				case AdEventTypes.LOADED:
-					_adEvents.EmitOnOnAdLoaded(this);
-					break;
 				case AdEventTypes.IMPRESSION:
 					_adEvents.EmitOnOnAdImpression(this);
 					break;
@@ -131,14 +106,20 @@ namespace Nimbus.Runtime.Scripts.Internal {
 					_adEvents.EmitOnOnVideoAdResume(this);
 					break;
 				case AdEventTypes.COMPLETED:
-					AdCompleted = true;
+					_adCompleted = true;
 					break;
 				case AdEventTypes.DESTROYED:
-					if (AdType == AdUnityType.Rewarded) {
-						_adEvents.EmitOnOnVideoAdCompleted(this, !AdCompleted); 
-					} else {
-					    _adEvents.EmitOnOnAdDestroyed(this);
-					}
+					// ReSharper disable once ConvertIfStatementToSwitchStatement
+					if (AdType == AdUnityType.Rewarded)
+						_adEvents.EmitOnOnAdCompleted(this, !_adCompleted);
+					else if (
+							AdType == AdUnityType
+								.Interstitial) // fired the completed event for interstitial ads force skipped to false everytime, since you 
+						// can skip after a set time
+						_adEvents.EmitOnOnAdCompleted(this, false);
+
+					// always call destroyed the destroyed event
+					_adEvents.EmitOnOnAdDestroyed(this);
 					break;
 			}
 		}
@@ -152,6 +133,23 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			if (_androidHelper != null) return;
 			_androidHelper = helper;
 		}
+
+		# region IOS specific
+
+		internal event DestroyAdDelegate OnDestroyIOSAd;
+
+		private void OnOnDestroyIOSAd() {
+			OnDestroyIOSAd?.Invoke();
+		}
+
+		#endregion
+
+		#region Android Specific
+
+		private AndroidJavaObject _androidController;
+		private AndroidJavaClass _androidHelper;
+
+		#endregion
 	}
 
 
@@ -181,22 +179,27 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		///     Returns the nimbus auction id, used for debugging
 		/// </summary>
 		public readonly string AuctionID;
+
 		/// <summary>
-		///     Returns returns the network bid as a floating integer 
-		/// </summary>
-		public readonly double BidRaw;
-		/// <summary>
-		///     Returns returns the network bid as a integer converted from dollars to cents 
+		///     Returns returns the network bid as a integer converted from dollars to cents
 		/// </summary>
 		public readonly int BidInCents;
+
+		/// <summary>
+		///     Returns returns the network bid as a floating integer
+		/// </summary>
+		public readonly double BidRaw;
+
 		/// <summary>
 		///     Returns the name of the winning network
 		/// </summary>
 		public readonly string Network;
+
 		/// <summary>
 		///     Returns the winning network's placement id
 		/// </summary>
 		public readonly string PlacementID;
+
 		// TODO pull in response data from IOS
 		internal MetaData(in AndroidJavaObject response) {
 			AuctionID = response.Get<string>("auction_id");

@@ -1,12 +1,17 @@
-using System;
 using System.Collections;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
-	public class RewardedVideoExample : MonoBehaviour, IAdEvents {
+	/// <summary>
+	///     This demonstrates how to call for a rewarded ad by implementing the IAdEvents interface which the NimbusManager
+	///     auto subscribes to
+	/// </summary>
+	public class RewardedVideoExample : MonoBehaviour, IAdEventsExtended {
 		public GameObject cloud;
+
+		// keep a reference of the returned ad so that it can be safely cleaned up
 		private NimbusAdUnit _ad;
 		private bool _alreadyTriggered;
 
@@ -26,48 +31,57 @@ namespace Example.Scripts {
 		}
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, " +
+				$"RewardedVideoExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, " +
 				$"bid value: {nimbusAdUnit.ResponseMetaData.BidRaw}, " +
 				$"bid value in cents: {nimbusAdUnit.ResponseMetaData.BidInCents}, " +
 				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
 				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
 				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
 		}
-
-		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
-			Debug.unityLogger.Log($"NimbusEventListenerExample Err {nimbusAdUnit.ErrorMessage()}");
-		}
-
-		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
-			// TODO
-		}
-
+		
 		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
-			// TODO
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log(
+				$"RewardedVideoExample Ad impression was fired {nimbusAdUnit.InstanceID}, " +
+				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
+				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
+				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
 		}
 
 		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
-			// TODO
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log(
+				$"RewardedVideoExample Ad was clicked {nimbusAdUnit.InstanceID}, " +
+				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
+				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
+				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
 		}
 
 		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
-			// Todo
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log(
+				$"RewardedVideoExample Ad was destroyed/removed from the scene {nimbusAdUnit.InstanceID}, " +
+				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
+				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
+				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
 		}
-
-		public void OnVideoAdPaused(NimbusAdUnit nimbusAdUnit) {
-			// TODO
+		
+		public void OnAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			if (skipped) return;
+			Debug.unityLogger.Log(
+				$"RewardedVideoExample Ad was completed and the use can be rewarded {nimbusAdUnit.InstanceID}, " +
+				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
+				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
+				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
+			UnityThread.ExecuteInUpdate(RewardUser);
 		}
-
-		public void OnVideoAdResume(NimbusAdUnit nimbusAdUnit) {
-			// TODO
-		}
-
-		public void OnVideoAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
-			if (!skipped) {
-			    Debug.unityLogger.Log("Rewarding the player for watching the whole video!");
-			    UnityThread.ExecuteInUpdate(RewardUser);
-			}
+		
+		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log($"RewardedVideoExample Err {nimbusAdUnit.ErrorMessage()}");
 		}
 
 		private IEnumerator MakeItRain() {

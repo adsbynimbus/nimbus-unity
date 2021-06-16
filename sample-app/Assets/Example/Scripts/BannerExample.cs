@@ -4,6 +4,9 @@ using Unity.Mathematics;
 using UnityEngine;
 
 namespace Example.Scripts {
+	/// <summary>
+	///     This demonstrates how to call for banner ad within a game context
+	/// </summary>
 	public class BannerExample : MonoBehaviour {
 		public GameObject fire;
 		public float fadeSpeed = .01f;

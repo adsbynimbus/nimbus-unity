@@ -4,6 +4,7 @@ using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class Android : NimbusAPI {
 		private const string NimbusPackage = "com.adsbynimbus.Nimbus";
@@ -31,7 +32,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
-			var closeButtonDelayMillis = nimbusAdUnit.CloseButtonDelayMillis;
+			var closeButtonDelayInSeconds = nimbusAdUnit.CloseButtonDelayInSeconds;
 			string functionCall;
 			switch (nimbusAdUnit.AdType) {
 				case AdUnityType.Banner:
@@ -48,7 +49,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			}
 
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position,
-				nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayMillis,
+				nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelayInSeconds,
 				listener);
 			return nimbusAdUnit;
 		}
