@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using UnityEngine;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 	[CreateAssetMenu(fileName = "Nimbus SDK Configuration", menuName = "Nimbus/Create SDK Configuration", order = 0)]
 	public class NimbusSDKConfiguration : ScriptableObject {
@@ -10,12 +10,10 @@ namespace Nimbus.Runtime.Scripts.ScriptableObjects {
 
 		[Tooltip("A UUID used to authenticate your requests to Nimbus")]
 		public string apiKey;
-		
-		[Header("SDK Flags")]
-		public bool enableSDKInTestMode;
 
-		[Header("Enable Unity Logs")] 
-		public bool enableUnityLogs;
+		[Header("SDK Flags")] public bool enableSDKInTestMode;
+
+		[Header("Enable Unity Logs")] public bool enableUnityLogs;
 
 		private void OnValidate() {
 			if (publisherKey.Trim().Length == 0) throw new Exception("Publisher key cannot be empty");

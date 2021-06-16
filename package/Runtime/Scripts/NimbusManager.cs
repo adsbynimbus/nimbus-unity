@@ -6,6 +6,7 @@ using Nimbus.Runtime.Scripts.Internal;
 using Nimbus.Runtime.Scripts.ScriptableObjects;
 using UnityEngine;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {

@@ -1,5 +1,6 @@
 using System;
 
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class AdEvents {
 		public event Action<NimbusAdUnit> OnAdRendered;
@@ -18,7 +19,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal void EmitOnAdRendered(NimbusAdUnit obj) {
 			OnAdRendered?.Invoke(obj);
 		}
-		
+
 		internal void EmitOnOnAdImpression(NimbusAdUnit obj) {
 			OnAdImpression?.Invoke(obj);
 		}
@@ -48,15 +49,18 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	// ReSharper disable InconsistentNaming
 	public enum AdEventTypes {
 		NOT_LOADED,
+
 		// LOADED,
 		IMPRESSION,
 		CLICKED,
 		PAUSED,
 		RESUME,
+
 		// FIRST_QUARTILE,
 		// MIDPOINT,
 		// THIRD_QUARTILE,
 		COMPLETED,
+
 		// SKIPPED,
 		// VOLUME_CHANGED
 		DESTROYED

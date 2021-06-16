@@ -4,6 +4,7 @@ using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
+// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class Android : NimbusAPI {
 		private const string NimbusPackage = "com.adsbynimbus.Nimbus";

@@ -1,3 +1,5 @@
+// ReSharper disable CheckNamespace
+
 namespace Nimbus.Runtime.Scripts.Internal {
 	/// <summary>
 	///     Specifies the type of ad that is being constructed

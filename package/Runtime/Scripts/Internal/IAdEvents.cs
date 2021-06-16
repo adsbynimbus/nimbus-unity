@@ -1,3 +1,5 @@
+// ReSharper disable CheckNamespace
+
 namespace Nimbus.Runtime.Scripts.Internal {
 	public interface IAdEvents {
 		void OnAdWasRendered(NimbusAdUnit nimbusAdUnit);
