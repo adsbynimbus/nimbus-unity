@@ -14,7 +14,7 @@ import NimbusKit
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
-    private let kCallbackTarget = "NimbusIOSAdManager"
+    private let adUnitInstanceId: Int
     
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
@@ -24,9 +24,9 @@ import NimbusKit
     // MARK: - Class Functions
     
     @objc public class func initializeNimbusSDK(publisher: String,
-                                          apiKey: String,
-                                          enableSDKInTestMode: Bool,
-                                          enableUnityLogs: Bool) {
+                                                apiKey: String,
+                                                enableSDKInTestMode: Bool,
+                                                enableUnityLogs: Bool) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
@@ -52,16 +52,18 @@ import NimbusKit
         user.configureGdprConsent(didConsent: true, consentString: consent)
         NimbusRequestManager.user = user
     }
-        
+    
     // MARK: - Private Functions
     
     private init(adUnitInstanceId: Int) {
         self.adUnitInstanceId = adUnitInstanceId
     }
     
-    @objc public func unityViewController() -> UIViewController? {
+    private func unityViewController() -> UIViewController? {
         return UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
     }
+    
+    // MARK: - Public Functions
     
     @objc public func showBannerAd(position: String, bannerFloor: Float) {
         guard let viewController = unityViewController() else { return }
@@ -130,17 +132,36 @@ import NimbusKit
 extension NimbusManager: NimbusAdManagerDelegate {
     
     public func didCompleteNimbusRequest(request: NimbusRequest, ad: NimbusAd) {
-        // do nothing
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "auctionId": ad.auctionId,
+            "bidRaw": ad.bidRaw,
+            "bidInCents": ad.bidInCents,
+            "network": ad.network,
+            "placementId": ad.placementId ?? ""
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
     }
     
     public func didFailNimbusRequest(request: NimbusRequest, error: NimbusError) {
-        UnitySendMessage(kCallbackTarget, "OnError", error.localizedDescription);
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "errorMessage": error.localizedDescription
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnError", params: params)
     }
     
     public func didRenderAd(request: NimbusRequest, ad: NimbusAd, controller: AdController) {
         self.adController = controller
         self.adController?.delegate = self
-        UnitySendMessage(kCallbackTarget, "OnAdRendered", "");
+        
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
     }
     
 }
@@ -178,12 +199,22 @@ extension NimbusManager: AdControllerDelegate {
             print("Ad Event not sent: \(event)")
             return
         }
-        UnitySendMessage(kCallbackTarget, method, eventName);
+
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "eventName": eventName
+        ]
+        UnityBinding.sendMessage(methodName: method, params: params)
     }
     
     /// Received an error for the ad
     public func didReceiveNimbusError(controller: AdController, error: NimbusError) {
-        UnitySendMessage(kCallbackTarget, "OnError", error.localizedDescription);
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "errorMessage": error.localizedDescription
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnError", params: params)
         destroyExistingAd()
     }
 }

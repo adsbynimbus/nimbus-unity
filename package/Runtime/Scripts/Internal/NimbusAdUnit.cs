@@ -200,13 +200,21 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		/// </summary>
 		public readonly string PlacementID;
 
-		// TODO pull in response data from IOS
 		internal MetaData(in AndroidJavaObject response) {
 			AuctionID = response.Get<string>("auction_id");
 			BidRaw = response.Get<double>("bid_raw");
 			BidInCents = response.Get<int>("bid_in_cents");
 			Network = response.Get<string>("network");
 			PlacementID = response.Get<string>("placement_id");
+		}
+
+		internal MetaData(in NimbusIOSAdResponse response)
+		{
+			AuctionID = response.auctionId;
+			BidRaw = response.bidRaw;
+			BidInCents = response.bidInCents;
+			Network = response.network;
+			PlacementID = response.placementId;	
 		}
 	}
 }
