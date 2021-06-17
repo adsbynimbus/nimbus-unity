@@ -124,6 +124,11 @@ import NimbusKit
         adController?.destroy()
         adView?.removeFromSuperview()
         adView = nil
+        removeReferenceFromManagerDictionary()
+    }
+    
+    private func removeReferenceFromManagerDictionary() {
+        NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
     }
     
 }
@@ -152,6 +157,7 @@ extension NimbusManager: NimbusAdManagerDelegate {
         ]
         
         UnityBinding.sendMessage(methodName: "OnError", params: params)
+        destroyExistingAd()
     }
     
     public func didRenderAd(request: NimbusRequest, ad: NimbusAd, controller: AdController) {
@@ -188,6 +194,7 @@ extension NimbusManager: AdControllerDelegate {
             eventName = "COMPLETED"
         case .destroyed:
             eventName = "DESTROYED"
+            removeReferenceFromManagerDictionary()
         @unknown default:
             print("Ad Event not sent: \(event)")
             return
