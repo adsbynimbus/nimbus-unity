@@ -3,7 +3,7 @@ using UnityEngine;
 
 // ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
-	public delegate void DestroyAdDelegate(int adUnityInstanceId);
+	internal delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public sealed class NimbusAdUnit {
 		private readonly AdEvents _adEvents;
