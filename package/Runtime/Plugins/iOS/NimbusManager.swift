@@ -95,6 +95,7 @@ import NimbusKit
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
         
+        
         (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
         nimbusAdManager = NimbusAdManager()
@@ -173,10 +174,8 @@ extension NimbusManager: AdControllerDelegate {
     public func didReceiveNimbusEvent(controller: AdController, event: NimbusEvent) {
         var method = "OnAdEvent", eventName = ""
         switch event {
-        case .loaded:
-            eventName = "LOADED"
-        case .loadedCompanionAd(width: _, height: _):
-            return // Unity doesn't handle this event
+        case .loaded, .loadedCompanionAd(width: _, height: _), .firstQuartile, .midpoint, .thirdQuartile:
+            return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"
         case .clicked:
@@ -185,12 +184,6 @@ extension NimbusManager: AdControllerDelegate {
             eventName = "PAUSED"
         case .resumed:
             eventName = "RESUME"
-        case .firstQuartile:
-            eventName = "FIRST_QUARTILE"
-        case .midpoint:
-            eventName = "MIDPOINT"
-        case .thirdQuartile:
-            eventName = "THIRD_QUARTILE"
         case .completed:
             eventName = "COMPLETED"
         case .destroyed:
