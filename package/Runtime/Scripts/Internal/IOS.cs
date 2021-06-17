@@ -6,8 +6,9 @@ using UnityEngine;
 // ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class IOS : NimbusAPI {
-		private static void OnDestroyIOSAd() {
-			_destroyAd();
+		private static void OnDestroyIOSAd(int adUnitInstanceId)
+		{
+			_destroyAd(adUnitInstanceId);
 		}
 
 		#region Declare external C interface
@@ -19,20 +20,20 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			bool enableUnityLogs);
 
 		[DllImport("__Internal")]
-		private static extern void _showBannerAd(string position, float bannerFloor);
+		private static extern void _showBannerAd(int adUnitInstanceId, string position, float bannerFloor);
 
 		[DllImport("__Internal")]
-		private static extern void _showInterstitialAd(string position, float bannerFloor, float videoFloor,
+		private static extern void _showInterstitialAd(int adUnitInstanceId, string position, float bannerFloor, float videoFloor,
 			double closeButtonDelay);
 
 		[DllImport("__Internal")]
-		private static extern void _showRewardedVideoAd(string position, float videoFloor, double closeButtonDelay);
+		private static extern void _showRewardedVideoAd(int adUnitInstanceId, string position, float videoFloor, double closeButtonDelay);
 
 		[DllImport("__Internal")]
 		private static extern void _setGDPRConsentString(string consent);
 
 		[DllImport("__Internal")]
-		private static extern void _destroyAd();
+		private static extern void _destroyAd(int adUnitInstanceId);
 
 		#endregion
 
@@ -53,22 +54,21 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 
 		internal override NimbusAdUnit LoadAndShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
-			_iOSAdManager.SetAdUnit(nimbusAdUnit);
+			_iOSAdManager.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
-
-			// iOS uses seconds
+			
 			var closeButtonDelaySeconds = nimbusAdUnit.CloseButtonDelayInSeconds;
 			switch (nimbusAdUnit.AdType) {
 				case AdUnityType.Banner:
-					_showBannerAd(nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor);
+					_showBannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor);
 					break;
 				case AdUnityType.Interstitial:
 					closeButtonDelaySeconds = 5;
-					_showInterstitialAd(nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor,
+					_showInterstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.BannerFloor,
 						nimbusAdUnit.BidFloors.VideoFloor, closeButtonDelaySeconds);
 					break;
 				case AdUnityType.Rewarded:
-					_showRewardedVideoAd(nimbusAdUnit.Position, nimbusAdUnit.BidFloors.VideoFloor,
+					_showRewardedVideoAd(nimbusAdUnit.InstanceID, nimbusAdUnit.Position, nimbusAdUnit.BidFloors.VideoFloor,
 						closeButtonDelaySeconds);
 					break;
 				default:
@@ -77,7 +77,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 			return nimbusAdUnit;
 		}
-
 
 		internal override void SetGDPRConsentString(string consent) {
 			_setGDPRConsentString(consent);

@@ -12,7 +12,7 @@ import NimbusKit
 
 @objc public class NimbusManager: NSObject {
     
-    @objc public static let shared = NimbusManager()
+    private static var managerDictionary: [Int: NimbusManager] = [:]
     
     private let kCallbackTarget = "NimbusIOSAdManager"
     
@@ -21,7 +21,9 @@ import NimbusKit
     
     private var adView: AdView?
     
-    @objc public func initializeNimbusSDK(publisher: String,
+    // MARK: - Class Functions
+    
+    @objc public class func initializeNimbusSDK(publisher: String,
                                           apiKey: String,
                                           enableSDKInTestMode: Bool,
                                           enableUnityLogs: Bool) {
@@ -34,8 +36,27 @@ import NimbusKit
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): NimbusVideoAdRenderer()
         ]
+    }
+    
+    @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
+        guard let manager = managerDictionary[adUnityInstanceId] else {
+            let manager = NimbusManager(adUnitInstanceId: adUnityInstanceId)
+            managerDictionary[adUnityInstanceId] = manager
+            return manager
+        }
+        return manager
+    }
+    
+    @objc public class func setGDPRConsentString(consent: String) {
+        var user = NimbusRequestManager.user ?? NimbusUser()
+        user.configureGdprConsent(didConsent: true, consentString: consent)
+        NimbusRequestManager.user = user
+    }
         
-        NimbusAdManager.user = NimbusUser(age: 20, gender: .male)
+    // MARK: - Private Functions
+    
+    private init(adUnitInstanceId: Int) {
+        self.adUnitInstanceId = adUnitInstanceId
     }
     
     @objc public func unityViewController() -> UIViewController? {
@@ -94,12 +115,6 @@ import NimbusKit
         nimbusAdManager?.showRewardedAd(request: request,
                                         closeButtonDelay: closeButtonDelay,
                                         adPresentingViewController: viewController)
-    }
-    
-    @objc public func setGDPRConsentString(consent: String) {
-        var user = NimbusRequestManager.user ?? NimbusUser()
-        user.configureGdprConsent(didConsent: true, consentString: consent)
-        NimbusRequestManager.user = user
     }
     
     @objc public func destroyExistingAd() {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 // ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
-	public delegate void DestroyAdDelegate();
+	public delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public sealed class NimbusAdUnit {
 		private readonly AdEvents _adEvents;
@@ -52,7 +52,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_androidController = null;
 			_androidHelper = null;
 # elif UNITY_IOS
-			OnDestroyIOSAd();
+			DestroyIOSAd();
 #endif
 		}
 
@@ -138,8 +138,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal event DestroyAdDelegate OnDestroyIOSAd;
 
-		private void OnOnDestroyIOSAd() {
-			OnDestroyIOSAd?.Invoke();
+		private void DestroyIOSAd() {
+			OnDestroyIOSAd?.Invoke(InstanceID);
 		}
 
 		#endregion
