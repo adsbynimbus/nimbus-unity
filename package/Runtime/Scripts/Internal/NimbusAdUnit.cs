@@ -52,7 +52,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_androidController = null;
 			_androidHelper = null;
 # elif UNITY_IOS
-			DestroyIOSAd();
+			OnDestroyIOSAd?.Invoke(InstanceID);
 #endif
 		}
 
@@ -137,10 +137,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		# region IOS specific
 
 		internal event DestroyAdDelegate OnDestroyIOSAd;
-
-		private void DestroyIOSAd() {
-			OnDestroyIOSAd?.Invoke(InstanceID);
-		}
 
 		#endregion
 
