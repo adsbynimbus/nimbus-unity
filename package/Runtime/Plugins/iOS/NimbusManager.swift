@@ -12,19 +12,21 @@ import NimbusKit
 
 @objc public class NimbusManager: NSObject {
     
-    @objc public static let shared = NimbusManager()
+    private static var managerDictionary: [Int: NimbusManager] = [:]
     
-    private let kCallbackTarget = "NimbusIOSAdManager"
+    private let adUnitInstanceId: Int
     
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
     
     private var adView: AdView?
     
-    @objc public func initializeNimbusSDK(publisher: String,
-                                          apiKey: String,
-                                          enableSDKInTestMode: Bool,
-                                          enableUnityLogs: Bool) {
+    // MARK: - Class Functions
+    
+    @objc public class func initializeNimbusSDK(publisher: String,
+                                                apiKey: String,
+                                                enableSDKInTestMode: Bool,
+                                                enableUnityLogs: Bool) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
@@ -34,13 +36,34 @@ import NimbusKit
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): NimbusVideoAdRenderer()
         ]
-        
-        NimbusAdManager.user = NimbusUser(age: 20, gender: .male)
     }
     
-    @objc public func unityViewController() -> UIViewController? {
+    @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
+        guard let manager = managerDictionary[adUnityInstanceId] else {
+            let manager = NimbusManager(adUnitInstanceId: adUnityInstanceId)
+            managerDictionary[adUnityInstanceId] = manager
+            return manager
+        }
+        return manager
+    }
+    
+    @objc public class func setGDPRConsentString(consent: String) {
+        var user = NimbusRequestManager.user ?? NimbusUser()
+        user.configureGdprConsent(didConsent: true, consentString: consent)
+        NimbusRequestManager.user = user
+    }
+    
+    // MARK: - Private Functions
+    
+    private init(adUnitInstanceId: Int) {
+        self.adUnitInstanceId = adUnitInstanceId
+    }
+    
+    private func unityViewController() -> UIViewController? {
         return UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
     }
+    
+    // MARK: - Public Functions
     
     @objc public func showBannerAd(position: String, bannerFloor: Float) {
         guard let viewController = unityViewController() else { return }
@@ -72,11 +95,12 @@ import NimbusKit
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
         
+        
         (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedAd(request: request,
+        nimbusAdManager?.showBlockingAd(request: request,
                                         closeButtonDelay: closeButtonDelay,
                                         adPresentingViewController: viewController)
     }
@@ -96,16 +120,15 @@ import NimbusKit
                                         adPresentingViewController: viewController)
     }
     
-    @objc public func setGDPRConsentString(consent: String) {
-        var user = NimbusRequestManager.user ?? NimbusUser()
-        user.configureGdprConsent(didConsent: true, consentString: consent)
-        NimbusRequestManager.user = user
-    }
-    
     @objc public func destroyExistingAd() {
         adController?.destroy()
         adView?.removeFromSuperview()
         adView = nil
+        removeReferenceFromManagerDictionary()
+    }
+    
+    private func removeReferenceFromManagerDictionary() {
+        NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
     }
     
 }
@@ -115,17 +138,37 @@ import NimbusKit
 extension NimbusManager: NimbusAdManagerDelegate {
     
     public func didCompleteNimbusRequest(request: NimbusRequest, ad: NimbusAd) {
-        // do nothing
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "auctionId": ad.auctionId,
+            "bidRaw": ad.bidRaw,
+            "bidInCents": ad.bidInCents,
+            "network": ad.network,
+            "placementId": ad.placementId ?? ""
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
     }
     
     public func didFailNimbusRequest(request: NimbusRequest, error: NimbusError) {
-        UnitySendMessage(kCallbackTarget, "OnError", error.localizedDescription);
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "errorMessage": error.localizedDescription
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnError", params: params)
+        destroyExistingAd()
     }
     
     public func didRenderAd(request: NimbusRequest, ad: NimbusAd, controller: AdController) {
         self.adController = controller
         self.adController?.delegate = self
-        UnitySendMessage(kCallbackTarget, "OnAdRendered", "");
+        
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
     }
     
 }
@@ -137,10 +180,8 @@ extension NimbusManager: AdControllerDelegate {
     public func didReceiveNimbusEvent(controller: AdController, event: NimbusEvent) {
         var method = "OnAdEvent", eventName = ""
         switch event {
-        case .loaded:
-            eventName = "LOADED"
-        case .loadedCompanionAd(width: _, height: _):
-            return // Unity doesn't handle this event
+        case .loaded, .loadedCompanionAd(width: _, height: _), .firstQuartile, .midpoint, .thirdQuartile:
+            return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"
         case .clicked:
@@ -149,26 +190,31 @@ extension NimbusManager: AdControllerDelegate {
             eventName = "PAUSED"
         case .resumed:
             eventName = "RESUME"
-        case .firstQuartile:
-            eventName = "FIRST_QUARTILE"
-        case .midpoint:
-            eventName = "MIDPOINT"
-        case .thirdQuartile:
-            eventName = "THIRD_QUARTILE"
         case .completed:
             eventName = "COMPLETED"
         case .destroyed:
             eventName = "DESTROYED"
+            removeReferenceFromManagerDictionary()
         @unknown default:
             print("Ad Event not sent: \(event)")
             return
         }
-        UnitySendMessage(kCallbackTarget, method, eventName);
+
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "eventName": eventName
+        ]
+        UnityBinding.sendMessage(methodName: method, params: params)
     }
     
     /// Received an error for the ad
     public func didReceiveNimbusError(controller: AdController, error: NimbusError) {
-        UnitySendMessage(kCallbackTarget, "OnError", error.localizedDescription);
+        let params: [String: Any] = [
+            "adUnitInstanceID": adUnitInstanceId,
+            "errorMessage": error.localizedDescription
+        ]
+        
+        UnityBinding.sendMessage(methodName: "OnError", params: params)
         destroyExistingAd()
     }
 }

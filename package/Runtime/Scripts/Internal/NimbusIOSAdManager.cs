@@ -1,11 +1,14 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 // ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	internal class NimbusIOSAdManager : MonoBehaviour {
+		
 		private static NimbusIOSAdManager _instance;
-		private NimbusAdUnit _adUnit;
+		
+		private readonly Dictionary<int, NimbusAdUnit> _adUnitDictionary = new Dictionary<int, NimbusAdUnit>();
 
 		internal static NimbusIOSAdManager Instance {
 			get {
@@ -24,35 +27,75 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 			DontDestroyOnLoad(gameObject);
 		}
+		
+		internal void AddAdUnit(NimbusAdUnit adUnit)
+		{
+			_adUnitDictionary.Add(adUnit.InstanceID, adUnit);
+		}
 
-		internal void SetAdUnit(NimbusAdUnit adUnit) {
-			_adUnit = adUnit;
+		private NimbusAdUnit AdUnitForInstanceID(int instanceID)
+		{
+			_adUnitDictionary.TryGetValue(instanceID, out var adUnit);
+			return adUnit;
 		}
 
 		#region iOS Event Callbacks
 
-		// TODO missing response data, i need to the Nimbus response object back
-		// private void onAdResponse(....) {
-		//     
-		// }
-
-		internal void OnAdRendered(string param) {
-			Debug.unityLogger.Log("OnAdRendered");
-			_adUnit.AdWasRendered = true;
-			_adUnit.EmitOnAdRendered(_adUnit);
+		private void OnAdResponse(string jsonParams) {
+			var data = NimbusIOSParser.ParseMessage<NimbusIOSAdResponse>(jsonParams);
+			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
+			
+			if (adUnit == null)
+			{
+				Debug.unityLogger.LogError("NimbusError", "AdUnit not found: " + data.adUnitInstanceID);
+				return;
+			}
+			
+			adUnit.ResponseMetaData = new MetaData(data);
 		}
 
-		internal void OnError(string param) {
-			// TODO pass through error message like Android
-			// e.g 	var errMessage = adError.Call<string>("getMessage");
-			Debug.unityLogger.Log("OnError: " + param);
-			_adUnit.EmitOnAdError(_adUnit);
+		internal void OnAdRendered(string jsonParams)
+		{
+			var data = NimbusIOSParser.ParseMessage<NimbusIOSParams>(jsonParams);
+			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
+
+			if (adUnit == null)
+			{
+				Debug.unityLogger.LogError("NimbusError", "AdUnit not found: " + data.adUnitInstanceID);
+				return;
+			}
+            
+			adUnit.AdWasRendered = true;
+			adUnit.EmitOnAdRendered(adUnit);
 		}
 
-		internal void OnAdEvent(string param) {
-			Debug.unityLogger.Log("OnAdEvent: " + param);
-			var eventType = (AdEventTypes) Enum.Parse(typeof(AdEventTypes), param, true);
-			_adUnit.EmitOnAdEvent(eventType);
+		internal void OnError(string jsonParams) {
+			var data = NimbusIOSParser.ParseMessage<NimbusIOSErrorData>(jsonParams);
+			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
+            
+			if (adUnit == null)
+			{
+				Debug.unityLogger.LogError("NimbusError", "AdUnit not found: " + data.adUnitInstanceID);
+				return;
+			}
+            
+			Debug.unityLogger.LogError("NimbusError", "Listener Ad error: " + data.errorMessage);
+			adUnit.AdListenerError = new AdError(data.errorMessage);
+			adUnit.EmitOnAdError(adUnit);
+		}
+
+		internal void OnAdEvent(string jsonParams) {
+			var data = NimbusIOSParser.ParseMessage<NimbusIOSAdEventData>(jsonParams);
+			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
+            
+			if (adUnit == null)
+			{
+				Debug.unityLogger.LogError("NimbusError", "AdUnit not found: " + data.adUnitInstanceID);
+				return;
+			}
+            
+			var eventType = (AdEventTypes)Enum.Parse(typeof(AdEventTypes), data.eventName, true);
+			adUnit.EmitOnAdEvent(eventType);
 		}
 
 		#endregion

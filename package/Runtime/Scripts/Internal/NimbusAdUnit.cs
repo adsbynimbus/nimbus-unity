@@ -3,7 +3,7 @@ using UnityEngine;
 
 // ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
-	public delegate void DestroyAdDelegate();
+	internal delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public sealed class NimbusAdUnit {
 		private readonly AdEvents _adEvents;
@@ -52,7 +52,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_androidController = null;
 			_androidHelper = null;
 # elif UNITY_IOS
-			OnDestroyIOSAd();
+			OnDestroyIOSAd?.Invoke(InstanceID);
 #endif
 		}
 
@@ -138,10 +138,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal event DestroyAdDelegate OnDestroyIOSAd;
 
-		private void OnOnDestroyIOSAd() {
-			OnDestroyIOSAd?.Invoke();
-		}
-
 		#endregion
 
 		#region Android Specific
@@ -200,13 +196,21 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		/// </summary>
 		public readonly string PlacementID;
 
-		// TODO pull in response data from IOS
 		internal MetaData(in AndroidJavaObject response) {
 			AuctionID = response.Get<string>("auction_id");
 			BidRaw = response.Get<double>("bid_raw");
 			BidInCents = response.Get<int>("bid_in_cents");
 			Network = response.Get<string>("network");
 			PlacementID = response.Get<string>("placement_id");
+		}
+
+		internal MetaData(in NimbusIOSAdResponse response)
+		{
+			AuctionID = response.auctionId;
+			BidRaw = response.bidRaw;
+			BidInCents = response.bidInCents;
+			Network = response.network;
+			PlacementID = response.placementId;	
 		}
 	}
 }
