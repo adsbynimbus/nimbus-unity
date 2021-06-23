@@ -121,7 +121,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.0.1
+  bundleVersion: 0.0.2
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -166,6 +166,7 @@ PlayerSettings:
     tvOS: com.DefaultCompany.com.unity.template.mobile2D
   buildNumber:
     Standalone: 0
+    iOS: 1
     iPhone: 0
     tvOS: 0
   AndroidBundleVersionCode: 1
@@ -471,7 +472,8 @@ PlayerSettings:
       m_Height: 20
       m_Kind: 2
       m_SubKind: iPad
-    - m_Textures: []
+    - m_Textures:
+      - {fileID: 2800000, guid: b617d10ccc6944ef8bcfc9481c46d89c, type: 3}
       m_Width: 1024
       m_Height: 1024
       m_Kind: 4

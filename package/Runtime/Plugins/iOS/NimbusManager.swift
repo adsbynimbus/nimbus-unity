@@ -95,6 +95,17 @@ import NimbusKit
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
         
+        let adFormat = UIDevice.current.orientation.isLandscape ? NimbusAdFormat.interstitialLandscape : NimbusAdFormat.interstitialPortrait
+        let banner = NimbusBanner(
+            width: adFormat.width,
+            height: adFormat.height,
+            companionAdRenderMode: .endCard
+        )
+        
+        // Forces the request to show the end card
+        var impression = request.impressions[0]
+        impression.video?.companionAds = [banner]
+        request.impressions[0] = impression
         
         (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
         
