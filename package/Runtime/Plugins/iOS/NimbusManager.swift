@@ -100,7 +100,7 @@ import NimbusKit
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedAd(request: request,
+        nimbusAdManager?.showBlockingAd(request: request,
                                         closeButtonDelay: closeButtonDelay,
                                         adPresentingViewController: viewController)
     }
