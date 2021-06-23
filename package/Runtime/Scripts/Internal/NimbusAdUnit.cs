@@ -135,8 +135,9 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		}
 
 		# region IOS specific
-
+#pragma warning disable 67
 		internal event DestroyAdDelegate OnDestroyIOSAd;
+#pragma warning restore 67
 
 		#endregion
 
