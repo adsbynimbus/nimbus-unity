@@ -21,43 +21,43 @@ void _initializeSDKWithPublisher(const char* publisher,
                                  const char* apikey,
                                  bool enableSDKInTestMode,
                                  bool enableUnityLogs) {
-    NSString* publishString = GetStringParam(publisher);
-    NSString* apiKeyString = GetStringParam(apikey);
-    
-    [NimbusManager initializeNimbusSDKWithPublisher: publishString
-                                             apiKey: apiKeyString
+    [NimbusManager initializeNimbusSDKWithPublisher: GetStringParam(publisher)
+                                             apiKey: GetStringParam(apikey)
                                 enableSDKInTestMode: enableSDKInTestMode
                                     enableUnityLogs: enableUnityLogs];
 }
 
 void _showBannerAd(int adUnitInstanceId, const char* position, float bannerFloor) {
-    NSString* positionString = GetStringParam(position);
-    [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] showBannerAdWithPosition:positionString
-                                                                                     bannerFloor:bannerFloor];
+    [
+     [NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+     showBannerAdWithPosition:GetStringParam(position) bannerFloor:bannerFloor
+     ];
 }
 
 void _showInterstitialAd(int adUnitInstanceId, const char* position, float bannerFloor, float videoFloor, double closeButtonDelay) {
-    NSString* positionString = GetStringParam(position);
-    [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] showInterstitialAdWithPosition:positionString
-                                                                                           bannerFloor:bannerFloor
-                                                                                            videoFloor:videoFloor
-                                                                                      closeButtonDelay:closeButtonDelay];
+    [
+     [NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+     showInterstitialAdWithPosition:GetStringParam(position)
+     bannerFloor:bannerFloor
+     videoFloor:videoFloor
+     closeButtonDelay:closeButtonDelay
+     ];
 }
 
 void _showRewardedVideoAd(int adUnitInstanceId, const char* position, float videoFloor, double closeButtonDelay) {
-    NSString* positionString = GetStringParam(position);
-    [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] showRewardedVideoAdWithPosition:positionString
-                                                                                             videoFloor:videoFloor
-                                                                                       closeButtonDelay:closeButtonDelay];
+    [
+     [NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+     showRewardedVideoAdWithPosition:GetStringParam(position)
+     videoFloor:videoFloor
+     closeButtonDelay:closeButtonDelay
+     ];
 }
 
 void _setGDPRConsentString(const char* consent) {
-    NSString* consentString = GetStringParam(consent);
-    [NimbusManager setGDPRConsentStringWithConsent: consentString];
+    [NimbusManager setGDPRConsentStringWithConsent: GetStringParam(consent)];
 }
 
 void _destroyAd(int adUnitInstanceId) {
     [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
 }
-
 }
