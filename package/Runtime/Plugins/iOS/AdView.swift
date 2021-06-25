@@ -23,26 +23,22 @@ class AdView: UIView {
         parentView.addSubview(self)
         
         if #available(iOS 11.0, *) {
-            self.translatesAutoresizingMaskIntoConstraints = false
-            
-            var constraints = [self.widthAnchor.constraint(equalToConstant: self.frame.width),
-                               self.heightAnchor.constraint(equalToConstant: self.frame.height)]
-            
-            constraints.append(contentsOf: [self.bottomAnchor .constraint(equalTo: parentView.safeAreaLayoutGuide.bottomAnchor)])
-            constraints.append(contentsOf: [self.centerXAnchor .constraint(equalTo: parentView.safeAreaLayoutGuide.centerXAnchor)])
-            
-            NSLayoutConstraint.activate(constraints)
+            translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                widthAnchor.constraint(equalToConstant: frame.width),
+                heightAnchor.constraint(equalToConstant: frame.height),
+                bottomAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.bottomAnchor),
+                centerXAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.centerXAnchor)
+            ])
         } else {
-            var rect = self.frame
-            
-            let screenWidth = UIScreen.main.bounds.size.width
-            let screenHeight = UIScreen.main.bounds.size.height
-            
-            rect.origin.x = screenWidth / 2 - rect.size.width / 2
-            rect.origin.y = screenHeight - rect.size.height
-            self.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin]
-            self.frame = rect
+            let ogFrame = frame
+            autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin]
+            frame = CGRect(
+                x: UIScreen.main.bounds.size.width / 2 - ogFrame.size.width / 2,
+                y: UIScreen.main.bounds.size.height - ogFrame.size.height,
+                width: ogFrame.width,
+                height: ogFrame.height
+            )
         }
-    }
-    
+    }   
 }

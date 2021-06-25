@@ -15,23 +15,21 @@ import NimbusKit
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
     private let adUnitInstanceId: Int
-    
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
-    
     private var adView: AdView?
     
     // MARK: - Class Functions
     
-    @objc public class func initializeNimbusSDK(publisher: String,
-                                                apiKey: String,
-                                                enableSDKInTestMode: Bool,
-                                                enableUnityLogs: Bool) {
+    @objc public class func initializeNimbusSDK(
+        publisher: String,
+        apiKey: String,
+        enableSDKInTestMode: Bool,
+        enableUnityLogs: Bool
+    ) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
-        
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
         Nimbus.shared.testMode = enableSDKInTestMode
-        
         Nimbus.shared.renderers = [
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): NimbusVideoAdRenderer()
@@ -50,7 +48,7 @@ import NimbusKit
     @objc public class func setGDPRConsentString(consent: String) {
         var user = NimbusRequestManager.user ?? NimbusUser()
         user.configureGdprConsent(didConsent: true, consentString: consent)
-        NimbusRequestManager.user = user
+        NimbusAdManager.user = user
     }
     
     // MARK: - Private Functions
@@ -60,7 +58,7 @@ import NimbusKit
     }
     
     private func unityViewController() -> UIViewController? {
-        return UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
+        UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
     }
     
     // MARK: - Public Functions
@@ -70,22 +68,24 @@ import NimbusKit
         
         let adFormat = NimbusAdFormat.banner320x50
         let adPosition = NimbusPosition.footer
-        
-        let request = NimbusRequest.forBannerAd(position: position,
-                                                format: adFormat,
-                                                adPosition: adPosition)
+        let request = NimbusRequest.forBannerAd(
+            position: position,
+            format: adFormat,
+            adPosition: adPosition
+        )
         request.impressions[0].bidFloor = bannerFloor
         
         let view = AdView(bannerFormat: adFormat)
-        self.adView = view
-        
+        adView = view
         view.attachToView(parentView: viewController.view, position: adPosition)
         
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showAd(request: request,
-                                container: view,
-                                adPresentingViewController: viewController)
+        nimbusAdManager?.showAd(
+            request: request,
+            container: view,
+            adPresentingViewController: viewController
+        )
     }
     
     @objc public func showInterstitialAd(position: String, bannerFloor: Float, videoFloor: Float, closeButtonDelay: Double) {
@@ -95,7 +95,8 @@ import NimbusKit
         request.impressions[0].banner?.bidFloor = bannerFloor
         request.impressions[0].video?.bidFloor = videoFloor
         
-        let adFormat = UIDevice.current.orientation.isLandscape ? NimbusAdFormat.interstitialLandscape : NimbusAdFormat.interstitialPortrait
+        let adFormat = UIDevice.current.orientation.isLandscape ? 
+            NimbusAdFormat.interstitialLandscape : NimbusAdFormat.interstitialPortrait
         let banner = NimbusBanner(
             width: adFormat.width,
             height: adFormat.height,
@@ -106,14 +107,14 @@ import NimbusKit
         var impression = request.impressions[0]
         impression.video?.companionAds = [banner]
         request.impressions[0] = impression
-        
-        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
-        
+                
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showBlockingAd(request: request,
-                                        closeButtonDelay: closeButtonDelay,
-                                        adPresentingViewController: viewController)
+        nimbusAdManager?.showBlockingAd(
+            request: request,
+            closeButtonDelay: closeButtonDelay,
+            adPresentingViewController: viewController
+        )
     }
     
     @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
@@ -121,14 +122,14 @@ import NimbusKit
         
         let request = NimbusRequest.forVideoAd(position: position)
         request.impressions[0].video?.bidFloor = videoFloor
-        
-        (Nimbus.shared.renderers[.forAuctionType(.video)] as? NimbusVideoAdRenderer)?.showMuteButton = false // false by default
-        
+                
         nimbusAdManager = NimbusAdManager()
         nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedAd(request: request,
-                                        closeButtonDelay: closeButtonDelay,
-                                        adPresentingViewController: viewController)
+        nimbusAdManager?.showRewardedAd(
+            request: request,
+            closeButtonDelay: closeButtonDelay,
+            adPresentingViewController: viewController
+        )
     }
     
     @objc public func destroyExistingAd() {
@@ -157,7 +158,6 @@ extension NimbusManager: NimbusAdManagerDelegate {
             "network": ad.network,
             "placementId": ad.placementId ?? ""
         ]
-        
         UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
     }
     
@@ -166,7 +166,6 @@ extension NimbusManager: NimbusAdManagerDelegate {
             "adUnitInstanceID": adUnitInstanceId,
             "errorMessage": error.localizedDescription
         ]
-        
         UnityBinding.sendMessage(methodName: "OnError", params: params)
         destroyExistingAd()
     }
@@ -175,10 +174,7 @@ extension NimbusManager: NimbusAdManagerDelegate {
         self.adController = controller
         self.adController?.delegate = self
         
-        let params: [String: Any] = [
-            "adUnitInstanceID": adUnitInstanceId
-        ]
-        
+        let params: [String: Any] = ["adUnitInstanceID": adUnitInstanceId]
         UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
     }
     
@@ -189,9 +185,9 @@ extension NimbusManager: NimbusAdManagerDelegate {
 extension NimbusManager: AdControllerDelegate {
     
     public func didReceiveNimbusEvent(controller: AdController, event: NimbusEvent) {
-        var method = "OnAdEvent", eventName = ""
+        let eventName: String
         switch event {
-        case .loaded, .loadedCompanionAd(width: _, height: _), .firstQuartile, .midpoint, .thirdQuartile:
+        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile:
             return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"
@@ -210,12 +206,12 @@ extension NimbusManager: AdControllerDelegate {
             print("Ad Event not sent: \(event)")
             return
         }
-
+        
         let params: [String: Any] = [
             "adUnitInstanceID": adUnitInstanceId,
             "eventName": eventName
         ]
-        UnityBinding.sendMessage(methodName: method, params: params)
+        UnityBinding.sendMessage(methodName: "OnAdEvent", params: params)
     }
     
     /// Received an error for the ad
@@ -224,7 +220,6 @@ extension NimbusManager: AdControllerDelegate {
             "adUnitInstanceID": adUnitInstanceId,
             "errorMessage": error.localizedDescription
         ]
-        
         UnityBinding.sendMessage(methodName: "OnError", params: params)
         destroyExistingAd()
     }
