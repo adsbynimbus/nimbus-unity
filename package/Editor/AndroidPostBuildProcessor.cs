@@ -14,37 +14,43 @@ allprojects {
 			credentials {
 				username = ""*""
 			}
+			content {
+                includeGroup(""com.adsbynimbus.android"")
+                includeGroup(""com.adsbynimbus.openrtb"")
+                includeGroup(""com.iab.omid.library.adsbynimbus"")
+            }
 		}
 	}
 }";
 		private static string dependencies = @"dependencies {
-	implementation ""com.adsbynimbus.android:nimbus:1.10.3""
-	implementation ""com.adsbynimbus.android:extension-okhttp:1.10.3""
-	implementation ""org.jetbrains.kotlin:kotlin-reflect:1.3.61""
+	implementation ""com.adsbynimbus.android:nimbus:1.11.4""
+	implementation ""com.adsbynimbus.android:extension-okhttp:1.11.4""
 }";
 
 		private static string keepRules = @"
 -keep class com.nimbus.demo.UnityHelper { *; }
 -keep class com.adsbynimbus.** { *; }";
 
+		private static string packagingOptions = @"
+android {
+	packagingOptions {
+    	pickFirst ""META-INF/annotation-experimental_release.kotlin_module""
+		pickFirst ""META-INF/kotlin-stdlib.kotlin_module""
+	}
+}";
+
 		public int callbackOrder {
 			get { return 999; }
 		}
 
-		public void OnPostGenerateGradleAndroidProject(string path) {
-			StreamWriter buildWriter = File.AppendText(path + "/build.gradle");			
-			#if UNITY_2020_1_OR_NEWER
+		public void OnPostGenerateGradleAndroidProject(string path) {		
 			writeGradleProps(path + "/../gradle.properties");
 			StreamWriter repoWriter = File.AppendText(path + "/../build.gradle");
 			repoWriter.WriteLine(repoString);
 			repoWriter.Flush();
 			repoWriter.Close();
-			#else
-			writeGradleProps(path + "/gradle.properties");
-			buildWriter.WriteLine(repoString);
-			buildWriter.Flush();
-			#endif
 
+			StreamWriter buildWriter = File.AppendText(path + "/build.gradle");	
 			buildWriter.WriteLine(dependencies);
 			buildWriter.Flush();
 			buildWriter.Close();
@@ -52,14 +58,19 @@ allprojects {
 			StreamWriter proguardWriter = File.AppendText(path + "/proguard-unity.txt");
 			proguardWriter.WriteLine(keepRules);
 			proguardWriter.Flush();
-			proguardWriter.Close();		
+			proguardWriter.Close();
+
+			StreamWriter packagingWriter = File.AppendText(path + "/../launcher/build.gradle");
+			packagingWriter.WriteLine(packagingOptions);
+			packagingWriter.Flush();
+			packagingWriter.Close();	
 		}
 
 		private void writeGradleProps(string gradleFile) {
 			StreamWriter propWriter = File.AppendText(gradleFile);
 			propWriter.WriteLine(@"
 android.useAndroidX=true
-android.enableJetifier=true");
+");
 			propWriter.Flush();
 			propWriter.Close();
 		}
