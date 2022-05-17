@@ -78,6 +78,14 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return nimbusAdUnit;
 		}
 
+		internal override NimbusAdUnit LoadAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			return nimbusAdUnit;
+		}
+
+		internal override NimbusAdUnit ShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			return nimbusAdUnit;
+		}
+
 		internal override void SetGDPRConsentString(string consent) {
 			_setGDPRConsentString(consent);
 		}

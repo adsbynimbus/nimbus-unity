@@ -34,13 +34,36 @@ public final class UnityHelper {
         BlockingAdRenderer.setStaticDismissTimeout(10000);
     }
 
-    public static void makeBannerRequest(Object obj, String position, float bannerFloor, float videoFloor,
-            int closeButtonDelaySeconds, Object listener) {
+    public static void makeBannerRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusRequest request =
                     NimbusRequest.forBannerAd(position, Format.BANNER_320_50, Position.FOOTER);
             request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
+            activity.runOnUiThread(() -> manager.makeRequest(activity, request, (NimbusAdManager.Listener) listener));
+        }
+    }
+
+    public static void makeInterstitialRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
+        if (obj instanceof Activity) {
+            final Activity activity = (Activity) obj;
+            final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
+            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
+            request.request.imp[0].video.bidfloor = (Float) videoFloor;
+            request.setCompanionAds(
+                new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
+                        Configuration.ORIENTATION_LANDSCAPE ?
+                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)});
+            activity.runOnUiThread(() -> manager.makeRequest(activity, request, (NimbusAdManager.Listener) listener));
+        }
+    }
+
+    public static void makeRewardedVideoRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
+        if (obj instanceof Activity) {
+            final Activity activity = (Activity) obj;
+            final NimbusRequest request = NimbusRequest.forRewardedVideo(position, 
+                activity.getResources().getConfiguration().orientation);
+            request.request.imp[0].video.bidfloor = (Float) videoFloor;
             activity.runOnUiThread(() -> manager.makeRequest(activity, request, (NimbusAdManager.Listener) listener));
         }
     }
@@ -62,7 +85,7 @@ public final class UnityHelper {
         }
     }
 
-    public static AdController renderBlocking(Object obj, String type, String auctionId, String markup, String network, String placementId,
+    public static void renderBlocking(Object obj, String type, String auctionId, String markup, String network, String placementId,
         int width, int height, byte isInterstitial, byte isMraid, String position, String[] impressionTrackers, String[] clickTrackers,
         int duration, int companionWidth, int companionHeight, Object listener) {
         if (obj instanceof Activity) {
@@ -75,9 +98,14 @@ public final class UnityHelper {
             if (companionWidth != 0 && companionHeight != 0) {
                 response.companionAds = new CompanionAd[]{ CompanionAd.end(companionWidth, companionHeight) };
             }
-            return Renderer.loadBlockingAd(response, activity);
+            final AdController controller = Renderer.loadBlockingAd(response, activity);
+            final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
+            if (controller != null) {
+                callback.onAdRendered(controller);
+             } else {
+                callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
+             }
         }
-        return null;
     }
 
     public static void setUser(String gdprConsent) {

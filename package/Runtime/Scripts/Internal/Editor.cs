@@ -33,6 +33,15 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return nimbusAdUnit;
 		}
 
+		internal override NimbusAdUnit LoadAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			return nimbusAdUnit;
+		}
+
+		internal override NimbusAdUnit ShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			return nimbusAdUnit;
+		}
+
+
 		internal override void SetGDPRConsentString(string consent) {
 			Debug.unityLogger.Log("Mock SDK consent string cannot be added");
 		}

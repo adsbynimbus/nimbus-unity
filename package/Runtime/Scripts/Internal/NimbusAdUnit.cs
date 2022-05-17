@@ -40,24 +40,6 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			Destroy();
 		}
 
-		public void Render() {
-#if UNITY_ANDROID
-			if (_androidController == null || _androidHelper == null) return;
-			var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-			var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-			_androidHelper.CallStatic("render", currentActivity, ResponseMetaData.Type, ResponseMetaData.AuctionID, ResponseMetaData.Markup, 
-			ResponseMetaData.Network, ResponseMetaData.PlacementID, ResponseMetaData.Width, ResponseMetaData.Height, ResponseMetaData.IsInterstitial,
-			ResponseMetaData.IsMraid, ResponseMetaData.Position, ResponseMetaData.ImpressionTrackers, ResponseMetaData.ClickTrackers,
-			ResponseMetaData.Duration, 0, 0, this/* NimbusAdManager.Listener */);
-			_androidController = null;
-			_androidHelper = null;
-#endif
-		}
-
-		public void RenderBlocking() {
-
-		}
-
 		/// <summary>
 		///     Destroys the ad at the mobile bridge level
 		/// </summary>

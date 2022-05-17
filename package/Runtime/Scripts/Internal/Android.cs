@@ -54,6 +54,52 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return nimbusAdUnit;
 		}
 
+		internal override NimbusAdUnit LoadAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
+			string functionCall;
+			switch (nimbusAdUnit.AdType) {
+				case AdUnityType.Banner:
+					functionCall = "makeBannerRequest";
+					break;
+				case AdUnityType.Interstitial:
+					functionCall = "makeInterstitialRequest";
+					break;
+				case AdUnityType.Rewarded:
+					functionCall = "makeRewardedVideoRequest";
+					break;
+				default:
+					throw new Exception("ad type not supported");
+			}
+
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.Position,
+				nimbusAdUnit.BidFloors.BannerFloor, nimbusAdUnit.BidFloors.VideoFloor, listener);
+			return nimbusAdUnit;
+		}
+
+		internal override NimbusAdUnit ShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
+			string functionCall;
+			switch (nimbusAdUnit.AdType) {
+				case AdUnityType.Banner:
+					functionCall = "render";
+					break;
+				case AdUnityType.Interstitial:
+					functionCall = "renderBlocking";
+					break;
+				case AdUnityType.Rewarded:
+					functionCall = "renderBlocking";
+					break;
+				default:
+					throw new Exception("ad type not supported");
+			}
+			var response = nimbusAdUnit.ResponseMetaData;
+			_helper.CallStatic(functionCall, _currentActivity, response.Type, response.AuctionID, response.Markup, 
+			response.Network, response.PlacementID, response.Width, response.Height, response.IsInterstitial,
+			response.IsMraid, response.Position, response.ImpressionTrackers, response.ClickTrackers,
+			response.Duration, 0, 0, listener);
+			return nimbusAdUnit;
+		}
+
 		internal override void SetGDPRConsentString(string consent) {
 			_helper.CallStatic("setUser", consent);
 		}
