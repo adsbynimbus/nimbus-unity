@@ -205,7 +205,7 @@ public final class UnityHelper {
                 };
                 activity.addContentView(adFrame, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
                 if (response == null) manager.showAd(request, adFrame, this); else {
-                    Renderer.loadAd(response, adFrame, this)
+                    Renderer.loadAd(response, adFrame, this);
                 }
                 activity = null;
             }
