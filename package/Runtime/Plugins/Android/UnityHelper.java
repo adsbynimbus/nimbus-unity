@@ -81,7 +81,7 @@ public final class UnityHelper {
             if (companionWidth != 0 && companionHeight != 0) {
                 response.companionAds = new CompanionAd[]{ CompanionAd.end(companionWidth, companionHeight) };
             }
-            activity.runOnUiThread(() -> new BannerHandler(activity, request, response, (NimbusAdManager.Listener) listener));
+            activity.runOnUiThread(new BannerHandler(activity, null, response, (NimbusAdManager.Listener) listener));
         }
     }
 
@@ -101,6 +101,7 @@ public final class UnityHelper {
             final AdController controller = Renderer.loadBlockingAd(response, activity);
             final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
             if (controller != null) {
+                controller.start();
                 callback.onAdRendered(controller);
              } else {
                 callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
