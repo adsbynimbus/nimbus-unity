@@ -25,6 +25,7 @@ allprojects {
 		private static string dependencies = @"dependencies {
 	implementation ""com.adsbynimbus.android:nimbus:1.11.4""
 	implementation ""com.adsbynimbus.android:extension-okhttp:1.11.4""
+	implementation ""androidx.core:core:1.5.0""
 }";
 
 		private static string keepRules = @"
