@@ -54,7 +54,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return nimbusAdUnit;
 		}
 
-		internal override NimbusAdUnit LoadAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+		internal override NimbusAdUnit RequestAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
 			var listener = new AdManagerListener(logger, in _helper, ref nimbusAdUnit);
 			string functionCall;
 			switch (nimbusAdUnit.AdType) {

@@ -78,12 +78,12 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			return nimbusAdUnit;
 		}
 
-		internal override NimbusAdUnit LoadAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
-			return nimbusAdUnit;
+		internal override NimbusAdUnit RequestAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
+			throw new Exception("ios not supported yet");
 		}
 
 		internal override NimbusAdUnit ShowAd(ILogger logger, ref NimbusAdUnit nimbusAdUnit) {
-			return nimbusAdUnit;
+			throw new Exception("ios not supported yet");
 		}
 
 		internal override void SetGDPRConsentString(string consent) {
