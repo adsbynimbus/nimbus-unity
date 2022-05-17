@@ -172,10 +172,14 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	// ReSharper disable IdentifierTypo
 	// ReSharper disable StringLiteralTypo
 	public class MetaData {
+		public readonly string Type;
+
 		/// <summary>
 		///     Returns the nimbus auction id, used for debugging
 		/// </summary>
 		public readonly string AuctionID;
+
+		public readonly string[] ADomain;
 
 		/// <summary>
 		///     Returns returns the network bid as a integer converted from dollars to cents
@@ -187,6 +191,18 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		/// </summary>
 		public readonly double BidRaw;
 
+		public readonly string ContentType;
+
+		public readonly string Crid;
+
+		public readonly int Height;
+
+		public readonly int Width;
+
+		public readonly byte IsInterstitial;
+
+		public readonly string Markup;
+
 		/// <summary>
 		///     Returns the name of the winning network
 		/// </summary>
@@ -197,12 +213,37 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		/// </summary>
 		public readonly string PlacementID;
 
+		public readonly byte IsMraid;
+
+		public readonly string Position;
+
+		public readonly string[] ImpressionTrackers;
+
+		public readonly string[] ClickTrackers; 
+
+		public readonly int Duration;
+
 		internal MetaData(in AndroidJavaObject response) {
-			AuctionID = response.Get<string>("auction_id");
-			BidRaw = response.Get<double>("bid_raw");
-			BidInCents = response.Get<int>("bid_in_cents");
-			Network = response.Get<string>("network");
-			PlacementID = response.Get<string>("placement_id");
+			var bid = response.Get<AndroidJavaObject>("bid");
+			var trackerMap =  bid.Get<AndroidJavaObject>("trackers");
+			Type = bid.Get<string>("type");
+			AuctionID = bid.Get<string>("auction_id");
+			ADomain = bid.Get<string[]>("adomain");
+			BidRaw = bid.Get<double>("bid_raw");
+			BidInCents = bid.Get<int>("bid_in_cents");
+			ContentType = bid.Get<string>("content_type");
+			Crid = bid.Get<string>("crid");
+			Height = bid.Get<int>("height");
+			Width = bid.Get<int>("width");
+			IsInterstitial = bid.Get<byte>("is_interstitial");
+			Markup = bid.Get<string>("markup");
+			Network = bid.Get<string>("network");
+			PlacementID = bid.Get<string>("placement_id");
+			IsMraid = bid.Get<byte>("is_mraid");
+			Position = bid.Get<string>("position");
+			ImpressionTrackers = trackerMap.Call<string[]>("get", "impression_trackers");
+			ClickTrackers = trackerMap.Call<string[]>("get", "click_trackers");
+			Duration = bid.Get<int>("duration");
 		}
 
 		internal MetaData(in NimbusIOSAdResponse response)
