@@ -50,7 +50,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 	public enum AdEventTypes {
 		NOT_LOADED,
 
-		// LOADED,
+		LOADED,
 		IMPRESSION,
 		CLICKED,
 		PAUSED,
