@@ -30,10 +30,6 @@ import java.util.HashMap;
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
 
-    static {
-        BlockingAdRenderer.setStaticDismissTimeout(10000);
-    }
-
     public static void makeBannerRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;

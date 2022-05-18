@@ -28,7 +28,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			AdType = adType;
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
 			CurrentAdState = AdEventTypes.NOT_LOADED;
-			CloseButtonDelayInSeconds = (int) TimeSpan.FromMinutes(60).TotalSeconds;
+			CloseButtonDelayInSeconds = adType == AdUnityType.Rewarded ? (int) TimeSpan.FromMinutes(60).TotalSeconds : 5;
 			InstanceID = GetHashCode();
 			Position = position;
 
