@@ -70,7 +70,7 @@ public final class UnityHelper {
 
     public static void render(Object obj, String type, String auctionId, String markup, String network, String placementId,
         int width, int height, byte isInterstitial, byte isMraid, String position, String[] impressionTrackers, String[] clickTrackers,
-        int duration, int companionWidth, int companionHeight, Object listener) {
+        int duration, int companionWidth, int companionHeight, int closeButtonDelaySeconds, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final HashMap<String, String[]> trackers = new HashMap<>();
@@ -87,7 +87,7 @@ public final class UnityHelper {
 
     public static void renderBlocking(Object obj, String type, String auctionId, String markup, String network, String placementId,
         int width, int height, byte isInterstitial, byte isMraid, String position, String[] impressionTrackers, String[] clickTrackers,
-        int duration, int companionWidth, int companionHeight, Object listener) {
+        int duration, int companionWidth, int companionHeight, int closeButtonDelaySeconds, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final HashMap<String, String[]> trackers = new HashMap<>();
@@ -97,15 +97,23 @@ public final class UnityHelper {
                 isInterstitial, markup, network, placementId, isMraid, position, trackers, duration));
             if (companionWidth != 0 && companionHeight != 0) {
                 response.companionAds = new CompanionAd[]{ CompanionAd.end(companionWidth, companionHeight) };
+            } else {
+                response.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
+                        Configuration.ORIENTATION_LANDSCAPE ?
+                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)})
             }
-            final AdController controller = Renderer.loadBlockingAd(response, activity);
-            final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
-            if (controller != null) {
-                controller.start();
-                callback.onAdRendered(controller);
-             } else {
-                callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
-             }
+            activity.runOnUiThread(() -> {
+                BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelaySeconds * 1000);
+                final AdController controller = Renderer.loadBlockingAd(response, activity);
+                final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
+                if (controller != null) {
+                    callback.onAdRendered(controller);
+                    controller.start();
+                 } else {
+                    callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
+                }
+            });
+         
         }
     }
 
