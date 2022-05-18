@@ -77,17 +77,15 @@ namespace Example.Scripts {
 			switch (_interactableButtons[index].state) {
 				case AdState.NotLoaded:
 					LoadAd(index);
-					_interactableButtons[index].NextState();
 					break;
 				case AdState.Loaded:
 					_interactableButtons[index].CurrentAd  = NimbusManager.Instance.ShowLoadedAd(ref _interactableButtons[index].CurrentAd);
-					_interactableButtons[index].NextState();
 					break;
 				case AdState.Displayed:
 					_interactableButtons[index].DestroyAd();
-					_interactableButtons[index].NextState();
 					break;
 			}
+			_interactableButtons[index].NextState();
 		}
 		
 		private void LoadAd(int index) {
@@ -106,8 +104,8 @@ namespace Example.Scripts {
 	
 	[Serializable]
 	public class AdController {
+		[HideInInspector] public AdState state;
 		public TextMeshProUGUI button;
-		public AdState state;
 		public AdUnityType adUnityType;
 		public NimbusAdUnit CurrentAd;
 		
