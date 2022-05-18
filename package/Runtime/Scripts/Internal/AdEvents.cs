@@ -3,6 +3,7 @@ using System;
 // ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts.Internal {
 	public class AdEvents {
+		public event Action<NimbusAdUnit> OnAdLoaded;
 		public event Action<NimbusAdUnit> OnAdRendered;
 		public event Action<NimbusAdUnit> OnAdError;
 		public event Action<NimbusAdUnit> OnAdImpression;
@@ -15,7 +16,11 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal void EmitOnAdError(NimbusAdUnit obj) {
 			OnAdError?.Invoke(obj);
 		}
-
+		
+		internal void EmitOnAdLoaded(NimbusAdUnit obj) {
+			OnAdLoaded?.Invoke(obj);
+		}
+		
 		internal void EmitOnAdRendered(NimbusAdUnit obj) {
 			OnAdRendered?.Invoke(obj);
 		}
@@ -43,6 +48,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 		internal void EmitOnOnAdCompleted(NimbusAdUnit obj, bool skipped) {
 			OnAdCompleted?.Invoke(obj, skipped);
 		}
+
+		
 	}
 
 

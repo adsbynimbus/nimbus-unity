@@ -93,6 +93,9 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal void EmitOnAdEvent(AdEventTypes e) {
 			switch (e) {
+				case AdEventTypes.LOADED:
+					_adEvents.EmitOnAdLoaded(this);
+					break;
 				case AdEventTypes.IMPRESSION:
 					_adEvents.EmitOnOnAdImpression(this);
 					break;

@@ -74,6 +74,7 @@ namespace Nimbus.Runtime.Scripts {
 		private static void AutoSubscribe() {
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
+				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
 				Instance.NimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError += iAdEvent.OnAdError;
 				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
@@ -96,6 +97,7 @@ namespace Nimbus.Runtime.Scripts {
 		private static void AutoUnsubscribe() {
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
+				Instance.NimbusEvents.OnAdLoaded -= iAdEvent.OnAdLoaded;
 				Instance.NimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError -= iAdEvent.OnAdError;
 				Instance.NimbusEvents.OnAdClicked -= iAdEvent.OnAdClicked;
