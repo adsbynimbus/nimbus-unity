@@ -96,7 +96,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_helper.CallStatic(functionCall, _currentActivity, response.Type, response.AuctionID, response.Markup, 
 			response.Network, response.PlacementID, response.Width, response.Height, response.IsInterstitial,
 			response.IsMraid, response.Position, response.ImpressionTrackers, response.ClickTrackers,
-			response.Duration, 0, 0, listener);
+			response.Duration, /* CompanionAd Width */ 0, /* CompanionAd Height */ 0, 
+			nimbusAdUnit.CloseButtonDelayInSeconds, listener);
 			return nimbusAdUnit;
 		}
 

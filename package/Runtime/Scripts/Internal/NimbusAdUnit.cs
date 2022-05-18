@@ -28,7 +28,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			AdType = adType;
 			BidFloors = new BidFloors(bannerFloor, videoFloor);
 			CurrentAdState = AdEventTypes.NOT_LOADED;
-			CloseButtonDelayInSeconds = (int) TimeSpan.FromMinutes(60).TotalSeconds;
+			CloseButtonDelayInSeconds = adType == AdUnityType.Rewarded ? (int) TimeSpan.FromMinutes(60).TotalSeconds : 5;
 			InstanceID = GetHashCode();
 			Position = position;
 
@@ -93,6 +93,9 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		internal void EmitOnAdEvent(AdEventTypes e) {
 			switch (e) {
+				case AdEventTypes.LOADED:
+					_adEvents.EmitOnAdLoaded(this);
+					break;
 				case AdEventTypes.IMPRESSION:
 					_adEvents.EmitOnOnAdImpression(this);
 					break;
@@ -229,7 +232,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			Type = bid.Get<string>("type");
 			AuctionID = bid.Get<string>("auction_id");
 			ADomain = bid.Get<string[]>("adomain");
-			BidRaw = bid.Get<double>("bid_raw");
+			BidRaw = bid.Get<float>("bid_raw");
 			BidInCents = bid.Get<int>("bid_in_cents");
 			ContentType = bid.Get<string>("content_type");
 			Crid = bid.Get<string>("crid");

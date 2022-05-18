@@ -29,6 +29,17 @@ namespace Example.Scripts {
 			_ad = NimbusManager.Instance.LoadAndShowRewardedVideoAd("unity_demo_rewarded_video_position", 0.0f);
 			_alreadyTriggered = true;
 		}
+		
+		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log(
+				$"RewardedVideoExample Ad was returned and loaded into memory ad instance {nimbusAdUnit.InstanceID}, " +
+				$"bid value: {nimbusAdUnit.ResponseMetaData.BidRaw}, " +
+				$"bid value in cents: {nimbusAdUnit.ResponseMetaData.BidInCents}, " +
+				$"network: {nimbusAdUnit.ResponseMetaData.Network}, " +
+				$"placement_id: {nimbusAdUnit.ResponseMetaData.PlacementID}, " +
+				$"auction_id: {nimbusAdUnit.ResponseMetaData.AuctionID}");
+		}
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;

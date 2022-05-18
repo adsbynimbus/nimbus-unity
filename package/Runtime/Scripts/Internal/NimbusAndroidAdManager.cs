@@ -18,6 +18,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 
 		private void onAdResponse(AndroidJavaObject response) {
 			_adUnit.ResponseMetaData = new MetaData(response);
+			_adUnit.CurrentAdState = AdEventTypes.LOADED;
+			_adUnit.EmitOnAdEvent(AdEventTypes.LOADED);
 		}
 
 		private void onAdRendered(AndroidJavaObject controller) {
@@ -34,6 +36,8 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_logger.Log($"Listener Ad error: {errMessage}");
 			_adUnit.AdListenerError = new AdError(errMessage);
 			_adUnit.EmitOnAdError(_adUnit);
+			// This is where a no bid would occur and is probably checked with the following
+			// adError.Get<AndroidJavaObject>("errorType").Call<string>("name") == "NO_BID"
 		}
 	}
 
@@ -51,7 +55,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			_logger.Log("Ad event " + adEvent.Call<string>("name"));
 			var eventState = adEvent.Call<string>("name");
 
-			if (!Enum.TryParse(eventState, out AdEventTypes state)) return;
+			if (!Enum.TryParse(eventState, out AdEventTypes state) || state == AdEventTypes.LOADED) return;
 			_adUnit.CurrentAdState = state;
 			_adUnit.EmitOnAdEvent(state);
 		}
