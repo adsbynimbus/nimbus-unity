@@ -230,5 +230,78 @@ namespace Nimbus.Runtime.Scripts {
 		public void SetGDPRConsentString(string consent) {
 			_nimbusPlatformAPI.SetGDPRConsentString(consent);
 		}
+		
+		
+		/// <summary>
+		///     Calls to Nimbus for a 320x50 banner ad from the server. It does not the ad. To load the ad you must pass
+		///		reference of the returned add to the ShowLoadedAd method
+		/// </summary>
+		/// <param name="position">
+		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
+		///     can be used by the Nimbus dashboard to breakout data
+		/// </param>
+		/// <param name="bannerBidFloor">
+		///     Represents your asking price for banner ads during the auction
+		/// </param>
+		public NimbusAdUnit LoadBannerAd(string position, float bannerBidFloor) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in NimbusEvents);
+			return _nimbusPlatformAPI.RequestAd(Debug.unityLogger, ref adUnit);
+		}
+		
+		
+		/// <summary>
+		///     Calls to Nimbus for a full screen interstitial ad, this can either be a static or video ad depending on which wins
+		///     the auction. It does not the ad. To load the ad you must pass reference of the returned add to the ShowLoadedAd method
+		/// </summary>
+		/// <param name="position">
+		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
+		///     can be used by the Nimbus dashboard to breakout data
+		/// </param>
+		/// <param name="bannerBidFloor">
+		///     Represents your asking price for banner ads during the auction
+		/// </param>
+		/// <param name="videoBidFloor">
+		///     Represents your asking price for video ads during the auction
+		/// </param>
+		public NimbusAdUnit LoadFullScreenAd(string position, float bannerBidFloor, float videoBidFloor) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor,
+				in NimbusEvents);
+			return _nimbusPlatformAPI.RequestAd(Debug.unityLogger, ref adUnit);
+		}
+		
+		/// <summary>
+		///   Calls to Nimbus for a video only ad and loads the ad if an ad is returned from the auction.
+		///   It does not the ad. To load the ad you must pass reference of the returned add to the ShowLoadedAd method
+		/// </summary>
+		/// <param name="position">
+		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
+		///     can be used by the Nimbus dashboard to breakout data
+		/// </param>
+		/// <param name="videoBidFloor">
+		///     Represents your asking price for video ads during the auction
+		/// </param>
+		public NimbusAdUnit LoadRewardedVideoAd(string position, float videoBidFloor) {
+			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, 0, videoBidFloor, in NimbusEvents);
+			return _nimbusPlatformAPI.RequestAd(Debug.unityLogger, ref adUnit);
+		}
+		
+		/// <summary>
+		///   Takes the returned ad unit from LoadBannerAd, LoadFullScreenAd, or LoadRewardedVideoAd and Displayed the won ad
+		/// </summary>
+		/// <param name="adUnit">
+		///   A references to a ad unit returned from LoadBannerAd, LoadFullScreenAd, or LoadRewardedVideoAd
+		/// </param>
+		public NimbusAdUnit ShowLoadedAd(ref NimbusAdUnit adUnit) {
+			if (adUnit == null || adUnit.DidHaveAnError()) {
+				Debug.unityLogger.LogError(adUnit?.InstanceID.ToString(),"there was no ad to render, either there was no fill or there was an error retrieving and ad");
+				return adUnit;
+			}
+			
+			if (adUnit.WasAdRendered()) {
+				Debug.unityLogger.LogError(adUnit.InstanceID.ToString(),"the was already rendered, you cannot render the same ad twice");
+				return adUnit;
+			}
+			return _nimbusPlatformAPI.ShowAd(Debug.unityLogger, ref adUnit);
+		}
 	}
 }
