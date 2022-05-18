@@ -2,6 +2,6 @@
 
 The latest [package](package) can be downloaded from the [Releases](https://github.com/timehop/nimbus-unity/releases) page
 
-## Minimum Requirements
+## Minimum Requirements To Play Demo Scenes
 
-- Unity 2018.4
+- Unity 2020.3
