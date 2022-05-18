@@ -19,6 +19,11 @@ namespace Example.Scripts {
 		private void Awake() {
 			Screen.orientation = ScreenOrientation.Portrait;
 		}
+		
+		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+			Debug.unityLogger.Log(
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.ResponseMetaData.AuctionID} was loaded");
+		}
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
