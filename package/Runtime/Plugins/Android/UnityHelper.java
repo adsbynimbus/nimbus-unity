@@ -99,8 +99,7 @@ public final class UnityHelper {
                 response.companionAds = new CompanionAd[]{ CompanionAd.end(companionWidth, companionHeight) };
             } else {
                 response.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
-                        Configuration.ORIENTATION_LANDSCAPE ?
-                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)})
+                        Configuration.ORIENTATION_LANDSCAPE ? CompanionAd.end(480, 320) : CompanionAd.end(320, 480)};
             }
             activity.runOnUiThread(() -> {
                 BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelaySeconds * 1000);
