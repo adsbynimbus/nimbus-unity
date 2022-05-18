@@ -229,7 +229,7 @@ namespace Nimbus.Runtime.Scripts.Internal {
 			Type = bid.Get<string>("type");
 			AuctionID = bid.Get<string>("auction_id");
 			ADomain = bid.Get<string[]>("adomain");
-			BidRaw = bid.Get<double>("bid_raw");
+			BidRaw = bid.Get<float>("bid_raw");
 			BidInCents = bid.Get<int>("bid_in_cents");
 			ContentType = bid.Get<string>("content_type");
 			Crid = bid.Get<string>("crid");
