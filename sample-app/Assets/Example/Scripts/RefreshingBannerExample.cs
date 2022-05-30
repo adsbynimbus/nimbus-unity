@@ -1,28 +1,30 @@
-using System.Collections;
+using System.Threading;
+using Example.Scripts.NotAdRelated;
 using Nimbus.Runtime.Scripts;
-using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
 	/// <summary>
-	///     This demonstrates how to call for a refreshing banner ad as well as how to properly stop ad refreshing
+	///     This demonstrates how to call for a refreshing banner using coroutines
 	/// </summary>
 	public class RefreshingBannerExample : MonoBehaviour {
 		private bool _alreadyTriggered;
-		private IEnumerator _bannerRoutine;
-		
+
+		private CancellationTokenSource _ctx;
+
+		private void Awake() {
+			_ctx = new CancellationTokenSource();
+		}
+
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_bannerRoutine =
-				NimbusManager.Instance.LoadAndShowBannerAdWithRefresh("unity_demo_banner_position2", 0.0f);
-			StartCoroutine(_bannerRoutine);
+			NimbusManager.Instance.RequestRefreshingBannerAdAndLoad(_ctx, "unity_demo_banner_position2");
 			_alreadyTriggered = true;
 		}
-		
+
 		public void StopBannerRefresh() {
-			// cleanup make sure that the ad is destroyed and removed after stopping the coroutine
-			NimbusManager.Instance.StopRefreshBannerAd(_bannerRoutine);
+			_ctx.Cancel();
 		}
 	}
 }

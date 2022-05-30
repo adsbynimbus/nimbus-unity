@@ -2,31 +2,33 @@ using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Nimbus.Runtime.Scripts.Internal;
-using Nimbus.Runtime.Scripts.ScriptableObjects;
+using System.Threading;
+using System.Threading.Tasks;
+using Nimbus.Internal;
+using Nimbus.Internal.Network;
+using Nimbus.Internal.RequestBuilder;
+using Nimbus.Internal.Utility;
+using Nimbus.ScriptableObjects;
+using OpenRTB.Request;
 using UnityEngine;
 
-// ReSharper disable CheckNamespace
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class NimbusManager : MonoBehaviour {
+		[field: SerializeField] private NimbusSDKConfiguration _configuration;
+		
+		private bool _isTheApplicationBackgrounded;
+		private NimbusClient _nimbusClient;
+		private NimbusAPI _nimbusPlatformAPI;
+		private GlobalRtbRegulation _regulations;
+		private CancellationTokenSource _ctx;
+		private string _sessionId;
+		
+		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
 
-		#region Editor Values
-
-		public NimbusSDKConfiguration configuration;
-
-		#endregion
-
-		private bool _canStartBannerRefreshing = true;
-		private NimbusAPI _nimbusPlatformAPI;
-		private NimbusAdUnit _refreshAd;
-
-		// ReSharper disable once MemberCanBePrivate.Global
-		public AdEvents NimbusEvents;
-
 		private void Awake() {
-			if (configuration == null) throw new Exception("The configuration object cannot be null");
+			if (_configuration == null) throw new Exception("The configuration object cannot be null");
 
 			if (Instance == null) {
 				_nimbusPlatformAPI = _nimbusPlatformAPI ?? new
@@ -38,9 +40,13 @@ namespace Nimbus.Runtime.Scripts {
                 IOS
 #endif
 					();
+
+				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
 				NimbusEvents = new AdEvents();
-				Debug.unityLogger.logEnabled = configuration.enableUnityLogs;
-				_nimbusPlatformAPI.InitializeSDK(Debug.unityLogger, configuration);
+				_regulations = new GlobalRtbRegulation();
+				_nimbusPlatformAPI.InitializeSDK(_configuration);
+				_ctx = new CancellationTokenSource();
+				_nimbusClient = new NimbusClient(_ctx, _configuration);
 				Instance = this;
 				DontDestroyOnLoad(gameObject);
 			}
@@ -54,19 +60,16 @@ namespace Nimbus.Runtime.Scripts {
 			AutoUnsubscribe();
 			AutoSubscribe();
 			yield return null;
-		}
-
-		private void OnEnable() {
-			AutoUnsubscribe();
-			AutoSubscribe();
+			_sessionId = _nimbusPlatformAPI.GetSessionID();
 		}
 
 		private void OnDisable() {
+			_ctx.Cancel();
 			AutoUnsubscribe();
 		}
 
-		private void OnDestroy() {
-			AutoUnsubscribe();
+		private void OnApplicationPause(bool isPaused) {
+			_isTheApplicationBackgrounded = isPaused;
 		}
 
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
@@ -114,196 +117,381 @@ namespace Nimbus.Runtime.Scripts {
 				}
 			}
 		}
-
+		
+		
+		/// <summary>
+		///     RequestAdAndLoad communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners and attempts the render the returned ad immediately.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bidRequest">
+		///     A manually constructed RTB data object. While it allows for more publisher flexibility to communicate to Nimbus
+		///		it does require more RTB knowledge. Please reference https://github.com/timehop/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
+		///		for more insight on how to construct an RTB request. You may also use the static helper class NimbusRtbBidRequestHelper
+		///		to auto fill some data.
+		/// </param>
+		public NimbusAdUnit RequestAdAndLoad(string nimbusReportingPosition, BidRequest bidRequest) {
+			var adUnit = RequestAd(nimbusReportingPosition, bidRequest);
+			ShowLoadedAd(adUnit);
+			return adUnit;
+		}
+		
 
 		/// <summary>
-		///     Calls to Nimbus for a 320x50 banner ad and loads the ad if an ad is returned from the auction
+		///     RequestBannerAdAndLoad communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners and attempts the render the returned ad immediately.
 		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
 		/// </param>
-		/// <param name="bannerBidFloor">
-		///     Represents your asking price for banner ads during the auction
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit LoadAndShowBannerAd(string position, float bannerBidFloor) {
-			// if there is a refreshing banner ad, kill the coroutine and clean up the refreshing banner ad
-			// before allowing a static call of the banner ad to start
-			if (!_canStartBannerRefreshing) {
-				// stopping the coroutine by method name since we don't have a reference to the started coroutine
-				StopCoroutine("LoadAndShowBannerAdWithRefresh");
-				_refreshAd?.Destroy();
-				_canStartBannerRefreshing = true;
-			}
-
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in NimbusEvents);
-			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f) {
+			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor);
+			ShowLoadedAd(adUnit);
+			return adUnit;
 		}
 
+		
 		/// <summary>
-		///     Calls to Nimbus for a full screen interstitial ad, this can either be a static or video ad depending on which wins
-		///     the auction,
-		///     and loads the ad if an ad is returned from the auction
+		///     RequestHybridFullScreenAndLoad pre constructs a Nimbus hybrid auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Note, though RTB Banner and Video objects are
+		///		being sent, creative types if of either type will only be returned if matching placements have been
+		///		set up operationally by the Demand partner and Nimbus team. Attempts the render the returned ad immediately.
 		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
 		/// </param>
-		/// <param name="bannerBidFloor">
-		///     Represents your asking price for banner ads during the auction
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		/// <param name="videoBidFloor">
-		///     Represents your asking price for video ads during the auction
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
-		public NimbusAdUnit LoadAndShowFullScreenAd(string position, float bannerBidFloor, float videoBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor,
-				in NimbusEvents);
-			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition, float bannerFloor = 0f,
+			float videoFloor = 0f) {
+			var adUnit = RequestHybridFullScreenAd(nimbusReportingPosition, bannerFloor, videoFloor);
+			ShowLoadedAd(adUnit);
+			return adUnit;
 		}
 
+		
 		/// <summary>
-		///     Calls to Nimbus for a video only ad and loads the ad if an ad is returned from the auction
+		///     RequestRewardVideoAd pre constructs a Nimbus Video auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
+		///		type, but rather a rendering behavior.  Attempts the render the returned ad immediately.
 		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
 		/// </param>
-		/// <param name="videoBidFloor">
-		///     Represents your asking price for video ads during the auction
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit LoadAndShowRewardedVideoAd(string position, float videoBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, 0, videoBidFloor, in NimbusEvents);
-			return _nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref adUnit);
+		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition, float videoFloor = 0f) {
+			var adUnit = RequestRewardVideoAd(nimbusReportingPosition, videoFloor);
+			ShowLoadedAd(adUnit);
+			return adUnit;
 		}
-
+		
 		/// <summary>
-		///     Calls to Nimbus on a set timer for a 320x50 banner ad and loads the ad if an ad is returned from the auction.
-		///     Note: there can only be 1 refreshing banner ad per application session
+		///     RequestRefreshingBannerAdAndLoad pre constructs a RTB Banner and sends requests to Nimbus periodically to retrieve ads.
+		///		This uses async rather than Unity Coroutines
 		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
+		/// <param name="source">
+		///		Passes a context to the Coroutine to signal if and when the coroutine should stop running in the background
 		/// </param>
-		/// <param name="bannerBidFloor">
-		///     Represents your asking price for banner ads during the auction
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		/// <param name="refreshIntervalInSeconds">
-		///     Specifies the rate at which banner ads should be called for. This defaults to
-		///     the industry standard and best practice of 30 seconds
+		///		Defines the rate at which Banner ads are refreshed with a new ad.
+		///		Defaults to the IAB recommended 30 seconds. Nimbus does not allow anything lower than 20 seconds
 		/// </param>
-		public IEnumerator LoadAndShowBannerAdWithRefresh(string position, float bannerBidFloor,
-			float refreshIntervalInSeconds = 30f) {
-			if (!_canStartBannerRefreshing)
-				throw new Exception(
-					"LoadAndShowBannerAdWithRefresh() is currently running a coroutine, only 1 running coroutine can be called at a time");
-			_canStartBannerRefreshing = false;
-			_refreshAd = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
-			_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref _refreshAd);
-			while (true) {
-				yield return new WaitForSeconds(refreshIntervalInSeconds);
-				_refreshAd?.Destroy();
-				_refreshAd = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0, in NimbusEvents);
-				_nimbusPlatformAPI.LoadAndShowAd(Debug.unityLogger, ref _refreshAd);
+		public async void RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
+			string nimbusReportingPosition, float bannerFloor = 0f,
+			int refreshIntervalInSeconds = 30) {
+
+			NimbusAdUnit nextAdUnit = null; 
+			var delay = (refreshIntervalInSeconds <= 20 ? 30: refreshIntervalInSeconds) * 1000;
+			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor);
+			while (!source.IsCancellationRequested) {
+				try {
+					await Task.Delay(delay, source.Token);
+					
+					// stop making updates if the application is backgrounded
+					while (!source.IsCancellationRequested && _isTheApplicationBackgrounded) {
+						await Task.Yield();
+					}
+					
+					// make sure to reset to avoid any leaks
+					nextAdUnit?.Destroy();
+					nextAdUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor);
+					
+					// while the ad was not fully returned and we did not receive an error from Nimbus
+					// we give the response some time to load into the ad unit object
+					while (!nextAdUnit.WasAnAdReturned() && nextAdUnit.ErrResponse.Message.IsNullOrEmpty()) {
+						await Task.Yield();
+					}
+					
+					// confirm that the ad was returned, it will be false if there was an error
+					if (!nextAdUnit.WasAnAdReturned()) {
+						nextAdUnit?.Destroy();
+						continue;
+					}
+	
+					// nextAdUnit was fully returned, we can swap the current unit out with the new returned banner
+					currentAdUnit?.Destroy();
+					currentAdUnit = nextAdUnit;
+					ShowLoadedAd(currentAdUnit);
+				}
+				catch (TaskCanceledException) {
+					break;
+				}
 			}
-			// ReSharper disable once IteratorNeverReturns
+			// requesting behavior killed
+			currentAdUnit?.Destroy();
+			nextAdUnit?.Destroy();
 		}
 
 		/// <summary>
-		///     Cleans up any ads that were created as a result of refreshing banner ads on a timer.
-		///     This also resets the internal state and allows the LoadAndShowBannerAdWithRefresh to called again
-		///     without throwing an exception
-		/// </summary>
-		/// <param name="refreshBannerCoroutine">
-		///     The coroutine that was returned from calling LoadAndShowBannerAdWithRefresh
-		/// </param>
-		public void StopRefreshBannerAd(IEnumerator refreshBannerCoroutine) {
-			StopCoroutine(refreshBannerCoroutine);
-			_refreshAd?.Destroy();
-			_canStartBannerRefreshing = true;
-		}
-
-		// ReSharper disable once InconsistentNaming
-		/// <summary>
-		///     Allows the TCF GDPR consent string to be set globally on all request to Nimbus
-		/// </summary>
-		/// <param name="consent">
-		///     This is the TCF GDPR consent string
-		/// </param>
-		public void SetGDPRConsentString(string consent) {
-			_nimbusPlatformAPI.SetGDPRConsentString(consent);
-		}
-		
-		
-		/// <summary>
-		///     Calls to Nimbus for a 320x50 banner ad from the server. It does not the ad. To load the ad you must pass
-		///		reference of the returned add to the ShowLoadedAd method
-		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
-		/// </param>
-		/// <param name="bannerBidFloor">
-		///     Represents your asking price for banner ads during the auction
-		/// </param>
-		public NimbusAdUnit LoadBannerAd(string position, float bannerBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Banner, position, bannerBidFloor, 0f, in NimbusEvents);
-			return _nimbusPlatformAPI.RequestAd(Debug.unityLogger, ref adUnit);
-		}
-		
-		
-		/// <summary>
-		///     Calls to Nimbus for a full screen interstitial ad, this can either be a static or video ad depending on which wins
-		///     the auction. It does not the ad. To load the ad you must pass reference of the returned add to the ShowLoadedAd method
-		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
-		/// </param>
-		/// <param name="bannerBidFloor">
-		///     Represents your asking price for banner ads during the auction
-		/// </param>
-		/// <param name="videoBidFloor">
-		///     Represents your asking price for video ads during the auction
-		/// </param>
-		public NimbusAdUnit LoadFullScreenAd(string position, float bannerBidFloor, float videoBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Interstitial, position, bannerBidFloor, videoBidFloor,
-				in NimbusEvents);
-			return _nimbusPlatformAPI.RequestAd(Debug.unityLogger, ref adUnit);
-		}
-		
-		/// <summary>
-		///   Calls to Nimbus for a video only ad and loads the ad if an ad is returned from the auction.
-		///   It does not the ad. To load the ad you must pass reference of the returned add to the ShowLoadedAd method
-		/// </summary>
-		/// <param name="position">
-		///     This is a Nimbus specific field, it must not be empty and it represents a generic placement name
-		///     can be used by the Nimbus dashboard to breakout data
-		/// </param>
-		/// <param name="videoBidFloor">
-		///     Represents your asking price for video ads during the auction
-		/// </param>
-		public NimbusAdUnit LoadRewardedVideoAd(string position, float videoBidFloor) {
-			var adUnit = new NimbusAdUnit(AdUnityType.Rewarded, position, 0, videoBidFloor, in NimbusEvents);
-			return _nimbusPlatformAPI.RequestAd(Debug.unityLogger, ref adUnit);
-		}
-		
-		/// <summary>
-		///   Takes the returned ad unit from LoadBannerAd, LoadFullScreenAd, or LoadRewardedVideoAd and Displayed the won ad
+		///     ShowLoadedAd a returned ad from Nimbus servers and attempts to render it on screen
 		/// </summary>
 		/// <param name="adUnit">
-		///   A references to a ad unit returned from LoadBannerAd, LoadFullScreenAd, or LoadRewardedVideoAd
+		///     A reference to a ad unit returned from RequestAd, RequestHybridFullScreenAd, RequestBannerAd, or
+		///     RequestRewardVideoAd
 		/// </param>
-		public NimbusAdUnit ShowLoadedAd(ref NimbusAdUnit adUnit) {
-			if (adUnit == null || adUnit.DidHaveAnError()) {
-				Debug.unityLogger.LogError(adUnit?.InstanceID.ToString(),"there was no ad to render, either there was no fill or there was an error retrieving and ad");
-				return adUnit;
+		public void ShowLoadedAd(NimbusAdUnit adUnit) {
+			if (adUnit == null) {
+				Debug.unityLogger.LogError("",
+					"there was no ad to render, likely there was no fill meaning that demand did not want to spend");
+				return;
+			}
+			if (adUnit.WasAdRendered()) {
+				Debug.unityLogger.LogError(adUnit.InstanceID.ToString(),
+					"the was already rendered, you cannot render the same ad twice");
+				return;
+			}
+			StartCoroutine(LoadAd(adUnit));
+		}
+
+
+		private IEnumerator LoadAd(NimbusAdUnit adUnit) {
+			while (adUnit.ErrResponse.Message.IsNullOrEmpty()) {
+				if (adUnit.WasAnAdReturned()) {
+					_nimbusPlatformAPI.ShowAd(adUnit);
+					yield break;
+				}
+				yield return null;
 			}
 			
-			if (adUnit.WasAdRendered()) {
-				Debug.unityLogger.LogError(adUnit.InstanceID.ToString(),"the was already rendered, you cannot render the same ad twice");
-				return adUnit;
+			if (!adUnit.ErrResponse.Message.IsNullOrEmpty()) {
+				Debug.unityLogger.LogError(adUnit?.InstanceID.ToString(),
+					$"error retrieving the ad message: {adUnit?.ErrResponse.Message}");
 			}
-			return _nimbusPlatformAPI.ShowAd(Debug.unityLogger, ref adUnit);
+		}
+		
+
+		/// <summary>
+		///     RequestAd communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners 
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bidRequest">
+		///     A manually constructed RTB data object. While it allows for more publisher flexibility to communicate to Nimbus
+		///		it does require more RTB knowledge. Please reference https://github.com/timehop/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
+		///		for more insight on how to construct an RTB request. You may also use the static helper class NimbusRtbBidRequestHelper
+		///		to auto fill some data.
+		/// </param>
+		public NimbusAdUnit RequestAd(string nimbusReportingPosition, BidRequest bidRequest) {
+			bidRequest.
+				SetSessionId(_sessionId).
+				SetDevice(_nimbusPlatformAPI.GetDevice()).
+				SetReportingPosition(nimbusReportingPosition).
+				SetTest(_configuration.enableSDKInTestMode);
+
+			SetTestData(bidRequest);
+			SetRegulations(bidRequest);
+
+			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
+			var adUnit = new NimbusAdUnit(AdUnitHelper.BidRequestToAdType(bidRequest), NimbusEvents);
+			adUnit.LoadJsonResponseAsync(responseJson);
+			return adUnit;
+		}
+		
+		/// <summary>
+		///     RequestHybridFullScreenAd pre constructs a Nimbus hybrid auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Note, though RTB Banner and Video objects are
+		///		being sent, creative types if of either type will only be returned if matching placements have been
+		///		set up operationally by the Demand partner and Nimbus team. 
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
+		/// </param>
+		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition, float bannerFloor = 0f,
+			float videoFloor = 0f) {
+			var bidRequest = NimbusRtbBidRequestHelper.ForHybridInterstitialAd(nimbusReportingPosition);
+			bidRequest.
+				SetSessionId(_sessionId).
+				SetDevice(_nimbusPlatformAPI.GetDevice()).
+				SetBannerFloor(bannerFloor).
+				SetVideoFloor(videoFloor).
+				SetTest(_configuration.enableSDKInTestMode);
+			
+			SetTestData(bidRequest);
+			SetRegulations(bidRequest);
+
+			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
+			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents);
+			adUnit.LoadJsonResponseAsync(responseJson);
+			return adUnit;
+		}
+
+		
+		/// <summary>
+		///     RequestBannerAd pre constructs a Nimbus Banner auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f) {
+			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition);
+			bidRequest.
+				SetSessionId(_sessionId).
+				SetDevice(_nimbusPlatformAPI.GetDevice()).
+				SetBannerFloor(bannerFloor).
+				SetTest(_configuration.enableSDKInTestMode);
+			
+			SetTestData(bidRequest);
+			SetRegulations(bidRequest);
+
+			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
+			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents);
+			adUnit.LoadJsonResponseAsync(responseJson);
+			return adUnit;
+		}
+
+		/// <summary>
+		///     RequestRewardVideoAd pre constructs a Nimbus Video auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
+		///		type, but rather a rendering behavior.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition, float videoFloor = 0f) {
+			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
+			bidRequest.
+				SetSessionId(_sessionId).
+				SetDevice(_nimbusPlatformAPI.GetDevice()).
+				SetVideoFloor(videoFloor).
+				SetRewardedVideoFlag().
+				AttemptToShowVideoEndCard().
+				SetTest(_configuration.enableSDKInTestMode);
+			
+			SetTestData(bidRequest);
+			SetRegulations(bidRequest);
+
+			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
+			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents);
+			adUnit.LoadJsonResponseAsync(responseJson);
+			return adUnit;
+		}
+
+		
+		/// <summary>
+		///     If this inventory is subject to GDPR regulations use this function to pass in RTB GDPR information for all Nimbus requests
+		/// </summary>
+		/// <param name="didUserConsent">
+		///		If the user is subject to GDPR and they consented to advertising set to true
+		/// </param>
+		/// <param name="gdprConsentString">
+		///		If the user is subject to GDPR pass in the CMP generated consent string
+		/// </param>
+		public void SetGdprConsent(bool didUserConsent, string gdprConsentString) {
+			_regulations.GdprUserConsent = didUserConsent ? (byte)1 : (byte)0;
+			_regulations.GdprConsentString = gdprConsentString;
+		}
+	
+		/// <summary>
+		///     If this inventory is subject to CCPA regulations use this function to pass in RTB CCPA information for all Nimbus requests
+		/// </summary>
+		/// <param name="usPrivacyString">
+		///		The user generated CCPA consent string
+		/// </param>
+		public void SetUsPrivacyString(string usPrivacyString) {
+			_regulations.UsPrivacyString = usPrivacyString;
+		}
+		
+		/// <summary>
+		///     If this inventory is subject to COPPA restrictions use this function to pass in RTB COPPA information for all Nimbus requests
+		/// </summary>
+		/// <param name="isCoppa">
+		///		Signals that the inventory is under that age of 13
+		/// </param>
+		public void SetCoppa(bool isCoppa) {
+			_regulations.Coppa = isCoppa;
+		}
+
+		// with test = 1 Nimbus servers check that the app object is present
+		// in production app data properly construction on Nimbus from database information assuming the account is not a 1:many account
+		// if the account is 1:many the publisher needs submit proper App object
+		private void SetTestData(BidRequest bidRequest) {
+			if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
+		}
+
+		private void SetRegulations(BidRequest bidRequest) {
+			bidRequest.SetCoppa(_regulations.Coppa);
+			bidRequest.SetGdpr(_regulations.GdprUserConsent, _regulations.GdprConsentString);
+			bidRequest.SetUsPrivacy(_regulations.UsPrivacyString);
+		}
+
+		
+		
+		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
+			_configuration = configuration;
+		}
+		
+		private class GlobalRtbRegulation {
+			internal bool Coppa;
+			internal string GdprConsentString;
+			internal byte GdprUserConsent;
+			internal string UsPrivacyString;
 		}
 	}
+
 }

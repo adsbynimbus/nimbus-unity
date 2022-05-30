@@ -9,7 +9,7 @@ using UnityEngine;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 // https://stackoverflow.com/questions/41330771/use-unity-api-from-another-thread-or-call-a-function-in-the-main-thread
-// ReSharper disable CheckNamespace
+
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
 	public class UnityThread : MonoBehaviour {

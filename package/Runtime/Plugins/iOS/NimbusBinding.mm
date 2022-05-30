@@ -53,9 +53,6 @@ void _showRewardedVideoAd(int adUnitInstanceId, const char* position, float vide
      ];
 }
 
-void _setGDPRConsentString(const char* consent) {
-    [NimbusManager setGDPRConsentStringWithConsent: GetStringParam(consent)];
-}
 
 void _destroyAd(int adUnitInstanceId) {
     [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];

@@ -1,4 +1,5 @@
 //
+//
 //  NimbusManager.swift
 //
 //  Created by Bruno Bruggemann on 5/7/21.
@@ -43,12 +44,6 @@ import NimbusKit
             return manager
         }
         return manager
-    }
-    
-    @objc public class func setGDPRConsentString(consent: String) {
-        var user = NimbusRequestManager.user ?? NimbusUser()
-        user.configureGdprConsent(didConsent: true, consentString: consent)
-        NimbusAdManager.user = user
     }
     
     // MARK: - Private Functions
