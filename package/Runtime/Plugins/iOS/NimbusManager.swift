@@ -58,74 +58,74 @@ import NimbusKit
     
     // MARK: - Public Functions
     
-    @objc public func showBannerAd(position: String, bannerFloor: Float) {
-        guard let viewController = unityViewController() else { return }
+    // @objc public func showBannerAd(position: String, bannerFloor: Float) {
+    //     guard let viewController = unityViewController() else { return }
         
-        let adFormat = NimbusAdFormat.banner320x50
-        let adPosition = NimbusPosition.footer
-        let request = NimbusRequest.forBannerAd(
-            position: position,
-            format: adFormat,
-            adPosition: adPosition
-        )
-        request.impressions[0].bidFloor = bannerFloor
+    //     let adFormat = NimbusAdFormat.banner320x50
+    //     let adPosition = NimbusPosition.footer
+    //     let request = NimbusRequest.forBannerAd(
+    //         position: position,
+    //         format: adFormat,
+    //         adPosition: adPosition
+    //     )
+    //     request.impressions[0].bidFloor = bannerFloor
         
-        let view = AdView(bannerFormat: adFormat)
-        adView = view
-        view.attachToView(parentView: viewController.view, position: adPosition)
+    //     let view = AdView(bannerFormat: adFormat)
+    //     adView = view
+    //     view.attachToView(parentView: viewController.view, position: adPosition)
         
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
-        nimbusAdManager?.showAd(
-            request: request,
-            container: view,
-            adPresentingViewController: viewController
-        )
-    }
+    //     nimbusAdManager = NimbusAdManager()
+    //     nimbusAdManager?.delegate = self
+    //     nimbusAdManager?.showAd(
+    //         request: request,
+    //         container: view,
+    //         adPresentingViewController: viewController
+    //     )
+    // }
     
-    @objc public func showInterstitialAd(position: String, bannerFloor: Float, videoFloor: Float, closeButtonDelay: Double) {
-        guard let viewController = unityViewController() else { return }
+    // @objc public func showInterstitialAd(position: String, bannerFloor: Float, videoFloor: Float, closeButtonDelay: Double) {
+    //     guard let viewController = unityViewController() else { return }
         
-        let request = NimbusRequest.forInterstitialAd(position: position)
-        request.impressions[0].banner?.bidFloor = bannerFloor
-        request.impressions[0].video?.bidFloor = videoFloor
+    //     let request = NimbusRequest.forInterstitialAd(position: position)
+    //     request.impressions[0].banner?.bidFloor = bannerFloor
+    //     request.impressions[0].video?.bidFloor = videoFloor
         
-        let adFormat = UIDevice.current.orientation.isLandscape ? 
-            NimbusAdFormat.interstitialLandscape : NimbusAdFormat.interstitialPortrait
-        let banner = NimbusBanner(
-            width: adFormat.width,
-            height: adFormat.height,
-            companionAdRenderMode: .endCard
-        )
+    //     let adFormat = UIDevice.current.orientation.isLandscape ? 
+    //         NimbusAdFormat.interstitialLandscape : NimbusAdFormat.interstitialPortrait
+    //     let banner = NimbusBanner(
+    //         width: adFormat.width,
+    //         height: adFormat.height,
+    //         companionAdRenderMode: .endCard
+    //     )
         
-        // Forces the request to show the end card
-        var impression = request.impressions[0]
-        impression.video?.companionAds = [banner]
-        request.impressions[0] = impression
+    //     // Forces the request to show the end card
+    //     var impression = request.impressions[0]
+    //     impression.video?.companionAds = [banner]
+    //     request.impressions[0] = impression
                 
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
-        nimbusAdManager?.showBlockingAd(
-            request: request,
-            closeButtonDelay: closeButtonDelay,
-            adPresentingViewController: viewController
-        )
-    }
+    //     nimbusAdManager = NimbusAdManager()
+    //     nimbusAdManager?.delegate = self
+    //     nimbusAdManager?.showBlockingAd(
+    //         request: request,
+    //         closeButtonDelay: closeButtonDelay,
+    //         adPresentingViewController: viewController
+    //     )
+    // }
     
-    @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
-        guard let viewController = unityViewController() else { return }
+    // @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
+    //     guard let viewController = unityViewController() else { return }
         
-        let request = NimbusRequest.forVideoAd(position: position)
-        request.impressions[0].video?.bidFloor = videoFloor
+    //     let request = NimbusRequest.forVideoAd(position: position)
+    //     request.impressions[0].video?.bidFloor = videoFloor
                 
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedAd(
-            request: request,
-            closeButtonDelay: closeButtonDelay,
-            adPresentingViewController: viewController
-        )
-    }
+    //     nimbusAdManager = NimbusAdManager()
+    //     nimbusAdManager?.delegate = self
+    //     nimbusAdManager?.showRewardedAd(
+    //         request: request,
+    //         closeButtonDelay: closeButtonDelay,
+    //         adPresentingViewController: viewController
+    //     )
+    // }
     
     @objc public func destroyExistingAd() {
         adController?.destroy()
