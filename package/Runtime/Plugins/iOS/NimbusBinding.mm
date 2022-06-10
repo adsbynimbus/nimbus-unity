@@ -58,27 +58,27 @@ extern "C" {
     }
 
     const char* _getSessionId() {
-        return [UnityHelper getSessionId].UTF8String;
+        return strdup([UnityHelper getSessionId].UTF8String);
     }
 
     const char* _getUserAgent() {
-        return [UnityHelper getUserAgent].UTF8String;
+        return strdup([UnityHelper getUserAgent].UTF8String);
     }
 
     const char* _getAdvertisingId() {
-        return [UnityHelper getAdvertisingId].UTF8String;
+        return strdup([UnityHelper getAdvertisingId].UTF8String);
     }
 
     int _getConnectionType() {
-        return [UnityHelper getConnectionType];
+        return (int)[UnityHelper getConnectionType];
     }
 
     const char* _getDeviceModel() {
-        return [UnityHelper getDeviceModel].UTF8String;
+        return strdup([UnityHelper getDeviceModel].UTF8String);
     }
 
     const char* _getSystemVersion() {
-        return [UnityHelper getSystemVersion].UTF8String;
+        return strdup([UnityHelper getSystemVersion].UTF8String);
     }
 
     bool _isLimitAdTrackingEnabled() {
