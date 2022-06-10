@@ -25,12 +25,10 @@ import NimbusKit
     @objc public class func initializeNimbusSDK(
         publisher: String,
         apiKey: String,
-        enableSDKInTestMode: Bool,
         enableUnityLogs: Bool
     ) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
-        Nimbus.shared.testMode = enableSDKInTestMode
         Nimbus.shared.renderers = [
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): NimbusVideoAdRenderer()

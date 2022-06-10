@@ -13,25 +13,31 @@ namespace Nimbus.Internal {
 		#region Declare external C interface
 
 		[DllImport("__Internal")]
-		private static extern void _initializeSDKWithPublisher(string publisher,
-			string apiKey,
-			bool enableSDKInTestMode, // TODO we can remove this parameter
+		private static extern void _initializeSDKWithPublisher(
+			string publisher, 
+			string apiKey, 
 			bool enableUnityLogs);
 
 		[DllImport("__Internal")]
-		private static extern void _showBannerAd(int adUnitInstanceId, string position, float bannerFloor);
+		private static extern void _showBannerAd(
+			int adUnitInstanceId, 
+			string position, 
+			float bannerFloor);
 
 		[DllImport("__Internal")]
-		private static extern void _showInterstitialAd(int adUnitInstanceId, string position, float bannerFloor,
+		private static extern void _showInterstitialAd(
+			int adUnitInstanceId, 
+			string position, 
+			float bannerFloor, 
+			float videoFloor, 
+			double closeButtonDelay);
+
+		[DllImport("__Internal")]
+		private static extern void _showRewardedVideoAd(
+			int adUnitInstanceId, 
+			string position, 
 			float videoFloor,
 			double closeButtonDelay);
-
-		[DllImport("__Internal")]
-		private static extern void _showRewardedVideoAd(int adUnitInstanceId, string position, float videoFloor,
-			double closeButtonDelay);
-
-		[DllImport("__Internal")]
-		private static extern void _setGDPRConsentString(string consent);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -50,7 +56,6 @@ namespace Nimbus.Internal {
 			Debug.unityLogger.Log("Initializing IOS SDK");
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
-				configuration.enableSDKInTestMode, // TODO can remove this, test mood is handled natively now
 				configuration.enableUnityLogs);
 		}
 
@@ -58,7 +63,6 @@ namespace Nimbus.Internal {
 			// TODO see the android implementation
 			throw new Exception("ios not supported yet");
 		}
-
 
 		internal override string GetSessionID() {
 			throw new Exception("ios not supported yet");
