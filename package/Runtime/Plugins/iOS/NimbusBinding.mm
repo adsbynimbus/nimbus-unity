@@ -58,30 +58,30 @@ extern "C" {
     }
 
     const char* _getSessionId() {
-        return strdup([UnityHelper getSessionId].UTF8String);
+        return strdup([NimbusHelper getSessionId].UTF8String);
     }
 
     const char* _getUserAgent() {
-        return strdup([UnityHelper getUserAgent].UTF8String);
+        return strdup([NimbusHelper getUserAgent].UTF8String);
     }
 
     const char* _getAdvertisingId() {
-        return strdup([UnityHelper getAdvertisingId].UTF8String);
+        return strdup([NimbusHelper getAdvertisingId].UTF8String);
     }
 
     int _getConnectionType() {
-        return (int)[UnityHelper getConnectionType];
+        return (int)[NimbusHelper getConnectionType];
     }
 
     const char* _getDeviceModel() {
-        return strdup([UnityHelper getDeviceModel].UTF8String);
+        return strdup([NimbusHelper getDeviceModel].UTF8String);
     }
 
     const char* _getSystemVersion() {
-        return strdup([UnityHelper getSystemVersion].UTF8String);
+        return strdup([NimbusHelper getSystemVersion].UTF8String);
     }
 
     bool _isLimitAdTrackingEnabled() {
-        return [UnityHelper isLimitAdTrackingEnabled];
+        return [NimbusHelper isLimitAdTrackingEnabled];
     }
 }

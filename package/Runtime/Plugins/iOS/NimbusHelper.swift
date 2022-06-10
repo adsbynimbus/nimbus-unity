@@ -10,7 +10,7 @@ import NimbusKit
 import AdSupport
 import AppTrackingTransparency
 
-@objc public class UnityHelper: NSObject {
+@objc public class NimbusHelper: NSObject {
     
     @objc public class func getSessionId() -> String {
         Nimbus.shared.sessionId
