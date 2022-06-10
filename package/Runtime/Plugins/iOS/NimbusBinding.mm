@@ -56,4 +56,32 @@ extern "C" {
     void _destroyAd(int adUnitInstanceId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
     }
+
+    const char* _getSessionId() {
+        return [UnityHelper getSessionId].UTF8String;
+    }
+
+    const char* _getUserAgent() {
+        return [UnityHelper getUserAgent].UTF8String;
+    }
+
+    const char* _getAdvertisingId() {
+        return [UnityHelper getAdvertisingId].UTF8String;
+    }
+
+    int _getConnectionType() {
+        return [UnityHelper getConnectionType];
+    }
+
+    const char* _getDeviceModel() {
+        return [UnityHelper getDeviceModel].UTF8String;
+    }
+
+    const char* _getSystemVersion() {
+        return [UnityHelper getSystemVersion].UTF8String;
+    }
+
+    bool _isLimitAdTrackingEnabled() {
+        return [UnityHelper isLimitAdTrackingEnabled];
+    }
 }

@@ -71,7 +71,7 @@ import NimbusKit
             format: adFormat,
             adPosition: adPosition
         )
-        request.impressions[0].bidFloor = bannerFloor
+        // request.impressions[0].bidFloor = bannerFloor
         
         let view = AdView(bannerFormat: adFormat)
         adView = view
