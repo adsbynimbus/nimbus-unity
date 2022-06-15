@@ -37,6 +37,10 @@ import AppTrackingTransparency
     }
     
     @objc public class func isLimitAdTrackingEnabled() -> Bool {
-        ATTrackingManager.trackingAuthorizationStatus != .authorized
+        if #available(iOS 14.0, *) {
+            return ATTrackingManager.trackingAuthorizationStatus != .authorized
+        } else {
+            return !ASIdentifierManager.shared().isAdvertisingTrackingEnabled
+        }
     }
 }

@@ -58,76 +58,68 @@ import NimbusKit
             .filter { $0.isKeyWindow }
             .first?.rootViewController
     }
-    
+        
     // MARK: - Public Functions
     
-    @objc public func showBannerAd(position: String, bannerFloor: Float) {
-        guard let viewController = unityViewController() else { return }
-        
-        let adFormat = NimbusAdFormat.banner320x50
-        let adPosition = NimbusPosition.footer
-        let request = NimbusRequest.forBannerAd(
-            position: position,
-            format: adFormat,
-            adPosition: adPosition
-        )
-        // request.impressions[0].bidFloor = bannerFloor
-        
-        let view = AdView(bannerFormat: adFormat)
-        adView = view
-        view.attachToView(parentView: viewController.view, position: adPosition)
-        
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
-        nimbusAdManager?.showAd(
-            request: request,
-            container: view,
-            adPresentingViewController: viewController
-        )
-    }
-    
-    @objc public func showInterstitialAd(position: String, bannerFloor: Float, videoFloor: Float, closeButtonDelay: Double) {
-        guard let viewController = unityViewController() else { return }
-        
-        let request = NimbusRequest.forInterstitialAd(position: position)
-        request.impressions[0].banner?.bidFloor = bannerFloor
-        request.impressions[0].video?.bidFloor = videoFloor
-        
-        let adFormat = UIDevice.current.orientation.isLandscape ? 
-            NimbusAdFormat.interstitialLandscape : NimbusAdFormat.interstitialPortrait
-        let banner = NimbusBanner(
-            width: adFormat.width,
-            height: adFormat.height,
-            companionAdRenderMode: .endCard
-        )
-        
-        // Forces the request to show the end card
-        var impression = request.impressions[0]
-        impression.video?.companionAds = [banner]
-        request.impressions[0] = impression
+    @objc public func renderAd(bidResponse: String, isBlocking: Bool, holdTime: TimeInterval) {
+        do {
+            guard let data = bidResponse.data(using: .utf8) else {
+                // TODO error:
+                return
+            }
+            
+            let nimbusAd = try JSONDecoder().decode(NimbusAd.self, from: data)
+            
+            guard let viewController = unityViewController() else { return }
+            
+            if isBlocking {
+                let adView = NimbusAdView(adPresentingViewController: viewController)
+                adView.volume = 100 // Accurate?
+                adView.delegate = self
+
+                let adVC = NimbusAdViewController(
+                    adView: adView,
+                    ad: nimbusAd,
+                    companionAd: nil,
+                    closeButtonDelay: holdTime,
+                    isRewardedAd: false
+                )
+                // Instead of the VC sent in by the publisher, we are creating the blocking VC here
+                adView.adPresentingViewController = adVC
+                adVC.modalPresentationStyle = .fullScreen
                 
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
-        nimbusAdManager?.showBlockingAd(
-            request: request,
-            closeButtonDelay: closeButtonDelay,
-            adPresentingViewController: viewController
-        )
-    }
-    
-    @objc public func showRewardedVideoAd(position: String, videoFloor: Float, closeButtonDelay: Double) {
-        guard let viewController = unityViewController() else { return }
-        
-        let request = NimbusRequest.forVideoAd(position: position)
-        request.impressions[0].video?.bidFloor = videoFloor
+                viewController.present(adVC, animated: true)
+                                
+                adVC.renderAndStart()
+            } else {
+                let adView = NimbusAdView(adPresentingViewController: viewController)
+                viewController.view.addSubview(adView)
                 
-        nimbusAdManager = NimbusAdManager()
-        nimbusAdManager?.delegate = self
-        nimbusAdManager?.showRewardedAd(
-            request: request,
-            closeButtonDelay: closeButtonDelay,
-            adPresentingViewController: viewController
-        )
+                adView.translatesAutoresizingMaskIntoConstraints = false
+                if nimbusAd.isInterstitial {
+                    NSLayoutConstraint.activate([
+                        adView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+                        adView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
+                        adView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+                        adView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+                    ])
+                } else {
+                    NSLayoutConstraint.activate([
+                        adView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                        adView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+                        adView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+                        adView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
+                    ])
+                }
+                
+                adView.delegate = self
+
+                adView.render(ad: nimbusAd)
+                adView.start()
+            }
+        } catch {
+            // TODO: Error
+        }
     }
     
     @objc public func destroyExistingAd() {
@@ -140,42 +132,6 @@ import NimbusKit
     private func removeReferenceFromManagerDictionary() {
         NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
     }
-    
-}
-
-// MARK: - NimbusAdManagerDelegate implementation
-
-extension NimbusManager: NimbusAdManagerDelegate {
-    
-    public func didCompleteNimbusRequest(request: NimbusRequest, ad: NimbusAd) {
-        let params: [String: Any] = [
-            "adUnitInstanceID": adUnitInstanceId,
-            "auctionId": ad.auctionId,
-            "bidRaw": ad.bidRaw,
-            "bidInCents": ad.bidInCents,
-            "network": ad.network,
-            "placementId": ad.placementId ?? ""
-        ]
-        UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
-    }
-    
-    public func didFailNimbusRequest(request: NimbusRequest, error: NimbusError) {
-        let params: [String: Any] = [
-            "adUnitInstanceID": adUnitInstanceId,
-            "errorMessage": error.localizedDescription
-        ]
-        UnityBinding.sendMessage(methodName: "OnError", params: params)
-        destroyExistingAd()
-    }
-    
-    public func didRenderAd(request: NimbusRequest, ad: NimbusAd, controller: AdController) {
-        self.adController = controller
-        self.adController?.delegate = self
-        
-        let params: [String: Any] = ["adUnitInstanceID": adUnitInstanceId]
-        UnityBinding.sendMessage(methodName: "OnAdResponse", params: params)
-    }
-    
 }
 
 // MARK: - AdControllerDelegate implementation
@@ -185,7 +141,7 @@ extension NimbusManager: AdControllerDelegate {
     public func didReceiveNimbusEvent(controller: AdController, event: NimbusEvent) {
         let eventName: String
         switch event {
-        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile:
+        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
             return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"

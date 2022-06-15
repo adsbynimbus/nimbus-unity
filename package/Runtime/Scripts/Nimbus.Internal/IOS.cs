@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -21,25 +21,7 @@ namespace Nimbus.Internal {
 			bool enableUnityLogs);
 
 		[DllImport("__Internal")]
-		private static extern void _showBannerAd(
-			int adUnitInstanceId, 
-			string position, 
-			float bannerFloor);
-
-		[DllImport("__Internal")]
-		private static extern void _showInterstitialAd(
-			int adUnitInstanceId, 
-			string position, 
-			float bannerFloor, 
-			float videoFloor, 
-			double closeButtonDelay);
-
-		[DllImport("__Internal")]
-		private static extern void _showRewardedVideoAd(
-			int adUnitInstanceId, 
-			string position, 
-			float videoFloor,
-			double closeButtonDelay);
+		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, double closeButtonDelay);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -78,25 +60,37 @@ namespace Nimbus.Internal {
 
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
+
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
 				configuration.enableUnityLogs);
+
 			Debug.unityLogger.Log("Ended initializing iOS SDK");
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log("Show Ad");
-			// TODO see the android implementation
-			throw new Exception("iOS not supported yet");
+
+			var isBlocking = false;
+			var closeButtonDelay = 0;
+			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
+				closeButtonDelay = 5;
+				isBlocking = true;
+				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+			}
+
+			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, closeButtonDelay);
 		}
 
 		internal override string GetSessionID() {
 			Debug.unityLogger.Log("Get Session ID");
+
 			return _getSessionId();
 		}
 
 		internal override Device GetDevice() {
 			Debug.unityLogger.Log("Get Device");
+
 			_device = new Device {
 				DeviceType = DeviceType.MobileTablet,
 				H = Screen.height,
