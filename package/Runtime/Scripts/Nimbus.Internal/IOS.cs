@@ -5,6 +5,7 @@ using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
 using Newtonsoft.Json;
+using Nimbus.Internal.Utility;
 using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
@@ -28,25 +29,25 @@ namespace Nimbus.Internal {
 		private static extern void _destroyAd(int adUnitInstanceId);
 
 		[DllImport("__Internal")]
-		private static extern void _getSessionId(out string sessionId);
+		private static extern string _getSessionId();
 
 		[DllImport("__Internal")]
-		private static extern void _getUserAgent(out string userAgent);
+		private static extern string _getUserAgent();
 
 		[DllImport("__Internal")]
-		private static extern void _getAdvertisingId(out string advertisingId);
+		private static extern string _getAdvertisingId();
 
 		[DllImport("__Internal")]
-		private static extern void _getConnectionType(out int connectionType);
+		private static extern int _getConnectionType();
 
 		[DllImport("__Internal")]
-		private static extern void _getDeviceModel(out string deviceModel);
+		private static extern string _getDeviceModel();
 
 		[DllImport("__Internal")]
-		private static extern void _getSystemVersion(out string systemVersion);
+		private static extern string _getSystemVersion();
 
 		[DllImport("__Internal")]
-		private static extern void _isLimitAdTrackingEnabled(out bool limitAdTracking);
+		private static extern bool _isLimitAdTrackingEnabled();
 
 		#endregion
 
@@ -54,6 +55,7 @@ namespace Nimbus.Internal {
 
 		private readonly NimbusIOSAdManager _iOSAdManager;
 		private Device _deviceCache;
+		private const string DntDeviceID = "00000000-0000-0000-0000-000000000000";
 
 		public IOS() {
 			_iOSAdManager = NimbusIOSAdManager.Instance;
@@ -61,7 +63,6 @@ namespace Nimbus.Internal {
 
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
-
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
 				configuration.enableUnityLogs);
@@ -84,68 +85,45 @@ namespace Nimbus.Internal {
 		}
 
 		internal override string GetSessionID() {
-			Debug.unityLogger.Log("Get Session ID");
-
-			var sessionId = "SessionID";
-			_getSessionId(out sessionId);
-			return sessionId;
+			return _getSessionId();
 		}
 
 		internal override Device GetDevice() {
 			Debug.unityLogger.Log("Get Device");
-
-			var deviceModel = "model";
-			_getDeviceModel(out deviceModel);
-
-			var systemVersion = "systemVersion";
-			_getSystemVersion(out systemVersion);
-
 			_deviceCache ??= new Device {
 				DeviceType = DeviceType.MobileTablet,
 				H = Screen.height,
 				W = Screen.width,
 				Os = "ios",
 				Make = "apple",
-            	Model = deviceModel,
-				Osv = systemVersion
+				Model = _getDeviceModel(),
+				Osv = _getSystemVersion(),
 			};
-
-			_deviceCache.Ua ??= "0000";
-
-			Debug.unityLogger.Log("Get Device 1");
-
-			var connectionType = 0;
-			_getConnectionType(out connectionType);
-
-			Debug.unityLogger.Log("Get Device 2");
-
-			_deviceCache.ConnectionType = (ConnectionType)connectionType;
-
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.ConnectionType}");
-
-			var limitAdTracking = false;
-			_isLimitAdTrackingEnabled(out limitAdTracking);
-			_deviceCache.Lmt = limitAdTracking ? 1 : 0;
-
-			var advertisingId = "AdvertisingId";
-			_getAdvertisingId(out advertisingId);
-			_deviceCache.Ifa = advertisingId;
-
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Ifa}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Lmt}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.DeviceType}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.H}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.W}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Os}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Make}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Model}");
-			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Osv}");
-
-			Debug.unityLogger.Log("Get Device end");
-
+			
+			_deviceCache.Ua = _getUserAgent();
+			_deviceCache.ConnectionType = (ConnectionType)_getConnectionType();
+			_deviceCache.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
+			
+			_deviceCache.Ifa = _getAdvertisingId();
+			if (_deviceCache.Ifa.IsNullOrEmpty()) {
+				_deviceCache.Ifa = DntDeviceID;
+			}
+			
+			Debug.unityLogger.Log($"Get Device connection type {_deviceCache.ConnectionType}");
+			Debug.unityLogger.Log($"Get Device UA {_deviceCache.Ua}");
+			Debug.unityLogger.Log($"Get Device ifa {_deviceCache.Ifa}");
+			Debug.unityLogger.Log($"Get Device lmt {_deviceCache.Lmt}");
+			Debug.unityLogger.Log($"Get Device device type {_deviceCache.DeviceType}");
+			Debug.unityLogger.Log($"Get Device height {_deviceCache.H}");
+			Debug.unityLogger.Log($"Get Device width {_deviceCache.W}");
+			Debug.unityLogger.Log($"Get Device os {_deviceCache.Os}");
+			Debug.unityLogger.Log($"Get Device make {_deviceCache.Make}");
+			Debug.unityLogger.Log($"Get Device model {_deviceCache.Model}");
+			Debug.unityLogger.Log($"Get Device osv {_deviceCache.Osv}");
+			
 			var body = JsonConvert.SerializeObject(_deviceCache);
-
 			Debug.unityLogger.Log($"Get Device end body {body}");
+			Debug.unityLogger.Log("Get Device end");
 
 			return _deviceCache;
 		}

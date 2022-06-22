@@ -40,31 +40,31 @@ extern "C" {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
     }
 
-    void _getSessionId(char* sessionId) {
-        sessionId = (char *)[[NimbusHelper getSessionId] UTF8String];
+    const char* _getSessionId() {
+        return strdup([[NimbusHelper getSessionId] UTF8String]);
     }
 
-    void _getUserAgent(char* userAgent) {
-        userAgent = (char *)[[NimbusHelper getUserAgent] UTF8String];
+    const char* _getUserAgent() {
+        return strdup([[NimbusHelper getUserAgent] UTF8String]);
     }
 
-    void _getAdvertisingId(char* advertisingId) {
-        advertisingId = (char *)[[NimbusHelper getAdvertisingId] UTF8String];
+    const char* _getAdvertisingId() {
+        return strdup([[NimbusHelper getAdvertisingId] UTF8String]);
     }
 
-    void _getConnectionType(int* connectionType) {
-        *connectionType = (int)[NimbusHelper getConnectionType];
+    int _getConnectionType(int* connectionType) {
+        return [NimbusHelper getConnectionType];
+    }
+    
+    const char* _getDeviceModel() {
+        return strdup([[NimbusHelper getDeviceModel] UTF8String]);
     }
 
-    void _getDeviceModel(char* deviceModel) {
-        deviceModel = (char *)[[NimbusHelper getDeviceModel] UTF8String];
+    const char* _getSystemVersion() {
+        return strdup([[NimbusHelper getSystemVersion] UTF8String]);
     }
 
-    void _getSystemVersion(const char* systemVersion) {
-        systemVersion = (char *)[[NimbusHelper getSystemVersion] UTF8String];
-    }
-
-    void _isLimitAdTrackingEnabled(bool* limitAdTracking) {
-        *limitAdTracking = [NimbusHelper isLimitAdTrackingEnabled];
+    bool _isLimitAdTrackingEnabled() {
+        return [NimbusHelper isLimitAdTrackingEnabled];
     }
 }
