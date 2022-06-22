@@ -61,9 +61,10 @@ import NimbusKit
         
     // MARK: - Public Functions
     
-    @objc public func renderAd(bidResponse: String, isBlocking: Bool, holdTime: TimeInterval) {
+    @objc public func renderAd(bidResponse: String, isBlocking: Bool, closeButtonDelay: TimeInterval) {
         do {
             guard let data = bidResponse.data(using: .utf8) else {
+                print("WTF cannot parse bid response \(bidResponse)")
                 // TODO error:
                 return
             }
@@ -81,7 +82,7 @@ import NimbusKit
                     adView: adView,
                     ad: nimbusAd,
                     companionAd: nil,
-                    closeButtonDelay: holdTime,
+                    closeButtonDelay: closeButtonDelay,
                     isRewardedAd: false
                 )
                 // Instead of the VC sent in by the publisher, we are creating the blocking VC here

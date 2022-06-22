@@ -27,32 +27,32 @@ namespace Nimbus.Internal {
 		private static extern void _destroyAd(int adUnitInstanceId);
 
 		[DllImport("__Internal")]
-		private static extern string _getSessionId();
+		private static extern void _getSessionId(out string sessionId);
 
 		[DllImport("__Internal")]
-		private static extern string _getUserAgent();
+		private static extern void _getUserAgent(out string userAgent);
 
 		[DllImport("__Internal")]
-		private static extern string _getAdvertisingId();
+		private static extern void _getAdvertisingId(out string advertisingId);
 
 		[DllImport("__Internal")]
-		private static extern int _getConnectionType();
+		private static extern void _getConnectionType(out int connectionType);
 
 		[DllImport("__Internal")]
-		private static extern string _getDeviceModel();
+		private static extern void _getDeviceModel(out string deviceModel);
 
 		[DllImport("__Internal")]
-		private static extern string _getSystemVersion();
+		private static extern void _getSystemVersion(out string systemVersion);
 
 		[DllImport("__Internal")]
-		private static extern bool _isLimitAdTrackingEnabled();
+		private static extern void _isLimitAdTrackingEnabled(out bool limitAdTracking);
 
 		#endregion
 
 		#region Wrapped methods and properties
 
 		private readonly NimbusIOSAdManager _iOSAdManager;
-		private Device _device;
+		private Device _deviceCache;
 
 		public IOS() {
 			_iOSAdManager = NimbusIOSAdManager.Instance;
@@ -85,27 +85,47 @@ namespace Nimbus.Internal {
 		internal override string GetSessionID() {
 			Debug.unityLogger.Log("Get Session ID");
 
-			return _getSessionId();
+			var sessionId = "SessionID";
+			_getSessionId(out sessionId);
+			return sessionId;
 		}
 
 		internal override Device GetDevice() {
 			Debug.unityLogger.Log("Get Device");
 
-			_device = new Device {
+			var deviceModel = "model";
+			_getDeviceModel(out deviceModel);
+
+			var systemVersion = "systemVersion";
+			_getSystemVersion(out systemVersion);
+
+			_deviceCache ??= new Device {
 				DeviceType = DeviceType.MobileTablet,
 				H = Screen.height,
 				W = Screen.width,
 				Os = "ios",
 				Make = "apple",
-            	Model = _getDeviceModel(),
-				Osv = _getSystemVersion()
+            	Model = deviceModel,
+				Osv = systemVersion
 			};
 
-			_device.Ua = _getUserAgent();
-			_device.ConnectionType = (ConnectionType)_getConnectionType();
-			_device.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
-			_device.Ifa = _getAdvertisingId();
-			return _device;
+			_deviceCache.Ua ??= "0000";
+
+			var connectionType = 0;
+			_getConnectionType(out connectionType);
+			_deviceCache.ConnectionType = (ConnectionType)connectionType;
+
+			var limitAdTracking = false;
+			_isLimitAdTrackingEnabled(out limitAdTracking);
+			_deviceCache.Lmt = limitAdTracking ? 1 : 0;
+
+			var advertisingId = "AdvertisingId";
+			_getAdvertisingId(out advertisingId);
+			_deviceCache.Ifa = advertisingId;
+
+			Debug.unityLogger.Log("Get Device end");
+
+			return _deviceCache;
 		}
 
 		#endregion

@@ -27,10 +27,10 @@ extern "C" {
      void _renderAd(int adUnitInstanceId,
                     const char* bidResponse,
                     bool isBlocking,
-                    double holdTime) {
+                    double closeButtonDelay) {
         if (bidResponse) {
             [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking holdTime:holdTime];
+             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking closeButtonDelay:closeButtonDelay];
         } else {
             // TODO: Error
         }
@@ -40,31 +40,31 @@ extern "C" {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
     }
 
-    const char* _getSessionId() {
-        return strdup([NimbusHelper getSessionId].UTF8String);
+    void _getSessionId(char* sessionId) {
+        sessionId = (char *)[[NimbusHelper getSessionId] UTF8String];
     }
 
-    const char* _getUserAgent() {
-        return strdup([NimbusHelper getUserAgent].UTF8String);
+    void _getUserAgent(char* userAgent) {
+        userAgent = (char *)[[NimbusHelper getUserAgent] UTF8String];
     }
 
-    const char* _getAdvertisingId() {
-        return strdup([NimbusHelper getAdvertisingId].UTF8String);
+    void _getAdvertisingId(char* advertisingId) {
+        advertisingId = (char *)[[NimbusHelper getAdvertisingId] UTF8String];
     }
 
-    int _getConnectionType() {
-        return (int)[NimbusHelper getConnectionType];
+    void _getConnectionType(int* connectionType) {
+        *connectionType = (int)[NimbusHelper getConnectionType];
     }
 
-    const char* _getDeviceModel() {
-        return strdup([NimbusHelper getDeviceModel].UTF8String);
+    void _getDeviceModel(char* deviceModel) {
+        deviceModel = (char *)[[NimbusHelper getDeviceModel] UTF8String];
     }
 
-    const char* _getSystemVersion() {
-        return strdup([NimbusHelper getSystemVersion].UTF8String);
+    void _getSystemVersion(const char* systemVersion) {
+        systemVersion = (char *)[[NimbusHelper getSystemVersion] UTF8String];
     }
 
-    bool _isLimitAdTrackingEnabled() {
-        return [NimbusHelper isLimitAdTrackingEnabled];
+    void _isLimitAdTrackingEnabled(bool* limitAdTracking) {
+        *limitAdTracking = [NimbusHelper isLimitAdTrackingEnabled];
     }
 }
