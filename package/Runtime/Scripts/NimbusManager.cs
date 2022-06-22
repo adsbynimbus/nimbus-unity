@@ -319,6 +319,8 @@ namespace Nimbus.Runtime.Scripts {
 		///		to auto fill some data.
 		/// </param>
 		public NimbusAdUnit RequestAd(string nimbusReportingPosition, BidRequest bidRequest) {
+			Debug.unityLogger.Log("Requesting ad 1");
+
 			bidRequest.
 				SetSessionId(_sessionId).
 				SetDevice(_nimbusPlatformAPI.GetDevice()).
@@ -328,8 +330,23 @@ namespace Nimbus.Runtime.Scripts {
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 
+			// Debug.unityLogger.Log(bidRequest);
+
+			Debug.unityLogger.Log("Requesting ad 2");
+
+			// Debug.unityLogger.LogError(adUnit.InstanceID.ToString(),
+			// 		"the was already rendered, you cannot render the same ad twice");
+
+			Debug.unityLogger.Log("Requesting ad 3");
+
 			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
+			
+			Debug.unityLogger.Log("Requesting ad 4");
+			
 			var adUnit = new NimbusAdUnit(AdUnitHelper.BidRequestToAdType(bidRequest), NimbusEvents);
+
+			Debug.unityLogger.Log("Requesting ad 5");
+
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
 		}

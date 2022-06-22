@@ -4,6 +4,7 @@ using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
+using Newtonsoft.Json;
 using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
@@ -111,9 +112,16 @@ namespace Nimbus.Internal {
 
 			_deviceCache.Ua ??= "0000";
 
+			Debug.unityLogger.Log("Get Device 1");
+
 			var connectionType = 0;
 			_getConnectionType(out connectionType);
+
+			Debug.unityLogger.Log("Get Device 2");
+
 			_deviceCache.ConnectionType = (ConnectionType)connectionType;
+
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.ConnectionType}");
 
 			var limitAdTracking = false;
 			_isLimitAdTrackingEnabled(out limitAdTracking);
@@ -123,7 +131,21 @@ namespace Nimbus.Internal {
 			_getAdvertisingId(out advertisingId);
 			_deviceCache.Ifa = advertisingId;
 
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Ifa}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Lmt}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.DeviceType}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.H}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.W}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Os}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Make}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Model}");
+			Debug.unityLogger.Log($"Get Device 3 {_deviceCache.Osv}");
+
 			Debug.unityLogger.Log("Get Device end");
+
+			var body = JsonConvert.SerializeObject(_deviceCache);
+
+			Debug.unityLogger.Log($"Get Device end body {body}");
 
 			return _deviceCache;
 		}
