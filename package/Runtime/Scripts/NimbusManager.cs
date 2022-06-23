@@ -414,11 +414,11 @@ namespace Nimbus.Runtime.Scripts {
 		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition, float videoFloor = 0f) {
 			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
 			bidRequest.
+				AttemptToShowVideoEndCard().
 				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
 				SetDevice(_nimbusPlatformAPI.GetDevice()).
 				SetVideoFloor(videoFloor).
 				SetRewardedVideoFlag().
-				AttemptToShowVideoEndCard().
 				SetTest(_configuration.enableSDKInTestMode);
 			
 			SetTestData(bidRequest);

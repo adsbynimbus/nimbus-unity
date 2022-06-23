@@ -27,13 +27,10 @@ extern "C" {
      void _renderAd(int adUnitInstanceId,
                     const char* bidResponse,
                     bool isBlocking,
+                    bool isRewarded,
                     double closeButtonDelay) {
-        if (bidResponse) {
-            [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking closeButtonDelay:closeButtonDelay];
-        } else {
-            // TODO: Error
-        }
+        [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+            renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay];
     }
 
     void _destroyAd(int adUnitInstanceId) {
@@ -53,7 +50,7 @@ extern "C" {
     }
 
     int _getConnectionType() {
-        return [NimbusHelper getConnectionType];
+        return (int)[NimbusHelper getConnectionType];
     }
     
     const char* _getDeviceModel() {

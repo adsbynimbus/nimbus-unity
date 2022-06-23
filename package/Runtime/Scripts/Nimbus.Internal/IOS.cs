@@ -9,7 +9,14 @@ using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
 	public class IOS : NimbusAPI {
-		private static void OnDestroyIOSAd(int adUnitInstanceId) {
+
+		private void OnDestroyIOSAd(int adUnitInstanceId)
+		{
+			var nimbusAdUnit = NimbusIOSAdManager.Instance.RemoveAdUnitForInstanceId(adUnitInstanceId);
+			if (nimbusAdUnit != null)
+			{
+				nimbusAdUnit.OnDestroyIOSAd -= OnDestroyIOSAd;
+			}
 			_destroyAd(adUnitInstanceId);
 		}
 
@@ -20,7 +27,7 @@ namespace Nimbus.Internal {
 			bool enableUnityLogs);
 
 		[DllImport("__Internal")]
-		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking,
+		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
 			double closeButtonDelay);
 
 		[DllImport("__Internal")]
@@ -47,35 +54,32 @@ namespace Nimbus.Internal {
 		[DllImport("__Internal")]
 		private static extern bool _isLimitAdTrackingEnabled();
 
-
-		private readonly NimbusIOSAdManager _iOSAdManager;
-
 		private Device _deviceCache;
 		private string _sessionId;
-		private const string DntDeviceID = "00000000-0000-0000-0000-000000000000";
-
-		public IOS() {
-			_iOSAdManager = NimbusIOSAdManager.Instance;
-		}
-
+		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
+
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
 				configuration.enableUnityLogs);
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
+			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
+			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
+
 			var isBlocking = false;
+			var isRewarded = false;
 			var closeButtonDelay = 0;
 			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
 				closeButtonDelay = 5;
 				isBlocking = true;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded)
-					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+					isRewarded = true;
 			}
 
-			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, closeButtonDelay);
+			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, isRewarded, closeButtonDelay);
 		}
 
 		internal override string GetSessionID() {
@@ -100,9 +104,6 @@ namespace Nimbus.Internal {
 			_deviceCache.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
 			_deviceCache.Ifa = _getAdvertisingId();
 			_deviceCache.Ua = _getUserAgent();
-			if (_deviceCache.Ifa.IsNullOrEmpty()) {
-				_deviceCache.Ifa = DntDeviceID;
-			}
 
 			return _deviceCache;
 		}
