@@ -1,5 +1,4 @@
 ﻿#if UNITY_EDITOR && UNITY_IOS
-
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -34,20 +33,15 @@ public class IOSPostBuildProcessor {
             pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityForwardDeclsHeaderFile);
             pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
             pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
-
-
-            CopyPodfile(path);
-            
             pbx.WriteToFile(pbxPath);
+            CopyPodfile(path);
         }
     }
     
     private static void CopyPodfile(string pathToBuiltProject) {
         var podfilePath = "Packages/com.adsbynimbus.unity/Runtime/Plugins/iOS/Podfile";
         var destPodfilePath = pathToBuiltProject + "/Podfile";
-
         Debug.Log($"Copying Podfile from {podfilePath} to {destPodfilePath}");
-
         if (!File.Exists(destPodfilePath)) {
             FileUtil.CopyFileOrDirectory(podfilePath, destPodfilePath);
         } else {
