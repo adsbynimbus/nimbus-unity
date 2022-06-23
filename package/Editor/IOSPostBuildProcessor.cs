@@ -39,7 +39,7 @@ public class IOSPostBuildProcessor {
     }
     
     private static void CopyPodfile(string pathToBuiltProject) {
-        var podfilePath = "Packages/com.adsbynimbus.unity/Runtime/Plugins/iOS/Podfile";
+        const string podfilePath = "Packages/com.adsbynimbus.unity/Runtime/Plugins/iOS/Podfile";
         var destPodfilePath = pathToBuiltProject + "/Podfile";
         Debug.Log($"Copying Podfile from {podfilePath} to {destPodfilePath}");
         if (!File.Exists(destPodfilePath)) {
