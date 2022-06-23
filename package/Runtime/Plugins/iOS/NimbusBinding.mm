@@ -52,7 +52,7 @@ extern "C" {
         return strdup([[NimbusHelper getAdvertisingId] UTF8String]);
     }
 
-    int _getConnectionType(int* connectionType) {
+    int _getConnectionType() {
         return [NimbusHelper getConnectionType];
     }
     

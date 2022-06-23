@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 485368386d18468b8de233661999ecf7, type: 3}
   m_Name: NimbusSDKDevExample
   m_EditorClassIdentifier: 
-  publisherKey: dev-publisher
-  apiKey: DEV-af79-4612-87a9-aa70c17e8dc6
+  publisherKey: dev-sdk
+  apiKey: DEV-cae2-4774-97ba-4e15c6276be0
   enableSDKInTestMode: 1
   enableUnityLogs: 1

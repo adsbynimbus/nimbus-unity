@@ -5,6 +5,7 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
+using UnityEngine;
 
 public class IOSPostBuildProcessor {
     [PostProcessBuild]
@@ -23,18 +24,34 @@ public class IOSPostBuildProcessor {
             pbx.SetBuildProperty(targetGUID, "SUPPORTED_PLATFORMS", "iphonesimulator iphoneos");         
 
             // UnityFramework
-            var unityFrameworkGUID = pbx.GetUnityFrameworkTargetGuid();
+            var unityFrameworkGuid = pbx.GetUnityFrameworkTargetGuid();
             var unityInterfaceHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityInterface.h");
             var unityForwardDeclsHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityForwardDecls.h");
             var unityRenderingHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityRendering.h");
             var unitySharedDeclsHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnitySharedDecls.h");
 
-            pbx.AddPublicHeaderToBuild(unityFrameworkGUID, unityInterfaceHeaderFile);
-            pbx.AddPublicHeaderToBuild(unityFrameworkGUID, unityForwardDeclsHeaderFile);
-            pbx.AddPublicHeaderToBuild(unityFrameworkGUID, unityRenderingHeaderFile);
-            pbx.AddPublicHeaderToBuild(unityFrameworkGUID, unitySharedDeclsHeaderFile);
+            pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityInterfaceHeaderFile);
+            pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityForwardDeclsHeaderFile);
+            pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
+            pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 
+
+            CopyPodfile(path);
+            
             pbx.WriteToFile(pbxPath);
+        }
+    }
+    
+    private static void CopyPodfile(string pathToBuiltProject) {
+        var podfilePath = "Packages/com.adsbynimbus.unity/Runtime/Plugins/iOS/Podfile";
+        var destPodfilePath = pathToBuiltProject + "/Podfile";
+
+        Debug.Log($"Copying Podfile from {podfilePath} to {destPodfilePath}");
+
+        if (!File.Exists(destPodfilePath)) {
+            FileUtil.CopyFileOrDirectory(podfilePath, destPodfilePath);
+        } else {
+            Debug.Log("Podfile already exists");
         }
     }
 

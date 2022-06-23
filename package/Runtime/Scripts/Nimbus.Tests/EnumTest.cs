@@ -24,7 +24,7 @@ namespace Nimbus.Tests {
 		public void TestBuilder() {
 			var bidRequest = NimbusRtbBidRequestHelper.ForHybridInterstitialAd("test_position");
 			bidRequest.SetAppBundle("com.foo");
-			bidRequest.Device = new Device {
+			bidRequest.SetDevice(new Device {
 				Ua = "UnityPlayer/2020.3.34f1 personal (UnityWebRequest/1.0, libcurl/7.52.0-DEV)",
 				Os = "Unity Editor",
 				DeviceType = DeviceType.PersonalComputer,
@@ -33,7 +33,7 @@ namespace Nimbus.Tests {
 				W = Screen.width,
 				ConnectionType = ConnectionType.Unknown,
 				Ifa = "00000000-0000-0000-0000-000000000000"
-			};
+			});
 			bidRequest.SetSessionId("foobar");
 
 			void TestSerialize() {

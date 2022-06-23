@@ -1,4 +1,5 @@
 using System;
+using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -26,6 +27,7 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _helper;
 		private AndroidJavaClass _nimbus;
 		private AndroidJavaClass _unityPlayer;
+		private string _sessionId;
 
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing Android SDK");
@@ -59,11 +61,13 @@ namespace Nimbus.Internal {
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, holdTime,
 				listener);
 		}
-
+		
 		internal override string GetSessionID() {
-			return _nimbus.CallStatic<string>("getSessionId");
+			if (_sessionId.IsNullOrEmpty()) {
+				_sessionId = _nimbus.CallStatic<string>("getSessionId");
+			}
+			return _sessionId;
 		}
-
 
 		internal override Device GetDevice() {
 			_deviceCache ??= new Device {

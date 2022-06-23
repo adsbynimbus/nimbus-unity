@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Nimbus.Internal.RequestBuilder;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
@@ -26,7 +25,7 @@ namespace Nimbus.Internal.Network {
 			Client.DefaultRequestHeaders.Add("Nimbus-Api-Key", configuration.apiKey);
 			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", "1.0.0");
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
-			Client.Timeout = TimeSpan.FromSeconds(2);
+			Client.Timeout = TimeSpan.FromSeconds(10);
 
 			var path = ProductionPath;
 			if (configuration.enableSDKInTestMode) path = TestingPath;
@@ -44,11 +43,11 @@ namespace Nimbus.Internal.Network {
 #pragma warning disable CS1998
 			return await Task.Run(async () => {
 #pragma warning restore CS1998
-				// This will throw an exception if the bid request is missing required data from Nimbus 
-				var body = JsonConvert.SerializeObject(bidRequest);
 #if UNITY_EDITOR
 				const string nimbusResponse = "{\"message\": \"in Editor mode, network request will not be made\"}";
 #else
+				// This will throw an exception if the bid request is missing required data from Nimbus 
+				var body = JsonConvert.SerializeObject(bidRequest);
 				HttpContent jsonBody = new StringContent(body, Encoding.UTF8, "application/json");
 				var serverResponse = await Client.PostAsync(_nimbusEndpoint, jsonBody, _ctx.Token);
 				if (_ctx.Token.IsCancellationRequested) {
