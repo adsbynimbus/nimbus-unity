@@ -73,10 +73,13 @@ namespace Nimbus.Internal {
 			var isRewarded = false;
 			var closeButtonDelay = 0;
 			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
-				closeButtonDelay = 5;
 				isBlocking = true;
+				closeButtonDelay = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded)
+				{
 					isRewarded = true;
+					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+				}
 			}
 
 			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, isRewarded, closeButtonDelay);
