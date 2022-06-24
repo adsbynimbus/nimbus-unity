@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-// TODO can probably remove this entire file
+
 namespace Nimbus.Internal {
 	internal static class NimbusIOSParser {
 		internal static T ParseMessage<T>(string jsonParams) {
@@ -11,15 +11,6 @@ namespace Nimbus.Internal {
 	[Serializable]
 	internal class NimbusIOSParams {
 		public int adUnitInstanceID;
-	}
-
-	[Serializable]
-	internal class NimbusIOSAdResponse : NimbusIOSParams {
-		public string auctionId;
-		public int bidRaw;
-		public int bidInCents;
-		public string network;
-		public string placementId;
 	}
 
 	[Serializable]

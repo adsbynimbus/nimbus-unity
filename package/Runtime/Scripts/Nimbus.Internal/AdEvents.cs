@@ -59,7 +59,7 @@ namespace Nimbus.Internal {
 		IMPRESSION,
 		CLICKED,
 		PAUSED,
-		RESUME,
+		RESUMED,
 
 		// FIRST_QUARTILE,
 		// MIDPOINT,

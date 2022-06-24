@@ -81,7 +81,7 @@ namespace Nimbus.Internal {
 				case AdEventTypes.PAUSED:
 					_adEvents.FireOnVideoAdPausedEvent(this);
 					break;
-				case AdEventTypes.RESUME:
+				case AdEventTypes.RESUMED:
 					_adEvents.FireOnVideoAdResumeEvent(this);
 					break;
 				case AdEventTypes.COMPLETED:

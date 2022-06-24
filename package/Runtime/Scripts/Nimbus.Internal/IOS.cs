@@ -1,75 +1,114 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using Nimbus.ScriptableObjects;
+using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
+using Nimbus.Internal.Utility;
+using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
 	public class IOS : NimbusAPI {
-		private static void OnDestroyIOSAd(int adUnitInstanceId) {
+
+		private void OnDestroyIOSAd(int adUnitInstanceId)
+		{
+			var nimbusAdUnit = NimbusIOSAdManager.Instance.RemoveAdUnitForInstanceId(adUnitInstanceId);
+			if (nimbusAdUnit != null)
+			{
+				nimbusAdUnit.OnDestroyIOSAd -= OnDestroyIOSAd;
+			}
 			_destroyAd(adUnitInstanceId);
 		}
 
-		#region Declare external C interface
-
 		[DllImport("__Internal")]
-		private static extern void _initializeSDKWithPublisher(string publisher,
+		private static extern void _initializeSDKWithPublisher(
+			string publisher,
 			string apiKey,
-			bool enableSDKInTestMode, // TODO we can remove this parameter
 			bool enableUnityLogs);
 
 		[DllImport("__Internal")]
-		private static extern void _showBannerAd(int adUnitInstanceId, string position, float bannerFloor);
-
-		[DllImport("__Internal")]
-		private static extern void _showInterstitialAd(int adUnitInstanceId, string position, float bannerFloor,
-			float videoFloor,
+		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
 			double closeButtonDelay);
-
-		[DllImport("__Internal")]
-		private static extern void _showRewardedVideoAd(int adUnitInstanceId, string position, float videoFloor,
-			double closeButtonDelay);
-
-		[DllImport("__Internal")]
-		private static extern void _setGDPRConsentString(string consent);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
 
-		#endregion
+		[DllImport("__Internal")]
+		private static extern string _getSessionId();
 
-		#region Wrapped methods and properties
+		[DllImport("__Internal")]
+		private static extern string _getUserAgent();
 
-		private readonly NimbusIOSAdManager _iOSAdManager;
+		[DllImport("__Internal")]
+		private static extern string _getAdvertisingId();
 
-		public IOS() {
-			_iOSAdManager = NimbusIOSAdManager.Instance;
-		}
+		[DllImport("__Internal")]
+		private static extern int _getConnectionType();
 
+		[DllImport("__Internal")]
+		private static extern string _getDeviceModel();
+
+		[DllImport("__Internal")]
+		private static extern string _getSystemVersion();
+
+		[DllImport("__Internal")]
+		private static extern bool _isLimitAdTrackingEnabled();
+
+		private Device _deviceCache;
+		private string _sessionId;
+		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
-			Debug.unityLogger.Log("Initializing IOS SDK");
+			Debug.unityLogger.Log("Initializing iOS SDK");
+
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
-				configuration.enableSDKInTestMode, // TODO can remove this, test mood is handled natively now
 				configuration.enableUnityLogs);
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
-			// TODO see the android implementation
-			throw new Exception("ios not supported yet");
+			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
+			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
+
+			var isBlocking = false;
+			var isRewarded = false;
+			var closeButtonDelay = 0;
+			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
+				isBlocking = true;
+				closeButtonDelay = 5;
+				if (nimbusAdUnit.AdType == AdUnitType.Rewarded)
+				{
+					isRewarded = true;
+					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+				}
+			}
+
+			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, isRewarded, closeButtonDelay);
 		}
 
-
 		internal override string GetSessionID() {
-			throw new Exception("ios not supported yet");
+			if (_sessionId.IsNullOrEmpty()) {
+				_sessionId = _getSessionId();
+			}
+			return _sessionId;
 		}
 
 		internal override Device GetDevice() {
-			// TODO this one is tricky see the android implementation, for efficiency we do not retrieve all the fields on every requests
-			// we only retrieve fields continuously that can change or fail like UserAgent, LMT, DNT, Connection type, etc
-			throw new Exception("ios not supported yet");
-		}
+			_deviceCache ??= new Device {
+				DeviceType = DeviceType.MobileTablet,
+				H = Screen.height,
+				W = Screen.width,
+				Os = "ios",
+				Make = "apple",
+				Model = _getDeviceModel(),
+				Osv = _getSystemVersion(),
+			};
 
-		#endregion
+			_deviceCache.ConnectionType = (ConnectionType)_getConnectionType();
+			_deviceCache.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
+			_deviceCache.Ifa = _getAdvertisingId();
+			_deviceCache.Ua = _getUserAgent();
+
+			return _deviceCache;
+		}
 	}
 }

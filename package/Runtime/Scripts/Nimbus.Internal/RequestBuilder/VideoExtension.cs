@@ -8,7 +8,7 @@ namespace Nimbus.Internal.RequestBuilder {
 			Protocols.Vast2, Protocols.Vast3, Protocols.Vast2Wrapper, Protocols.Vast3Wrapper
 		};
 
-#if UNITY_EDITOR || UNITY_ANDROID
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
 		private static readonly string[] DefaultMimes =
 			{ "application/x-mpegurl", "video/mp4", "video/3gpp", "video/x-flv" };
 #else
