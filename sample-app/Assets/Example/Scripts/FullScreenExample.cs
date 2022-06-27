@@ -1,6 +1,7 @@
 using System.Collections;
+using Example.Scripts.NotAdRelated;
+using Nimbus.Internal;
 using Nimbus.Runtime.Scripts;
-using Nimbus.Runtime.Scripts.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
@@ -15,11 +16,12 @@ namespace Example.Scripts {
 		private void Awake() {
 			UnityThread.InitUnityThread();
 		}
+
 		private void Start() {
 			NimbusManager.Instance.NimbusEvents.OnAdCompleted += RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError += LogError;
 		}
-		
+
 		// called as for extra safety. Ensures all resources are released
 		private void OnDestroy() {
 			NimbusManager.Instance.NimbusEvents.OnAdCompleted -= RewardUser;
@@ -30,7 +32,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.LoadAndShowFullScreenAd("unity_demo_rewarded_fullscreen_position", 0.0f, 0.0f);
+			_ad = NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_rewarded_fullscreen_position");
 			_alreadyTriggered = true;
 		}
 
@@ -42,34 +44,24 @@ namespace Example.Scripts {
 
 		private void RewardUser(NimbusAdUnit ad, bool skipped) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
-			if (!skipped) {
-				Debug.unityLogger.Log(
-					$"NimbusEventListenerExample Ad was rendered for ad instance {ad.InstanceID}, " +
-					$"bid value: {ad.ResponseMetaData.BidRaw}, " +
-					$"bid value in cents: {ad.ResponseMetaData.BidInCents}, " +
-					$"network: {ad.ResponseMetaData.Network}, " +
-					$"placement_id: {ad.ResponseMetaData.PlacementID}, " +
-					$"auction_id: {ad.ResponseMetaData.AuctionID}");
-				// ensures that this coroutine starts on the Unity Main thread since this is called within an event callback
-				UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
-				return;
-			}
+			if (skipped) return;
 			Debug.unityLogger.Log(
-				$"NimbusEventListenerExample Ad was rendered for ad instance, however the user skipped the ad {ad.InstanceID}, " +
-				$"bid value: {ad.ResponseMetaData.BidRaw}, " +
-				$"bid value in cents: {ad.ResponseMetaData.BidInCents}, " +
-				$"network: {ad.ResponseMetaData.Network}, " +
-				$"placement_id: {ad.ResponseMetaData.PlacementID}, " +
-				$"auction_id: {ad.ResponseMetaData.AuctionID}");
+				$"NimbusEventListenerExample Ad was rendered for ad instance {ad.InstanceID}, " +
+				$"bid value: {ad.BidResponse.BidRaw}, " +
+				$"bid value in cents: {ad.BidResponse.BidInCents}, " +
+				$"network: {ad.BidResponse.Network}, " +
+				$"placement_id: {ad.BidResponse.PlacementId}, " +
+				$"auction_id: {ad.BidResponse.AuctionId}");
+			// ensures that this coroutine starts on the Unity Main thread since this is called within an event callback
+			UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
 		}
 
 		private void LogError(NimbusAdUnit ad) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
 			Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +
-				$"Error Message Ad failed to load {ad.ErrorMessage()}, " +
-				$"auction_id: {ad.ResponseMetaData.AuctionID}");
+				$"Error Message Ad failed to load {ad.ErrResponse.Message}, " +
+				$"auction_id: {ad.BidResponse.AuctionId}");
 		}
-		
 	}
 }

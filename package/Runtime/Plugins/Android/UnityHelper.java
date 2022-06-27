@@ -29,135 +29,33 @@ import java.util.HashMap;
 
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
-
-    public static void makeBannerRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
+    
+    public static void render(Object obj, String jsonResponse, boolean isBlocking, int closeButtonDelay, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
-            final NimbusRequest request =
-                    NimbusRequest.forBannerAd(position, Format.BANNER_320_50, Position.FOOTER);
-            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
-            activity.runOnUiThread(() -> manager.makeRequest(activity, request, (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void makeInterstitialRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
-            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
-            request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            request.setCompanionAds(
-                new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
+            final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
+            if (isBlocking) {
+                nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
                         Configuration.ORIENTATION_LANDSCAPE ?
-                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)});
-            activity.runOnUiThread(() -> manager.makeRequest(activity, request, (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void makeRewardedVideoRequest(Object obj, String position, float bannerFloor, float videoFloor, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final NimbusRequest request = NimbusRequest.forRewardedVideo(position, 
-                activity.getResources().getConfiguration().orientation);
-            request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            activity.runOnUiThread(() -> manager.makeRequest(activity, request, (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void render(Object obj, String type, String auctionId, String markup, String network, String placementId,
-        int width, int height, byte isInterstitial, byte isMraid, String position, String[] impressionTrackers, String[] clickTrackers,
-        int duration, int companionWidth, int companionHeight, int closeButtonDelaySeconds, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final HashMap<String, String[]> trackers = new HashMap<>();
-            trackers.put("impression_trackers", impressionTrackers);
-            trackers.put("click_trackers", clickTrackers);
-            final NimbusResponse response = new NimbusResponse(new BidResponse(type, auctionId, null, 0, 0, null, null, height, width, 
-                isInterstitial, markup, network, placementId, isMraid, position, trackers, duration));
-            if (companionWidth != 0 && companionHeight != 0) {
-                response.companionAds = new CompanionAd[]{ CompanionAd.end(companionWidth, companionHeight) };
-            }
-            activity.runOnUiThread(new BannerHandler(activity, null, response, (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void renderBlocking(Object obj, String type, String auctionId, String markup, String network, String placementId,
-        int width, int height, byte isInterstitial, byte isMraid, String position, String[] impressionTrackers, String[] clickTrackers,
-        int duration, int companionWidth, int companionHeight, int closeButtonDelaySeconds, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final HashMap<String, String[]> trackers = new HashMap<>();
-            trackers.put("impression_trackers", impressionTrackers);
-            trackers.put("click_trackers", clickTrackers);
-            final NimbusResponse response = new NimbusResponse(new BidResponse(type, auctionId, null, 0, 0, null, null, height, width, 
-                isInterstitial, markup, network, placementId, isMraid, position, trackers, duration));
-            if (companionWidth != 0 && companionHeight != 0) {
-                response.companionAds = new CompanionAd[]{ CompanionAd.end(companionWidth, companionHeight) };
+                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)};
+                
+                activity.runOnUiThread(() -> {
+                    BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelay * 1000);
+                    final AdController controller = Renderer.loadBlockingAd(nimbusResponse, activity);
+                    final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
+                    if (controller != null) {
+                              callback.onAdRendered(controller);
+                              controller.start();
+                    } else {
+                        callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
+                    }
+                });
             } else {
-                response.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
-                        Configuration.ORIENTATION_LANDSCAPE ? CompanionAd.end(480, 320) : CompanionAd.end(320, 480)};
+                activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener));
             }
-            activity.runOnUiThread(() -> {
-                BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelaySeconds * 1000);
-                final AdController controller = Renderer.loadBlockingAd(response, activity);
-                final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
-                if (controller != null) {
-                    callback.onAdRendered(controller);
-                    controller.start();
-                 } else {
-                    callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
-                }
-            });
-         
         }
     }
-
-    public static void setUser(String gdprConsent) {
-        final User user = new User();
-        user.ext = new User.Extension();
-        user.ext.consent = gdprConsent;
-        RequestManager.setUser(user);
-    }
-
-    public static void showInterstitialAd(Object obj, String position, float bannerFloor, float videoFloor,
-            int closeButtonDelaySeconds, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final NimbusRequest request = NimbusRequest.forInterstitialAd(position);
-            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
-            request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            request.setCompanionAds(
-                new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
-                        Configuration.ORIENTATION_LANDSCAPE ?
-                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)});
-            activity.runOnUiThread(() -> manager.showBlockingAd(request, activity,
-                    (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void showRewardedVideoAd(Object obj, String position, float bannerFloor, float videoFloor,
-            int closeButtonDelaySeconds, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final NimbusRequest request = NimbusRequest.forRewardedVideo(position, 
-                activity.getResources().getConfiguration().orientation);
-            request.request.imp[0].video.bidfloor = (Float) videoFloor;
-            activity.runOnUiThread(() -> manager.showRewardedAd(request, (Integer) closeButtonDelaySeconds, activity,
-                (NimbusAdManager.Listener) listener));
-        }
-    }
-
-    public static void showBannerAd(Object obj, String position, float bannerFloor, float videoFloor,
-            int closeButtonDelay, Object listener) {
-        if (obj instanceof Activity) {
-            final Activity activity = (Activity) obj;
-            final NimbusRequest request =
-                    NimbusRequest.forBannerAd(position, Format.BANNER_320_50, Position.FOOTER);
-            request.request.imp[0].banner.bidfloor = (Float) bannerFloor;
-            activity.runOnUiThread(new BannerHandler(activity, request, (NimbusAdManager.Listener) listener));
-        }
-    }
-
+    
     public static void addListener(Object controller, Object listener) {
         if (controller instanceof AdController) {
             ((AdController) controller).listeners().add((AdController.Listener) listener);
