@@ -484,6 +484,10 @@ namespace Nimbus.Runtime.Scripts {
 			_configuration = configuration;
 		}
 		
+		public NimbusSDKConfiguration GetNimbusConfiguration() {
+			return _configuration;
+		}
+		
 		private class GlobalRtbRegulation {
 			internal bool Coppa;
 			internal string GdprConsentString;

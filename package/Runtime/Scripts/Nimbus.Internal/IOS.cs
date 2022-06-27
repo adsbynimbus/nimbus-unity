@@ -10,11 +10,9 @@ using DeviceType = OpenRTB.Enumerations.DeviceType;
 namespace Nimbus.Internal {
 	public class IOS : NimbusAPI {
 
-		private void OnDestroyIOSAd(int adUnitInstanceId)
-		{
-			var nimbusAdUnit = NimbusIOSAdManager.Instance.RemoveAdUnitForInstanceId(adUnitInstanceId);
-			if (nimbusAdUnit != null)
-			{
+		private static void OnDestroyIOSAd(int adUnitInstanceId) {
+			var nimbusAdUnit = NimbusIOSAdManager.Instance.AdUnitForInstanceID(adUnitInstanceId);
+			if (nimbusAdUnit != null) {
 				nimbusAdUnit.OnDestroyIOSAd -= OnDestroyIOSAd;
 			}
 			_destroyAd(adUnitInstanceId);

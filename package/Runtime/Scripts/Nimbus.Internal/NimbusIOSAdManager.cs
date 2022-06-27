@@ -23,21 +23,14 @@ namespace Nimbus.Internal {
 				Destroy(gameObject);
 				return;
 			}
-
 			DontDestroyOnLoad(gameObject);
 		}
 
 		internal void AddAdUnit(NimbusAdUnit adUnit) { 
 			_adUnitDictionary.Add(adUnit.InstanceID, adUnit);
 		}
-
-		internal NimbusAdUnit RemoveAdUnitForInstanceId(int instanceId) {
-			_adUnitDictionary.TryGetValue(instanceId, out var adUnit);
-			_adUnitDictionary.Remove(instanceId);
-			return adUnit;
-		}
 		
-		private NimbusAdUnit AdUnitForInstanceID(int instanceID) {
+		internal NimbusAdUnit AdUnitForInstanceID(int instanceID) {
 			_adUnitDictionary.TryGetValue(instanceID, out var adUnit);
 			return adUnit;
 		}
@@ -64,8 +57,12 @@ namespace Nimbus.Internal {
 				return;
 			}
 
-			var eventType = (AdEventTypes)Enum.Parse(typeof(AdEventTypes), data.eventName, true);
-			adUnit.FireMobileAdEvents(eventType);
+			if (!Enum.TryParse(data.eventName, out AdEventTypes state)) return;
+			adUnit.FireMobileAdEvents(state);
+			// clean up internal map
+			if (state == AdEventTypes.DESTROYED) {
+				_adUnitDictionary.Remove(data.adUnitInstanceID);
+			}
 		}
 
 		internal void OnError(string jsonParams) {

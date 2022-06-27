@@ -103,6 +103,9 @@ namespace Nimbus.Internal {
 					// always call destroyed the destroyed event
 					_adEvents.FireOnAdDestroyedEvent(this);
 					break;
+				default:
+					Debug.unityLogger.LogWarning("Nimbus",$"uncaught mobile event {e}");
+					break;
 			}
 		}
 
