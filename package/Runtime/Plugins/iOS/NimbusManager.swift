@@ -19,6 +19,7 @@ import NimbusKit
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
     private var adView: NimbusAdView?
+    private var nimbusAdVC: NimbusAdViewController?
     
     // MARK: - Class Functions
     
@@ -87,21 +88,23 @@ import NimbusKit
                 companionAd = NimbusCompanionAd(width: 320, height: 480, renderMode: .endCard)
             }
             
-            let adVC = NimbusAdViewController(
+            nimbusAdVC = NimbusAdViewController(
                 adView: adView,
                 ad: nimbusAd,
                 companionAd: companionAd,
                 closeButtonDelay: closeButtonDelay,
                 isRewardedAd: isRewarded
             )
+            guard let nimbusAdVC = nimbusAdVC else { return }
+            
             // Instead of the VC sent in by the publisher, we are creating the blocking VC here
-            adView.adPresentingViewController = adVC
-            adVC.modalPresentationStyle = .fullScreen
-            adVC.delegate = self
+            adView.adPresentingViewController = nimbusAdVC
+            nimbusAdVC.modalPresentationStyle = .fullScreen
+            nimbusAdVC.delegate = self
             
-            viewController.present(adVC, animated: true)
+            viewController.present(nimbusAdVC, animated: true)
             
-            adVC.renderAndStart()
+            nimbusAdVC.renderAndStart()
             
             UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
         } else {
@@ -137,7 +140,7 @@ import NimbusKit
     
     @objc public func destroyExistingAd() {
         adView?.destroy()
-        adView = nil
+        nimbusAdVC?.dismiss(animated: true)
         removeReferenceFromManagerDictionary()
     }
     
