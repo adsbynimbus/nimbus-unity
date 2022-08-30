@@ -80,10 +80,9 @@ namespace Nimbus.Internal.RequestBuilder {
 			return bidRequest;
 		}
 		
-		public static BidRequest SetGdpr(this BidRequest bidRequest, int didConsent, string consentString) {
+		public static BidRequest SetGdprConsentString(this BidRequest bidRequest, string consentString) {
 			bidRequest.User ??= new User();
 			bidRequest.User.Ext ??= new UserExt {
-				DidConsent = didConsent,
 				Consent = consentString
 			};
 			return bidRequest;

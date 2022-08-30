@@ -434,14 +434,10 @@ namespace Nimbus.Runtime.Scripts {
 		/// <summary>
 		///     If this inventory is subject to GDPR regulations use this function to pass in RTB GDPR information for all Nimbus requests
 		/// </summary>
-		/// <param name="didUserConsent">
-		///		If the user is subject to GDPR and they consented to advertising set to true
-		/// </param>
 		/// <param name="gdprConsentString">
 		///		If the user is subject to GDPR pass in the CMP generated consent string
 		/// </param>
-		public void SetGdprConsent(bool didUserConsent, string gdprConsentString) {
-			_regulations.GdprUserConsent = didUserConsent ? (byte)1 : (byte)0;
+		public void SetGdprConsent(string gdprConsentString) {
 			_regulations.GdprConsentString = gdprConsentString;
 		}
 	
@@ -474,7 +470,7 @@ namespace Nimbus.Runtime.Scripts {
 
 		private void SetRegulations(BidRequest bidRequest) {
 			bidRequest.SetCoppa(_regulations.Coppa);
-			bidRequest.SetGdpr(_regulations.GdprUserConsent, _regulations.GdprConsentString);
+			bidRequest.SetGdprConsentString(_regulations.GdprConsentString);
 			bidRequest.SetUsPrivacy(_regulations.UsPrivacyString);
 		}
 
@@ -491,7 +487,6 @@ namespace Nimbus.Runtime.Scripts {
 		private class GlobalRtbRegulation {
 			internal bool Coppa;
 			internal string GdprConsentString;
-			internal byte GdprUserConsent;
 			internal string UsPrivacyString;
 		}
 	}
