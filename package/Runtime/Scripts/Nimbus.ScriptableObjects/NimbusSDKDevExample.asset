@@ -16,3 +16,6 @@ MonoBehaviour:
   apiKey: DEV-cae2-4774-97ba-4e15c6276be0
   enableSDKInTestMode: 1
   enableUnityLogs: 1
+  enableAPS: 0
+  appID: 
+  slotData: []
