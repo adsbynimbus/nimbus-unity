@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using Nimbus.Internal;
 using Nimbus.Internal.RequestBuilder;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using NUnit.Framework;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -57,6 +61,65 @@ namespace Nimbus.Tests {
 			var body = JsonConvert.SerializeObject(bidRequest);
 			Assert.AreEqual(expected, body);
 		}
-		
+
+		[Test]
+		public void TestThirdPartyExtensionInjection() {
+			const string expected = "{\"aps\":\"{\\\"data\\\":\\\"complex data\\\"}\",\"position\":\"extended_imp\"}";
+			var impExt = new ThirdPartyProviderImpExt {
+				Position = "extended_imp",
+				Skadn = null,
+				Aps = "{\"data\":\"complex data\"}"
+			};
+			var body = JsonConvert.SerializeObject(impExt);
+			Assert.AreEqual(expected, body);
+		}
+
+		[Test]
+		public void TestInterceptors() {
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new Tuple<BidRequest, IInterceptor>(new BidRequest {
+					Imp = new[] {
+						new Imp {
+							Ext = new ThirdPartyProviderImpExt {
+								Position = "test",
+								Aps = "",
+							}
+						}
+					}
+				}, new Aps("foo_app_id", 
+					new [] {
+						new ApsSlotData {
+							SlotId = "rewarded_video_slot",
+							AdUnitType = AdUnitType.Rewarded,
+						},
+						new ApsSlotData {
+							SlotId = "interstitial_slot",
+							AdUnitType = AdUnitType.Interstitial,
+						},
+						new ApsSlotData {
+							SlotId = "banner_slot",
+							AdUnitType = AdUnitType.Banner,
+						}
+					}))
+			};
+			
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var got = new BidRequest {
+					Imp = new[] {
+						new Imp {
+							Ext = new ThirdPartyProviderImpExt {
+								Position = "test"
+							}
+						}
+					}
+				};
+				got = interceptor.ModifyRequest(got);
+				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
+				var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
+				Assert.AreEqual(wantBody, gotBody);
+			}
+		}
 	}
 }
