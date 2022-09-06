@@ -10,7 +10,6 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public bool enableUnityLogs;
 
 		// APS data
-		[HideInInspector] public bool enableAPS;
 		[HideInInspector] public string androidAppID;
 		[HideInInspector] public ApsSlotData[] androidApsSlotData;
 		
@@ -24,22 +23,24 @@ namespace Nimbus.ScriptableObjects {
 		public void Sanitize() {
 			publisherKey = publisherKey?.Trim();
 			apiKey = apiKey?.Trim();
-			androidAppID = androidAppID?.Trim();
-			iosAppID = iosAppID?.Trim();
+			#if NIMBUS_ENABLE_APS
+				androidAppID = androidAppID?.Trim();
+				iosAppID = iosAppID?.Trim();
 
-			// ReSharper disable ForCanBeConvertedToForeach
-			// ReSharper disable InvertIf
-			if (androidApsSlotData != null) {
-				for (var i = 0; i < androidApsSlotData.Length; i++) {
-					androidApsSlotData[i].SlotId = androidApsSlotData[i].SlotId?.Trim();
+				// ReSharper disable ForCanBeConvertedToForeach
+				// ReSharper disable InvertIf
+				if (androidApsSlotData != null) {
+					for (var i = 0; i < androidApsSlotData.Length; i++) {
+						androidApsSlotData[i].SlotId = androidApsSlotData[i].SlotId?.Trim();
+					}
 				}
-			}
-			
-			if (iosApsSlotData != null) {
-				for (var i = 0; i < iosApsSlotData.Length; i++) {
-					iosApsSlotData[i].SlotId = iosApsSlotData[i].SlotId?.Trim();
+				
+				if (iosApsSlotData != null) {
+					for (var i = 0; i < iosApsSlotData.Length; i++) {
+						iosApsSlotData[i].SlotId = iosApsSlotData[i].SlotId?.Trim();
+					}
 				}
-			}
+			#endif
 		}
 	}
 }

@@ -73,6 +73,7 @@ namespace Nimbus.Runtime.Scripts {
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
 		[SuppressMessage("ReSharper", "InvertIf")]
 		private static void AutoSubscribe() {
+			if (Instance == null) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
@@ -96,6 +97,7 @@ namespace Nimbus.Runtime.Scripts {
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
 		[SuppressMessage("ReSharper", "InvertIf")]
 		private static void AutoUnsubscribe() {
+			if (Instance == null) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdLoaded -= iAdEvent.OnAdLoaded;
