@@ -15,9 +15,13 @@ namespace Nimbus.ScriptableObjects {
 
 		// APS
 		private SerializedProperty _enableAps;
-		private SerializedProperty _appId;
-		private ReorderableList _apsSlotIdList = null;
-		private SerializedProperty _apsSlots = null;
+		private SerializedProperty _androidAppId;
+		private ReorderableList _androidApsSlotIdList = null;
+		private SerializedProperty _androidApsSlots = null;
+		
+		private SerializedProperty _iosAppId;
+		private ReorderableList _iosApsSlotIdList = null;
+		private SerializedProperty _iosApsSlots = null;
 
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
@@ -27,23 +31,39 @@ namespace Nimbus.ScriptableObjects {
 
 
 			_enableAps = serializedObject.FindProperty("enableAPS");
-			_appId = serializedObject.FindProperty("appID");
-			_apsSlots = serializedObject.FindProperty("slotData");
-			_apsSlotIdList = new ReorderableList(
-				serializedObject, _apsSlots,
+			// Android APS UI
+			_androidAppId = serializedObject.FindProperty("androidAppID");
+			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
+			_androidApsSlotIdList = new ReorderableList(
+				serializedObject, _androidApsSlots,
 				true,
 				false,
 				true,
 				true
 			);
-			_apsSlots.isExpanded = true;
-			_apsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
-			_apsSlotIdList.headerHeight = 0f;
-			_apsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
+			_androidApsSlots.isExpanded = true;
+			_androidApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_androidApsSlotIdList.headerHeight = 0f;
+			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
+			
+			// IOS APS UI
+			_iosAppId = serializedObject.FindProperty("iosAppID");
+			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
+			_iosApsSlotIdList = new ReorderableList(
+				serializedObject, _iosApsSlots,
+				true,
+				false,
+				true,
+				true
+			);
+			_iosApsSlots.isExpanded = true;
+			_iosApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_iosApsSlotIdList.headerHeight = 0f;
+			_iosApsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
 		}
 
 		private void OnDisable() {
-			_apsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
+			_androidApsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
 
 			var config = target as NimbusSDKConfiguration;
 			if (config == null) return;
@@ -58,7 +78,7 @@ namespace Nimbus.ScriptableObjects {
 			var fieldRect = rect;
 			fieldRect.height = EditorGUIUtility.singleLineHeight;
 
-			var item = _apsSlots.GetArrayElementAtIndex(index);
+			var item = _androidApsSlots.GetArrayElementAtIndex(index);
 			item.isExpanded = true;
 			var itr = item.Copy();
 
@@ -104,12 +124,25 @@ namespace Nimbus.ScriptableObjects {
 			EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			EditorGUILayout.PropertyField((_enableAps));
 			if (_enableAps.boolValue) {
-				EditorGUILayout.PropertyField((_appId));
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				EditorDrawUtility.DrawArray(_apsSlots, "Slot Id Data");
-			}
 
-			EditorGUILayout.Space();
+#if UNITY_ANDROID
+				EditorGUILayout.PropertyField((_androidAppId));
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				EditorDrawUtility.DrawArray(_androidApsSlots, "Android Slot Id Data");
+#endif
+
+#if UNITY_IOS
+				EditorGUILayout.PropertyField((_iosAppId));
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				EditorDrawUtility.DrawArray(_iosApsSlots, "iOS Slot Id Data");
+#endif
+
+#if !UNITY_ANDROID && !UNITY_IOS
+				EditorGUILayout.HelpBox("In build settings select Android or IOS to enter APS data", MessageType.Warning);
+#endif
+				
+			}
+			
 			serializedObject.ApplyModifiedProperties();
 		}
 	}

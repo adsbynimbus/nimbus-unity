@@ -11,8 +11,11 @@ namespace Nimbus.ScriptableObjects {
 
 		// APS data
 		[HideInInspector] public bool enableAPS;
-		[HideInInspector] public string appID;
-		[HideInInspector] public ApsSlotData[] slotData;
+		[HideInInspector] public string androidAppID;
+		[HideInInspector] public ApsSlotData[] androidApsSlotData;
+		
+		[HideInInspector] public string iosAppID;
+		[HideInInspector] public ApsSlotData[] iosApsSlotData;
 
 		private void OnValidate() {
 			Sanitize();
@@ -21,13 +24,21 @@ namespace Nimbus.ScriptableObjects {
 		public void Sanitize() {
 			publisherKey = publisherKey?.Trim();
 			apiKey = apiKey?.Trim();
-			appID = appID?.Trim();
+			androidAppID = androidAppID?.Trim();
+			iosAppID = iosAppID?.Trim();
 
-			if (slotData == null) return;
-
-			// ReSharper disable once ForCanBeConvertedToForeach
-			for (var i = 0; i < slotData.Length; i++) {
-				slotData[i].SlotId = slotData[i].SlotId?.Trim();
+			// ReSharper disable ForCanBeConvertedToForeach
+			// ReSharper disable InvertIf
+			if (androidApsSlotData != null) {
+				for (var i = 0; i < androidApsSlotData.Length; i++) {
+					androidApsSlotData[i].SlotId = androidApsSlotData[i].SlotId?.Trim();
+				}
+			}
+			
+			if (iosApsSlotData != null) {
+				for (var i = 0; i < iosApsSlotData.Length; i++) {
+					iosApsSlotData[i].SlotId = iosApsSlotData[i].SlotId?.Trim();
+				}
 			}
 		}
 	}

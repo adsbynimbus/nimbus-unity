@@ -142,7 +142,7 @@ namespace Nimbus.Editor {
 				var apsData = new ApsSlotData {
 					SlotId = slotId?.stringValue
 				};
-
+				
 				var adUnitType = item.FindPropertyRelative("AdUnitType");
 				if (adUnitType != null) {
 					apsData.AdUnitType = (AdUnitType)adUnitType.enumValueIndex;
@@ -150,8 +150,13 @@ namespace Nimbus.Editor {
 
 				apsSlotData.Add(apsData);
 			}
-
-			_asset.slotData = apsSlotData.ToArray();
+			
+#if UNITY_ANDROID
+			_asset.androidApsSlotData = apsSlotData.ToArray();
+# elif UNITY_IOS
+			_asset.iosApsSlotData = apsSlotData.ToArray();
+#endif
+			
 		}
 
 		private bool ValidateApsData() {
@@ -162,37 +167,46 @@ namespace Nimbus.Editor {
 					return false;
 				}
 
-				if (_asset.slotData.Length == 0) {
+				ApsSlotData[] slotData = null;
+				
+				// ReSharper disable once ConvertToConstant.Local
+				var platform = "Android";
+#if UNITY_ANDROID
+				slotData = _asset.androidApsSlotData;
+# elif UNITY_IOS
+				slotData = _asset.iosApsSlotData;
+				platform = "iOS";
+#endif
+				if (slotData == null || slotData.Length == 0) {
 					Debug.LogError(
-						"APS SDK has been included, APS placement slots need to be entered, object NimbusAdsManager not created");
+						$"APS SDK has been included, APS placement slots for {platform} need to be entered, object NimbusAdsManager not created");
 					return false;
 				}
 
 				var seenAdTypes = new Dictionary<AdUnitType, bool>();
-				foreach (var apsSlot in _asset.slotData) {
+				foreach (var apsSlot in slotData) {
 					if (apsSlot.SlotId.IsNullOrEmpty()) {
 						Debug.LogError(
-							"APS SDK has been included, the APS slot id cannot be empty, object NimbusAdsManager not created");
+							$"APS SDK has been included, the APS slot id for {platform} cannot be empty, object NimbusAdsManager not created");
 						return false;
 					}
-
+					
 					if (apsSlot.AdUnitType == AdUnitType.Undefined) {
 						Debug.LogError(
-							"APS SDK has been included, Ad Unit type cannot be Undefined, object NimbusAdsManager not created");
+							$"APS SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
 						return false;
 					}
-
+					
 					if (!seenAdTypes.ContainsKey(apsSlot.AdUnitType)) {
 						seenAdTypes.Add(apsSlot.AdUnitType, true);
 					}
 					else {
 						Debug.LogError(
-							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdUnitType}, object NimbusAdsManager not created");
+							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdUnitType} for {platform}, object NimbusAdsManager not created");
 						return false;
 					}
 				}
 			}
-
 			return true;
 		}
 	}
