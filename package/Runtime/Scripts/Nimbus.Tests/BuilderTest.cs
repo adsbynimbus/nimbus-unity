@@ -115,7 +115,7 @@ namespace Nimbus.Tests {
 						}
 					}
 				};
-				got = interceptor.ModifyRequest(got);
+				got = interceptor.ModifyRequest(got, "");
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
 				var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
 				Assert.AreEqual(wantBody, gotBody);

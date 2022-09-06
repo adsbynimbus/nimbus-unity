@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -28,6 +30,9 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _nimbus;
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
+		
+		// ThirdParty Providers
+		private List<IInterceptor> _interceptors;
 
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing Android SDK");
@@ -43,6 +48,17 @@ namespace Nimbus.Internal {
 			_nimbus.CallStatic("addLogger", androidLogger);
 			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
+
+			if (InitializeInterceptor()) {
+				_interceptors = new List<IInterceptor>();		
+			}
+
+			#if NIMBUS_ENABLE_APS
+				var (appID, slots) = configuration.GetApsData();
+				var aps = new Aps(_currentActivity, appID, slots);
+				aps.InitializeNativeSDK();
+				_interceptors.Add(aps);
+			#endif
 		}
 
 
@@ -89,6 +105,17 @@ namespace Nimbus.Internal {
 			_deviceCache.Lmt = _adInfo.Call<bool>("isLimitAdTrackingEnabled") ? 1 : 0;
 			_deviceCache.Ifa = _adInfo.Call<string>("getId");
 			return _deviceCache;
+		}
+
+		internal override List<IInterceptor> Interceptors() {
+			return _interceptors;
+		}
+
+		private static bool InitializeInterceptor() {
+			#if NIMBUS_ENABLE_APS
+				return true;
+			#endif
+			return false;
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

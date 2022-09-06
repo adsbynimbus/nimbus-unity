@@ -364,8 +364,11 @@ namespace Nimbus.Runtime.Scripts {
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 
+			const AdUnitType adUnitType = AdUnitType.Interstitial;
+			bidRequest = ApplyInterceptors(bidRequest, adUnitType, true);
+			
 			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents);
+			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
 		}
@@ -393,9 +396,12 @@ namespace Nimbus.Runtime.Scripts {
 			
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
+			
+			const AdUnitType adUnitType = AdUnitType.Banner;
+			bidRequest = ApplyInterceptors(bidRequest, adUnitType, false);
 
 			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents);
+			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
 		}
@@ -425,9 +431,12 @@ namespace Nimbus.Runtime.Scripts {
 			
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
+			
+			const AdUnitType adUnitType = AdUnitType.Rewarded;
+			bidRequest = ApplyInterceptors(bidRequest, adUnitType, false);
 
 			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents);
+			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
 		}
@@ -476,7 +485,17 @@ namespace Nimbus.Runtime.Scripts {
 			bidRequest.SetUsPrivacy(_regulations.UsPrivacyString);
 		}
 
-		
+		private BidRequest ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			if (_nimbusPlatformAPI.Interceptors() == null) {
+				return bidRequest;
+			}
+			
+			foreach (var interceptor in _nimbusPlatformAPI.Interceptors()) {
+				var data = interceptor.GetProviderRtbDataFromNativeSDK(adUnitType, isFullScreen);
+				bidRequest = interceptor.ModifyRequest(bidRequest, data);
+			}
+			return bidRequest;
+		}
 		
 		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
 			_configuration = configuration;

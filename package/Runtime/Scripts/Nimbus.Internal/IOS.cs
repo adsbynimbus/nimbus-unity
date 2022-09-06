@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -107,6 +109,10 @@ namespace Nimbus.Internal {
 			_deviceCache.Ua = _getUserAgent();
 
 			return _deviceCache;
+		}
+
+		internal override List<IInterceptor> Interceptors() {
+			return null;
 		}
 	}
 }
