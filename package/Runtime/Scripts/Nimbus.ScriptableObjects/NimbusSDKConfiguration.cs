@@ -1,3 +1,4 @@
+using System;
 using Nimbus.Internal.ThirdPartyDemandProviders;
 using UnityEngine;
 
@@ -41,6 +42,17 @@ namespace Nimbus.ScriptableObjects {
 					}
 				}
 			#endif
+		}
+
+
+		public Tuple<string, ApsSlotData[]> GetApsData() {
+			var appID = androidAppID;
+			var slots = androidApsSlotData;
+			#if UNITY_IOS
+				appID = iosAppID;
+				slots =  iosApsSlotData;
+			#endif
+			return new Tuple<string, ApsSlotData[]>(appID, slots);
 		}
 	}
 }
