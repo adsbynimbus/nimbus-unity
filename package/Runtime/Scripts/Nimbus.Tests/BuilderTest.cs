@@ -64,11 +64,20 @@ namespace Nimbus.Tests {
 
 		[Test]
 		public void TestThirdPartyExtensionInjection() {
-			const string expected = "{\"aps\":\"{\\\"data\\\":\\\"complex data\\\"}\",\"position\":\"extended_imp\"}";
+			const string expected = "{\"aps\":[{\"amzn_b\":\"foobar-bid\",\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznp\":\"cnabk0\",\"amznrdr\":\"default\",\"amznslots\":\"foobar\",\"dc\":\"iad\"}],\"position\":\"extended_imp\"}";
 			var impExt = new ThirdPartyProviderImpExt {
 				Position = "extended_imp",
 				Skadn = null,
-				Aps = "{\"data\":\"complex data\"}"
+				Aps = new ApsResponse[] {
+					new ApsResponse {
+						AmznB = "foobar-bid",
+						AmznH = "aax-us-east.amazon-adsystem.com",
+						Amznp = "cnabk0",
+						Amznrdr = "default",
+						Amznslots = "foobar",
+						Dc = "iad"
+					},
+				}
 			};
 			var body = JsonConvert.SerializeObject(impExt);
 			Assert.AreEqual(expected, body);
@@ -82,7 +91,16 @@ namespace Nimbus.Tests {
 						new Imp {
 							Ext = new ThirdPartyProviderImpExt {
 								Position = "test",
-								Aps = "",
+								Aps = new ApsResponse[] {
+									new ApsResponse {
+										AmznB = "foobar-bid",
+										AmznH = "aax-us-east.amazon-adsystem.com",
+										Amznp = "cnabk0",
+										Amznrdr = "default",
+										Amznslots = "foobar",
+										Dc = "iad"
+									},
+								}
 							}
 						}
 					}
@@ -110,7 +128,17 @@ namespace Nimbus.Tests {
 					Imp = new[] {
 						new Imp {
 							Ext = new ThirdPartyProviderImpExt {
-								Position = "test"
+								Position = "test",
+								Aps = new ApsResponse[] {
+									new ApsResponse {
+										AmznB = "foobar-bid",
+										AmznH = "aax-us-east.amazon-adsystem.com",
+										Amznp = "cnabk0",
+										Amznrdr = "default",
+										Amznslots = "foobar",
+										Dc = "iad"
+									},
+								}
 							}
 						}
 					}

@@ -3,6 +3,7 @@ using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using Newtonsoft.Json;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.ThirdPartyDemandProviders {
@@ -10,6 +11,7 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 		private const string AndroidApsPackage = "com.adsbynimbus.request.ApsDemandProvider";
 
 		private readonly string _appID;
+		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
 		private readonly AndroidJavaObject _currentActivity;
 		private AndroidJavaClass _aps;
@@ -19,10 +21,11 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 			_slotData = slotData;
 		}
 		
-		public Aps(AndroidJavaObject currentActivity, string appID, ApsSlotData[] slotData) {
+		public Aps(AndroidJavaObject currentActivity, string appID, ApsSlotData[] slotData, bool enableTestMode) {
 			_currentActivity = currentActivity;
 			_appID = appID;
 			_slotData = slotData;
+			_enableTestMode = enableTestMode;
 		}
 
 		public void InitializeNativeSDK() {
@@ -36,6 +39,11 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 				}
 				_aps.CallStatic<bool>("addApsSlot", slot.SlotId, w, h, false);
 			}
+
+			if (!_enableTestMode) return;
+			
+			using var adRegistration = new AndroidJavaClass("com.amazon.device.ads.AdRegistration");
+			adRegistration.CallStatic("enableTesting", true);
 		}
 
 		private static Tuple<int, int> AdTypeToDim(AdUnitType type) {
@@ -55,13 +63,19 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 
 		
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+			var found = false;
+			// ReSharper disable once ForCanBeConvertedToForeach
 			// ReSharper disable once LoopCanBeConvertedToQuery
-			foreach (var slot in _slotData) {
-				if (slot.AdUnitType == type) {
-					break;
-				}
+			for (var i = 0; i < _slotData.Length; i++) {
+				if (_slotData[i].AdUnitType != type) continue;
+				found = true;
+				break;
+			}
+			
+			if (!found) {
 				return null;
 			}
+			
 			
 			var (w, h) = AdTypeToDim(type);
 			if (type == AdUnitType.Rewarded) {
@@ -69,7 +83,7 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 				h = 0;
 				isFullScreen = true;
 			}
-			
+		
 			var response = _aps.CallStatic<string>("fetchApsParams", w, h, isFullScreen);
 			return response;
 		}
@@ -81,18 +95,28 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 			
 			// ReSharper disable InvertIf
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
-				bidRequest.Imp[0].Ext ??= new ThirdPartyProviderImpExt();
-				// pass in the APS data
-				if (bidRequest.Imp[0].Ext is ThirdPartyProviderImpExt apsData) {
-					apsData.Aps = data;
-					bidRequest.Imp[0].Ext = apsData;
+				if (bidRequest.Imp[0].Ext != null) {
+					var apsObject = JsonConvert.DeserializeObject<ApsResponse[]>(data);
+					// ThirdPartyProviderImpExt has already been initialized by another IProvider
+					if (bidRequest.Imp[0].Ext is ThirdPartyProviderImpExt apsData) {
+						apsData.Aps = apsObject;
+						bidRequest.Imp[0].Ext = apsData;
+						return bidRequest;
+					}
+					
+					var ext = new ThirdPartyProviderImpExt {
+						Position = bidRequest.Imp[0].Ext.Position,
+						Skadn =  bidRequest.Imp[0].Ext.Skadn,
+						Aps =  apsObject,
+					};
+					bidRequest.Imp[0].Ext = ext;
 				}
 			}
 			return bidRequest;
 		}
 
 		internal void SetApsTimeout(int timeInSeconds) {
-			var timeout = (int)TimeSpan.FromSeconds(timeInSeconds).TotalMilliseconds;
+			var timeout = (long)TimeSpan.FromSeconds(timeInSeconds).TotalMilliseconds;
 			_aps.CallStatic("setApsRequestTimeout", timeout);
 		}
 	}

@@ -55,7 +55,7 @@ namespace Nimbus.Internal {
 
 			#if NIMBUS_ENABLE_APS
 				var (appID, slots) = configuration.GetApsData();
-				var aps = new Aps(_currentActivity, appID, slots);
+				var aps = new Aps(_currentActivity, appID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
@@ -115,7 +115,9 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_APS
 				return true;
 			#endif
+#pragma warning disable CS0162
 			return false;
+#pragma warning restore CS0162
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {
