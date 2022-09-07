@@ -12,7 +12,7 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 		private readonly string _appID;
 		private readonly ApsSlotData[] _slotData;
 		private readonly AndroidJavaObject _currentActivity;
-		private AndroidJavaObject _aps;
+		private AndroidJavaClass _aps;
 		
 		public Aps(string appID, ApsSlotData[] slotData) {
 			_appID = appID;
@@ -26,15 +26,15 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 		}
 
 		public void InitializeNativeSDK() {
-			_aps = new AndroidJavaObject(AndroidApsPackage);
+			_aps = new AndroidJavaClass(AndroidApsPackage);
 			_aps.CallStatic("initialize", _currentActivity, _appID);
 			foreach (var slot in _slotData) {
+				var (w, h) = AdTypeToDim(slot.AdUnitType);
 				if (slot.AdUnitType == AdUnitType.Rewarded) {
-					_aps.CallStatic("addApsSlot", slot.SlotId, Screen.width, Screen.height, true);
+					_aps.CallStatic<bool>("addApsSlot", slot.SlotId, w, h, true);
 					continue;
 				}
-				var (w, h) = AdTypeToDim(slot.AdUnitType);
-				_aps.CallStatic("addApsSlot", slot.SlotId, w, h, false);
+				_aps.CallStatic<bool>("addApsSlot", slot.SlotId, w, h, false);
 			}
 		}
 
