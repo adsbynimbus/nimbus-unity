@@ -38,6 +38,7 @@ public class IOSPostBuildProcessor {
         }
     }
     
+    // TODO: Conditionally add `NimbusRequestAPSKit`
     private static void CopyPodfile(string pathToBuiltProject) {
         const string podfilePath = "Packages/com.adsbynimbus.unity/Runtime/Plugins/iOS/Podfile";
         var destPodfilePath = pathToBuiltProject + "/Podfile";
