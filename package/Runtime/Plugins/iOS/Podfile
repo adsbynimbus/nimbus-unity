@@ -2,7 +2,8 @@ platform :ios, '14.0'
 use_frameworks!
 source 'https://cdn.cocoapods.org/'
 def sdk_dependencies
-  pod 'NimbusSDK', '1.11.4', subspecs: ['NimbusKit', 'NimbusRenderVideoKit', 'NimbusRenderStaticKit']
+  # TODO: This needs to be a 2.1.0 internal beta
+  pod 'NimbusSDK', '2.0.0', subspecs: ['NimbusKit', 'NimbusRenderVideoKit', 'NimbusRenderStaticKit', 'NimbusRequestAPSKit']
 end
 target 'Unity-iPhone' do
   sdk_dependencies
