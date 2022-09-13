@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace Nimbus.Editor {
 	public class ThirdPartyMacros : EditorWindow {
-		[ReadOnly] public bool _androidApsIsEnabled;
-		[ReadOnly] public bool _iosApsIsEnabled;
+		private bool _androidApsIsEnabled;
+		private bool _iosApsIsEnabled;
 
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string Enabled = "Enabled";
