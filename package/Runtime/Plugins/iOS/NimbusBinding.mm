@@ -80,9 +80,7 @@ extern "C" {
     }
 
     const char* _fetchAPSParams(int width, int height, bool includeVideo) {
-        return [NimbusManager fetchAPSParamsWithWidth: width 
-                                               height: height 
-                                               includeVideo: includeVideo];
+        return strdup([[NimbusManager fetchAPSParamsWithWidth: width height:height includeVideo:includeVideo] UTF8String]);
     }
 #endif
 }

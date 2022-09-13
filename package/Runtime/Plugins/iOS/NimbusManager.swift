@@ -10,6 +10,9 @@ import Foundation
 import NimbusRenderStaticKit
 import NimbusRenderVideoKit
 import NimbusKit
+#if NIMBUS_ENABLE_APS
+import NimbusRequestAPSKit
+#endif
 
 @objc public class NimbusManager: NSObject {
     
@@ -22,7 +25,7 @@ import NimbusKit
     private var nimbusAdVC: NimbusAdViewController?
     
     #if NIMBUS_ENABLE_APS
-    private var apsRequestHelper: NimbusAPSRequestHelper?
+    private static var apsRequestHelper: NimbusAPSRequestHelper?
     #endif
     
     // MARK: - Class Functions
