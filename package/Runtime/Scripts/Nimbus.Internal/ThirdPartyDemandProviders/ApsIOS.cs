@@ -2,50 +2,49 @@ using System;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using Newtonsoft.Json;
 
-[assembly:InternalsVisibleTo("nimbus.test")]
+[assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.ThirdPartyDemandProviders {
-	internal class Aps : IInterceptor, IProvider {
+	internal class ApsIOS : IInterceptor, IProvider {
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
-        private readonly long _timeoutInMS;
-
-        [DllImport("__Internal")]
-		private static extern void _initializeAPSRequestHelper(const char* appKey, double timeoutInMS, bool enableTestMode);
 
 		[DllImport("__Internal")]
-		private static extern void _addAPSSlot(const char* slotUUID, int width, int height, bool isVideo);
+		private static extern void _initializeAPSRequestHelper(string appKey, bool enableTestMode,
+			double timeoutInMS = 0.6f);
+
+		[DllImport("__Internal")]
+		private static extern void _addAPSSlot(string slotUuid, int width, int height, bool isVideo);
 
 		[DllImport("__Internal")]
 		private static extern string _fetchAPSParams(int width, int height, bool includeVideo);
-		
-		public Aps(string appID, ApsSlotData[] slotData, long timeoutInMS) {
+
+		public ApsIOS(string appID, ApsSlotData[] slotData) {
 			_appID = appID;
 			_slotData = slotData;
-            _timeoutInMS = timeoutInMS;
 		}
-		
-		public Aps(string appID, ApsSlotData[] slotData, long timeoutInMS, bool enableTestMode) {
+
+		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode) {
 			_appID = appID;
 			_slotData = slotData;
-            _timeoutInMS = timeoutInMS;
 			_enableTestMode = enableTestMode;
 		}
 
 		public void InitializeNativeSDK() {
-            _initializeAPSRequestHelper(_appID, _enableTestMode);
+			_initializeAPSRequestHelper(_appID, _enableTestMode);
 
 			foreach (var slot in _slotData) {
 				var (w, h) = AdTypeToDim(slot.AdUnitType);
 				if (slot.AdUnitType == AdUnitType.Rewarded) {
-                    _addAPSSlot(slot.SlotId, w, h, true);
+					_addAPSSlot(slot.SlotId, w, h, true);
 					continue;
 				}
 
-                _addAPSSlot(slot.SlotId, w, h, false);
+				_addAPSSlot(slot.SlotId, w, h, false);
 			}
 		}
 
@@ -73,27 +72,28 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 				found = true;
 				break;
 			}
-			
+
 			if (!found) {
 				return null;
 			}
-			
-			
+
+
 			var (w, h) = AdTypeToDim(type);
+			// ReSharper disable once InvertIf
 			if (type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;
 			}
 
-            return _fetchAPSParams(w, h, isFullScreen);
+			return _fetchAPSParams(w, h, isFullScreen);
 		}
-		
+
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			
+
 			// ReSharper disable InvertIf
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
 				if (bidRequest.Imp[0].Ext != null) {
@@ -104,15 +104,16 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 						bidRequest.Imp[0].Ext = apsData;
 						return bidRequest;
 					}
-					
+
 					var ext = new ThirdPartyProviderImpExt {
 						Position = bidRequest.Imp[0].Ext.Position,
-						Skadn =  bidRequest.Imp[0].Ext.Skadn,
-						Aps =  apsObject,
+						Skadn = bidRequest.Imp[0].Ext.Skadn,
+						Aps = apsObject,
 					};
 					bidRequest.Imp[0].Ext = ext;
 				}
 			}
+
 			return bidRequest;
 		}
 	}

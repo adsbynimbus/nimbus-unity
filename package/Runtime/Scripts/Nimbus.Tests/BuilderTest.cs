@@ -104,7 +104,7 @@ namespace Nimbus.Tests {
 							}
 						}
 					}
-				}, new Aps("foo_app_id", 
+				}, new ApsAndroid("foo_app_id", 
 					new [] {
 						new ApsSlotData {
 							SlotId = "rewarded_video_slot",

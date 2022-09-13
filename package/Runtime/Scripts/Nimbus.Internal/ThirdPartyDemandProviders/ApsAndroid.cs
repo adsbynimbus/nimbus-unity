@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.ThirdPartyDemandProviders {
-	internal class Aps : IInterceptor, IProvider {
+	internal class ApsAndroid : IInterceptor, IProvider {
 		private const string AndroidApsPackage = "com.adsbynimbus.request.ApsDemandProvider";
 
 		private readonly string _appID;
@@ -16,12 +16,12 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 		private readonly AndroidJavaObject _currentActivity;
 		private AndroidJavaClass _aps;
 		
-		public Aps(string appID, ApsSlotData[] slotData) {
+		public ApsAndroid(string appID, ApsSlotData[] slotData) {
 			_appID = appID;
 			_slotData = slotData;
 		}
 		
-		public Aps(AndroidJavaObject currentActivity, string appID, ApsSlotData[] slotData, bool enableTestMode) {
+		public ApsAndroid(AndroidJavaObject currentActivity, string appID, ApsSlotData[] slotData, bool enableTestMode) {
 			_currentActivity = currentActivity;
 			_appID = appID;
 			_slotData = slotData;
