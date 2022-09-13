@@ -49,13 +49,13 @@ namespace Nimbus.Internal {
 			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
 
-			if (InitializeInterceptor()) {
+			if (StaticMethod.InitializeInterceptor()) {
 				_interceptors = new List<IInterceptor>();		
 			}
 
 			#if NIMBUS_ENABLE_APS
 				var (appID, slots) = configuration.GetApsData();
-				var aps = new Aps(_currentActivity, appID, slots, configuration.enableSDKInTestMode);
+				var aps = new ApsAndroid(_currentActivity, appID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
@@ -109,15 +109,6 @@ namespace Nimbus.Internal {
 
 		internal override List<IInterceptor> Interceptors() {
 			return _interceptors;
-		}
-
-		private static bool InitializeInterceptor() {
-			#if NIMBUS_ENABLE_APS
-				return true;
-			#endif
-#pragma warning disable CS0162
-			return false;
-#pragma warning restore CS0162
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

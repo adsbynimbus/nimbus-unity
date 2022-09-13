@@ -20,7 +20,10 @@ import NimbusKit
     private var adController: AdController?
     private var adView: NimbusAdView?
     private var nimbusAdVC: NimbusAdViewController?
+    
+    #if NIMBUS_ENABLE_APS
     private var apsRequestHelper: NimbusAPSRequestHelper?
+    #endif
     
     // MARK: - Class Functions
     
@@ -46,8 +49,9 @@ import NimbusKit
         return manager
     }
 
-    @objc public class func initializeAPSRequestHelper(appKey: string, enableTestMode: Bool) {
-        apsRequestHelper = NimbusAPSRequestHelper(appKey: String, enableTestMode: enableTestMode)
+    #if NIMBUS_ENABLE_APS
+    @objc public class func initializeAPSRequestHelper(appKey: String, timeoutInSeconds: Double, enableTestMode: Bool) {
+        apsRequestHelper = NimbusAPSRequestHelper(appKey: appKey, timeoutInSeconds: timeoutInSeconds, enableTestMode: enableTestMode)
     }
 
     @objc public class func addAPSSlot(slotUUID: String, width: Int, height: Int, isVideo: Bool) {
@@ -57,6 +61,7 @@ import NimbusKit
     @objc public class func fetchAPSParams(width: Int, height: Int, includeVideo: Bool) -> String? {
         apsRequestHelper?.fetchAPSParams(width: width, height: height, includeVideo: includeVideo)
     }
+    #endif
     
     // MARK: - Private Functions
     

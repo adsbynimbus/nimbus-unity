@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 
 namespace Nimbus.Editor {
@@ -7,3 +8,4 @@ namespace Nimbus.Editor {
 	/// </summary>
 	public class ReadOnlyAttribute : PropertyAttribute { }
 }
+#endif

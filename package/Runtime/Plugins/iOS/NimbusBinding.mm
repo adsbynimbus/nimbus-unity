@@ -65,15 +65,24 @@ extern "C" {
         return [NimbusHelper isLimitAdTrackingEnabled];
     }
 
-    void _initializeAPSRequestHelper(const char* appKey, double timeoutInMS, bool enableTestMode) {
-         [NimbusManager initializeAPSRequestHelperWithAppKey: appKey timeoutInMS: timeoutInMS enableTestMode: enableTestMode];
+#if NIMBUS_ENABLE_APS
+    void _initializeAPSRequestHelper(const char* appKey, double timeoutInSeconds, bool enableTestMode) {
+          [NimbusManager initializeAPSRequestHelperWithAppKey: GetStringParam(appKey)
+                                                  timeoutInSeconds: timeoutInSeconds 
+                                                  enableTestMode: enableTestMode];
     }
 
     void _addAPSSlot(const char* slotUUID, int width, int height, bool isVideo) {
-        [NimbusManager addAPSSlotWithSlotUUID: slotUUID width: width height: height isVideo: isVideo];
+        [NimbusManager addAPSSlotWithSlotUUID: GetStringParam(slotUUID) 
+                                        width: width 
+                                        height: height 
+                                        isVideo: isVideo];
     }
 
     const char* _fetchAPSParams(int width, int height, bool includeVideo) {
-        return [NimbusManager fetchAPSParamsWithWidth: width height: height includeVideo: includeVideo];
+        return [NimbusManager fetchAPSParamsWithWidth: width 
+                                               height: height 
+                                               includeVideo: includeVideo];
     }
+#endif
 }

@@ -13,9 +13,10 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
 
+		private const double TimeoutInSeconds = 0.6f;
+
 		[DllImport("__Internal")]
-		private static extern void _initializeAPSRequestHelper(string appKey, bool enableTestMode,
-			double timeoutInMS = 0.6f);
+		private static extern void _initializeAPSRequestHelper(string appKey, double timeoutInSeconds, bool enableTestMode);
 
 		[DllImport("__Internal")]
 		private static extern void _addAPSSlot(string slotUuid, int width, int height, bool isVideo);
@@ -35,7 +36,7 @@ namespace Nimbus.Internal.ThirdPartyDemandProviders {
 		}
 
 		public void InitializeNativeSDK() {
-			_initializeAPSRequestHelper(_appID, _enableTestMode);
+			_initializeAPSRequestHelper(_appID, TimeoutInSeconds, _enableTestMode);
 
 			foreach (var slot in _slotData) {
 				var (w, h) = AdTypeToDim(slot.AdUnitType);

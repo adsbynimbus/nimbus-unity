@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Linq;
 using Nimbus.ScriptableObjects;
 using UnityEditor;
@@ -104,3 +105,4 @@ namespace Nimbus.Editor {
 		}
 	}
 }
+#endif
