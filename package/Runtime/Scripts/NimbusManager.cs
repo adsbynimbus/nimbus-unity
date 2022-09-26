@@ -73,6 +73,7 @@ namespace Nimbus.Runtime.Scripts {
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
 		[SuppressMessage("ReSharper", "InvertIf")]
 		private static void AutoSubscribe() {
+			if (Instance == null) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
@@ -96,6 +97,7 @@ namespace Nimbus.Runtime.Scripts {
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
 		[SuppressMessage("ReSharper", "InvertIf")]
 		private static void AutoUnsubscribe() {
+			if (Instance == null) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
 			foreach (var iAdEvent in iAdEvents) {
 				Instance.NimbusEvents.OnAdLoaded -= iAdEvent.OnAdLoaded;
@@ -200,6 +202,7 @@ namespace Nimbus.Runtime.Scripts {
 			return adUnit;
 		}
 		
+		
 		/// <summary>
 		///     RequestRefreshingBannerAdAndLoad pre constructs a RTB Banner and sends requests to Nimbus periodically to retrieve ads.
 		///		This uses async rather than Unity Coroutines
@@ -263,6 +266,7 @@ namespace Nimbus.Runtime.Scripts {
 			currentAdUnit?.Destroy();
 			nextAdUnit?.Destroy();
 		}
+		
 
 		/// <summary>
 		///     ShowLoadedAd a returned ad from Nimbus servers and attempts to render it on screen
@@ -317,20 +321,11 @@ namespace Nimbus.Runtime.Scripts {
 		///		to auto fill some data.
 		/// </param>
 		public NimbusAdUnit RequestAd(string nimbusReportingPosition, BidRequest bidRequest) {
-			bidRequest.
-				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
-				SetDevice(_nimbusPlatformAPI.GetDevice()).
-				SetReportingPosition(nimbusReportingPosition).
-				SetTest(_configuration.enableSDKInTestMode);
-
-			SetTestData(bidRequest);
-			SetRegulations(bidRequest);
-
-			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitHelper.BidRequestToAdType(bidRequest), NimbusEvents);
-			adUnit.LoadJsonResponseAsync(responseJson);
-			return adUnit;
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition);
+			var adUnitType = AdUnitHelper.BidRequestToAdType(bidRequest);
+			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
+		
 		
 		/// <summary>
 		///     RequestHybridFullScreenAd pre constructs a Nimbus hybrid auction RTB object and communicates
@@ -351,21 +346,14 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition, float bannerFloor = 0f,
 			float videoFloor = 0f) {
-			var bidRequest = NimbusRtbBidRequestHelper.ForHybridInterstitialAd(nimbusReportingPosition);
-			bidRequest.
-				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
-				SetDevice(_nimbusPlatformAPI.GetDevice()).
-				SetBannerFloor(bannerFloor).
-				SetVideoFloor(videoFloor).
-				SetTest(_configuration.enableSDKInTestMode);
 			
-			SetTestData(bidRequest);
-			SetRegulations(bidRequest);
-
-			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents);
-			adUnit.LoadJsonResponseAsync(responseJson);
-			return adUnit;
+			const AdUnitType adUnitType = AdUnitType.Interstitial;
+			var bidRequest = NimbusRtbBidRequestHelper.ForHybridInterstitialAd(nimbusReportingPosition);
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
+				SetBannerFloor(bannerFloor).
+				SetVideoFloor(videoFloor);
+			
+			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
 
 		
@@ -382,20 +370,13 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f) {
-			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition);
-			bidRequest.
-				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
-				SetDevice(_nimbusPlatformAPI.GetDevice()).
-				SetBannerFloor(bannerFloor).
-				SetTest(_configuration.enableSDKInTestMode);
+			const AdUnitType adUnitType = AdUnitType.Banner;
 			
-			SetTestData(bidRequest);
-			SetRegulations(bidRequest);
-
-			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents);
-			adUnit.LoadJsonResponseAsync(responseJson);
-			return adUnit;
+			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition);
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
+				SetBannerFloor(bannerFloor);
+			
+			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
 
 		/// <summary>
@@ -412,24 +393,16 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition, float videoFloor = 0f) {
-			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
-			bidRequest.
-				AttemptToShowVideoEndCard().
-				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
-				SetDevice(_nimbusPlatformAPI.GetDevice()).
-				SetVideoFloor(videoFloor).
-				SetRewardedVideoFlag().
-				SetTest(_configuration.enableSDKInTestMode);
+			const AdUnitType adUnitType = AdUnitType.Rewarded;
 			
-			SetTestData(bidRequest);
-			SetRegulations(bidRequest);
+			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
+				AttemptToShowVideoEndCard().
+				SetVideoFloor(videoFloor).
+				SetRewardedVideoFlag();
 
-			var responseJson = _nimbusClient.MakeRequestAsync(bidRequest);
-			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents);
-			adUnit.LoadJsonResponseAsync(responseJson);
-			return adUnit;
+			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
-
 		
 		/// <summary>
 		///     If this inventory is subject to GDPR regulations use this function to pass in RTB GDPR information for all Nimbus requests
@@ -460,7 +433,18 @@ namespace Nimbus.Runtime.Scripts {
 		public void SetCoppa(bool isCoppa) {
 			_regulations.Coppa = isCoppa;
 		}
+		
+		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
+			_configuration = configuration;
+		}
+		
+		public NimbusSDKConfiguration GetNimbusConfiguration() {
+			return _configuration;
+		}
 
+		
+		#region Private helpers
+		
 		// with test = 1 Nimbus servers check that the app object is present
 		// in production app data properly construction on Nimbus from database information assuming the account is not a 1:many account
 		// if the account is 1:many the publisher needs submit proper App object
@@ -474,14 +458,42 @@ namespace Nimbus.Runtime.Scripts {
 			bidRequest.SetUsPrivacy(_regulations.UsPrivacyString);
 		}
 
-		
-		
-		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
-			_configuration = configuration;
+		private BidRequest ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			if (_nimbusPlatformAPI.Interceptors() == null) {
+				return bidRequest;
+			}
+			
+			foreach (var interceptor in _nimbusPlatformAPI.Interceptors()) {
+				var data = interceptor.GetProviderRtbDataFromNativeSDK(adUnitType, isFullScreen);
+				bidRequest = interceptor.ModifyRequest(bidRequest, data);
+			}
+			return bidRequest;
 		}
 		
-		public NimbusSDKConfiguration GetNimbusConfiguration() {
-			return _configuration;
+		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			return await Task.Run(async () => {
+				bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
+				return await  _nimbusClient.MakeRequestAsync(bidRequest);
+			});
+		}
+		
+		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
+			var responseJson =
+				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
+			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
+			adUnit.LoadJsonResponseAsync(responseJson);
+			return adUnit;
+		}
+		
+		private BidRequest SetUniversalRtbData(BidRequest bidRequest, string position) {
+			bidRequest.
+				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
+				SetDevice(_nimbusPlatformAPI.GetDevice()).
+				SetTest(_configuration.enableSDKInTestMode).
+				SetReportingPosition(position);
+			SetTestData(bidRequest);
+			SetRegulations(bidRequest);
+			return bidRequest;
 		}
 		
 		private class GlobalRtbRegulation {
@@ -489,6 +501,8 @@ namespace Nimbus.Runtime.Scripts {
 			internal string GdprConsentString;
 			internal string UsPrivacyString;
 		}
+		
+		#endregion
 	}
 
 }

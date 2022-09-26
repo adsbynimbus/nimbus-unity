@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 
@@ -7,5 +9,6 @@ namespace Nimbus.Internal {
 		internal abstract void ShowAd(NimbusAdUnit nimbusAdUnit);
 		internal abstract string GetSessionID();
 		internal abstract Device GetDevice();
+		internal abstract List<IInterceptor> Interceptors();
 	}
 }

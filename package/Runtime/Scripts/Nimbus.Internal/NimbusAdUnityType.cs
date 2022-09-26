@@ -31,5 +31,15 @@ namespace Nimbus.Internal {
 
 			return bidRequest.Imp[0].Video != null ? AdUnitType.Rewarded : AdUnitType.Undefined;
 		}
+		
+		public static bool IsAdTypeFullScreen(AdUnitType adUnitType) {
+			// ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+			switch (adUnitType) {
+				case AdUnitType.Interstitial: case AdUnitType.Rewarded:
+					return true;
+			}
+			return false;
+		}
+		
 	}
 }
