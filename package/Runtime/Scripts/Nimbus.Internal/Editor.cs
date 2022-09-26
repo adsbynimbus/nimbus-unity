@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -31,6 +33,10 @@ namespace Nimbus.Internal {
 				ConnectionType = ConnectionType.Unknown,
 				Ifa = "00000000-0000-0000-0000-000000000000"
 			};
+		}
+		
+		internal override List<IInterceptor> Interceptors() {
+			return null;
 		}
 	}
 }
