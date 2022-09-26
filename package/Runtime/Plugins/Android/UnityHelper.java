@@ -102,9 +102,12 @@ public final class UnityHelper {
                     @Override
                     public void onViewAdded(View child) {
                         super.onViewAdded(child);
+                        if (response.width() != 0) child.getLayoutParams().width = WRAP_CONTENT;
+                        if (response.height() != 0) child.getLayoutParams().height = WRAP_CONTENT;
                         ((LayoutParams) child.getLayoutParams()).gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                     }
                 };
+
                 activity.addContentView(adFrame, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
                 if (response == null) manager.showAd(request, adFrame, this); else {
                     Renderer.loadAd(response, adFrame, this);
