@@ -469,13 +469,20 @@ namespace Nimbus.Runtime.Scripts {
 			}
 			return bidRequest;
 		}
-		
+
+#if  UNITY_IOS
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			return await Task.Run(async () => {
 				bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
 				return await  _nimbusClient.MakeRequestAsync(bidRequest);
 			});
 		}
+#else
+		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
+			return await  _nimbusClient.MakeRequestAsync(bidRequest);
+		}
+#endif
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
 			var responseJson =
