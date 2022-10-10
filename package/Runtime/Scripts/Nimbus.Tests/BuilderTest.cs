@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Nimbus.Internal.RequestBuilder;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using NUnit.Framework;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -57,6 +58,26 @@ namespace Nimbus.Tests {
 			var body = JsonConvert.SerializeObject(bidRequest);
 			Assert.AreEqual(expected, body);
 		}
-		
+
+		[Test]
+		public void TestThirdPartyExtensionInjection() {
+			const string expected = "{\"aps\":[{\"amzn_b\":\"foobar-bid\",\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznp\":\"cnabk0\",\"amznrdr\":\"default\",\"amznslots\":\"foobar\",\"dc\":\"iad\"}],\"position\":\"extended_imp\"}";
+			var impExt = new ThirdPartyProviderImpExt {
+				Position = "extended_imp",
+				Skadn = null,
+				Aps = new ApsResponse[] {
+					new ApsResponse {
+						AmznB = "foobar-bid",
+						AmznH = "aax-us-east.amazon-adsystem.com",
+						Amznp = "cnabk0",
+						Amznrdr = "default",
+						Amznslots = "foobar",
+						Dc = "iad"
+					},
+				}
+			};
+			var body = JsonConvert.SerializeObject(impExt);
+			Assert.AreEqual(expected, body);
+		}
 	}
 }

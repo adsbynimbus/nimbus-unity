@@ -10,6 +10,9 @@ import Foundation
 import NimbusRenderStaticKit
 import NimbusRenderVideoKit
 import NimbusKit
+#if NIMBUS_ENABLE_APS
+import NimbusRequestAPSKit
+#endif
 
 @objc public class NimbusManager: NSObject {
     
@@ -20,6 +23,10 @@ import NimbusKit
     private var adController: AdController?
     private var adView: NimbusAdView?
     private var nimbusAdVC: NimbusAdViewController?
+    
+    #if NIMBUS_ENABLE_APS
+    private static var apsRequestHelper: NimbusAPSRequestHelper?
+    #endif
     
     // MARK: - Class Functions
     
@@ -44,6 +51,24 @@ import NimbusKit
         }
         return manager
     }
+
+    #if NIMBUS_ENABLE_APS
+    @objc public class func initializeAPSRequestHelper(appKey: String, timeoutInSeconds: Double, enableTestMode: Bool) {
+        apsRequestHelper = NimbusAPSRequestHelper(appKey: appKey, timeoutInSeconds: timeoutInSeconds, enableTestMode: enableTestMode)
+    }
+
+    @objc public class func addAPSSlot(slotUUID: String, width: Int, height: Int, isVideo: Bool) {
+        apsRequestHelper?.addAPSSlot(slotUUID: slotUUID, width: width, height: height, isVideo: isVideo) 
+    }
+
+    @objc public class func fetchAPSParams(width: Int, height: Int, includeVideo: Bool) -> String {
+        let data = apsRequestHelper?.fetchAPSParams(width: width, height: height, includeVideo: includeVideo);
+        if let unwrapped = data {
+            return unwrapped;
+        }
+        return "";
+    }
+    #endif
     
     // MARK: - Private Functions
     

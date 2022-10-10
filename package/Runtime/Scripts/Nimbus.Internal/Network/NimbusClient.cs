@@ -23,7 +23,8 @@ namespace Nimbus.Internal.Network {
 
 		public NimbusClient(CancellationTokenSource ctx, NimbusSDKConfiguration configuration) {
 			Client.DefaultRequestHeaders.Add("Nimbus-Api-Key", configuration.apiKey);
-			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", "1.0.0");
+			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", "2.1.0");
+			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.1.0");
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
 			Client.Timeout = TimeSpan.FromSeconds(10);
 

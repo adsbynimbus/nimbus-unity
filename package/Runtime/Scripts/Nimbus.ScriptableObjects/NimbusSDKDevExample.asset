@@ -16,3 +16,19 @@ MonoBehaviour:
   apiKey: DEV-cae2-4774-97ba-4e15c6276be0
   enableSDKInTestMode: 1
   enableUnityLogs: 1
+  androidAppID: a9_onboarding_app_id
+  androidApsSlotData:
+  - SlotId: 4e918ac0-5c68-4fe1-8d26-4e76e8f74831
+    AdUnitType: 2
+  - SlotId: 5ab6a4ae-4aa5-43f4-9da4-e30755f2b295
+    AdUnitType: 1
+  - SlotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
+    AdUnitType: 3
+  iosAppID: a9_onboarding_app_id
+  iosApsSlotData:
+  - SlotId: 4e918ac0-5c68-4fe1-8d26-4e76e8f74831
+    AdUnitType: 2
+  - SlotId: 5ab6a4ae-4aa5-43f4-9da4-e30755f2b295
+    AdUnitType: 1
+  - SlotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
+    AdUnitType: 3

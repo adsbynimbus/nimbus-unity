@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Nimbus.Internal.ThirdPartyDemandProviders;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -9,6 +11,10 @@ using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
 	public class IOS : NimbusAPI {
+		
+		// ThirdParty Providers
+		private List<IInterceptor> _interceptors;
+		
 
 		private static void OnDestroyIOSAd(int adUnitInstanceId) {
 			var nimbusAdUnit = NimbusIOSAdManager.Instance.AdUnitForInstanceID(adUnitInstanceId);
@@ -61,6 +67,18 @@ namespace Nimbus.Internal {
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
 				configuration.enableUnityLogs);
+			
+			if (StaticMethod.InitializeInterceptor()) {
+				_interceptors = new List<IInterceptor>();		
+			}
+			
+			#if NIMBUS_ENABLE_APS
+				Debug.unityLogger.Log("Initializing iOS APS SDK");
+				var (appID, slots) = configuration.GetApsData();
+				var aps = new ApsIOS(appID, slots, configuration.enableSDKInTestMode);
+				aps.InitializeNativeSDK();
+				_interceptors.Add(aps);
+			#endif
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
@@ -107,6 +125,10 @@ namespace Nimbus.Internal {
 			_deviceCache.Ua = _getUserAgent();
 
 			return _deviceCache;
+		}
+
+		internal override List<IInterceptor> Interceptors() {
+			return _interceptors;
 		}
 	}
 }
