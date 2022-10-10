@@ -92,12 +92,21 @@ namespace Nimbus.Tests {
 						new Imp {
 							Ext = new ThirdPartyProviderImpExt {
 								Position = "test",
+								Aps = new ApsResponse[] {
+									new ApsResponse {
+										AmznB = "foobar-bid",
+										AmznH = "aax-us-east.amazon-adsystem.com",
+										Amznp = "cnabk0",
+										Amznrdr = "default",
+										Amznslots = "foobar",
+										Dc = "iad"
+									},
+								}
 							}
 						}
 					}
 				};
-				var data = "[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
-				got = interceptor.ModifyRequest(got, data);
+				got = interceptor.ModifyRequest(got, "");
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
 				var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
 				Assert.AreEqual(wantBody, gotBody);

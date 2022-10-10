@@ -432,6 +432,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public void SetCoppa(bool isCoppa) {
 			_regulations.Coppa = isCoppa;
+			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
 		
 		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {

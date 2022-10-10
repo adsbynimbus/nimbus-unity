@@ -60,6 +60,10 @@ extern "C" {
     const char* _getSystemVersion() {
         return strdup([[NimbusHelper getSystemVersion] UTF8String]);
     }
+    
+    void _setCoppa(bool flag) {
+        [NimbusHelper setCoppaWithFlag: flag];
+    }
 
     bool _isLimitAdTrackingEnabled() {
         return [NimbusHelper isLimitAdTrackingEnabled];

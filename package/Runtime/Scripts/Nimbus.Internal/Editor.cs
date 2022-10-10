@@ -38,5 +38,9 @@ namespace Nimbus.Internal {
 		internal override List<IInterceptor> Interceptors() {
 			return null;
 		}
+		
+		internal override void SetCoppaFlag(bool flag) {
+			Debug.unityLogger.Log($"Mock Coppa flag set {flag}");
+		}
 	}
 }

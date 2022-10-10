@@ -110,6 +110,10 @@ namespace Nimbus.Internal {
 		internal override List<IInterceptor> Interceptors() {
 			return _interceptors;
 		}
+		
+		internal override void SetCoppaFlag(bool flag) {
+			_nimbus.SetStatic("COPPA", flag);
+		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {
 			var clazz = new AndroidJavaClass("java.lang.Class");
