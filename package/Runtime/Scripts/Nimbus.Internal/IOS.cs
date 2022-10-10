@@ -54,6 +54,9 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern string _getSystemVersion();
+		
+		[DllImport("__Internal")]
+		private static extern void _setCoppa(bool flag);
 
 		[DllImport("__Internal")]
 		private static extern bool _isLimitAdTrackingEnabled();
@@ -129,6 +132,10 @@ namespace Nimbus.Internal {
 
 		internal override List<IInterceptor> Interceptors() {
 			return _interceptors;
+		}
+		
+		internal override void SetCoppaFlag(bool flag) {
+			_setCoppa(flag);
 		}
 	}
 }

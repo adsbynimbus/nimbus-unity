@@ -36,6 +36,10 @@ import AppTrackingTransparency
         UIDevice.current.systemVersion
     }
     
+    @objc public class func setCoppa(flag: Bool) {
+        Nimbus.shared.coppa = flag;
+    }
+    
     @objc public class func isLimitAdTrackingEnabled() -> Bool {
         if #available(iOS 14.0, *) {
             return ATTrackingManager.trackingAuthorizationStatus != .authorized
