@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR && UNITY_IOS
 using System.IO;
 using System.Text;
+using Nimbus.Internal.Utility;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
@@ -43,6 +44,7 @@ namespace Nimbus.Editor {
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 			pbx.WriteToFile(pbxPath);
 			CopyPodfile(path);
+			AddSkaAdNetworkIdsToPlist(path);
 		}
 
 		private static void CopyPodfile(string pathToBuiltProject) {
@@ -76,6 +78,23 @@ namespace Nimbus.Editor {
 			using (var sr = new StreamWriter(headerPath)) {
 				sr.Write(sb.ToString());
 			}
+		}
+		
+		private static void AddSkaAdNetworkIdsToPlist(string path) {
+			if (!File.Exists(SkaAdNetworkEditor.SkaAdSavePath)) {
+				return;
+			}
+		
+			var plistPath = path + "/Info.plist";
+			var plist = new PlistDocument();
+			plist.ReadFromString(File.ReadAllText(plistPath));
+			var array = plist.root.CreateArray(SkaAdNetworkEditor.SkaItem);
+			foreach (var id in  File.ReadLines(SkaAdNetworkEditor.SkaAdSavePath) ) {
+				if (id.Trim().IsNullOrEmpty()) continue;
+				array.AddDict().SetString(SkaAdNetworkEditor.SkaKey, id);
+			}
+			Debug.Log($"Writing SkAdNetwork ids to {path}");
+			plist.WriteToFile(plistPath);
 		}
 	}
 }
