@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
-using Newtonsoft.Json;
-using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 
-namespace Nimbus.Internal.ThirdPartyDemandProviders {
+namespace Nimbus.Internal.Interceptor {
 	public class SkAdNetworkIOS : IInterceptor {
 		private readonly Skadn _skAdNetwork;
 

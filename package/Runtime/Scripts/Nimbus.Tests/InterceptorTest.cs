@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Nimbus.Internal;
-using Nimbus.Internal.ThirdPartyDemandProviders;
+using Nimbus.Internal.Interceptor;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using NUnit.Framework;
 using OpenRTB.Request;
 

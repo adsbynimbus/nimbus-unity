@@ -1,6 +1,6 @@
 using System;
 
-namespace Nimbus.Internal.ThirdPartyDemandProviders {
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 	[Serializable]
 	public class ApsSlotData {
 		public string SlotId;

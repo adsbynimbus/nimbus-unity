@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -11,7 +12,6 @@ using Debug = UnityEngine.Debug;
 
 using System.Collections.Generic;
 using Nimbus.Internal;
-using Nimbus.Internal.ThirdPartyDemandProviders;
 
 #endregion
 

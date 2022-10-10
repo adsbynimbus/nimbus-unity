@@ -1,5 +1,5 @@
 using System;
-using Nimbus.Internal.ThirdPartyDemandProviders;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using UnityEngine;
 
 namespace Nimbus.ScriptableObjects {
