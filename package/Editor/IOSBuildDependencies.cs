@@ -3,8 +3,7 @@ using System.Text;
 
 namespace Nimbus.Editor {
 	public class IOSBuildDependencies {
-		// TODO point to a production build before merging
-		private const string SdkVersion = "2.1.1-internal.1";
+		private const string SdkVersion = "2.1.0";
 		private readonly List<string> _dependencies = new List<string> {
 			"'NimbusKit'",
 			"'NimbusRenderVideoKit'",

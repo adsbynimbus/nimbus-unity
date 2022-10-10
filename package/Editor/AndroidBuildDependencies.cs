@@ -2,8 +2,7 @@ using System.Text;
 
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {
-		// TODO point to a production build before merging
-		private const string SdkVersion = "2.1.0-beta";
+		private const string SdkVersion = "2.1.0";
 
 		public static string BuildDependencies() {
 			var builder = new StringBuilder();
