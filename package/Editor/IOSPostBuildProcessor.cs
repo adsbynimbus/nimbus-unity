@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR && UNITY_IOS
 using System.IO;
+using System.Linq;
 using System.Text;
 using Nimbus.Internal.Utility;
 using UnityEditor;
@@ -79,20 +80,36 @@ namespace Nimbus.Editor {
 				sr.Write(sb.ToString());
 			}
 		}
-		
+
 		private static void AddSkaAdNetworkIdsToPlist(string path) {
 			if (!File.Exists(SkaAdNetworkEditor.SkaAdSavePath)) {
 				return;
 			}
-		
+
 			var plistPath = path + "/Info.plist";
 			var plist = new PlistDocument();
 			plist.ReadFromString(File.ReadAllText(plistPath));
-			var array = plist.root.CreateArray(SkaAdNetworkEditor.SkaItem);
-			foreach (var id in  File.ReadLines(SkaAdNetworkEditor.SkaAdSavePath) ) {
-				if (id.Trim().IsNullOrEmpty()) continue;
-				array.AddDict().SetString(SkaAdNetworkEditor.SkaKey, id);
+
+			var array = plist.root.values.TryGetValue(SkaAdNetworkEditor.SkaItem, out var existingArray)
+				? existingArray.AsArray()
+				: plist.root.CreateArray(SkaAdNetworkEditor.SkaItem);
+
+			foreach (var id in File.ReadLines(SkaAdNetworkEditor.SkaAdSavePath)) {
+				var trimmedID = id.Trim();
+				if (trimmedID.IsNullOrEmpty()) continue;
+
+				var found = array.values
+					.Select(element => element.AsDict())
+					.Select(map => 
+						map[SkaAdNetworkEditor.SkaKey]
+					)
+					.Any(storedID => trimmedID == storedID.AsString().Trim());
+				
+				if (!found) {
+					array.AddDict().SetString(SkaAdNetworkEditor.SkaKey, id);
+				}
 			}
+
 			Debug.Log($"Writing SkAdNetwork ids to {path}");
 			plist.WriteToFile(plistPath);
 		}
