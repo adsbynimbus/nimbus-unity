@@ -91,7 +91,7 @@ namespace Example.Scripts {
 					// it simply means demand partners did not want to bid on this inventory
 					if (_interactableButtons[index].CurrentAd.ErrResponse.Message != null) {
 						var message = _interactableButtons[index].CurrentAd.ErrResponse.Message;
-						Debug.unityLogger.LogError("AdError", message);
+						Debug.unityLogger.LogWarning("AdError", message);
 						StartCoroutine(SetErrorText(message, _interactableButtons[index]));
 						break;
 					}
