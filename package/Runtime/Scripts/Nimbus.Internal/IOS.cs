@@ -11,11 +11,9 @@ using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
 	public class IOS : NimbusAPI {
-		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
 		
-
 		private static void OnDestroyIOSAd(int adUnitInstanceId) {
 			var nimbusAdUnit = NimbusIOSAdManager.Instance.AdUnitForInstanceID(adUnitInstanceId);
 			if (nimbusAdUnit != null) {
@@ -60,19 +58,27 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern bool _isLimitAdTrackingEnabled();
+		
+		[DllImport("__Internal")]
+		private static extern string _getPlistJSON();
 
 		private Device _deviceCache;
 		private string _sessionId;
 		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
-
+			
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
 				configuration.enableUnityLogs);
 			
-			if (StaticMethod.InitializeInterceptor()) {
+			var plist = GetPlistJson();
+			if (StaticMethod.InitializeInterceptor() || !plist.IsNullOrEmpty()) {
 				_interceptors = new List<IInterceptor>();		
+			}
+
+			if (!plist.IsNullOrEmpty()) {
+				_interceptors.Add(new SkAdNetworkIOS(plist));
 			}
 			
 			#if NIMBUS_ENABLE_APS
@@ -136,6 +142,10 @@ namespace Nimbus.Internal {
 		
 		internal override void SetCoppaFlag(bool flag) {
 			_setCoppa(flag);
+		}
+
+		private static string GetPlistJson() {
+			return  _getPlistJSON();
 		}
 	}
 }

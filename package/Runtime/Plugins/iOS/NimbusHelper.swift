@@ -47,4 +47,12 @@ import AppTrackingTransparency
             return !ASIdentifierManager.shared().isAdvertisingTrackingEnabled
         }
     }
+    
+    @objc public class func getPlistJSON() -> String? {
+    	guard let infoDict = Bundle.main.infoDictionary,
+    	let jsonData = try? JSONSerialization.data(withJSONObject: infoDict, options: []) else { 
+    		return nil
+    	}
+    	return String(data: jsonData, encoding: .ascii)
+    }
 }
