@@ -91,13 +91,13 @@ namespace Example.Scripts {
 					// it simply means demand partners did not want to bid on this inventory
 					if (_interactableButtons[index].CurrentAd.ErrResponse.Message != null) {
 						var message = _interactableButtons[index].CurrentAd.ErrResponse.Message;
-						Debug.unityLogger.LogError("AdError", message);
+						Debug.unityLogger.LogWarning("AdError", message);
 						StartCoroutine(SetErrorText(message, _interactableButtons[index]));
 						break;
 					}
 					var currentAd = _interactableButtons[index].CurrentAd;
 					NimbusManager.Instance.ShowLoadedAd(currentAd);
-					StartCoroutine(Reset(_interactableButtons[index], currentAd));
+					StartCoroutine(ResetState(_interactableButtons[index], currentAd));
 					break;
 				case AdState.Displayed:
 					_interactableButtons[index].DestroyAd();
@@ -125,7 +125,7 @@ namespace Example.Scripts {
 			controller.ResetState();
 		}
 		
-		private IEnumerator Reset(AdController controller, NimbusAdUnit adUnit) {
+		private static IEnumerator ResetState(AdController controller, NimbusAdUnit adUnit) {
 			if (adUnit.AdType != AdUnitType.Interstitial && adUnit.AdType != AdUnitType.Rewarded) yield break;
 			while (adUnit.CurrentAdState != AdEventTypes.COMPLETED ||
 			       adUnit.CurrentAdState != AdEventTypes.DESTROYED) {

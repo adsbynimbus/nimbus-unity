@@ -68,6 +68,11 @@ extern "C" {
     bool _isLimitAdTrackingEnabled() {
         return [NimbusHelper isLimitAdTrackingEnabled];
     }
+    
+    const char* _getPlistJSON() {
+        return strdup([[NimbusHelper getPlistJSON] UTF8String]);
+    }
+    
 
 #if NIMBUS_ENABLE_APS
     void _initializeAPSRequestHelper(const char* appKey, double timeoutInSeconds, bool enableTestMode) {

@@ -1,0 +1,77 @@
+{
+  "DTPlatformName": "iphonesimulator",
+  "CFBundleIdentifier": "com.adsbynimbus.unity.ios.NimbusDemoDev",
+  "UIDeviceFamily": [
+    1,
+    2
+  ],
+  "MinimumOSVersion": "15.0",
+  "UILaunchStoryboardName": "LaunchScreen-iPhone",
+  "DTPlatformBuild": "20A360",
+  "CADisableMinimumFrameDurationOnPhone": false,
+  "CFBundleName": "NimbusSampleUnityApp",
+  "DTSDKBuild": "20A360",
+  "UIRequiresPersistentWiFi": false,
+  "CFBundleNumericVersion": 16809984,
+  "CFBundlePackageType": "APPL",
+  "CFBundleExecutable": "NimbusSampleUnityApp",
+  "DTXcode": "1401",
+  "DTXcodeBuild": "14A400",
+  "CFBundleShortVersionString": "0.0.2",
+  "LSRequiresIPhoneOS": true,
+  "BuildMachineOSBuild": "21G115",
+  "UIViewControllerBasedStatusBarAppearance": false,
+  "NSAppTransportSecurity": {
+    "NSAllowsArbitraryLoads": true
+  },
+  "UIRequiresFullScreen": true,
+  "Unity_LoadingActivityIndicatorStyle": -1,
+  "CADisableMinimumFrameDuration": false,
+  "CFBundleVersion": "1",
+  "UISupportedInterfaceOrientations": [
+    "UIInterfaceOrientationPortrait",
+    "UIInterfaceOrientationLandscapeRight",
+    "UIInterfaceOrientationLandscapeLeft"
+  ],
+  "SKAdNetworkIdentifier": [
+    {
+      "SKAdNetworkItems": "id1.skadnetwork"
+    },
+    {
+      "SKAdNetworkItems": "id2.skadnetwork"
+    },
+    {
+      "SKAdNetworkItems": "id3.skadnetwork"
+    },
+    {
+      "SKAdNetworkItems": "id4.skadnetwork"
+    }
+  ],
+  "CFBundleDevelopmentRegion": "en",
+  "UIPrerenderedIcon": false,
+  "UnityCrashSubmissionURL": "",
+  "DTPlatformVersion": "16.0",
+  "UIRequiredDeviceCapabilities": [
+    "arm64",
+    "metal"
+  ],
+  "DTSDKName": "iphonesimulator16.0",
+  "CFBundleAllowMixedLocalizations": true,
+  "UnityCloudProjectID": "",
+  "CFBundleSupportedPlatforms": [
+    "iPhoneSimulator"
+  ],
+  "CFBundleIcons": {
+    "CFBundlePrimaryIcon": {
+      "CFBundleIconFiles": [
+        "AppIcon60x60"
+      ],
+      "CFBundleIconName": "AppIcon"
+    }
+  },
+  "UIStatusBarHidden": true,
+  "CFBundleInfoDictionaryVersion": "6.0",
+  "UIStatusBarStyle": "UIStatusBarStyleDefault",
+  "DTCompiler": "com.apple.compilers.llvm.clang.1_0",
+  "CFBundleDisplayName": "Nimbus Sample Unity App"
+}

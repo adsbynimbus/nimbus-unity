@@ -1,7 +1,7 @@
-using OpenRTB.Request;
 using Newtonsoft.Json;
+using OpenRTB.Request;
 
-namespace Nimbus.Internal.ThirdPartyDemandProviders {
+namespace Nimbus.Internal.Interceptor {
 	public class ThirdPartyProviderImpExt : ImpExt {
 		[JsonProperty("aps", DefaultValueHandling = DefaultValueHandling.Ignore)]
 		public ApsResponse[] Aps;

@@ -443,7 +443,6 @@ namespace Nimbus.Runtime.Scripts {
 			return _configuration;
 		}
 
-		
 		#region Private helpers
 		
 		// with test = 1 Nimbus servers check that the app object is present

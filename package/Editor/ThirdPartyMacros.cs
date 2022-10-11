@@ -50,8 +50,8 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.Android, ApsMacro);
-					LogWithHelpBox("Don't Forget To Add your Android APS App Ids and APS Slot Ids to the " +
-					               "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android APS App Ids and APS Slot Ids to the " +
+					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager();
 				}
 			}
@@ -70,8 +70,8 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.iOS, ApsMacro);
-					LogWithHelpBox("Don't Forget To Add your IOS APS App Ids and APS Slot Ids to the " +
-					               "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS APS App Ids and APS Slot Ids to the " +
+					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager();
 				}
 			}
@@ -117,30 +117,12 @@ namespace Nimbus.Editor {
 				Selection.activeGameObject = manager.gameObject;
 			}
 			else {
-				LogWithHelpBox("APS was enabled however there is no NimbusAdManager located in your scene, " +
-				               "please add a NimbusGameManager to you scene. In the ToolBar Go to Nimbus -> Create New NimbusAdManager",
+				EditorUtil.LogWithHelpBox("APS was enabled however there is no NimbusAdManager located in your scene, " +
+				                         "please add a NimbusGameManager to you scene. In the ToolBar Go to Nimbus -> Create New NimbusAdManager",
 					MessageType.Error);
 			}
 		}
-
-		private static void LogWithHelpBox(string message, MessageType type) {
-			GUILayout.Space(5);
-			EditorGUILayout.HelpBox(message, type);
-			switch (type) {
-				case MessageType.None: case MessageType.Info:
-					Debug.unityLogger.Log(message);
-					break;
-				case MessageType.Warning:
-					Debug.unityLogger.LogWarning("Nimbus", message);
-					break;
-				case MessageType.Error:
-					Debug.unityLogger.LogError("Nimbus", message);
-					break;
-				default:
-					Debug.unityLogger.Log(message);
-					break;
-			}
-		}
+		
 		
 	}
 }

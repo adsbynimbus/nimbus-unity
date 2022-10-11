@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nimbus.Internal.ThirdPartyDemandProviders;
+using Nimbus.Internal.Interceptor;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 

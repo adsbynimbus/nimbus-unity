@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
+using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.RequestBuilder;
-using Nimbus.Internal.ThirdPartyDemandProviders;
 using NUnit.Framework;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
