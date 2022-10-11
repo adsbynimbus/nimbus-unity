@@ -1,6 +1,6 @@
 {
   "name": "com.adsbynimbus.nimbus",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "displayName": "Ads By Nimbus",
   "description": "This package allows for Unity games to access ads driven by Nimbus",
   "unity": "2020.3",
