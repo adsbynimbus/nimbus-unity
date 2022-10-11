@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
