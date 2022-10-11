@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.adsbynimbus.unity": {
-      "version": "file:../../package",
+    "com.adsbynimbus.nimbus": {
+      "version": "file:../../com.adsbynimbus.nimbus",
       "depth": 0,
       "source": "local",
       "dependencies": {
