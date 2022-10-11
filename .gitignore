@@ -81,3 +81,7 @@ crashlytics-build.properties
 
 *.DotSettings
 **/*.DotSettings
+
+
+# should not be included for downloadable packages
+/com.adsbynimbus.nimbus/package-lock.json.meta
