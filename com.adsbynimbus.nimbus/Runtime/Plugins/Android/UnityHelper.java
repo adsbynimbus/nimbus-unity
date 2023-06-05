@@ -37,7 +37,7 @@ public final class UnityHelper {
             if (isBlocking) {
                 nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
                         Configuration.ORIENTATION_LANDSCAPE ?
-                        CompanionAd.end(480, 320) : CompanionAd.end(320, 480)};
+                        CompanionAd.Companion.end(480, 320) : CompanionAd.Companion.end(320, 480)};
                 
                 activity.runOnUiThread(() -> {
                     BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelay * 1000);
