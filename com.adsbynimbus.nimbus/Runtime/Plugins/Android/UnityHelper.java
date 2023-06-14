@@ -9,27 +9,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.adsbynimbus.Nimbus;
 import com.adsbynimbus.NimbusAdManager;
 import com.adsbynimbus.NimbusError;
-import com.adsbynimbus.openrtb.request.App;
 import com.adsbynimbus.openrtb.response.BidResponse;
-import com.adsbynimbus.openrtb.request.Format;
-import com.adsbynimbus.openrtb.request.Position;
-import com.adsbynimbus.openrtb.request.User;
 import com.adsbynimbus.render.AdController;
 import com.adsbynimbus.render.AdEvent;
 import com.adsbynimbus.render.BlockingAdRenderer;
 import com.adsbynimbus.render.CompanionAd;
 import com.adsbynimbus.render.Renderer;
+import com.adsbynimbus.render.StaticAdRenderer;
+import com.adsbynimbus.render.VideoAdRenderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
-import com.adsbynimbus.request.RequestManager;
 
-import java.util.HashMap;
+import java.util.Set;
 
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
-    
+
+    public static void initSdk(Object context, String publisherKey, String apiKey) {
+        Nimbus.initialize((Activity) context, publisherKey, apiKey, Set.of(new StaticAdRenderer(), new VideoAdRenderer()));
+    }
+
     public static void render(Object obj, String jsonResponse, boolean isBlocking, int closeButtonDelay, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
@@ -38,14 +40,14 @@ public final class UnityHelper {
                 nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
                         Configuration.ORIENTATION_LANDSCAPE ?
                         CompanionAd.Companion.end(480, 320) : CompanionAd.Companion.end(320, 480)};
-                
+
                 activity.runOnUiThread(() -> {
                     BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelay * 1000);
                     final AdController controller = Renderer.loadBlockingAd(nimbusResponse, activity);
                     final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
                     if (controller != null) {
-                              callback.onAdRendered(controller);
-                              controller.start();
+                        callback.onAdRendered(controller);
+                        controller.start();
                     } else {
                         callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
                     }
@@ -55,13 +57,13 @@ public final class UnityHelper {
             }
         }
     }
-    
+
     public static void addListener(Object controller, Object listener) {
         if (controller instanceof AdController) {
             ((AdController) controller).listeners().add((AdController.Listener) listener);
         }
     }
-    
+
     public static void destroyController(Object obj, Object controller) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
@@ -72,7 +74,7 @@ public final class UnityHelper {
     }
 
     static final class BannerHandler implements Runnable, NimbusAdManager.Listener,
-        AdController.Listener {
+            AdController.Listener {
 
         protected final NimbusRequest request;
         protected final NimbusResponse response;
@@ -88,7 +90,7 @@ public final class UnityHelper {
         }
 
         public BannerHandler(Activity activity, NimbusRequest request, NimbusResponse response,
-            NimbusAdManager.Listener listener) {
+                NimbusAdManager.Listener listener) {
             this.activity = activity;
             this.request = request;
             this.loadListener = listener;

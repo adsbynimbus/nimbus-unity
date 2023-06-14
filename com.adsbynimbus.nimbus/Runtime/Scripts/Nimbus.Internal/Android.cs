@@ -47,7 +47,7 @@ namespace Nimbus.Internal {
 
 			var androidLogger = new AndroidJavaObject(AndroidLogger, 0);
 			_nimbus.CallStatic("addLogger", androidLogger);
-			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
+			_helper.CallStatic("initSdk", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
 
 			if (StaticMethod.InitializeInterceptor()) {
