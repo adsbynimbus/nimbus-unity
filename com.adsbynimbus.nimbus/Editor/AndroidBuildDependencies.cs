@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {
-		private const string SdkVersion = "2.1.0";
+		private const string SdkVersion = "2.8.0";
 
 		public static string BuildDependencies() {
 			var builder = new StringBuilder();

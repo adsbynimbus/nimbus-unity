@@ -30,8 +30,7 @@ allprojects {
 		private const string PackagingOptions = @"
 android {
 	packagingOptions {
-    	pickFirst ""META-INF/annotation-experimental_release.kotlin_module""
-		pickFirst ""META-INF/kotlin-stdlib.kotlin_module""
+    	pickFirst ""META-INF/*.kotlin_module""
 	}
 }";
 
