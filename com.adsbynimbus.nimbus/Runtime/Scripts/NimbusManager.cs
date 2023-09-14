@@ -129,7 +129,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		/// <param name="bidRequest">
 		///     A manually constructed RTB data object. While it allows for more publisher flexibility to communicate to Nimbus
-		///		it does require more RTB knowledge. Please reference https://github.com/timehop/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
+		///		it does require more RTB knowledge. Please reference https://github.com/adsbynimbus/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
 		///		for more insight on how to construct an RTB request. You may also use the static helper class NimbusRtbBidRequestHelper
 		///		to auto fill some data.
 		/// </param>
@@ -316,7 +316,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		/// <param name="bidRequest">
 		///     A manually constructed RTB data object. While it allows for more publisher flexibility to communicate to Nimbus
-		///		it does require more RTB knowledge. Please reference https://github.com/timehop/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
+		///		it does require more RTB knowledge. Please reference https://github.com/adsbynimbus/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
 		///		for more insight on how to construct an RTB request. You may also use the static helper class NimbusRtbBidRequestHelper
 		///		to auto fill some data.
 		/// </param>
