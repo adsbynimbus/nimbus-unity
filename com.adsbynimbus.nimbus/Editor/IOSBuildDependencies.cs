@@ -18,7 +18,7 @@ use_frameworks!
 source 'https://cdn.cocoapods.org/'
 ");
 			if (SdkVersion.Contains("internal")) {
-				builder.AppendLine("source 'git@github.com:timehop/Specs.git'");
+				builder.AppendLine("source 'git@github.com:adsbynimbus/Specs.git'");
 			}
 			
 			#if NIMBUS_ENABLE_APS
