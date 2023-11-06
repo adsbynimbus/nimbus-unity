@@ -2,7 +2,7 @@
 //  NimbusBinding.mm
 //
 //  Created by Bruno Bruggemann on 5/7/21.
-//  Copyright © 2021 Timehop. All rights reserved.
+//  Copyright © 2021 AdsByNimbus. All rights reserved.
 //
 
 #import "UnityFramework/UnityFramework-Swift.h"
