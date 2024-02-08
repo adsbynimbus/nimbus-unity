@@ -485,8 +485,12 @@ namespace Nimbus.Runtime.Scripts {
 #endif
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
-			var responseJson =
-				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
+			Task<string> responseJson;
+			try {
+				responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
+			} catch (Exception e) { 
+				responseJson = Task.FromException<string>(e);
+			}
 			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
