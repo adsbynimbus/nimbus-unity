@@ -15,6 +15,8 @@ using System.Text;
 
 namespace Nimbus.Internal.Network {
 	public class NimbusClient {
+
+		public const string Sdkv = "2.10.0";
 		private const string ProductionPath = "/rta/v1";
 		private const string TestingPath = "/rta/test";
 		private static readonly HttpClient Client = new HttpClient();
@@ -23,7 +25,7 @@ namespace Nimbus.Internal.Network {
 
 		public NimbusClient(CancellationTokenSource ctx, NimbusSDKConfiguration configuration) {
 			Client.DefaultRequestHeaders.Add("Nimbus-Api-Key", configuration.apiKey);
-			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", "2.1.0");
+			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", NimbusClient.Sdkv);
 			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.1.1");
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
 			Client.Timeout = TimeSpan.FromSeconds(10);

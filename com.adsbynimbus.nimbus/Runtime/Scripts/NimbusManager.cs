@@ -501,7 +501,8 @@ namespace Nimbus.Runtime.Scripts {
 				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
 				SetDevice(_nimbusPlatformAPI.GetDevice()).
 				SetTest(_configuration.enableSDKInTestMode).
-				SetReportingPosition(position);
+				SetReportingPosition(position).
+				SetOMInformation(NimbusClient.Sdkv);
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;
