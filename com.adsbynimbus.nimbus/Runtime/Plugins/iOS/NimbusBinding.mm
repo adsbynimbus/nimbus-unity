@@ -60,7 +60,15 @@ extern "C" {
     const char* _getSystemVersion() {
         return strdup([[NimbusHelper getSystemVersion] UTF8String]);
     }
-    
+
+    int _getAtts() {
+        return (int)[NimbusHelper getAtts];
+    }
+
+    const char* _getVendorId() {
+        return strdup([[NimbusHelper getVendorId] UTF8String]);
+    }
+
     void _setCoppa(bool flag) {
         [NimbusHelper setCoppaWithFlag: flag];
     }
