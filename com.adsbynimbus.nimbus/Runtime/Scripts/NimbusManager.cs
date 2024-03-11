@@ -45,7 +45,7 @@ namespace Nimbus.Runtime.Scripts {
 				_regulations = new GlobalRtbRegulation();
 				_nimbusPlatformAPI.InitializeSDK(_configuration);
 				_ctx = new CancellationTokenSource();
-				_nimbusClient = new NimbusClient(_ctx, _configuration);
+				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				Instance = this;
 				DontDestroyOnLoad(gameObject);
 			}
@@ -502,7 +502,7 @@ namespace Nimbus.Runtime.Scripts {
 				SetDevice(_nimbusPlatformAPI.GetDevice()).
 				SetTest(_configuration.enableSDKInTestMode).
 				SetReportingPosition(position).
-				SetOMInformation(NimbusClient.Sdkv);
+				SetOMInformation(_nimbusClient.platformSdkv);
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;

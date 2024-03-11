@@ -11,5 +11,6 @@ namespace Nimbus.Internal {
 		internal abstract Device GetDevice();
 		internal abstract void SetCoppaFlag(bool flag);
 		internal abstract List<IInterceptor> Interceptors();
+		internal abstract string GetVersion();
 	}
 }

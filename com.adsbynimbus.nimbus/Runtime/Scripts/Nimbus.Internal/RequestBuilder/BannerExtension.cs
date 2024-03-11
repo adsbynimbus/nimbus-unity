@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Nimbus.Internal.RequestBuilder {
 	public static class BannerExtension {
-		private static readonly Api[] DefaultApis = { Api.Mraid1, Api.Mraid2, Api.Mraid3 };
+		private static readonly Api[] DefaultApis = { Api.Mraid1, Api.Mraid2, Api.Mraid3, Api.Omid };
 
 		public static Banner Interstitial(this Banner banner) {
 			var size = Input.deviceOrientation == DeviceOrientation.Portrait

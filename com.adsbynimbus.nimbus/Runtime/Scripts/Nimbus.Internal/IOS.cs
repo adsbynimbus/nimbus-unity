@@ -69,6 +69,9 @@ namespace Nimbus.Internal {
 		[DllImport("__Internal")]
 		private static extern string _getVendorId();
 
+		[DllImport("__Internal")]
+		private static extern string _getVersion();
+
 		private Device _deviceCache;
 		private string _sessionId;
 		
@@ -156,6 +159,10 @@ namespace Nimbus.Internal {
 		
 		internal override void SetCoppaFlag(bool flag) {
 			_setCoppa(flag);
+		}
+
+		internal override string GetVersion() {
+			return _getVersion();
 		}
 
 		private static string GetPlistJson() {

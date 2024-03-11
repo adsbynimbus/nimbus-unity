@@ -37,9 +37,11 @@ import NimbusRequestAPSKit
     ) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
+        let videoRenderer = NimbusVideoAdRenderer()
+        videoRenderer.showMuteButton = true
         Nimbus.shared.renderers = [
             .forAuctionType(.static): NimbusStaticAdRenderer(),
-            .forAuctionType(.video): NimbusVideoAdRenderer()
+            .forAuctionType(.video): videoRenderer,
         ]
     }
     
@@ -97,9 +99,11 @@ import NimbusRequestAPSKit
         
         if isBlocking {
             adView = NimbusAdView(adPresentingViewController: viewController)
-            adView?.delegate = self
-            adView?.volume = 100
             guard let adView = adView else { return }
+            adView.delegate = self
+            adView.volume = 100
+            adView.isBlocking = true
+            adView.showsSKOverlay = true
             
             let companionAd: NimbusCompanionAd
             if UIDevice.current.orientation.isLandscape {

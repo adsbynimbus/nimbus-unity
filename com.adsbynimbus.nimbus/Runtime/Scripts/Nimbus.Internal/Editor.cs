@@ -42,5 +42,9 @@ namespace Nimbus.Internal {
 		internal override void SetCoppaFlag(bool flag) {
 			Debug.unityLogger.Log($"Mock Coppa flag set {flag}");
 		}
+
+		internal override string GetVersion() {
+			return "1.1.1";
+		}
 	}
 }

@@ -76,6 +76,10 @@ extern "C" {
     bool _isLimitAdTrackingEnabled() {
         return [NimbusHelper isLimitAdTrackingEnabled];
     }
+
+    const char* _getVersion() {
+        return strdup([[NimbusHelper getVersion] UTF8String]);
+    }
     
     const char* _getPlistJSON() {
         return strdup([[NimbusHelper getPlistJSON] UTF8String]);

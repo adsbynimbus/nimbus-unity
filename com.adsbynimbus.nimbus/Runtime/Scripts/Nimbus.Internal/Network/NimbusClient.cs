@@ -15,17 +15,19 @@ using System.Text;
 
 namespace Nimbus.Internal.Network {
 	public class NimbusClient {
-
-		public const string Sdkv = "2.10.0";
 		private const string ProductionPath = "/rta/v1";
 		private const string TestingPath = "/rta/test";
+		
 		private static readonly HttpClient Client = new HttpClient();
 		private readonly string _nimbusEndpoint = "https://{0}.adsbynimbus.com{1}";
 		private CancellationTokenSource _ctx;
 
-		public NimbusClient(CancellationTokenSource ctx, NimbusSDKConfiguration configuration) {
+		public readonly string platformSdkv;
+
+		public NimbusClient(CancellationTokenSource ctx, NimbusSDKConfiguration configuration, string platformSdkVersion) {
+			platformSdkv = platformSdkVersion;
 			Client.DefaultRequestHeaders.Add("Nimbus-Api-Key", configuration.apiKey);
-			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", NimbusClient.Sdkv);
+			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", platformSdkv);
 			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.1.1");
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
 			Client.Timeout = TimeSpan.FromSeconds(10);

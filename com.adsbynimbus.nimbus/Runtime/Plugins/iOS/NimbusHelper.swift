@@ -40,6 +40,10 @@ import AppTrackingTransparency
         UIDevice.current.identifierForVendor?.uuidString
     }
 
+    @objc public class func getVersion() -> String? {
+        Nimbus.shared.version
+    }
+
     @objc public class func getAtts() -> Int {
         if #available(iOS 14.0, *) {
             return Int(ATTrackingManager.trackingAuthorizationStatus.rawValue)
