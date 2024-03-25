@@ -44,7 +44,7 @@ namespace Nimbus.Internal {
 		}
 
 		internal override string GetVersion() {
-			return "1.1.1";
+			return "1.3.0";
 		}
 	}
 }
