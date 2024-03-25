@@ -100,7 +100,7 @@ namespace Nimbus.Internal {
 			var ctx = CastToJavaObject(_currentActivity, "android.content.Context");
 			_deviceCache.Ua = _nimbus.CallStatic<string>("getUserAgent", ctx);
 			_deviceCache.ConnectionType =
-				(ConnectionType)_connectionTypeHelper.CallStatic<byte>("getConnectionType", ctx);
+				(ConnectionType)_connectionTypeHelper.CallStatic<sbyte>("getConnectionType", ctx);
 
 			var _adInfo = _nimbus.CallStatic<AndroidJavaObject>("getAdIdInfo");
 			_deviceCache.Lmt = _adInfo.Call<bool>("isLimitAdTrackingEnabled") ? 1 : 0;
@@ -114,6 +114,10 @@ namespace Nimbus.Internal {
 		
 		internal override void SetCoppaFlag(bool flag) {
 			_nimbus.SetStatic("COPPA", flag);
+		}
+
+		internal override string GetVersion() {
+			return _nimbus.GetStatic<string>("version");
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

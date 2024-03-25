@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Nimbus.Editor {
 	public class IOSBuildDependencies {
-		private const string SdkVersion = "2.10.0";
+		private const string SdkVersion = "2.20.0";
 		private readonly List<string> _dependencies = new List<string> {
 			"'NimbusKit'",
 			"'NimbusRenderVideoKit'",
@@ -13,7 +13,7 @@ namespace Nimbus.Editor {
 		public string BuildDependencies() {
 			var builder = new StringBuilder();
 			
-			builder.AppendLine(@"platform :ios, '14.0'
+			builder.AppendLine(@"platform :ios, '12.0'
 use_frameworks!
 source 'https://cdn.cocoapods.org/'
 ");

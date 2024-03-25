@@ -45,7 +45,7 @@ namespace Nimbus.Runtime.Scripts {
 				_regulations = new GlobalRtbRegulation();
 				_nimbusPlatformAPI.InitializeSDK(_configuration);
 				_ctx = new CancellationTokenSource();
-				_nimbusClient = new NimbusClient(_ctx, _configuration);
+				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				Instance = this;
 				DontDestroyOnLoad(gameObject);
 			}
@@ -485,8 +485,12 @@ namespace Nimbus.Runtime.Scripts {
 #endif
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
-			var responseJson =
-				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
+			Task<string> responseJson;
+			try {
+				responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
+			} catch (Exception e) { 
+				responseJson = Task.FromException<string>(e);
+			}
 			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
@@ -497,7 +501,8 @@ namespace Nimbus.Runtime.Scripts {
 				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
 				SetDevice(_nimbusPlatformAPI.GetDevice()).
 				SetTest(_configuration.enableSDKInTestMode).
-				SetReportingPosition(position);
+				SetReportingPosition(position).
+				SetOMInformation(_nimbusClient.platformSdkv);
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;

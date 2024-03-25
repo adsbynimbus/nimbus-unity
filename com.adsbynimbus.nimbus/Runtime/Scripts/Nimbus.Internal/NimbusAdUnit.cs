@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenRTB.Response;
@@ -112,7 +113,20 @@ namespace Nimbus.Internal {
 		
 		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
 			await Task.Run(async () => {
-				var response = await jsonBody;
+				var response = "";
+				try {
+					response = await jsonBody;
+				} catch (Exception e) { }
+
+				if (String.IsNullOrEmpty(response)) {
+					var networkError = new ErrResponse();
+					networkError.Id = "";
+					networkError.StatusCode = 0;
+					networkError.Message = "Unknown network error occurred";
+					ErrResponse = networkError;
+					_adEvents.FireOnAdErrorEvent(this);
+					return;
+				}
 				if (response.Contains("message")) {
 					ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
 					_adEvents.FireOnAdErrorEvent(this);

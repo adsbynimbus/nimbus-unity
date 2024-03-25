@@ -63,6 +63,15 @@ namespace Nimbus.Internal {
 		[DllImport("__Internal")]
 		private static extern string _getPlistJSON();
 
+		[DllImport("__Internal")]
+		private static extern int _getAtts();
+
+		[DllImport("__Internal")]
+		private static extern string _getVendorId();
+
+		[DllImport("__Internal")]
+		private static extern string _getVersion();
+
 		private Device _deviceCache;
 		private string _sessionId;
 		
@@ -127,12 +136,19 @@ namespace Nimbus.Internal {
 				Make = "apple",
 				Model = _getDeviceModel(),
 				Osv = _getSystemVersion(),
+				Ext = new DeviceExt {
+					Ifv = _getVendorId()
+				},
 			};
 
 			_deviceCache.ConnectionType = (ConnectionType)_getConnectionType();
 			_deviceCache.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
 			_deviceCache.Ifa = _getAdvertisingId();
 			_deviceCache.Ua = _getUserAgent();
+			var atts = _getAtts();
+			if (atts > -1) { 
+				_deviceCache.Ext.Atts = atts;
+			}
 
 			return _deviceCache;
 		}
@@ -143,6 +159,10 @@ namespace Nimbus.Internal {
 		
 		internal override void SetCoppaFlag(bool flag) {
 			_setCoppa(flag);
+		}
+
+		internal override string GetVersion() {
+			return _getVersion();
 		}
 
 		private static string GetPlistJson() {

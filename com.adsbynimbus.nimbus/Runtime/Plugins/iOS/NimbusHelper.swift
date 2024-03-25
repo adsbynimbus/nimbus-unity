@@ -35,6 +35,22 @@ import AppTrackingTransparency
     @objc public class func getSystemVersion() -> String {
         UIDevice.current.systemVersion
     }
+
+    @objc public class func getVendorId() -> String? {
+        UIDevice.current.identifierForVendor?.uuidString
+    }
+
+    @objc public class func getVersion() -> String? {
+        Nimbus.shared.version
+    }
+
+    @objc public class func getAtts() -> Int {
+        if #available(iOS 14.0, *) {
+            return Int(ATTrackingManager.trackingAuthorizationStatus.rawValue)
+        } else {
+            return -1
+        }
+    }
     
     @objc public class func setCoppa(flag: Bool) {
         Nimbus.shared.coppa = flag;

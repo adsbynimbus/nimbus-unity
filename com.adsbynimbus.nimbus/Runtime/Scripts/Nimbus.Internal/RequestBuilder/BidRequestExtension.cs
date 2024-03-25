@@ -133,6 +133,14 @@ namespace Nimbus.Internal.RequestBuilder {
 			return bidRequest;
 		}
 
+		public static BidRequest SetOMInformation(this BidRequest bidRequest, string sdkVersion) {
+			var source = new Source();
+			source.Ext = new SourceExt();
+			source.Ext.Omidpn = "Adsbynimbus";
+			source.Ext.Omidpv = sdkVersion;
+			bidRequest.Source = source;
+			return bidRequest;
+		}
 		
 		internal static bool IsHybridBidRequest(this BidRequest bidRequest) {
 			if (bidRequest.Imp.IsNullOrEmpty()) return false;

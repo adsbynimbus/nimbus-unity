@@ -8,6 +8,8 @@ namespace Nimbus.Internal.RequestBuilder {
 			Protocols.Vast2, Protocols.Vast3, Protocols.Vast2Wrapper, Protocols.Vast3Wrapper
 		};
 
+		private static readonly Api[] DefaultApis = { Api.Omid };
+
 #if UNITY_EDITOR || UNITY_ANDROID
 		private static readonly string[] DefaultMimes =
 			{ "application/x-mpegurl", "video/mp4", "video/3gpp", "video/x-flv" };
@@ -21,6 +23,7 @@ namespace Nimbus.Internal.RequestBuilder {
 			video.Pos = Position.Fullscreen;
 			video.Protocols = DefaultProtocols;
 			video.Mimes = DefaultMimes;
+			video.Api = DefaultApis;
 			return video;
 		}
 
@@ -32,6 +35,7 @@ namespace Nimbus.Internal.RequestBuilder {
 			video.Pos = position;
 			video.Protocols = DefaultProtocols;
 			video.Mimes = DefaultMimes;
+			video.Api = DefaultApis;
 			return video;
 		}
 

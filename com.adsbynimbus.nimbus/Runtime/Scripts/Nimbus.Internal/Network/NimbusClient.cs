@@ -17,14 +17,18 @@ namespace Nimbus.Internal.Network {
 	public class NimbusClient {
 		private const string ProductionPath = "/rta/v1";
 		private const string TestingPath = "/rta/test";
+		
 		private static readonly HttpClient Client = new HttpClient();
 		private readonly string _nimbusEndpoint = "https://{0}.adsbynimbus.com{1}";
 		private CancellationTokenSource _ctx;
 
-		public NimbusClient(CancellationTokenSource ctx, NimbusSDKConfiguration configuration) {
+		public readonly string platformSdkv;
+
+		public NimbusClient(CancellationTokenSource ctx, NimbusSDKConfiguration configuration, string platformSdkVersion) {
+			platformSdkv = platformSdkVersion;
 			Client.DefaultRequestHeaders.Add("Nimbus-Api-Key", configuration.apiKey);
-			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", "2.1.0");
-			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.1.1");
+			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", platformSdkv);
+			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.3.0");
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
 			Client.Timeout = TimeSpan.FromSeconds(10);
 
