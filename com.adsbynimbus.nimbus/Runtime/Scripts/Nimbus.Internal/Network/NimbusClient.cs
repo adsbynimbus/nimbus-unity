@@ -28,7 +28,7 @@ namespace Nimbus.Internal.Network {
 			platformSdkv = platformSdkVersion;
 			Client.DefaultRequestHeaders.Add("Nimbus-Api-Key", configuration.apiKey);
 			Client.DefaultRequestHeaders.Add("Nimbus-Sdkv", platformSdkv);
-			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.3.0");
+			Client.DefaultRequestHeaders.Add("Nimbus-Unity-Sdkv", "1.3.1");
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
 			Client.Timeout = TimeSpan.FromSeconds(10);
 
