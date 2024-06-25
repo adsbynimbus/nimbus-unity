@@ -14,12 +14,12 @@ namespace Nimbus.Internal.Interceptor {
 			if (rawPlistJson.IsNullOrEmpty()) return;
 			
 			var plistData = JsonConvert.DeserializeObject<Root>(rawPlistJson);
-			if (plistData.SKAdNetworkIdentifier == null) return;
+			if (plistData.SKAdNetworkItems == null) return;
 			
 			var networkIds = new List<string>();
 			// ReSharper disable once LoopCanBeConvertedToQuery
-			foreach (var item in plistData.SKAdNetworkIdentifier) {
-				networkIds.Add(item.SKAdNetworkItems);
+			foreach (var item in plistData.SKAdNetworkItems) {
+				networkIds.Add(item.SKAdNetworkIdentifier);
 			}
 			
 			if (networkIds.Count == 0) return;
@@ -54,12 +54,12 @@ namespace Nimbus.Internal.Interceptor {
 	}
 	
     public struct Root {
-	    [JsonProperty("SKAdNetworkIdentifier")]
-        public List<SKAdNetworkIdentifier> SKAdNetworkIdentifier;
+	    [JsonProperty("SKAdNetworkItems")]
+        public List<SkAdNetworkIdentifier> SKAdNetworkItems;
     }
 
-    public struct SKAdNetworkIdentifier {
-        [JsonProperty("SKAdNetworkItems")]
-        public string SKAdNetworkItems;
+    public struct SkAdNetworkIdentifier {
+        [JsonProperty("SKAdNetworkIdentifier")]
+        public string SKAdNetworkIdentifier;
     }
 }

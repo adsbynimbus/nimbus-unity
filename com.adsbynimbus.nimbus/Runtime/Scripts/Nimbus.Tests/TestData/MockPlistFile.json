@@ -33,18 +33,18 @@
     "UIInterfaceOrientationLandscapeRight",
     "UIInterfaceOrientationLandscapeLeft"
   ],
-  "SKAdNetworkIdentifier": [
+  "SKAdNetworkItems": [
     {
-      "SKAdNetworkItems": "id1.skadnetwork"
+      "SKAdNetworkIdentifier": "id1.skadnetwork"
     },
     {
-      "SKAdNetworkItems": "id2.skadnetwork"
+      "SKAdNetworkIdentifier": "id2.skadnetwork"
     },
     {
-      "SKAdNetworkItems": "id3.skadnetwork"
+      "SKAdNetworkIdentifier": "id3.skadnetwork"
     },
     {
-      "SKAdNetworkItems": "id4.skadnetwork"
+      "SKAdNetworkIdentifier": "id4.skadnetwork"
     }
   ],
   "CFBundleDevelopmentRegion": "en",
