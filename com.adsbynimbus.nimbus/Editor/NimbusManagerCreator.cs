@@ -184,7 +184,7 @@ namespace Nimbus.Editor {
 				#endif
 
 				AssetDatabase.CreateAsset(_asset,
-					"Packages/com.adsbynimbus.unity/Runtime/Scripts/Nimbus.ScriptableObjects/NimbusSDKConfiguration.asset");
+					"Packages/com.adsbynimbus.nimbus/Runtime/Scripts/Nimbus.ScriptableObjects/NimbusSDKConfiguration.asset");
 				AssetDatabase.SaveAssets();
 
 				var go = new GameObject {

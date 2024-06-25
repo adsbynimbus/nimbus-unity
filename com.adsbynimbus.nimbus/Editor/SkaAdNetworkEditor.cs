@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Nimbus.Editor {
 	public class SkaAdNetworkEditor : EditorWindow {
-		public const string SkaAdSavePath = "Packages/com.adsbynimbus.unity/Runtime/Plugins/iOS/SKAdNetworks";
+		public const string SkaAdSavePath = "Packages/com.adsbynimbus.nimbus/Runtime/Plugins/iOS/SKAdNetworks";
 		public const string SkaKey = "SKAdNetworkItems";
 		public const string SkaItem = "SKAdNetworkIdentifier";
 		

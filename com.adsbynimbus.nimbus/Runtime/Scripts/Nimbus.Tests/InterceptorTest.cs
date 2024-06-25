@@ -224,7 +224,7 @@ namespace Nimbus.Tests {
 	internal static class MockData {
 		public static string PlistDataRaw() {
 			return System.IO.File.ReadAllText(
-				"Packages/com.adsbynimbus.unity/Runtime/Scripts/Nimbus.Tests/TestData/MockPlistFile.json");
+				"../com.adsbynimbus.nimbus/Runtime/Scripts/Nimbus.Tests/TestData/MockPlistFile.json");
 		}
 	}
 }
