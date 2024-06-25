@@ -131,7 +131,8 @@ namespace Nimbus.Editor {
 			foreach (var id in skaIds) {
 				builder.AppendLine(id);
 			}
-
+			// Ensure directory exists before writing to file
+			Directory.CreateDirectory(SkaAdSavePath.Substring(0, SkaAdSavePath.LastIndexOf('/')));
 			File.WriteAllText(SkaAdSavePath, builder.ToString());
 		}
 	}

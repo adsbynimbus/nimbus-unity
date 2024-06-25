@@ -90,9 +90,9 @@ namespace Nimbus.Editor {
 			var plist = new PlistDocument();
 			plist.ReadFromString(File.ReadAllText(plistPath));
 
-			var array = plist.root.values.TryGetValue(SkaAdNetworkEditor.SkaItem, out var existingArray)
+			var array = plist.root.values.TryGetValue(SkaAdNetworkEditor.SkaKey, out var existingArray)
 				? existingArray.AsArray()
-				: plist.root.CreateArray(SkaAdNetworkEditor.SkaItem);
+				: plist.root.CreateArray(SkaAdNetworkEditor.SkaKey);
 
 			foreach (var id in File.ReadLines(SkaAdNetworkEditor.SkaAdSavePath)) {
 				var trimmedID = id.Trim();
@@ -101,12 +101,12 @@ namespace Nimbus.Editor {
 				var found = array.values
 					.Select(element => element.AsDict())
 					.Select(map => 
-						map[SkaAdNetworkEditor.SkaKey]
+						map[SkaAdNetworkEditor.SkaItem]
 					)
 					.Any(storedID => trimmedID == storedID.AsString().Trim());
 				
 				if (!found) {
-					array.AddDict().SetString(SkaAdNetworkEditor.SkaKey, id);
+					array.AddDict().SetString(SkaAdNetworkEditor.SkaItem, id);
 				}
 			}
 
