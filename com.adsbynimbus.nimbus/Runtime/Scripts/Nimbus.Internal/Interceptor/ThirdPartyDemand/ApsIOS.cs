@@ -8,6 +8,7 @@ using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
+	#if UNITY_IOS
 	internal class ApsIOS : IInterceptor, IProvider {
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
@@ -118,4 +119,5 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			return bidRequest;
 		}
 	}
+#endif
 }

@@ -408,7 +408,7 @@ TextureImporter:
       213: 21300268
     second: TX Village Props Fire Bowl
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -425,10 +425,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -467,6 +469,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -478,6 +482,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
@@ -490,6 +495,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
@@ -1372,50 +1391,86 @@ TextureImporter:
       tessellationDetail: 0
       bones:
       - name: bone_1
+        guid: 
         position: {x: 33.02426, y: 1.4000549, z: 0}
         rotation: {x: 0, y: 0, z: 0.7185991, w: 0.6954247}
         length: 22.87777
         parentId: -1
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_2
+        guid: 
         position: {x: 22.877771, y: -0.0000062545373, z: 0}
         rotation: {x: 0, y: 0, z: 0.013576721, w: 0.99990785}
         length: 18.776001
         parentId: 0
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_3
+        guid: 
         position: {x: 18.776, y: 0.000005447091, z: 0}
         rotation: {x: 0, y: 0, z: -0.014818351, w: 0.9998902}
         length: 12.3754835
         parentId: 1
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_4
+        guid: 
         position: {x: 12.375483, y: -0.000010779326, z: 0}
         rotation: {x: 0, y: 0, z: -0.027333945, w: 0.9996264}
         length: 15.37317
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_5
+        guid: 
         position: {x: 15.373169, y: -0.0000031733691, z: 0}
         rotation: {x: 0, y: 0, z: -0.021844711, w: 0.99976146}
         length: 16.531454
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_6
+        guid: 
         position: {x: 7.958882, y: -9.616584, z: 0}
         rotation: {x: 0, y: 0, z: -0.69048387, w: 0.7233478}
         length: 14.662141
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_7
+        guid: 
         position: {x: 14.662139, y: 0.0000015498499, z: 0}
         rotation: {x: 0, y: 0, z: -0.03837672, w: 0.9992634}
         length: 7.4968863
         parentId: 5
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_8
+        guid: 
         position: {x: 8.526524, y: 9.117035, z: 0}
         rotation: {x: 0, y: 0, z: 0.6859953, w: 0.72760606}
         length: 13.124906
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_9
+        guid: 
         position: {x: 13.124906, y: -0.00000084381276, z: 0}
         rotation: {x: 0, y: 0, z: -0.1010917, w: 0.9948771}
         length: 6.5463824
         parentId: 7
+        color:
+          serializedVersion: 2
+          rgba: 0
       spriteID: ecfa6cc8366b6804e893ad86feff23e5
       internalID: 21300082
       vertices:
@@ -2201,155 +2256,275 @@ TextureImporter:
       tessellationDetail: 0
       bones:
       - name: bone_1
+        guid: 
         position: {x: 79.68475, y: 2.668098, z: 0}
         rotation: {x: 0, y: 0, z: 0.70391476, w: 0.71028453}
         length: 40.758152
         parentId: -1
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_2
+        guid: 
         position: {x: 40.758156, y: 0.000005650114, z: 0}
         rotation: {x: 0, y: 0, z: 0.0045017307, w: 0.99998987}
         length: 30.475563
         parentId: 0
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_3
+        guid: 
         position: {x: 30.475561, y: -0.000007651854, z: 0}
         rotation: {x: 0, y: 0, z: 0.007697209, w: 0.9999704}
         length: 23.869251
         parentId: 1
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_4
+        guid: 
         position: {x: 23.869257, y: -0.000026980197, z: 0}
         rotation: {x: 0, y: 0, z: 0.00563378, w: 0.99998415}
         length: 27.547985
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_5
+        guid: 
         position: {x: 27.547985, y: 0.000012607001, z: 0}
         rotation: {x: 0, y: 0, z: -0.00526166, w: 0.99998623}
         length: 22.767836
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_6
+        guid: 
         position: {x: 7.77162, y: -11.593674, z: 0}
         rotation: {x: 0, y: 0, z: -0.27976376, w: 0.9600689}
         length: 10.705072
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_7
+        guid: 
         position: {x: 10.70507, y: -0.0000004529138, z: 0}
         rotation: {x: 0, y: 0, z: -0.13004503, w: 0.9915081}
         length: 16.358896
         parentId: 5
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_8
+        guid: 
         position: {x: 0.28388938, y: -16.903639, z: 0}
         rotation: {x: 0, y: 0, z: -0.51466054, w: 0.8573941}
         length: 15.621088
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_9
+        guid: 
         position: {x: 15.621091, y: 0.0000021853339, z: 0}
         rotation: {x: 0, y: 0, z: 0.28255028, w: 0.9592525}
         length: 18.229816
         parentId: 7
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_10
+        guid: 
         position: {x: 18.229815, y: 0.000002143357, z: 0}
         rotation: {x: 0, y: 0, z: -0.5701948, w: 0.82150954}
         length: 11.841098
         parentId: 8
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_11
+        guid: 
         position: {x: -13.693188, y: -17.63288, z: 0}
         rotation: {x: 0, y: 0, z: -0.6458385, w: 0.76347405}
         length: 17.210321
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_12
+        guid: 
         position: {x: 17.210321, y: 0.0000016342872, z: 0}
         rotation: {x: 0, y: 0, z: 0.39229435, w: 0.91983974}
         length: 12.222064
         parentId: 10
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_13
+        guid: 
         position: {x: 12.222068, y: -0.0000004576318, z: 0}
         rotation: {x: 0, y: 0, z: -0.5777825, w: 0.8161908}
         length: 14.338658
         parentId: 11
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_14
+        guid: 
         position: {x: -1.762364, y: -19.068125, z: 0}
         rotation: {x: 0, y: 0, z: -0.61777455, w: 0.78635526}
         length: 18.969213
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_15
+        guid: 
         position: {x: 18.969215, y: 0.0000003384862, z: 0}
         rotation: {x: 0, y: 0, z: 0.01436418, w: 0.9998969}
         length: 21.031803
         parentId: 13
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_16
+        guid: 
         position: {x: 2.0390775, y: 13.188654, z: 0}
         rotation: {x: 0, y: -0, z: 0.96050966, w: 0.27824664}
         length: 7.7455277
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_17
+        guid: 
         position: {x: 7.745526, y: -0.00000086722775, z: 0}
         rotation: {x: 0, y: 0, z: -0.28491247, w: 0.95855355}
         length: 17.080622
         parentId: 15
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_18
+        guid: 
         position: {x: -6.670469, y: 11.56436, z: 0}
         rotation: {x: 0, y: -0, z: 0.7731595, w: 0.6342116}
         length: 16.567734
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_19
+        guid: 
         position: {x: 16.567736, y: 0.0000011719753, z: 0}
         rotation: {x: 0, y: 0, z: 0.003374091, w: 0.99999434}
         length: 24.135996
         parentId: 17
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_20
+        guid: 
         position: {x: 24.136002, y: -0.000022320297, z: 0}
         rotation: {x: 0, y: 0, z: 0.12499567, w: 0.99215734}
         length: 9.5253525
         parentId: 18
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_21
+        guid: 
         position: {x: 1.1842794, y: 16.864508, z: 0}
         rotation: {x: 0, y: 0, z: 0.6672414, w: 0.7448416}
         length: 13.264169
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_22
+        guid: 
         position: {x: 13.264171, y: -0.000002281494, z: 0}
         rotation: {x: 0, y: 0, z: -0.031430203, w: 0.99950594}
         length: 12.6182165
         parentId: 20
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_23
+        guid: 
         position: {x: 12.618218, y: 0.0000023588418, z: 0}
         rotation: {x: 0, y: 0, z: 0.098248444, w: 0.99516195}
         length: 21.691345
         parentId: 21
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_24
+        guid: 
         position: {x: 10.937909, y: 10.727565, z: 0}
         rotation: {x: 0, y: 0, z: 0.5039369, w: 0.8637405}
         length: 20.367397
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_25
+        guid: 
         position: {x: 20.367392, y: 0.000006375384, z: 0}
         rotation: {x: 0, y: 0, z: -0.086494446, w: 0.9962524}
         length: 16.745815
         parentId: 23
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_26
+        guid: 
         position: {x: 0.9948915, y: 16.141853, z: 0}
         rotation: {x: 0, y: 0, z: 0.34516987, w: 0.9385403}
         length: 16.130676
         parentId: 4
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_27
+        guid: 
         position: {x: 16.130686, y: -0.0000011241068, z: 0}
         rotation: {x: 0, y: 0, z: -0.078748725, w: 0.99689454}
         length: 8.25122
         parentId: 25
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_28
+        guid: 
         position: {x: 14.483837, y: 10.048655, z: 0}
         rotation: {x: 0, y: 0, z: 0.09629468, w: 0.99535286}
         length: 12.386389
         parentId: 4
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_29
+        guid: 
         position: {x: -3.8490033, y: -10.954512, z: 0}
         rotation: {x: 0, y: 0, z: -0.40845, w: 0.9127807}
         length: 12.991998
         parentId: 4
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_30
+        guid: 
         position: {x: 12.991994, y: -0.000003930054, z: 0}
         rotation: {x: 0, y: 0, z: 0.2670431, w: 0.9636846}
         length: 15.685742
         parentId: 28
+        color:
+          serializedVersion: 2
+          rgba: 0
       spriteID: 8fb7ddbf20d66fd4cbd6a7865c328e7a
       internalID: 21300120
       vertices:
@@ -5907,30 +6082,50 @@ TextureImporter:
       tessellationDetail: 0
       bones:
       - name: bone_1
+        guid: 
         position: {x: 12.866608, y: 2.368641, z: 0}
         rotation: {x: 0, y: 0, z: 0.70710677, w: 0.7071068}
         length: 12.80802
         parentId: -1
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_2
+        guid: 
         position: {x: 12.80802, y: -0.0000010027492, z: 0}
         rotation: {x: 0, y: 0, z: 0.00926127, w: 0.99995714}
         length: 12.810211
         parentId: 0
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_3
+        guid: 
         position: {x: 12.810211, y: -0.00004362798, z: 0}
         rotation: {x: 0, y: 0, z: -0.02811807, w: 0.99960464}
         length: 12.579778
         parentId: 1
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_4
+        guid: 
         position: {x: 12.579778, y: -0.0000006732977, z: 0}
         rotation: {x: 0, y: 0, z: 0.06414699, w: 0.9979405}
         length: 7.859408
         parentId: 2
+        color:
+          serializedVersion: 2
+          rgba: 0
       - name: bone_5
+        guid: 
         position: {x: 7.8594074, y: -0.00000030850865, z: 0}
         rotation: {x: 0, y: 0, z: -0.013117304, w: 0.999914}
         length: 7.368038
         parentId: 3
+        color:
+          serializedVersion: 2
+          rgba: 0
       spriteID: 703a17db8956d7842aa77335cf49fcef
       internalID: 21300266
       vertices:
@@ -6285,9 +6480,144 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      TX Village Props Anvil: 21300084
+      TX Village Props Apple: 21300178
+      TX Village Props Archert Target: 21300154
+      TX Village Props Arrow: 21300156
+      TX Village Props Arrow Hit: 21300158
+      TX Village Props Axe: 21300064
+      TX Village Props B: 21300074
+      TX Village Props Banner: 21300124
+      TX Village Props Banner Pillar: 21300122
+      TX Village Props Barrel: 21300008
+      TX Village Props Barricade: 21300214
+      TX Village Props Basket: 21300196
+      TX Village Props Billboard: 21300052
+      TX Village Props Billboard Noti A: 21300054
+      TX Village Props Billboard Noti B: 21300058
+      TX Village Props Billboard Noti C: 21300060
+      TX Village Props Billboard Noti D: 21300056
+      TX Village Props Bread: 21300182
+      TX Village Props Brick Wall: 21300160
+      TX Village Props Bucket: 21300068
+      TX Village Props Bush A: 21300110
+      TX Village Props Bush B: 21300112
+      TX Village Props Bush C: 21300114
+      TX Village Props Campfire: 21300128
+      TX Village Props Cauldron: 21300198
+      TX Village Props Chair: 21300174
+      TX Village Props Chest: 21300004
+      TX Village Props Chest Opened: 21300006
+      TX Village Props Cloth A: 21300236
+      TX Village Props Cloth B: 21300238
+      TX Village Props Cloth C: 21300240
+      TX Village Props Cloth D: 21300242
+      TX Village Props Cloth E: 21300248
+      TX Village Props Cloth F: 21300250
+      TX Village Props Cloth G: 21300252
+      TX Village Props Cloth H: 21300254
+      TX Village Props Clother Hanger Clip: 21300244
+      TX Village Props Clother Hanger Pillar A: 21300230
+      TX Village Props Clother Hanger Pillar B: 21300232
+      TX Village Props Clother Hanger Rope A: 21300234
+      TX Village Props Clother Hanger Rope B: 21300246
+      TX Village Props Crate Large: 21300000
+      TX Village Props Crate Small: 21300002
+      TX Village Props Cup: 21300180
+      TX Village Props Fence A Nail: 21300036
+      TX Village Props Fence A Pillar A: 21300024
+      TX Village Props Fence A Pillar B: 21300026
+      TX Village Props Fence A Pillar C: 21300028
+      TX Village Props Fence A Rail A: 21300030
+      TX Village Props Fence A Rail B: 21300032
+      TX Village Props Fence A Rail C: 21300034
+      TX Village Props Fence B Pillar: 21300038
+      TX Village Props Fence B Rail: 21300040
+      TX Village Props Fire Bowl: 21300268
+      TX Village Props Flower A: 21300100
+      TX Village Props Flower B: 21300108
+      TX Village Props Grain Box: 21300200
+      TX Village Props Grass A: 21300094
+      TX Village Props Grass B: 21300096
+      TX Village Props Grass C: 21300098
+      TX Village Props Grass D: 21300102
+      TX Village Props Grass E: 21300104
+      TX Village Props Grass F: 21300106
+      TX Village Props Gravestone A: 21300086
+      TX Village Props Gravestone B: 21300088
+      TX Village Props Gravestone C: 21300090
+      TX Village Props Gravestone D: 21300092
+      TX Village Props Gunny Bag A: 21300130
+      TX Village Props Gunny Bag B: 21300132
+      TX Village Props Hammer: 21300186
+      TX Village Props Hanging Bag: 21300192
+      TX Village Props Hay Bale: 21300076
+      TX Village Props Hay Fork: 21300080
+      TX Village Props Hay Pile: 21300078
+      TX Village Props Heavy Sword: 21300168
+      TX Village Props Kettle: 21300202
+      TX Village Props Ladder M: 21300072
+      TX Village Props Ladder T: 21300070
+      TX Village Props Log Bench: 21300170
+      TX Village Props Platform L: 21300220
+      TX Village Props Platform M: 21300222
+      TX Village Props Platform R: 21300224
+      TX Village Props Platform S: 21300216
+      TX Village Props Platform W: 21300218
+      TX Village Props Pot A: 21300010
+      TX Village Props Pot B: 21300012
+      TX Village Props Pot C: 21300014
+      TX Village Props Pumpkin A: 21300256
+      TX Village Props Pumpkin B: 21300258
+      TX Village Props Road Lamp: 21300016
+      TX Village Props Road Lamp Light Off: 21300018
+      TX Village Props Road Lamp Light On: 21300020
+      TX Village Props Road Sign A: 21300042
+      TX Village Props Road Sign B: 21300044
+      TX Village Props Road Sign Text A: 21300046
+      TX Village Props Road Sign Text B: 21300048
+      TX Village Props Road Sign Text C: 21300050
+      TX Village Props Rock A: 21300134
+      TX Village Props Rock B: 21300136
+      TX Village Props Rock C: 21300138
+      TX Village Props Scarecrow: 21300082
+      TX Village Props Spear: 21300164
+      TX Village Props Spike: 21300228
+      TX Village Props Spike Ball: 21300260
+      TX Village Props Stall Fruit A: 21300206
+      TX Village Props Stall Fruit B: 21300208
+      TX Village Props Stall Fruit C: 21300210
+      TX Village Props Stall Fruit D: 21300212
+      TX Village Props Stall Table: 21300194
+      TX Village Props Stall Tent: 21300188
+      TX Village Props Stall Tent Pillar: 21300190
+      TX Village Props Statue: 21300150
+      TX Village Props Statue Bouquet: 21300152
+      TX Village Props Stump: 21300062
+      TX Village Props Sunflower A: 21300262
+      TX Village Props Sunflower B: 21300264
+      TX Village Props Sunflower C: 21300266
+      TX Village Props Sword: 21300166
+      TX Village Props Table: 21300172
+      TX Village Props Torch: 21300022
+      TX Village Props Training Dummy: 21300184
+      TX Village Props Tree A: 21300120
+      TX Village Props Tree B: 21300226
+      TX Village Props Weapon Rack: 21300162
+      TX Village Props Well: 21300066
+      TX Village Props Wheat A: 21300140
+      TX Village Props Wheat B: 21300142
+      TX Village Props Wheat C: 21300144
+      TX Village Props Wheat D: 21300146
+      TX Village Props Wheat E: 21300148
+      TX Village Props Wheelbarrow: 21300116
+      TX Village Props Wheelbarrow Wheel: 21300118
+      TX Village Props White Bottle: 21300204
+      TX Village Props Wine Bottle: 21300176
+      TX Village Props Wood Logs: 21300126
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
