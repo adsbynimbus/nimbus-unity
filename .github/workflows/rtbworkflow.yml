@@ -4,11 +4,11 @@ on:
     branches:
       - main
     paths:
-      - 'com.adsbynimbus.nimbus/Runtime/Plugins/RTB/**'
+      - 'com.adsbynimbus.nimbus/Runtime/Plugins/OpenRTB/**'
       - '.github/workflows/rtbworkflow*'
   pull_request:
     paths:
-      - 'com.adsbynimbus.nimbus/Runtime/Plugins/RTB/**'
+      - 'com.adsbynimbus.nimbus/Runtime/Plugins/OpenRTB/**'
       - '.github/workflows/rtbworkflow*'
 
 
@@ -32,8 +32,8 @@ jobs:
 
       - name: Install dependencies
         run: nuget restore
-        working-directory: com.adsbynimbus.nimbus/Runtime/Plugins/RTB
+        working-directory: com.adsbynimbus.nimbus/Runtime/Plugins/OpenRTB
 
       - name: Run Test
         run: dotnet test --no-restore
-        working-directory: com.adsbynimbus.nimbus/Runtime/Plugins/RTB
+        working-directory: com.adsbynimbus.nimbus/Runtime/Plugins/OpenRTB
