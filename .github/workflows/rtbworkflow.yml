@@ -1,4 +1,4 @@
-name: CSharp
+name: nimbus-unity
 on:
   push:
     branches:
