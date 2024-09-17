@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="..\packages\Microsoft.NET.Test.Sdk.17.2.0\build\net45\Microsoft.NET.Test.Sdk.props" Condition="Exists('..\packages\Microsoft.NET.Test.Sdk.17.2.0\build\net45\Microsoft.NET.Test.Sdk.props')" />
     <Import Project="..\packages\Microsoft.CodeCoverage.17.2.0\build\netstandard1.0\Microsoft.CodeCoverage.props" Condition="Exists('..\packages\Microsoft.CodeCoverage.17.2.0\build\netstandard1.0\Microsoft.CodeCoverage.props')" />
@@ -55,7 +55,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\OpenRTB\OpenRTB.csproj">
+      <ProjectReference Include="..\RTB\OpenRTB.csproj">
         <Project>{26758b88-6dca-4582-a817-2331a6c7940d}</Project>
         <Name>OpenRTB</Name>
       </ProjectReference>
