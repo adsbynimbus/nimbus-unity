@@ -111,7 +111,7 @@ TextureImporter:
       213: 21300070
     second: TX Tileset Ground Darken Slope X2 R 4
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -128,10 +128,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -170,6 +172,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -181,6 +185,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
@@ -193,6 +198,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
@@ -964,9 +983,45 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      TX Tileset Ground Darken B: 21300008
+      TX Tileset Ground Darken BL: 21300010
+      TX Tileset Ground Darken BR: 21300006
+      TX Tileset Ground Darken C B: 21300038
+      TX Tileset Ground Darken C BL: 21300040
+      TX Tileset Ground Darken C BR: 21300042
+      TX Tileset Ground Darken C L: 21300034
+      TX Tileset Ground Darken C R: 21300036
+      TX Tileset Ground Darken C T: 21300032
+      TX Tileset Ground Darken C TL: 21300046
+      TX Tileset Ground Darken C TR: 21300044
+      TX Tileset Ground Darken Col B: 21300030
+      TX Tileset Ground Darken Col M: 21300028
+      TX Tileset Ground Darken Col T: 21300026
+      TX Tileset Ground Darken L: 21300016
+      TX Tileset Ground Darken M: 21300012
+      TX Tileset Ground Darken R: 21300014
+      TX Tileset Ground Darken Row L: 21300018
+      TX Tileset Ground Darken Row M: 21300020
+      TX Tileset Ground Darken Row R: 21300022
+      TX Tileset Ground Darken S: 21300024
+      TX Tileset Ground Darken Slope X1 L B: 21300056
+      TX Tileset Ground Darken Slope X1 L T: 21300048
+      TX Tileset Ground Darken Slope X1 R B: 21300058
+      TX Tileset Ground Darken Slope X1 R T: 21300050
+      TX Tileset Ground Darken Slope X2 L 1: 21300052
+      TX Tileset Ground Darken Slope X2 L 2: 21300060
+      TX Tileset Ground Darken Slope X2 L 3: 21300062
+      TX Tileset Ground Darken Slope X2 L 4: 21300064
+      TX Tileset Ground Darken Slope X2 R 1: 21300054
+      TX Tileset Ground Darken Slope X2 R 2: 21300066
+      TX Tileset Ground Darken Slope X2 R 3: 21300068
+      TX Tileset Ground Darken Slope X2 R 4: 21300070
+      TX Tileset Ground Darken T: 21300002
+      TX Tileset Ground Darken TL: 21300000
+      TX Tileset Ground Darken TR: 21300004
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

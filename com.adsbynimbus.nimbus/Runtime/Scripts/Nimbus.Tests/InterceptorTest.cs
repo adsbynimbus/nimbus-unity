@@ -11,6 +11,7 @@ namespace Nimbus.Tests {
 	public class InterceptorTest {
 		[Test]
 		public void TestApsInterceptor() {
+			#if UNITY_IOS
 			var table = new List<Tuple<BidRequest, IInterceptor>> {
 				new Tuple<BidRequest, IInterceptor>(
 					new BidRequest {
@@ -104,8 +105,8 @@ namespace Nimbus.Tests {
 				var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
 				Assert.AreEqual(wantBody, gotBody);
 			}
+		#endif
 		}
-
 		[Test]
 		public void TestSkaAdNetworkInterceptor() {
 			var table = new List<Tuple<BidRequest, IInterceptor>> {

@@ -11,6 +11,7 @@ using Nimbus.Internal.Utility;
 using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
+	#if UNITY_IOS
 	public class IOS : NimbusAPI {
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
@@ -169,4 +170,5 @@ namespace Nimbus.Internal {
 			return  _getPlistJSON();
 		}
 	}
+#endif
 }
