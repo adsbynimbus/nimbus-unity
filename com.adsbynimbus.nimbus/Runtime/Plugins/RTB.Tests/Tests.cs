@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
-//trying something
+
 namespace OpenRTB.Tests {
     [SetUpFixture]
     public class SetupTrace {
