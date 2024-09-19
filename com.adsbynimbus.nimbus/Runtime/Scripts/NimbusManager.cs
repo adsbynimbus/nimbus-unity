@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Nimbus.Internal;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
@@ -485,6 +486,7 @@ namespace Nimbus.Runtime.Scripts {
 #endif
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
+			Debug.Log("BID REQUEST: " + JsonConvert.SerializeObject(bidRequest));
 			Task<string> responseJson;
 			try {
 				responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
