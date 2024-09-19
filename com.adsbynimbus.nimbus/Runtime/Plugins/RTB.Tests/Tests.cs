@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
+#else
+using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -400,3 +402,4 @@ namespace OpenRTB.Tests {
         }
     }
 }
+#endif
