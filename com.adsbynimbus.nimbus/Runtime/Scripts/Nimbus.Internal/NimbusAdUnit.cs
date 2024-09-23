@@ -132,7 +132,7 @@ namespace Nimbus.Internal {
 					_adEvents.FireOnAdErrorEvent(this);
 					return;
 				}
-				Debug.Log("BID RESPONSE: " + response);
+				Debug.unityLogger.Log("Nimbus","BID RESPONSE: " + response);
 				_adWasReturned = true;
 				RawBidResponse = response;
 				BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);

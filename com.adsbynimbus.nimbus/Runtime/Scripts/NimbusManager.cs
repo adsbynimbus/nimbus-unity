@@ -278,7 +278,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public void ShowLoadedAd(NimbusAdUnit adUnit) {
 			if (adUnit == null) {
-				Debug.unityLogger.LogError("",
+				Debug.unityLogger.LogError("Nimbus",
 					"there was no ad to render, likely there was no fill meaning that demand did not want to spend");
 				return;
 			}
@@ -486,7 +486,6 @@ namespace Nimbus.Runtime.Scripts {
 #endif
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
-			Debug.Log("BID REQUEST: " + JsonConvert.SerializeObject(bidRequest));
 			Task<string> responseJson;
 			try {
 				responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
