@@ -54,7 +54,7 @@ namespace Nimbus.Internal.Network {
 #else
 				// This will throw an exception if the bid request is missing required data from Nimbus 
 				var body = JsonConvert.SerializeObject(bidRequest);
-				Debug.unityLogger.Log("Nimbus", "BID REQUEST: " + body);
+				Debug.unityLogger.Log("Nimbus", $"BID REQUEST: {body}");
 				HttpContent jsonBody = new StringContent(body, Encoding.UTF8, "application/json");
 				var serverResponse = await Client.PostAsync(_nimbusEndpoint, jsonBody, _ctx.Token);
 				if (_ctx.Token.IsCancellationRequested) {
