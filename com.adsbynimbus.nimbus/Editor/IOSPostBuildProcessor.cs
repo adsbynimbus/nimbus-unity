@@ -51,12 +51,12 @@ namespace Nimbus.Editor {
 		private static void CopyPodfile(string pathToBuiltProject) {
 			var podfile = new IOSBuildDependencies();
 			var destPodfilePath = pathToBuiltProject + "/Podfile";
-			Debug.Log($"Copying generating pod file to {destPodfilePath}");
+			Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
 			if (!File.Exists(destPodfilePath)) {
 				File.WriteAllText(destPodfilePath, podfile.BuildDependencies());
 			}
 			else {
-				Debug.Log("Podfile already exists");
+				Debug.unityLogger.Log("Podfile already exists");
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace Nimbus.Editor {
 				}
 			}
 
-			Debug.Log($"Writing SkAdNetwork ids to {path}");
+			Debug.unityLogger.Log($"Writing SkAdNetwork ids to {path}");
 			plist.WriteToFile(plistPath);
 		}
 	}

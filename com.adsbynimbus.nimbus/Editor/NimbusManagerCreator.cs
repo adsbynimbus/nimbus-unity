@@ -168,12 +168,14 @@ namespace Nimbus.Editor {
 				
 				_asset.Sanitize();
 				if (_asset.apiKey.IsNullOrEmpty()) {
-					Debug.LogError("Apikey cannot be empty, object NimbusAdsManager not created");
+					Debug.unityLogger.LogError("Nimbus", 
+						"Apikey cannot be empty, object NimbusAdsManager not created");
 					return;
 				}
 
 				if (_asset.publisherKey.IsNullOrEmpty()) {
-					Debug.LogError("Publisher cannot be empty, object NimbusAdsManager not created");
+					Debug.unityLogger.LogError("Nimbus", 
+						"Publisher cannot be empty, object NimbusAdsManager not created");
 					return;
 				}
 
@@ -241,7 +243,7 @@ namespace Nimbus.Editor {
 			#endif
 			
 			if (appId.IsNullOrEmpty()) {
-				Debug.LogError(
+				Debug.unityLogger.LogError("Nimbus", 
 					"APS SDK has been included, the APS App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
@@ -257,7 +259,7 @@ namespace Nimbus.Editor {
 			#endif
 			
 			if (slotData == null || slotData.Length == 0) {
-				Debug.LogError(
+				Debug.unityLogger.LogError("Nimbus", 
 					$"APS SDK has been included, APS placement slots for {platform} need to be entered, object NimbusAdsManager not created");
 				return false;
 			}
@@ -265,13 +267,13 @@ namespace Nimbus.Editor {
 			var seenAdTypes = new Dictionary<AdUnitType, bool>();
 			foreach (var apsSlot in slotData) {
 				if (apsSlot.SlotId.IsNullOrEmpty()) {
-					Debug.LogError(
+					Debug.unityLogger.LogError("Nimbus", 
 						$"APS SDK has been included, the APS slot id for {platform} cannot be empty, object NimbusAdsManager not created");
 					return false;
 				}
 
 				if (apsSlot.AdUnitType == AdUnitType.Undefined) {
-					Debug.LogError(
+					Debug.unityLogger.LogError("Nimbus", 
 						$"APS SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
 					return false;
 				}
@@ -280,7 +282,7 @@ namespace Nimbus.Editor {
 					seenAdTypes.Add(apsSlot.AdUnitType, true);
 				}
 				else {
-					Debug.LogError(
+					Debug.unityLogger.LogError("Nimbus", 
 						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdUnitType} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}

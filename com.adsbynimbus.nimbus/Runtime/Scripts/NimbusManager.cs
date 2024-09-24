@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Nimbus.Internal;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
@@ -277,7 +278,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public void ShowLoadedAd(NimbusAdUnit adUnit) {
 			if (adUnit == null) {
-				Debug.unityLogger.LogError("",
+				Debug.unityLogger.LogError("Nimbus",
 					"there was no ad to render, likely there was no fill meaning that demand did not want to spend");
 				return;
 			}

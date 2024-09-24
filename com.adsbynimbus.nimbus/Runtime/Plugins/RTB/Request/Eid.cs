@@ -12,6 +12,9 @@ namespace OpenRTB.Request {
     public class Uid {
         [JsonProperty("id", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string Id;
+        
+        [JsonProperty("atype", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public int aType;
 
         [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public UidExt UidExt;
