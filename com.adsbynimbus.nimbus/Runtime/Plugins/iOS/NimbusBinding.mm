@@ -56,6 +56,10 @@ extern "C" {
     const char* _getDeviceModel() {
         return strdup([[NimbusHelper getDeviceModel] UTF8String]);
     }
+    
+    const char* _getDeviceLanguage() {
+        return strdup([[NimbusHelper getDeviceLanguage] UTF8String]);
+    }
 
     const char* _getSystemVersion() {
         return strdup([[NimbusHelper getSystemVersion] UTF8String]);

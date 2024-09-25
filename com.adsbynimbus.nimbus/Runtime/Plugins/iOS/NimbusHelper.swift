@@ -32,6 +32,17 @@ import AppTrackingTransparency
         UIDevice.current.nimbusModelName
     }
     
+    @objc public class func getDeviceLanguage() -> String? {
+        guard let preferred = Locale.preferredLanguages.first else {
+            // Edge case fallback as I saw some old ObjC case where preferredLanguages
+            // returned an empty array (causing a crash) and Apple Docs don't say this array must not
+            // be empty despite not being able to delete all preferred languages on an iOS device.
+            return Locale.current.languageCode
+        }
+            
+        return Locale(identifier: preferred).languageCode
+    }
+    
     @objc public class func getSystemVersion() -> String {
         UIDevice.current.systemVersion
     }
