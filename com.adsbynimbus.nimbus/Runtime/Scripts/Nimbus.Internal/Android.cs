@@ -103,6 +103,9 @@ namespace Nimbus.Internal {
 				(ConnectionType)_connectionTypeHelper.CallStatic<sbyte>("getConnectionType", ctx);
 
 			var _adInfo = _nimbus.CallStatic<AndroidJavaObject>("getAdIdInfo");
+			var cls = new AndroidJavaClass("java.util.Locale");
+			var locale = cls.CallStatic<AndroidJavaObject>("getDefault");
+			_deviceCache.Language = locale.Call<string>("getLanguage"); 
 			_deviceCache.Lmt = _adInfo.Call<bool>("isLimitAdTrackingEnabled") ? 1 : 0;
 			_deviceCache.Ifa = _adInfo.Call<string>("getId");
 			return _deviceCache;

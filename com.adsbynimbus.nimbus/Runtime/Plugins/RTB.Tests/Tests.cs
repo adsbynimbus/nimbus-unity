@@ -1,4 +1,4 @@
-﻿#if !UNITY_EDITOR && !UNITY_IOS && !UNITY_ANDROID
+#if !UNITY_EDITOR && !UNITY_IOS && !UNITY_ANDROID
 using System;
 using System.Diagnostics;
 using Newtonsoft.Json;

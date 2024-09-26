@@ -51,6 +51,9 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern string _getDeviceModel();
+				
+		[DllImport("__Internal")]
+		private static extern string _getDeviceLanguage();
 
 		[DllImport("__Internal")]
 		private static extern string _getSystemVersion();
@@ -137,6 +140,7 @@ namespace Nimbus.Internal {
 				Make = "apple",
 				Model = _getDeviceModel(),
 				Osv = _getSystemVersion(),
+				Language = _getDeviceLanguage(),
 				Ext = new DeviceExt {
 					Ifv = _getVendorId()
 				},
