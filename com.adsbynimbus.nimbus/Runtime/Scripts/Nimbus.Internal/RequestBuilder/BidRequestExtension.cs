@@ -68,7 +68,6 @@ namespace Nimbus.Internal.RequestBuilder {
 		}
 		
 		public static BidRequest SetDevice(this BidRequest bidRequest, Device device) {
-			//device.Language = Application.systemLanguage.ToString();
 			bidRequest.Device = device;
 			return bidRequest;
 		}

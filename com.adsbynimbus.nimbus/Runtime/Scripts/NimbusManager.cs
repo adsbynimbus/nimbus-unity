@@ -486,7 +486,6 @@ namespace Nimbus.Runtime.Scripts {
 #endif
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
-			Debug.Log("BID REQUEST: " + JsonConvert.SerializeObject(bidRequest));
 			Task<string> responseJson;
 			try {
 				responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
