@@ -9,6 +9,23 @@ using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 namespace Nimbus.Editor {
+	/*public class PostProcessIOS : MonoBehaviour
+	{
+		[PostProcessBuild(49)]
+		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
+		{
+			if (target == BuildTarget.iOS)
+			{
+				var podfile = new IOSBuildDependencies();
+				using (StreamWriter sw = File.AppendText(buildPath + "/Podfile"))
+				{
+					// E.g. add an app extension
+					sw.WriteLine(podfile.BuildDependencies());
+				}
+			}
+		}
+	}*/
+
 	public class IOSPostBuildProcessor {
 		[PostProcessBuild]
 		public static void OnPostprocessBuild(BuildTarget target, string path) {
@@ -44,7 +61,7 @@ namespace Nimbus.Editor {
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 			pbx.WriteToFile(pbxPath);
-			CopyPodfile(path);
+			//CopyPodfile(path);
 			AddSkaAdNetworkIdsToPlist(path);
 		}
 
