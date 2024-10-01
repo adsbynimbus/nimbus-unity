@@ -9,22 +9,22 @@ using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 namespace Nimbus.Editor {
-	/*public class PostProcessIOS : MonoBehaviour
+	public class PostProcessIOS : MonoBehaviour
 	{
-		[PostProcessBuild(49)]
+		[PostProcessBuildAttribute(45)]
 		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
 		{
 			if (target == BuildTarget.iOS)
 			{
 				var podfile = new IOSBuildDependencies();
-				using (StreamWriter sw = File.AppendText(buildPath + "/Podfile"))
+				using (StreamWriter sw = new StreamWriter(buildPath + "/Podfile", false))
 				{
 					// E.g. add an app extension
 					sw.WriteLine(podfile.BuildDependencies());
 				}
 			}
 		}
-	}*/
+	}
 
 	public class IOSPostBuildProcessor {
 		[PostProcessBuild]

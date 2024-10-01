@@ -9,6 +9,7 @@
          androidPackage. -->
     <repositories>
       <repository>https://repo.maven.apache.org/maven2</repository>
+      <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
     </repositories>
     <!-- The "spec" attribute is *required* and provides the Maven package
          specification.
@@ -22,23 +23,21 @@
 
          Additional repositories can be added using the "repositories" element.
     -->
-    <androidPackage spec="com.google.android.gms:play-services-games:9.8.0">
-      <!-- androidSdkPackageIds is optional and contains the set of Android
-           SDK package manager components (packages) this package requires.
+    <!-- <androidPackage spec="com.google.android.gms:play-services-games:9.8.0">
+  androidSdkPackageIds is optional and contains the set of Android
+         SDK package manager components (packages) this package requires.
 
-           If the package can't be found in any of the specified repositories,
-           the dependency resolver will attempt to install the set of Android
-           SDK packages specified here and then attempt resolution again.
-      -->
+         If the package can't be found in any of the specified repositories,
+         the dependency resolver will attempt to install the set of Android
+         SDK packages specified here and then attempt resolution again.
+ 
       <androidSdkPackageIds>
         <androidSdkPackageId>extra-google-m2repository</androidSdkPackageId>
       </androidSdkPackageIds>
-      <!-- "repositories" are optional and contain the set of additional
-           repository URIs to search for this package. -->
       <repositories>
         <repository>https://maven.google.com</repository>
       </repositories>
-    </androidPackage>
+    </androidPackage>-->
   </androidPackages>
 
   <!-- iOS Cocoapod dependencies can be specified by each iosPod element. -->
@@ -73,11 +72,15 @@
          * "subspecs" (optional)
            Subspecs to include for the pod.
      -->
-    <iosPod name="NimbusSDK" version="~> 2.20.0" addToAllTargets="true"
+    <!--<iosPod name="NimbusSDK" version="~> 2.20.0" addToAllTargets="true"
         subspecs="['NimbusKit', 'NimbusRenderVideoKit', 'NimbusRenderStaticKit']">
       <sources>
         <source>https://github.com/CocoaPods/Specs</source>
       </sources>
-    </iosPod>
+    </iosPod>-->
+    <!--The below pod is only to trick EDM4U into building a podfile but this is then removed and replaced dynamically
+      with the actual needed pods (NimbusSDK + related) -->
+    <iosPod name="Google-Mobile-Ads-SDK" version="~> 7.0" bitcodeEnabled="true"
+            minTargetSdk="6.0" addToAllTargets="false" />
   </iosPods>
 </dependencies>
