@@ -74,6 +74,9 @@ crashlytics-build.properties
 /[Uu]serSettings/AndroidLogcatSettings.asset
 **/[Uu]serSettings/AndroidLogcatSettings.asset
 
+# Ignore EDM4U
+**/[Aa]ssets/ExternalDependencyManager/
+
 *.DS_Store
 **/*.DS_store
 
