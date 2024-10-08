@@ -61,7 +61,7 @@ namespace Nimbus.Editor {
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 			pbx.WriteToFile(pbxPath);
-			//CopyPodfile(path);
+			CopyPodfile(path);
 			AddSkaAdNetworkIdsToPlist(path);
 		}
 
