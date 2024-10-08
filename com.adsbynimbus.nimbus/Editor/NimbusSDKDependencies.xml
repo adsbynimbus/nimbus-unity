@@ -11,7 +11,7 @@
   <iosPods>
     <!--The below pod is only to trick EDM4U into building a podfile but this is then removed and replaced dynamically
       with the actual needed pods (NimbusSDK + related) -->
-    <iosPod name="Google-Mobile-Ads-SDK" version="~> 7.0" bitcodeEnabled="false"
-            minTargetSdk="6.0" addToAllTargets="false" />
+    <iosPod name="NimbusSDK" version="2.20.0" bitcodeEnabled="false" 
+            addToAllTargets="true"/>
   </iosPods>
 </dependencies>

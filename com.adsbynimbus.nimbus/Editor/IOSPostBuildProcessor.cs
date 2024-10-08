@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR && UNITY_IOS
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,35 @@ using UnityEngine;
 namespace Nimbus.Editor {
 	public class PostProcessIOS : MonoBehaviour
 	{
-		[PostProcessBuildAttribute(45)]
+		private static readonly List<string> Dependencies = new List<string>
+		{
+			"'NimbusKit'",
+			"'NimbusRenderVideoKit'",
+			"'NimbusRenderStaticKit'",
+		};
+		[PostProcessBuild(45)]
 		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
 		{
 			if (target == BuildTarget.iOS)
 			{
-				var podfile = new IOSBuildDependencies();
-				using (StreamWriter sw = new StreamWriter(buildPath + "/Podfile", false))
+				#if NIMBUS_ENABLE_APS
+					Dependencies.Add("'NimbusRequestAPSKit'");
+				#endif
+				
+				var path = buildPath + "/Podfile";
+				FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);				using (StreamReader sr = new StreamReader(fileStream))
 				{
-					// E.g. add an app extension
-					sw.WriteLine(podfile.BuildDependencies());
+					using (StreamWriter sw = new StreamWriter(fileStream))
+					{
+						var line = "";
+						while ((line = sr.ReadLine()) != null)
+						{
+							if (line.ToLower().Contains("nimbus"))
+							{
+								sw.WriteLine($"{line}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
+							}
+						}
+					}
 				}
 			}
 		}
