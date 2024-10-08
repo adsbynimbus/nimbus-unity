@@ -61,20 +61,7 @@ namespace Nimbus.Editor {
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 			pbx.WriteToFile(pbxPath);
-			CopyPodfile(path);
 			AddSkaAdNetworkIdsToPlist(path);
-		}
-
-		private static void CopyPodfile(string pathToBuiltProject) {
-			var podfile = new IOSBuildDependencies();
-			var destPodfilePath = pathToBuiltProject + "/Podfile";
-			Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
-			if (!File.Exists(destPodfilePath)) {
-				File.WriteAllText(destPodfilePath, podfile.BuildDependencies());
-			}
-			else {
-				Debug.unityLogger.Log("Podfile already exists");
-			}
 		}
 
 		private static void ChangeUnityFrameworkHeader(string path) {
