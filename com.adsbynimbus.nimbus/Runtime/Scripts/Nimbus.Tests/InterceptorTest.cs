@@ -11,7 +11,7 @@ namespace Nimbus.Tests {
 	public class InterceptorTest {
 		[Test]
 		public void TestApsInterceptor() {
-			#if UNITY_IOS
+			#if UNITY_IOS && NIMBUS_ENABLE_APS
 			var table = new List<Tuple<BidRequest, IInterceptor>> {
 				new Tuple<BidRequest, IInterceptor>(
 					new BidRequest {
