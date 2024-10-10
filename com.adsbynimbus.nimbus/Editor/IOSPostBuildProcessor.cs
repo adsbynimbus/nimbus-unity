@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR && UNITY_IOS
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,42 @@ using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 namespace Nimbus.Editor {
+	public class PostProcessIOS : MonoBehaviour
+	{
+		private static readonly List<string> Dependencies = new List<string>
+		{
+			"'NimbusKit'",
+			"'NimbusRenderVideoKit'",
+			"'NimbusRenderStaticKit'",
+		};
+		[PostProcessBuild(45)]
+		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
+		{
+			if (target == BuildTarget.iOS)
+			{
+				#if NIMBUS_ENABLE_APS
+					Dependencies.Add("'NimbusRequestAPSKit'");
+				#endif
+				
+				var path = buildPath + "/Podfile";
+				FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);				using (StreamReader sr = new StreamReader(fileStream))
+				{
+					using (StreamWriter sw = new StreamWriter(fileStream))
+					{
+						var line = "";
+						while ((line = sr.ReadLine()) != null)
+						{
+							if (line.ToLower().Contains("nimbus"))
+							{
+								sw.WriteLine($"{line}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public class IOSPostBuildProcessor {
 		[PostProcessBuild]
 		public static void OnPostprocessBuild(BuildTarget target, string path) {
@@ -44,20 +81,7 @@ namespace Nimbus.Editor {
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 			pbx.WriteToFile(pbxPath);
-			CopyPodfile(path);
 			AddSkaAdNetworkIdsToPlist(path);
-		}
-
-		private static void CopyPodfile(string pathToBuiltProject) {
-			var podfile = new IOSBuildDependencies();
-			var destPodfilePath = pathToBuiltProject + "/Podfile";
-			Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
-			if (!File.Exists(destPodfilePath)) {
-				File.WriteAllText(destPodfilePath, podfile.BuildDependencies());
-			}
-			else {
-				Debug.unityLogger.Log("Podfile already exists");
-			}
 		}
 
 		private static void ChangeUnityFrameworkHeader(string path) {
