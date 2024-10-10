@@ -8,7 +8,7 @@ using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
-	#if UNITY_IOS
+	#if UNITY_IOS && NIMBUS_ENABLE_APS
 	internal class ApsIOS : IInterceptor, IProvider {
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
