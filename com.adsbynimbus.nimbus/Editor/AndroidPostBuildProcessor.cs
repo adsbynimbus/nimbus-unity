@@ -4,22 +4,6 @@ using UnityEditor.Android;
 
 namespace Nimbus.Editor {
 	public class AndroidPostBuildProcessor : IPostGenerateGradleAndroidProject {
-		private const string RepoString = @"
-allprojects {
-	repositories {
-		maven {
-			url = uri(""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"")
-			credentials {
-				username = ""*""
-			}
-			content {
-                includeGroup(""com.adsbynimbus.android"")
-                includeGroup(""com.adsbynimbus.openrtb"")
-                includeGroup(""com.iab.omid.library.adsbynimbus"")
-            }
-		}
-	}
-}";
 
 		private static readonly string Dependencies = AndroidBuildDependencies.BuildDependencies();
 
@@ -38,15 +22,6 @@ android {
 
 		public void OnPostGenerateGradleAndroidProject(string path) {
 			WriteGradleProps(path + "/../gradle.properties");
-			var repoWriter = File.AppendText(path + "/../build.gradle");
-			repoWriter.WriteLine(RepoString);
-			repoWriter.Flush();
-			repoWriter.Close();
-
-			var buildWriter = File.AppendText(path + "/build.gradle");
-			buildWriter.WriteLine(Dependencies);
-			buildWriter.Flush();
-			buildWriter.Close();
 
 			var proguardWriter = File.AppendText(path + "/proguard-unity.txt");
 			proguardWriter.WriteLine(KeepRules);

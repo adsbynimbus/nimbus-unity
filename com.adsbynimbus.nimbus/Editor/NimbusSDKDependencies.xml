@@ -1,17 +1,15 @@
 <dependencies>
-
   <androidPackages>
     <repositories>
-      <repository>https://repo.maven.apache.org/maven2</repository>
       <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
     </repositories>
-
+    <androidPackage spec="com.adsbynimbus.android:nimbus:2.22.0">
+    </androidPackage>
   </androidPackages>
 
   <iosPods>
-    <!--The below pod is only to trick EDM4U into building a podfile but this is then removed and replaced dynamically
-      with the actual needed pods (NimbusSDK + related) -->
-    <iosPod name="NimbusSDK" version="2.20.0" bitcodeEnabled="false" 
+    <!--The below pod does not include subspecs because those are added dynamically in IOSPostBuildProcessor.cs-->
+    <iosPod name="NimbusSDK" version="2.22.1" bitcodeEnabled="false" 
             addToAllTargets="true"/>
   </iosPods>
 </dependencies>
