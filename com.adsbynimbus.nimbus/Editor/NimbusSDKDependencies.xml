@@ -1,9 +1,9 @@
 <dependencies>
   <androidPackages>
-    <repositories>
-      <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
-    </repositories>
-    <androidPackage spec="com.adsbynimbus.android:nimbus:2.22.0">
+    <androidPackage spec="com.adsbynimbus.android:nimbus:2.21.0">
+      <repositories>
+        <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
+      </repositories>-
     </androidPackage>
   </androidPackages>
 

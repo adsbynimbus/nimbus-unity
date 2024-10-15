@@ -5,8 +5,6 @@ using UnityEditor.Android;
 namespace Nimbus.Editor {
 	public class AndroidPostBuildProcessor : IPostGenerateGradleAndroidProject {
 
-		private static readonly string Dependencies = AndroidBuildDependencies.BuildDependencies();
-
 		private const string KeepRules = @"
 -keep class com.nimbus.demo.UnityHelper { *; }
 -keep class com.adsbynimbus.** { *; }";
