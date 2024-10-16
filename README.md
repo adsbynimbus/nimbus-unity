@@ -4,7 +4,7 @@ The latest [package](package) can be downloaded from the [Releases](https://gith
 
 ## Minimum Requirements To Play Demo Scenes
 
-- Unity 2020.3
+- Unity 2021.3
 
 
 ## To install the Ads By Nimbus Package
