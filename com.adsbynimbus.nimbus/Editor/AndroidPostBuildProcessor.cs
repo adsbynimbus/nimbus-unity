@@ -4,24 +4,6 @@ using UnityEditor.Android;
 
 namespace Nimbus.Editor {
 	public class AndroidPostBuildProcessor : IPostGenerateGradleAndroidProject {
-		private const string RepoString = @"
-allprojects {
-	repositories {
-		maven {
-			url = uri(""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"")
-			credentials {
-				username = ""*""
-			}
-			content {
-                includeGroup(""com.adsbynimbus.android"")
-                includeGroup(""com.adsbynimbus.openrtb"")
-                includeGroup(""com.iab.omid.library.adsbynimbus"")
-            }
-		}
-	}
-}";
-
-		private static readonly string Dependencies = AndroidBuildDependencies.BuildDependencies();
 
 		private const string KeepRules = @"
 -keep class com.nimbus.demo.UnityHelper { *; }
@@ -32,40 +14,42 @@ android {
 	packagingOptions {
     	pickFirst ""META-INF/*.kotlin_module""
 	}
+}
+if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVersion(8, 1)) {
+    dependencies {
+        constraints {
+            implementation(""androidx.fragment:fragment:1.7.1"") {
+                because(""Build issue when using Android Gradle Plugin < 8.1"")
+            }
+            implementation(""androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"") {
+                because(""Build issue when using Android Gradle Plugin < 8.1"")
+            }
+        }
+    }
 }";
 
 		public int callbackOrder => 999;
 
 		public void OnPostGenerateGradleAndroidProject(string path) {
-			WriteGradleProps(path + "/../gradle.properties");
-			var repoWriter = File.AppendText(path + "/../build.gradle");
-			repoWriter.WriteLine(RepoString);
-			repoWriter.Flush();
-			repoWriter.Close();
-
-			var buildWriter = File.AppendText(path + "/build.gradle");
-			buildWriter.WriteLine(Dependencies);
-			buildWriter.Flush();
-			buildWriter.Close();
-
+			
 			var proguardWriter = File.AppendText(path + "/proguard-unity.txt");
 			proguardWriter.WriteLine(KeepRules);
 			proguardWriter.Flush();
 			proguardWriter.Close();
-
+			
 			var packagingWriter = File.AppendText(path + "/../launcher/build.gradle");
 			packagingWriter.WriteLine(PackagingOptions);
 			packagingWriter.Flush();
 			packagingWriter.Close();
-		}
+			
+			#if NIMBUS_ENABLE_APS
+				var apsDependencies = AndroidBuildDependencies.APSBuildDependencies();
+				var buildWriter = File.AppendText(path + "/build.gradle");
+				buildWriter.WriteLine(apsDependencies);
+				buildWriter.Flush();
+				buildWriter.Close();
+			#endif
 
-		private static void WriteGradleProps(string gradleFile) {
-			var propWriter = File.AppendText(gradleFile);
-			propWriter.WriteLine(@"
-android.useAndroidX=true
-");
-			propWriter.Flush();
-			propWriter.Close();
 		}
 	}
 }

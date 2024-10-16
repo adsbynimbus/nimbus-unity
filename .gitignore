@@ -74,6 +74,9 @@ crashlytics-build.properties
 /[Uu]serSettings/AndroidLogcatSettings.asset
 **/[Uu]serSettings/AndroidLogcatSettings.asset
 
+# Ignore EDM4U
+**/[Aa]ssets/ExternalDependencyManager/
+
 *.DS_Store
 **/*.DS_store
 
@@ -83,3 +86,10 @@ crashlytics-build.properties
 
 # should not be included for downloadable packages
 /com.adsbynimbus.nimbus/package-lock.json.meta
+sample-app/Assets/Plugins/Android/gradleTemplate.properties.DISABLED
+sample-app/Assets/Plugins/Android/mainTemplate.gradle
+sample-app/Assets/Plugins/Android/mainTemplate.gradle.DISABLED
+sample-app/Assets/Plugins/Android/settingsTemplate.gradle
+sample-app/Assets/Plugins/Android/settingsTemplate.gradle.DISABLED
+sample-app/ProjectSettings/AndroidResolverDependencies.xml
+sample-app/ProjectSettings/BurstAotSettings_StandaloneOSX.json
