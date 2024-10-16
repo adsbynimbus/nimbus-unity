@@ -14,12 +14,23 @@ android {
 	packagingOptions {
     	pickFirst ""META-INF/*.kotlin_module""
 	}
+}
+if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVersion(8, 1)) {
+    dependencies {
+        constraints {
+            implementation(""androidx.fragment:fragment:1.7.1"") {
+                because(""Build issue when using Android Gradle Plugin < 8.1"")
+            }
+            implementation(""androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"") {
+                because(""Build issue when using Android Gradle Plugin < 8.1"")
+            }
+        }
+    }
 }";
 
 		public int callbackOrder => 999;
 
 		public void OnPostGenerateGradleAndroidProject(string path) {
-			WriteGradleProps(path + "/../gradle.properties");
 
 			var proguardWriter = File.AppendText(path + "/proguard-unity.txt");
 			proguardWriter.WriteLine(KeepRules);
@@ -30,15 +41,6 @@ android {
 			packagingWriter.WriteLine(PackagingOptions);
 			packagingWriter.Flush();
 			packagingWriter.Close();
-		}
-
-		private static void WriteGradleProps(string gradleFile) {
-			var propWriter = File.AppendText(gradleFile);
-			propWriter.WriteLine(@"
-android.useAndroidX=true
-");
-			propWriter.Flush();
-			propWriter.Close();
 		}
 	}
 }
