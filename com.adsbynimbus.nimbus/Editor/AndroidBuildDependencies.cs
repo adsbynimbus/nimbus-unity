@@ -2,19 +2,14 @@ using System.Text;
 
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {
-		private const string SdkVersion = "2.18.0";
+		private const string SdkVersion = "2.23.0";
 
-		public static string BuildDependencies() {
+		public static string APSBuildDependencies() {
 			var builder = new StringBuilder();
 			
 			builder.AppendLine("");
 			builder.AppendLine("dependencies {");
-			builder.AppendLine($@"implementation ""com.adsbynimbus.android:nimbus:{SdkVersion}""");
-			
-			#if NIMBUS_ENABLE_APS
-				builder.AppendLine($@"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""");
-			#endif
-			
+			builder.AppendLine($@"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""");
 			builder.AppendLine("}");
 			return builder.ToString();
 		}

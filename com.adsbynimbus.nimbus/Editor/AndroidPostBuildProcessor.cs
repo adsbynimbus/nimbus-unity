@@ -31,16 +31,25 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 		public int callbackOrder => 999;
 
 		public void OnPostGenerateGradleAndroidProject(string path) {
-
+			
 			var proguardWriter = File.AppendText(path + "/proguard-unity.txt");
 			proguardWriter.WriteLine(KeepRules);
 			proguardWriter.Flush();
 			proguardWriter.Close();
-
+			
 			var packagingWriter = File.AppendText(path + "/../launcher/build.gradle");
 			packagingWriter.WriteLine(PackagingOptions);
 			packagingWriter.Flush();
 			packagingWriter.Close();
+			
+			#if NIMBUS_ENABLE_APS
+				var apsDependencies = AndroidBuildDependencies.APSBuildDependencies();
+				var buildWriter = File.AppendText(path + "/build.gradle");
+				buildWriter.WriteLine(apsDependencies);
+				buildWriter.Flush();
+				buildWriter.Close();
+			#endif
+
 		}
 	}
 }
