@@ -62,8 +62,28 @@ namespace Nimbus.Internal.Network {
 					return "{\"message\": \"Application Closed\"}";
 				}
 				var nimbusResponse = await serverResponse.Content.ReadAsStringAsync();
-#endif
-
+				if (nimbusResponse.IsNullOrEmpty())
+				{
+					switch ((int)serverResponse.StatusCode)
+					{
+						case 400:
+							nimbusResponse = "{\"status_code\": 400, \"message\": \"POST data was malformed\"}";
+							break;
+						case 404:
+							nimbusResponse = "{\"status_code\": 404,\"message\": \"No bids returned\"}";
+							break;
+						case 429:
+							nimbusResponse = "{\"status_code\": 429,\"message\": \"Rate limited\"}";
+							break;
+						case 500:
+							nimbusResponse = "{\"status_code\": 500,\"message\": \"Server is unavailable\"}";
+							break;
+						default:
+							nimbusResponse = $"{{\"status_code\": {(int)serverResponse.StatusCode},\"message\": \"Unknown network error occurred\"}}";
+							break;
+					}
+				}
+				#endif
 				return nimbusResponse;
 			});
 		}
