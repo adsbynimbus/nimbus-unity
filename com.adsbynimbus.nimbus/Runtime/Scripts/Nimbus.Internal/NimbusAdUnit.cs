@@ -117,17 +117,8 @@ namespace Nimbus.Internal {
 				try {
 					response = await jsonBody;
 				} catch (Exception e) { }
-
-				if (String.IsNullOrEmpty(response)) {
-					var networkError = new ErrResponse();
-					networkError.Id = "";
-					networkError.StatusCode = 0;
-					networkError.Message = "Unknown network error occurred";
-					ErrResponse = networkError;
-					_adEvents.FireOnAdErrorEvent(this);
-					return;
-				}
 				if (response.Contains("message")) {
+					Debug.unityLogger.Log("Nimbus",$"RESPONSE ERROR: {response}");
 					ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
 					_adEvents.FireOnAdErrorEvent(this);
 					return;
