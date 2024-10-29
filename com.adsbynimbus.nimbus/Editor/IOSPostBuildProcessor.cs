@@ -26,6 +26,9 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_APS
 					Dependencies.Add("'NimbusRequestAPSKit'");
 				#endif
+				#if NIMBUS_ENABLE_VUNGLE
+					Dependencies.Add("'NimbusVungleKit'");
+				#endif
 				
 				var path = buildPath + "/Podfile";
 				FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);				using (StreamReader sr = new StreamReader(fileStream))

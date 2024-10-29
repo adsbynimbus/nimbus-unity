@@ -33,5 +33,8 @@ namespace OpenRTB.Request {
 
         [JsonProperty("eids", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public Eid[] Eids;
+        
+        [JsonProperty("vungle_buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string VungleBuyerId;
     }
 }

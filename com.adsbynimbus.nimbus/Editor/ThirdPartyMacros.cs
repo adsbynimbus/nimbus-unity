@@ -9,11 +9,15 @@ namespace Nimbus.Editor {
 	public class ThirdPartyMacros : EditorWindow {
 		private bool _androidApsIsEnabled;
 		private bool _iosApsIsEnabled;
-
+		private bool _androidVungleIsEnabled;
+		private bool _iosVungleIsEnabled;
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
+		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
+		private const string ApsPartnerStr = "APS";
+		private const string VunglePartnerStr = "Vungle";
 
 		private void OnEnable() {
 			UpdateSettings();
@@ -52,7 +56,7 @@ namespace Nimbus.Editor {
 					SetBuildMacroForGroup(BuildTargetGroup.Android, ApsMacro);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android APS App Ids and APS Slot Ids to the " +
 					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
-					FocusOnGameManager();
+					FocusOnGameManager(ApsPartnerStr);
 				}
 			}
 
@@ -70,12 +74,60 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.iOS, ApsMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS APS App Ids and APS Slot Ids to the " +
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Vungle App Ids and Vungle Placement Ids to the " +
 					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
-					FocusOnGameManager();
+					FocusOnGameManager(ApsPartnerStr);
 				}
 			}
 			// END OF APS
+			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			
+			// START OF VUNGLE
+			EditorGUILayout.LabelField("Vungle Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			status = _androidVungleIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {status}", headerStyle);
+			GUILayout.Space(2);
+			buttonText = _androidVungleIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Vungle", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "Vungle", "Android");
+			if (GUILayout.Button(buttonText)) {
+				if (_androidApsIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Vungle App Ids and Vungle Placement Ids to the " +
+					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					FocusOnGameManager(VunglePartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			status = _iosVungleIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {status}", headerStyle);
+			GUILayout.Space(2);
+			buttonText = _iosApsIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Vungle", "Ios")
+				: string.Format(ButtonMessageTemplate, "Enable", "Vungle", "Ios");
+			if (GUILayout.Button(buttonText)) {
+				if (_iosApsIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS APS App Ids and APS Slot Ids to the " +
+					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					FocusOnGameManager(VunglePartnerStr);
+				}
+			}
+			// END OF VUNGLE
+			
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 		}
@@ -87,6 +139,8 @@ namespace Nimbus.Editor {
 		private void UpdateSettings() {
 			_androidApsIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, ApsMacro);
 			_iosApsIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, ApsMacro);
+			_androidVungleIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, VungleMacro);
+			_iosVungleIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, VungleMacro);
 		}
 
 
@@ -111,13 +165,13 @@ namespace Nimbus.Editor {
 			PlayerSettings.SetScriptingDefineSymbolsForGroup(group, macros.ToArray());
 		}
 
-		private static void FocusOnGameManager() {
+		private static void FocusOnGameManager(string partner) {
 			var manager = FindObjectOfType<NimbusManager>();
 			if (manager != null) {
 				Selection.activeGameObject = manager.gameObject;
 			}
 			else {
-				EditorUtil.LogWithHelpBox("APS was enabled however there is no NimbusAdManager located in your scene, " +
+				EditorUtil.LogWithHelpBox($"{partner} was enabled however there is no NimbusAdManager located in your scene, " +
 				                         "please add a NimbusGameManager to you scene. In the ToolBar Go to Nimbus -> Create New NimbusAdManager",
 					MessageType.Error);
 			}

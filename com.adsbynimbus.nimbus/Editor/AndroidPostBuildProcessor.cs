@@ -44,10 +44,18 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 			
 			#if NIMBUS_ENABLE_APS
 				var apsDependencies = AndroidBuildDependencies.APSBuildDependencies();
-				var buildWriter = File.AppendText(path + "/build.gradle");
-				buildWriter.WriteLine(apsDependencies);
-				buildWriter.Flush();
-				buildWriter.Close();
+				var apsBuildWriter = File.AppendText(path + "/build.gradle");
+				apsBuildWriter.WriteLine(apsDependencies);
+				apsBuildWriter.Flush();
+				apsBuildWriter.Close();
+			#endif
+
+			#if NIMBUS_ENABLE_VUNGLE
+				var vungleDependencies = AndroidBuildDependencies.VungleBuildDependencies();
+				var vunlgeBuildWriter = File.AppendText(path + "/build.gradle");
+				vunlgeBuildWriter.WriteLine(vungleDependencies);
+				vunlgeBuildWriter.Flush();
+				vunlgeBuildWriter.Close();
 			#endif
 
 		}

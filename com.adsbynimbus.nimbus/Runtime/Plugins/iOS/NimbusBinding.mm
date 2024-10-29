@@ -108,4 +108,8 @@ extern "C" {
         return strdup([[NimbusManager fetchAPSParamsWithWidth: width height:height includeVideo:includeVideo] UTF8String]);
     }
 #endif
+
+#if NIMBUS_ENABLE_VUNGLE
+    // need initialization method and fetch buyer id
+#endif
 }
