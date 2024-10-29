@@ -65,6 +65,14 @@ namespace Nimbus.Editor {
 				// Enable MACRO for C++ code
 				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_APS");
 			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				var projectGuid = pbx.ProjectGuid();
+				// Enable MACRO for Swift code
+				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_VUNGLE");
+				// Enable MACRO for C++ code
+				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_VUNGLE");
+			#endif
 
 			// Unity-IPhone
 			var targetGuid = pbx.GetUnityMainTargetGuid();

@@ -14,7 +14,8 @@ import NimbusKit
 import NimbusRequestAPSKit
 #endif
 #if NIMBUS_ENABLE_VUNGLE
-import NimbusVungleKit
+import VungleAdsSDK
+import NimbusSDK
 #endif
 
 @objc public class NimbusManager: NSObject {
@@ -76,8 +77,8 @@ import NimbusVungleKit
     #endif
     
     #if NIMBUS_ENABLE_VUNGLE
-        @objc public class func initializeVungle(appId: String) {
-            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appId)
+        @objc public class func initializeVungle(appKey: String) {
+            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
             NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
         }
         
