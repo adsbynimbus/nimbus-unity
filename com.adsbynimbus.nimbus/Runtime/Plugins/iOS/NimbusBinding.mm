@@ -110,6 +110,13 @@ extern "C" {
 #endif
 
 #if NIMBUS_ENABLE_VUNGLE
-    // need initialization method and fetch buyer id
+    void _initializeVungle(const char* appId) {
+        [NimbusManager initializeVungle: GetStringParam(appId)];
+    }
+    
+    const char* _fetchVungleBuyerId() {
+        return [NimbusManager fetchVungleBuyerId]
+    }
+    
 #endif
 }

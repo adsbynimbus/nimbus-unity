@@ -13,6 +13,9 @@ import NimbusKit
 #if NIMBUS_ENABLE_APS
 import NimbusRequestAPSKit
 #endif
+#if NIMBUS_ENABLE_VUNGLE
+import NimbusVungleKit
+#endif
 
 @objc public class NimbusManager: NSObject {
     
@@ -70,6 +73,17 @@ import NimbusRequestAPSKit
         }
         return "";
     }
+    #endif
+    
+    #if NIMBUS_ENABLE_VUNGLE
+        @objc public class func initializeVungle(appId: String) {
+            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appId)
+            NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
+        }
+        
+        @objc public class func fetchVungleBuyerId() -> String {
+            return VungleAds.getBiddingToken()
+        }
     #endif
     
     // MARK: - Private Functions

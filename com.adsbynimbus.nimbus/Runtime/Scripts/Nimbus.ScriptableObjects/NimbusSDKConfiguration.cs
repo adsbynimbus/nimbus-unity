@@ -16,6 +16,10 @@ namespace Nimbus.ScriptableObjects {
 		
 		[HideInInspector] public string iosAppID;
 		[HideInInspector] public ApsSlotData[] iosApsSlotData;
+		
+		// Vungle Data
+		[HideInInspector] public string androidVungleAppID;
+		[HideInInspector] public string iosVungleAppID;
 
 		private void OnValidate() {
 			Sanitize();
@@ -42,6 +46,11 @@ namespace Nimbus.ScriptableObjects {
 					}
 				}
 			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				androidVungleAppID = androidVungleAppID?.Trim();
+				iosVungleAppID = iosVungleAppID?.Trim();
+			#endif
 		}
 
 
@@ -53,6 +62,15 @@ namespace Nimbus.ScriptableObjects {
 				slots =  iosApsSlotData;
 			#endif
 			return new Tuple<string, ApsSlotData[]>(appID, slots);
+		}
+
+		public string GetVungleData()
+		{
+			var appID = androidVungleAppID;
+			#if UNITY_IOS
+				appID = iosVungleAppID;
+			#endif
+			return appID;
 		}
 	}
 }

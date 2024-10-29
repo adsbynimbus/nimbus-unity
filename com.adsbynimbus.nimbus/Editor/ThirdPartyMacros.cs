@@ -89,14 +89,14 @@ namespace Nimbus.Editor {
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 			GUILayout.Space(10);
 
-			status = _androidVungleIsEnabled ? Enabled : Disabled;
-			EditorGUILayout.LabelField($"Macro is set for Android is: {status}", headerStyle);
+			var vungleAndroidStatus = _androidVungleIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {vungleAndroidStatus}", headerStyle);
 			GUILayout.Space(2);
-			buttonText = _androidVungleIsEnabled
+			var androidVunglebuttonText = _androidVungleIsEnabled
 				? string.Format(ButtonMessageTemplate, "Remove", "Vungle", "Android")
 				: string.Format(ButtonMessageTemplate, "Enable", "Vungle", "Android");
-			if (GUILayout.Button(buttonText)) {
-				if (_androidApsIsEnabled) {
+			if (GUILayout.Button(androidVunglebuttonText)) {
+				if (_androidVungleIsEnabled) {
 					RemoveBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
 				}
 				else {
@@ -109,14 +109,14 @@ namespace Nimbus.Editor {
 
 			GUILayout.Space(5);
 
-			status = _iosVungleIsEnabled ? Enabled : Disabled;
-			EditorGUILayout.LabelField($"Macro is set for Ios is: {status}", headerStyle);
+			var vungleIosStatus = _iosVungleIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {vungleIosStatus}", headerStyle);
 			GUILayout.Space(2);
-			buttonText = _iosApsIsEnabled
+			var vungleAndroidButtonText = _iosVungleIsEnabled
 				? string.Format(ButtonMessageTemplate, "Remove", "Vungle", "Ios")
 				: string.Format(ButtonMessageTemplate, "Enable", "Vungle", "Ios");
-			if (GUILayout.Button(buttonText)) {
-				if (_iosApsIsEnabled) {
+			if (GUILayout.Button(vungleAndroidButtonText)) {
+				if (_iosVungleIsEnabled) {
 					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
 				}
 				else {

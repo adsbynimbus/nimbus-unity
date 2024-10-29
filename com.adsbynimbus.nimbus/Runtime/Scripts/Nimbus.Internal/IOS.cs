@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -101,6 +101,13 @@ namespace Nimbus.Internal {
 				var aps = new ApsIOS(appID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
+			#endif
+			#if NIMBUS_ENABLE_VUNGLE
+				Debug.unityLogger.Log("Initializing iOS Vungle SDK");
+				var appID = configuration.GetVungleData();
+				var vungle = new VungleIOS(appID);
+				vungle.InitializeNativeSDK();
+				_interceptors.Add(vungle);
 			#endif
 		}
 

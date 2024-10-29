@@ -21,6 +21,11 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _iosAppId;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
+		
+		// Vungle
+		private SerializedProperty _androidVungleAppId;
+		
+		private SerializedProperty _iosVungleAppId;
 
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
@@ -42,7 +47,7 @@ namespace Nimbus.ScriptableObjects {
 			_androidApsSlots.isExpanded = true;
 			_androidApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_androidApsSlotIdList.headerHeight = 0f;
-			_androidApsSlotIdList.drawElementCallback += OnDrawElementAndroidApsSlotData;
+			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
 			
 			// IOS APS UI
 			_iosAppId = serializedObject.FindProperty("iosAppID");
@@ -57,12 +62,19 @@ namespace Nimbus.ScriptableObjects {
 			_iosApsSlots.isExpanded = true;
 			_iosApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosApsSlotIdList.headerHeight = 0f;
-			_iosApsSlotIdList.drawElementCallback += OnDrawElementIosApsSlotData;
+			_iosApsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
+			
+			// Vungle
+			// Android Vungle UI
+			_androidVungleAppId = serializedObject.FindProperty("androidVungleAppID");
+			
+			// IOS Vungle UI
+			_iosVungleAppId = serializedObject.FindProperty("iosVungleAppID");
 		}
 
 		private void OnDisable() {
-			_androidApsSlotIdList.drawElementCallback -= OnDrawElementAndroidApsSlotData;
-			_iosApsSlotIdList.drawElementCallback -= OnDrawElementIosApsSlotData;
+			_androidApsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
+			_iosApsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
 
 			var config = target as NimbusSDKConfiguration;
 			if (config == null) return;
@@ -73,11 +85,15 @@ namespace Nimbus.ScriptableObjects {
 		}
 
 
-		private void OnDrawElementAndroidApsSlotData(Rect rect, int index, bool isActive, bool isFocused) {
+		private void OnDrawElementApsSlotData(Rect rect, int index, bool isActive, bool isFocused) {
 			var fieldRect = rect;
 			fieldRect.height = EditorGUIUtility.singleLineHeight;
-
-			var item = _androidApsSlots.GetArrayElementAtIndex(index);
+			#if UNITY_ANDROID
+				var item = _androidApsSlots.GetArrayElementAtIndex(index);
+			#endif
+			#if UNITY_IOS
+				var item = _iosApsSlots.GetArrayElementAtIndex(index);
+			#endif
 			item.isExpanded = true;
 			var itr = item.Copy();
 
@@ -92,27 +108,6 @@ namespace Nimbus.ScriptableObjects {
 				fieldRect.y += fieldRect.height;
 			}
 		}
-		
-		private void OnDrawElementIosApsSlotData(Rect rect, int index, bool isActive, bool isFocused) {
-			var fieldRect = rect;
-			fieldRect.height = EditorGUIUtility.singleLineHeight;
-
-			var item = _iosApsSlots.GetArrayElementAtIndex(index);
-			item.isExpanded = true;
-			var itr = item.Copy();
-
-			itr.Next(true);
-			fieldRect.y += 1.5f * fieldRect.height;
-			EditorGUI.PropertyField(fieldRect, itr, false);
-
-			var children = item.CountInProperty() - 1;
-			for (var i = 0; i < children; i++) {
-				EditorGUI.PropertyField(fieldRect, itr, false);
-				itr.Next(false);
-				fieldRect.y += fieldRect.height;
-			}
-		}
-
 
 		public override void OnInspectorGUI() {
 			serializedObject.Update();
@@ -139,9 +134,12 @@ namespace Nimbus.ScriptableObjects {
 			EditorGUILayout.PropertyField((_enableUnityLogs));
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
-
-			#if NIMBUS_ENABLE_APS
+			
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
+			#endif
+			
+			#if NIMBUS_ENABLE_APS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
@@ -160,7 +158,27 @@ namespace Nimbus.ScriptableObjects {
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter APS data", MessageType.Warning);
 				#endif
-			#endif			
+				GUILayout.Space(10);
+			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField((_androidVungleAppId););
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField((_iosVungleAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
+				#endif
+			#endif
 			
 			serializedObject.ApplyModifiedProperties();
 		}
