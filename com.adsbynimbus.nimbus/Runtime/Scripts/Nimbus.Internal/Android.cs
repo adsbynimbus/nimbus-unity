@@ -60,6 +60,14 @@ namespace Nimbus.Internal {
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				var vungleAppId = configuration.GetVungleData()
+				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
+				var vungle = new VungleAndroid(_currentActivity, vungleAppId);
+				vungle.InitializeNativeSDK();
+				_interceptors.Add(vungle);
+			#endif
 		}
 
 

@@ -9,12 +9,17 @@ using UnityEngine;
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 	internal class VungleAndroid : IInterceptor, IProvider {
-		private const string AndroidVunglePackage = "com.adsbynimbus.request.VungleDemandProvider";
+		private const string NimbusVunglePackage = "com.adsbynimbus.request.VungleDemandProvider";
+		private const string VunglePackage = "com.vungle.ads.VungleAds"
 		private readonly string _appID;
-		private readonly AndroidJavaObject _currentActivity;
-		private AndroidJavaClass _vungle;
+		private readonly AndroidJavaObject _applicationContext;
 
 		public VungleAndroid(string appID) {
+			_appID = appID;
+		}
+		
+		public VungleAndroid(AndroidJavaObject applicationContext, string appID) {
+			_applicationContext = applicationContext;
 			_appID = appID;
 		}
 		
@@ -31,12 +36,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
-			return _fetchVungleBuyerId();
+			var vungle = new AndroidJavaClass(VunglePackage);
+			return vungle.CallStatic("getBiddingToken", _applicationContext);
 		}
 		
 		public void InitializeNativeSDK() {
-			_vungle = new AndroidJavaClass(AndroidVunglePackage);
-			_vungle.CallStatic("initialize", _appID);
+			var vungle = new AndroidJavaClass(NimbusVunglePackage);
+			vungle.CallStatic("initialize", _appID);
 		}
 	}
 }
