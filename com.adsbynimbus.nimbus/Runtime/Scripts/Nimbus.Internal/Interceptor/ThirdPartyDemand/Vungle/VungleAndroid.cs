@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 	internal class VungleAndroid : IInterceptor, IProvider {
 		private const string NimbusVunglePackage = "com.adsbynimbus.request.VungleDemandProvider";
-		private const string VunglePackage = "com.vungle.ads.VungleAds"
+		private const string VunglePackage = "com.vungle.ads.VungleAds";
 		private readonly string _appID;
 		private readonly AndroidJavaObject _applicationContext;
 
@@ -37,7 +37,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var vungle = new AndroidJavaClass(VunglePackage);
-			return vungle.CallStatic("getBiddingToken", _applicationContext);
+			return vungle.Call<string>("getBiddingToken", _applicationContext);
 		}
 		
 		public void InitializeNativeSDK() {
