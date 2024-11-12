@@ -110,8 +110,8 @@ extern "C" {
 #endif
 
 #if NIMBUS_ENABLE_VUNGLE
-    void _initializeVungle(NSString* appKey) {
-        [NimbusManager initializeVungleWithAppKey: appKey];
+    void _initializeVungle(const char* appKey) {
+        [NimbusManager initializeVungleWithAppKey: GetStringParam(appKey)];
     }
     
     const NSString* _fetchVungleBuyerId() {

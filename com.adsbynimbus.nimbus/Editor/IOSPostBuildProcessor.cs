@@ -31,20 +31,15 @@ namespace Nimbus.Editor {
 				#endif
 				
 				var path = buildPath + "/Podfile";
-				FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);				using (StreamReader sr = new StreamReader(fileStream))
+				var lines = File.ReadAllLines(path);
+				for(int i = 0 ; i < lines.Length ; i++)
 				{
-					using (StreamWriter sw = new StreamWriter(fileStream))
+					if (lines[i].ToLower().Contains("nimbus"))
 					{
-						var line = "";
-						while ((line = sr.ReadLine()) != null)
-						{
-							if (line.ToLower().Contains("nimbus"))
-							{
-								sw.WriteLine($"{line}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
-							}
-						}
+						lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
 					}
 				}
+				File.WriteAllLines(path, lines);
 			}
 		}
 	}
