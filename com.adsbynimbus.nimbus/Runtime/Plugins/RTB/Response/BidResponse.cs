@@ -32,6 +32,9 @@ namespace OpenRTB.Response {
 
         [JsonProperty("placement_id", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string PlacementId;
+        
+        [JsonProperty("exp", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public int Exp;
 
         [JsonProperty("duration", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int Duration;

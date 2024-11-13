@@ -114,8 +114,8 @@ extern "C" {
         [NimbusManager initializeVungleWithAppKey: GetStringParam(appKey)];
     }
     
-    const NSString* _fetchVungleBuyerId() {
-        return [NimbusManager fetchVungleBuyerId];
+    const char* _fetchVungleBuyerId() {
+        return strdup([[NimbusManager fetchVungleBuyerId] UTF8String]);
     }
     
 #endif

@@ -39,7 +39,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
-			return _fetchVungleBuyerId();
+			var buyerId = _fetchVungleBuyerId();
+			Debug.unityLogger.Log("VUNGLEBUYER", buyerId);
+			return buyerId;
 		}
 
 	}
