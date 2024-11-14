@@ -62,6 +62,7 @@ namespace Example.Scripts {
 			if (!_shouldDestroyBanner) {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
+				Debug.unityLogger.Log(NimbusManager.Instance == null);
 				_loadAndShowBannerAdUnit = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position");
 				return;
 			}

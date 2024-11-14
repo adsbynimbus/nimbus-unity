@@ -166,7 +166,7 @@ namespace Nimbus.ScriptableObjects {
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
 				#if UNITY_ANDROID
-					EditorGUILayout.PropertyField((_androidVungleAppId););
+					EditorGUILayout.PropertyField((_androidVungleAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 

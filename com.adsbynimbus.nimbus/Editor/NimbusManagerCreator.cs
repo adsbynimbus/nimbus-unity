@@ -32,8 +32,12 @@ namespace Nimbus.Editor {
 		private SerializedProperty _iosAppId;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
-
-
+		
+		// Vungle
+		private SerializedProperty _androidVungleAppId;
+		
+		private SerializedProperty _iosVungleAppId;
+		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -73,6 +77,13 @@ namespace Nimbus.Editor {
 			_iosApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosApsSlotIdList.headerHeight = 0f;
 			_iosApsSlotIdList.drawElementCallback += OnDrawElementIosApsSlotData;
+			
+			// Vungle
+			// Android Vungle UI
+			_androidVungleAppId = serializedObject.FindProperty("androidVungleAppID");
+			
+			// IOS Vungle UI
+			_iosVungleAppId = serializedObject.FindProperty("iosVungleAppID");
 		}
 
 
@@ -132,9 +143,12 @@ namespace Nimbus.Editor {
 
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
+			
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE
+				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
+			#endif
 
 			#if NIMBUS_ENABLE_APS
-				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
@@ -154,6 +168,25 @@ namespace Nimbus.Editor {
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter APS data", MessageType.Warning);
 				#endif
 			#endif	
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField((_androidVungleAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField((_iosVungleAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
+				#endif
+			#endif
 
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create")) {
@@ -184,6 +217,12 @@ namespace Nimbus.Editor {
 						return;
 					}
 				#endif
+				
+				#if NIMBUS_ENABLE_VUNGLE
+					if (!ValidateVungleData()) {
+						return;
+					}
+				#endif	
 
 				AssetDatabase.CreateAsset(_asset,
 					"Packages/com.adsbynimbus.nimbus/Runtime/Scripts/Nimbus.ScriptableObjects/NimbusSDKConfiguration.asset");
@@ -287,6 +326,23 @@ namespace Nimbus.Editor {
 					return false;
 				}
 			}
+			return true;
+		}
+		
+		private bool ValidateVungleData() {
+			string appId = null;
+			#if UNITY_ANDROID
+				appId = _androidVungleAppId.stringValue;
+			#elif UNITY_IOS
+				appId = _iosVungleAppId.stringValue;
+			#endif
+			
+			if (appId.IsNullOrEmpty()) {
+				Debug.unityLogger.LogError("Nimbus", 
+					"Vungle SDK has been included, the Vungle App ID cannot be empty, object NimbusAdsManager not created");
+				return false;
+			}
+			ApsSlotData[] slotData = null;
 			return true;
 		}
 	}

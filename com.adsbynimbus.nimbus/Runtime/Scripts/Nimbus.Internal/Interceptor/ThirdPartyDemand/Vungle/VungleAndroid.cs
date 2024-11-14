@@ -37,7 +37,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var vungle = new AndroidJavaClass(VunglePackage);
-			return vungle.Call<string>("getBiddingToken", _applicationContext);
+			var buyerId = vungle.CallStatic<string>("getBiddingToken", _applicationContext);
+			return buyerId;
 		}
 		
 		public void InitializeNativeSDK() {

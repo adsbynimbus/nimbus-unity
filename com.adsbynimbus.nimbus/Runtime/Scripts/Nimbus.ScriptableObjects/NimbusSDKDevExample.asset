@@ -32,5 +32,5 @@ MonoBehaviour:
     AdUnitType: 1
   - SlotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
     AdUnitType: 3
-  androidVungleAppID: 
-  iosVungleAppID: 65eb251c96ec25b72d8e09f7
+  androidVungleAppID:
+  iosVungleAppID:
