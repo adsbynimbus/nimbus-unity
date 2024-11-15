@@ -27,6 +27,8 @@ import NimbusSDK
     private var adController: AdController?
     private var adView: NimbusAdView?
     private var nimbusAdVC: NimbusAdViewController?
+    private lazy var thirdPartyInterstitialAdManager = ThirdPartyInterstitialAdManager()
+    private var thirdPartyInterstitialAdController: AdController?
     
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
@@ -78,7 +80,8 @@ import NimbusSDK
     
     #if NIMBUS_ENABLE_VUNGLE
         @objc public class func initializeVungle(appKey: String) {
-            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
+            print("appkey is: \(appKey)")
+            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: "65eb251c96ec25b72d8e09f7")
             NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
             Nimbus.shared.renderers = [.forNetwork("vungle"): NimbusVungleAdRenderer()]
         }
@@ -128,23 +131,38 @@ import NimbusSDK
                 companionAd = NimbusCompanionAd(width: 320, height: 480, renderMode: .endCard)
             }
             
-            nimbusAdVC = NimbusAdViewController(
-                adView: adView,
-                ad: nimbusAd,
-                companionAd: companionAd,
-                closeButtonDelay: closeButtonDelay,
-                isRewardedAd: isRewarded
-            )
-            guard let nimbusAdVC = nimbusAdVC else { return }
-            
-            // Instead of the VC sent in by the publisher, we are creating the blocking VC here
-            adView.adPresentingViewController = nimbusAdVC
-            nimbusAdVC.modalPresentationStyle = .fullScreen
-            nimbusAdVC.delegate = self
-            
-            viewController.present(nimbusAdVC, animated: true)
-            
-            nimbusAdVC.renderAndStart()
+            if ThirdPartyDemandNetwork.exists(for: nimbusAd) {
+                thirdPartyInterstitialAdController = try? thirdPartyInterstitialAdManager.render(
+                    ad: nimbusAd,
+                    adPresentingViewController: viewController,
+                    companionAd: companionAd
+                )
+                guard let thirdPartyInterstitialAdController else {
+                    Nimbus.shared.logger.log("Unable to render ad for network: \(nimbusAd.network)", level: .error)
+                    return
+                }
+                
+                thirdPartyInterstitialAdController.delegate = self
+                thirdPartyInterstitialAdController.start()
+            } else {
+                nimbusAdVC = NimbusAdViewController(
+                    adView: adView,
+                    ad: nimbusAd,
+                    companionAd: companionAd,
+                    closeButtonDelay: closeButtonDelay,
+                    isRewardedAd: isRewarded
+                )
+                guard let nimbusAdVC = nimbusAdVC else { return }
+                
+                // Instead of the VC sent in by the publisher, we are creating the blocking VC here
+                adView.adPresentingViewController = nimbusAdVC
+                nimbusAdVC.modalPresentationStyle = .fullScreen
+                nimbusAdVC.delegate = self
+                
+                viewController.present(nimbusAdVC, animated: true)
+                
+                nimbusAdVC.renderAndStart()
+            }
             
             UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
         } else {
