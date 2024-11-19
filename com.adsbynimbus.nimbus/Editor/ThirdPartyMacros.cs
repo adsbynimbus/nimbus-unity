@@ -74,7 +74,7 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.iOS, ApsMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Vungle App Ids and Vungle Placement Ids to the " +
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS APS App Ids and APS Slot Ids to the " +
 					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(ApsPartnerStr);
 				}
@@ -101,7 +101,7 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Vungle App Ids and Vungle Placement Ids to the " +
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Vungle App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(VunglePartnerStr);
 				}
@@ -121,7 +121,7 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS APS App Ids and APS Slot Ids to the " +
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Vungle App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(VunglePartnerStr);
 				}
