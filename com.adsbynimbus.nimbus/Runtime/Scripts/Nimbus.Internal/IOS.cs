@@ -103,7 +103,7 @@ namespace Nimbus.Internal {
 				_interceptors.Add(aps);
 			#endif
 			#if NIMBUS_ENABLE_VUNGLE
-				Debug.unityLogger.Log("Initializing iOS Vungle SDK");
+				Debug.unityLogger.Log("Initializing iOS Liftoff Monetize SDK");
 				var appID = configuration.GetVungleData();
 				var vungle = new VungleIOS(appID);
 				vungle.InitializeNativeSDK();

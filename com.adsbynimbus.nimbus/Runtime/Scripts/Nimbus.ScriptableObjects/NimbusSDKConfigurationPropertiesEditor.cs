@@ -144,13 +144,13 @@ namespace Nimbus.ScriptableObjects {
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
 				#if UNITY_ANDROID
-					EditorGUILayout.PropertyField((_androidAppId));
+					EditorGUILayout.PropertyField(_androidAppId);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "Android Slot Id Data");
 				#endif
 
 				#if UNITY_IOS
-					EditorGUILayout.PropertyField((_iosAppId));
+					EditorGUILayout.PropertyField(_iosAppId);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_iosApsSlots, "iOS Slot Id Data");
 				#endif
@@ -164,19 +164,21 @@ namespace Nimbus.ScriptableObjects {
 			#if NIMBUS_ENABLE_VUNGLE
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
-				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
+				EditorGUILayout.LabelField("Liftoff Monetize Configuration", headerStyle);
 				#if UNITY_ANDROID
-					EditorGUILayout.PropertyField((_androidVungleAppId));
+					var label = new GUIContent("Android Liftoff Monetize App ID");
+					EditorGUILayout.PropertyField(_androidVungleAppId, label);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 
 				#if UNITY_IOS
-					EditorGUILayout.PropertyField((_iosVungleAppId));
+					var label = new GUIContent("iOS Liftoff Monetize App ID");
+					EditorGUILayout.PropertyField(_iosVungleAppId, label);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
-					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Liftoff Monetize data", MessageType.Warning);
 				#endif
 			#endif
 			

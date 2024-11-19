@@ -30,18 +30,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			if (bidRequest.User.Ext != null) {
-				bidRequest.User.Ext.VungleBuyerId = data;
+			if (bidRequest.User.Ext == null) {
+				bidRequest.User.Ext = new UserExt();
 			}
-
+			bidRequest.User.Ext.VungleBuyerId = data;
 			return bidRequest;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
-		{
-			var buyerId = _fetchVungleBuyerId();
-			Debug.unityLogger.Log("VUNGLEBUYER", buyerId);
-			return buyerId;
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+			return _fetchVungleBuyerId();
 		}
 
 	}
