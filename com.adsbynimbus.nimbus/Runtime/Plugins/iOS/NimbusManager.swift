@@ -80,8 +80,7 @@ import NimbusSDK
     
     #if NIMBUS_ENABLE_VUNGLE
         @objc public class func initializeVungle(appKey: String) {
-            print("appkey is: \(appKey)")
-            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: "65eb251c96ec25b72d8e09f7")
+            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
             NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
             Nimbus.shared.renderers = [.forNetwork("vungle"): NimbusVungleAdRenderer()]
         }
