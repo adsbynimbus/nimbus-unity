@@ -17,7 +17,7 @@ namespace Nimbus.Editor {
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
 		private const string ApsPartnerStr = "APS";
-		private const string VunglePartnerStr = "Liftoff Monetize";
+		private const string VunglePartnerStr = "Vungle";
 
 		private void OnEnable() {
 			UpdateSettings();
@@ -85,7 +85,7 @@ namespace Nimbus.Editor {
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 			
 			// START OF VUNGLE
-			EditorGUILayout.LabelField("Liftoff Monetize Build Macro Settings:", headerStyle);
+			EditorGUILayout.LabelField("Vungle Build Macro Settings:", headerStyle);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 			GUILayout.Space(10);
 
@@ -93,15 +93,15 @@ namespace Nimbus.Editor {
 			EditorGUILayout.LabelField($"Macro is set for Android is: {vungleAndroidStatus}", headerStyle);
 			GUILayout.Space(2);
 			var androidVunglebuttonText = _androidVungleIsEnabled
-				? string.Format(ButtonMessageTemplate, "Remove", "Liftoff Monetize", "Android")
-				: string.Format(ButtonMessageTemplate, "Enable", "Liftoff Monetize", "Android");
+				? string.Format(ButtonMessageTemplate, "Remove", "Vungle", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "Vungle", "Android");
 			if (GUILayout.Button(androidVunglebuttonText)) {
 				if (_androidVungleIsEnabled) {
 					RemoveBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your Liftoff Monetize Android App Id to the " +
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Vungle App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(VunglePartnerStr);
 				}
@@ -113,15 +113,15 @@ namespace Nimbus.Editor {
 			EditorGUILayout.LabelField($"Macro is set for Ios is: {vungleIosStatus}", headerStyle);
 			GUILayout.Space(2);
 			var vungleAndroidButtonText = _iosVungleIsEnabled
-				? string.Format(ButtonMessageTemplate, "Remove", "Liftoff Monetize", "Ios")
-				: string.Format(ButtonMessageTemplate, "Enable", "Liftoff Monetize", "Ios");
+				? string.Format(ButtonMessageTemplate, "Remove", "Vungle", "Ios")
+				: string.Format(ButtonMessageTemplate, "Enable", "Vungle", "Ios");
 			if (GUILayout.Button(vungleAndroidButtonText)) {
 				if (_iosVungleIsEnabled) {
 					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your Liftoff Monetize IOS App Id to the " +
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Vungle App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(VunglePartnerStr);
 				}

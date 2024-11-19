@@ -172,21 +172,19 @@ namespace Nimbus.Editor {
 			#if NIMBUS_ENABLE_VUNGLE
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
-				EditorGUILayout.LabelField("Liftoff Monetize Configuration", headerStyle);
+				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
 				#if UNITY_ANDROID
-					var label = new GUIContent("Android Liftoff Monetize App ID");
-					EditorGUILayout.PropertyField(_androidVungleAppId, label);
+					EditorGUILayout.PropertyField((_androidVungleAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 
 				#if UNITY_IOS
-					var label = new GUIContent("iOS Liftoff Monetize App ID");
-					EditorGUILayout.PropertyField(_iosVungleAppId, label);
+					EditorGUILayout.PropertyField((_iosVungleAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
-					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Liftoff Monetize data", MessageType.Warning);
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
 				#endif
 			#endif
 
@@ -341,7 +339,7 @@ namespace Nimbus.Editor {
 			
 			if (appId.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"Liftoff Monetize SDK has been included, the Liftoff Monetize App ID cannot be empty, object NimbusAdsManager not created");
+					"Vungle SDK has been included, the Vungle App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
 			ApsSlotData[] slotData = null;
