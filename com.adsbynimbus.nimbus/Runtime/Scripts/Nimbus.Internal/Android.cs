@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -59,6 +60,15 @@ namespace Nimbus.Internal {
 				var aps = new ApsAndroid(_currentActivity, appID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
+			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				var vungleAppId = configuration.GetVungleData();
+				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
+				Debug.unityLogger.Log(vungleAppId);
+				var vungle = new VungleAndroid(applicationContext, vungleAppId);
+				vungle.InitializeNativeSDK();
+				_interceptors.Add(vungle);
 			#endif
 		}
 

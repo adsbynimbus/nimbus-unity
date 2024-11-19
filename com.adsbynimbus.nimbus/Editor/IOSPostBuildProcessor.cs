@@ -26,22 +26,20 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_APS
 					Dependencies.Add("'NimbusRequestAPSKit'");
 				#endif
+				#if NIMBUS_ENABLE_VUNGLE
+					Dependencies.Add("'NimbusVungleKit'");
+				#endif
 				
 				var path = buildPath + "/Podfile";
-				FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);				using (StreamReader sr = new StreamReader(fileStream))
+				var lines = File.ReadAllLines(path);
+				for(int i = 0 ; i < lines.Length ; i++)
 				{
-					using (StreamWriter sw = new StreamWriter(fileStream))
+					if (lines[i].ToLower().Contains("nimbus"))
 					{
-						var line = "";
-						while ((line = sr.ReadLine()) != null)
-						{
-							if (line.ToLower().Contains("nimbus"))
-							{
-								sw.WriteLine($"{line}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
-							}
-						}
+						lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
 					}
 				}
+				File.WriteAllLines(path, lines);
 			}
 		}
 	}
@@ -61,6 +59,14 @@ namespace Nimbus.Editor {
 				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_APS");
 				// Enable MACRO for C++ code
 				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_APS");
+			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE
+				var projectGuid = pbx.ProjectGuid();
+				// Enable MACRO for Swift code
+				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_VUNGLE");
+				// Enable MACRO for C++ code
+				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_VUNGLE");
 			#endif
 
 			// Unity-IPhone

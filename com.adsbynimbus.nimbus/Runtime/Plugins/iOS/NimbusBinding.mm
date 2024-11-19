@@ -108,4 +108,15 @@ extern "C" {
         return strdup([[NimbusManager fetchAPSParamsWithWidth: width height:height includeVideo:includeVideo] UTF8String]);
     }
 #endif
+
+#if NIMBUS_ENABLE_VUNGLE
+    void _initializeVungle(const char* appKey) {
+        [NimbusManager initializeVungleWithAppKey: GetStringParam(appKey)];
+    }
+    
+    const char* _fetchVungleBuyerId() {
+        return strdup([[NimbusManager fetchVungleBuyerId] UTF8String]);
+    }
+    
+#endif
 }
