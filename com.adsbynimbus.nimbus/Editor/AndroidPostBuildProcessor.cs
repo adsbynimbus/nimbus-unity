@@ -1,5 +1,6 @@
 #if UNITY_EDITOR && UNITY_ANDROID
 using System.IO;
+using System.Text;
 using UnityEditor.Android;
 
 namespace Nimbus.Editor {
@@ -42,22 +43,22 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 			packagingWriter.Flush();
 			packagingWriter.Close();
 			
-			#if NIMBUS_ENABLE_APS
-				var apsDependencies = AndroidBuildDependencies.APSBuildDependencies();
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE
+				var builder = new StringBuilder();
+				builder.AppendLine("");
+				builder.AppendLine("dependencies {");
+				#if NIMBUS_ENABLE_APS
+					builder.AppendLine(AndroidBuildDependencies.APSBuildDependencies());
+				#endif
+				#if NIMBUS_ENABLE_VUNGLE
+					builder.AppendLine(AndroidBuildDependencies.VungleBuildDependencies());
+				#endif
+				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");
-				apsBuildWriter.WriteLine(apsDependencies);
+				apsBuildWriter.WriteLine(builder.ToString());
 				apsBuildWriter.Flush();
 				apsBuildWriter.Close();
 			#endif
-
-			#if NIMBUS_ENABLE_VUNGLE
-				var vungleDependencies = AndroidBuildDependencies.VungleBuildDependencies();
-				var vunlgeBuildWriter = File.AppendText(path + "/build.gradle");
-				vunlgeBuildWriter.WriteLine(vungleDependencies);
-				vunlgeBuildWriter.Flush();
-				vunlgeBuildWriter.Close();
-			#endif
-
 		}
 	}
 }
