@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 using NUnit.Framework;
 using OpenRTB.Request;
 
