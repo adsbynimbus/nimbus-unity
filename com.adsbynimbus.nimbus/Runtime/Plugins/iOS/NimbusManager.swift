@@ -63,8 +63,8 @@ import NimbusSDK
 
     #if NIMBUS_ENABLE_APS
     @objc public class func initializeAPSRequestHelper(appKey: String, timeoutInSeconds: Double, enableTestMode: Bool) {
-        DTBAds.sharedInstance().testMode = enableTestMode
         apsRequestHelper = NimbusAPSRequestHelper(appKey: appKey, timeoutInSeconds: timeoutInSeconds)
+        DTBAds.sharedInstance().testMode = enableTestMode
     }
 
     @objc public class func addAPSSlot(slotUUID: String, width: Int, height: Int, isVideo: Bool) {
