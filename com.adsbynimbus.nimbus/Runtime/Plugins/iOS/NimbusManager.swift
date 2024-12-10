@@ -12,6 +12,7 @@ import NimbusRenderVideoKit
 import NimbusKit
 #if NIMBUS_ENABLE_APS
 import NimbusRequestAPSKit
+import DTBiOSSDK
 #endif
 #if NIMBUS_ENABLE_VUNGLE
 import VungleAdsSDK
@@ -62,7 +63,8 @@ import NimbusSDK
 
     #if NIMBUS_ENABLE_APS
     @objc public class func initializeAPSRequestHelper(appKey: String, timeoutInSeconds: Double, enableTestMode: Bool) {
-        apsRequestHelper = NimbusAPSRequestHelper(appKey: appKey, timeoutInSeconds: timeoutInSeconds, enableTestMode: enableTestMode)
+        apsRequestHelper = NimbusAPSRequestHelper(appKey: appKey, timeoutInSeconds: timeoutInSeconds)
+        DTBAds.sharedInstance().testMode = enableTestMode
     }
 
     @objc public class func addAPSSlot(slotUUID: String, width: Int, height: Int, isVideo: Bool) {
