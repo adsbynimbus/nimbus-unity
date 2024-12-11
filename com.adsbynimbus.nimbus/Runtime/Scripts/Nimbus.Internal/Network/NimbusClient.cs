@@ -39,6 +39,10 @@ namespace Nimbus.Internal.Network {
 			_ctx = ctx;
 		}
 
+		public void AddHeader(String name, String value) {
+			Client.DefaultRequestHeaders.Add(name, value);
+		}
+
 		public async Task<string> MakeRequestAsync(BidRequest bidRequest) {
 			// getting the UserAgent on a mobile device can fail on the first attempt to retrieve
 			// it's not an issue try again on the next ad call.
