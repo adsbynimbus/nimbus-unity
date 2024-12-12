@@ -10,6 +10,9 @@
         <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
       </repositories>
     </androidPackage>
+    <!--The below package is needed to resolve gradle issues with the above nimbus-vast package-->
+    <androidPackage spec="io.github.pdvrieze.xmlutil:serialization:0.90.3">
+    </androidPackage>
   </androidPackages>
 
   <iosPods>

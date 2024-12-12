@@ -475,18 +475,20 @@ namespace Nimbus.Runtime.Scripts {
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			return await Task.Run(async () => {
 				bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
+				/* To test new video player
 				if (adUnitType == AdUnitType.Interstitial || adUnitType == AdUnitType.Rewarded) {
 					_nimbusClient.AddHeader("Nimbus-Test-EnableNewRenderer", "true");
-				}
+				}*/
 				return await  _nimbusClient.MakeRequestAsync(bidRequest);
 			});
 		}
 #else
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
-			if (adUnitType == AdUnitType.Interstitial || adUnitType == AdUnitType.Rewarded) {
+			/* To test new video player
+			 if (adUnitType == AdUnitType.Interstitial || adUnitType == AdUnitType.Rewarded) {
 				_nimbusClient.AddHeader("Nimbus-Test-EnableNewRenderer", "true");
-			}
+			}*/
 			return await  _nimbusClient.MakeRequestAsync(bidRequest);
 		}
 #endif
