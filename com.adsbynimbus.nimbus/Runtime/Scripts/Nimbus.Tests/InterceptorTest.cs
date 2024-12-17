@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
-#if UNITY_IOS
+#if UNITY_IOS && NIMBUS_ENABLE_APS
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 #endif
 using NUnit.Framework;

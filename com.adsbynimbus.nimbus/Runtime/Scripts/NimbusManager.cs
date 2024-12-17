@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -475,9 +476,9 @@ namespace Nimbus.Runtime.Scripts {
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			return await Task.Run(async () => {
 				bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
-				/* To test new video player
+				 /*To test new video player
 				if (adUnitType == AdUnitType.Interstitial || adUnitType == AdUnitType.Rewarded) {
-					_nimbusClient.AddHeader("Nimbus-Test-EnableNewRenderer", "true");
+					_nimbusClient.AddHeader(new List<KeyValuePair<string, string>>(){new ("Nimbus-Test-EnableNewRenderer", "true")});
 				}*/
 				return await  _nimbusClient.MakeRequestAsync(bidRequest);
 			});
@@ -485,9 +486,9 @@ namespace Nimbus.Runtime.Scripts {
 #else
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
-			/* To test new video player
+			 /* To test new video player
 			 if (adUnitType == AdUnitType.Interstitial || adUnitType == AdUnitType.Rewarded) {
-				_nimbusClient.AddHeader("Nimbus-Test-EnableNewRenderer", "true");
+				_nimbusClient.AddHeader(new List<KeyValuePair<string, string>>(){new ("Nimbus-Test-EnableNewRenderer", "true")});
 			}*/
 			return await  _nimbusClient.MakeRequestAsync(bidRequest);
 		}

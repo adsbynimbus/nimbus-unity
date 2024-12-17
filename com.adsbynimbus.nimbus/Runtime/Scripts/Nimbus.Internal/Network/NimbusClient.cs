@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,8 +40,10 @@ namespace Nimbus.Internal.Network {
 			_ctx = ctx;
 		}
 
-		public void AddHeader(String name, String value) {
-			Client.DefaultRequestHeaders.Add(name, value);
+		public void AddHeader(List<KeyValuePair<string, string>> headers) {
+			foreach (var header in headers) {
+				Client.DefaultRequestHeaders.Add(header.Key, header.Value);
+			}
 		}
 
 		public async Task<string> MakeRequestAsync(BidRequest bidRequest) {

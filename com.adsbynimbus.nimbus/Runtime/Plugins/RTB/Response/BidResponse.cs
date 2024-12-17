@@ -46,5 +46,7 @@ namespace OpenRTB.Response {
     public struct BidExt {
         [JsonProperty("skadn", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public SkadnResponse Skadn;
+        [JsonProperty("use_new_renderer", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool useNewRenderer;
     }
 }
