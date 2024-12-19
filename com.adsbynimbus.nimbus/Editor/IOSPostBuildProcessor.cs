@@ -17,6 +17,7 @@ namespace Nimbus.Editor {
 			"'NimbusKit'",
 			"'NimbusRenderVideoKit'",
 			"'NimbusRenderStaticKit'",
+			"'NimbusRenderVASTKit'"
 		};
 		[PostProcessBuild(45)]
 		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
@@ -34,7 +35,7 @@ namespace Nimbus.Editor {
 				var lines = File.ReadAllLines(path);
 				for(int i = 0 ; i < lines.Length ; i++)
 				{
-					if (lines[i].ToLower().Contains("nimbus"))
+					if (lines[i].Contains("NimbusSDK"))
 					{
 						lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
 					}
