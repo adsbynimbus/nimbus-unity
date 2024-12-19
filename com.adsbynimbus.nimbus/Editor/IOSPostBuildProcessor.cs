@@ -35,7 +35,7 @@ namespace Nimbus.Editor {
 				var lines = File.ReadAllLines(path);
 				for(int i = 0 ; i < lines.Length ; i++)
 				{
-					if (lines[i].ToLower().Contains("nimbussdk"))
+					if (lines[i].Contains("NimbusSDK"))
 					{
 						lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
 					}
