@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +38,12 @@ namespace Nimbus.Internal.Network {
 			if (configuration.enableSDKInTestMode) path = TestingPath;
 			_nimbusEndpoint = Format(_nimbusEndpoint, configuration.publisherKey, path);
 			_ctx = ctx;
+		}
+
+		public void AddHeader(List<KeyValuePair<string, string>> headers) {
+			foreach (var header in headers) {
+				Client.DefaultRequestHeaders.Add(header.Key, header.Value);
+			}
 		}
 
 		public async Task<string> MakeRequestAsync(BidRequest bidRequest) {
