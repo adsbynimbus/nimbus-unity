@@ -5,6 +5,7 @@ using Nimbus.Internal;
 using Nimbus.Runtime.Scripts;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Example.Scripts {
 	/// <summary>
@@ -132,6 +133,11 @@ namespace Example.Scripts {
 				yield return null;
 			}
 			controller.ResetState();
+		}
+
+		public void LoadGame()
+		{
+			SceneManager.LoadScene("Example/Scenes/NimbusAdShowCase");
 		}
 	}
 
