@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Example.Scripts.NotAdRelated {
 	public class NimbusPlayerController : MonoBehaviour {
@@ -62,6 +63,11 @@ namespace Example.Scripts.NotAdRelated {
 			Gizmos.color = Color.magenta;
 			Gizmos.DrawCube(new Vector2(position.x + _groundColliderOffset.x, position.y + _groundColliderOffset.y),
 				_groundColliderSize);
+		}
+		
+		public void GoBack()
+		{
+			SceneManager.LoadScene("Example/Scenes/NimbusDemoScene");
 		}
 
 	}
