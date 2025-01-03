@@ -26,6 +26,11 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _androidVungleAppId;
 		
 		private SerializedProperty _iosVungleAppId;
+		
+		// Meta
+		private SerializedProperty _androidMetaAppId;
+
+		private SerializedProperty _iosMetaAppId;
 
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
@@ -70,6 +75,13 @@ namespace Nimbus.ScriptableObjects {
 			
 			// IOS Vungle UI
 			_iosVungleAppId = serializedObject.FindProperty("iosVungleAppID");
+			
+			// Meta
+			// Android Meta UI
+			_androidMetaAppId = serializedObject.FindProperty("androidMetaAppID");
+			
+			// IOS Meta UI
+			_iosMetaAppId = serializedObject.FindProperty("iosMetaAppID");
 		}
 
 		private void OnDisable() {
@@ -135,7 +147,7 @@ namespace Nimbus.ScriptableObjects {
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -177,6 +189,26 @@ namespace Nimbus.ScriptableObjects {
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
+				#endif
+				GUILayout.Space(10);
+			#endif
+			
+			#if NIMBUS_ENABLE_META
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Meta Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField((_androidMetaAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField((_iosMetaAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Meta data", MessageType.Warning);
 				#endif
 			#endif
 			

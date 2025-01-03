@@ -11,13 +11,17 @@ namespace Nimbus.Editor {
 		private bool _iosApsIsEnabled;
 		private bool _androidVungleIsEnabled;
 		private bool _iosVungleIsEnabled;
+		private bool _androidMetaIsEnabled;
+		private bool _iosMetaIsEnabled;
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
+		private const string MetaMacro = "NIMBUS_ENABLE_META";
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
 		private const string ApsPartnerStr = "APS";
 		private const string VunglePartnerStr = "Vungle";
+		private const string MetaPartnerStr = "Meta";
 
 		private void OnEnable() {
 			UpdateSettings();
@@ -130,6 +134,53 @@ namespace Nimbus.Editor {
 			
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			
+			// START OF META
+			EditorGUILayout.LabelField("Meta Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			var metaAndroidStatus = _androidMetaIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {metaAndroidStatus}", headerStyle);
+			GUILayout.Space(2);
+			var androidMetabuttonText = _androidMetaIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Meta", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "Meta", "Android");
+			if (GUILayout.Button(androidMetabuttonText)) {
+				if (_androidMetaIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, MetaMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, MetaMacro);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Meta App Id to the " +
+					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					FocusOnGameManager(MetaPartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			var metaIosStatus = _iosMetaIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {metaIosStatus}", headerStyle);
+			GUILayout.Space(2);
+			var metaAndroidButtonText = _iosMetaIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Meta", "Ios")
+				: string.Format(ButtonMessageTemplate, "Enable", "Meta", "Ios");
+			if (GUILayout.Button(metaAndroidButtonText)) {
+				if (_iosMetaIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MetaMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS, MetaMacro);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Meta App Id to the " +
+					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					FocusOnGameManager(MetaPartnerStr);
+				}
+			}
+			// END OF META
+			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 		}
 		
 		private void OnInspectorUpdate() {
@@ -141,6 +192,8 @@ namespace Nimbus.Editor {
 			_iosApsIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, ApsMacro);
 			_androidVungleIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, VungleMacro);
 			_iosVungleIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, VungleMacro);
+			_androidMetaIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, MetaMacro);
+			_iosMetaIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MetaMacro);
 		}
 
 

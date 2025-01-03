@@ -18,6 +18,9 @@ import DTBiOSSDK
 import VungleAdsSDK
 import NimbusSDK
 #endif
+#if NIMBUS_ENABLE_META
+import NimbusSDK
+#endif
 
 @objc public class NimbusManager: NSObject {
     
@@ -89,6 +92,18 @@ import NimbusSDK
         
         @objc public class func fetchVungleBuyerId() -> String {
             return VungleAds.getBiddingToken()
+        }
+    #endif
+    
+    #if NIMBUS_ENABLE_META
+        @objc public class func initializeMeta(appKey: String, enableTestMode: Bool) {
+            let metaRequestInterceptor = NimbusFANRequestInterceptor(appId: appKey)
+            if (enableTestMode) {
+                Nimbus.shared.testMode = true
+                metaRequestInterceptor.forceTestAd = true
+            }
+            NimbusRequestManager.requestInterceptors?.append(metaRequestInterceptor)
+            Nimbus.shared.renderers = [.forNetwork("facebook"): NimbusFANAdRenderer()]        
         }
     #endif
     

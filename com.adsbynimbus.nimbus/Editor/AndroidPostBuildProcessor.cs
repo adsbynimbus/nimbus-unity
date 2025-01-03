@@ -43,7 +43,7 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 			packagingWriter.Flush();
 			packagingWriter.Close();
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
@@ -52,6 +52,9 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				#endif
 				#if NIMBUS_ENABLE_VUNGLE
 					builder.AppendLine(AndroidBuildDependencies.VungleBuildDependencies());
+				#endif
+				#if NIMBUS_ENABLE_META
+					builder.AppendLine(AndroidBuildDependencies.MetaBuildDependencies());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");

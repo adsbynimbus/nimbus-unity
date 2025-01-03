@@ -117,6 +117,11 @@ extern "C" {
     const char* _fetchVungleBuyerId() {
         return strdup([[NimbusManager fetchVungleBuyerId] UTF8String]);
     }
-    
+#endif
+
+#if NIMBUS_ENABLE_META
+    void _initializeMeta(const char* appKey, bool enableTestMode) {
+        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey)];
+    }
 #endif
 }

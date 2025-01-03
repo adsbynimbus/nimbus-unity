@@ -110,6 +110,12 @@ namespace Nimbus.Internal {
 				vungle.InitializeNativeSDK();
 				_interceptors.Add(vungle);
 			#endif
+			#if NIMBUS_ENABLE_VUNGLE
+				Debug.unityLogger.Log("Initializing iOS Meta SDK");
+				var appID = configuration.GetMetaData();
+				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
+				meta.InitializeNativeSDK();
+			#endif
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {

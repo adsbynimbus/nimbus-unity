@@ -30,6 +30,10 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_VUNGLE
 					Dependencies.Add("'NimbusVungleKit'");
 				#endif
+				#if NIMBUS_ENABLE_META 
+					Dependencies.Add("'NimbusRequestFANKit'");
+					Dependencies.Add("'NimbusRenderFANKit'");
+				#endif
 				
 				var path = buildPath + "/Podfile";
 				var lines = File.ReadAllLines(path);
@@ -68,6 +72,14 @@ namespace Nimbus.Editor {
 				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_VUNGLE");
 				// Enable MACRO for C++ code
 				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_VUNGLE");
+			#endif
+			
+			#if NIMBUS_ENABLE_META
+				var projectGuid = pbx.ProjectGuid();
+				// Enable MACRO for Swift code
+				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_META");
+				// Enable MACRO for C++ code
+				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_META");
 			#endif
 
 			// Unity-IPhone

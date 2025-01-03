@@ -21,6 +21,10 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public string androidVungleAppID;
 		[HideInInspector] public string iosVungleAppID;
 
+		// Meta Data
+		[HideInInspector] public string androidMetaAppID;
+		[HideInInspector] public string iosMetaAppID;
+		
 		private void OnValidate() {
 			Sanitize();
 		}
@@ -51,6 +55,11 @@ namespace Nimbus.ScriptableObjects {
 				androidVungleAppID = androidVungleAppID?.Trim();
 				iosVungleAppID = iosVungleAppID?.Trim();
 			#endif
+			
+			#if NIMBUS_ENABLE_META
+				androidMetaAppID = androidMetaAppID?.Trim();
+				iosMetaAppID = iosMetaAppID?.Trim();
+			#endif
 		}
 
 
@@ -70,6 +79,15 @@ namespace Nimbus.ScriptableObjects {
 			#if UNITY_IOS
 				appID = iosVungleAppID;
 			#endif
+			return appID;
+		}
+		
+		public string GetMetaData()
+		{
+			var appID = androidMetaAppID;
+		#if UNITY_IOS
+			appID = iosMetaAppID;
+		#endif
 			return appID;
 		}
 	}
