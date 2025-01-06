@@ -24,6 +24,7 @@ namespace Nimbus.ScriptableObjects {
 		// Meta Data
 		[HideInInspector] public string androidMetaAppID;
 		[HideInInspector] public string iosMetaAppID;
+		[HideInInspector] public bool iosMetaAdvertiserTrackingEnabled = false;
 		
 		private void OnValidate() {
 			Sanitize();

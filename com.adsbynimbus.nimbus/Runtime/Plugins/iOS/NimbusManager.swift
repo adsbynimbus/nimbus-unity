@@ -96,15 +96,19 @@ import NimbusSDK
     #endif
     
     #if NIMBUS_ENABLE_META
-        @objc public class func initializeMeta(appKey: String, enableTestMode: Bool) {
+        @objc public class func initializeMeta(appKey: String, 
+            advertiserTrackingEnabled: Bool, enableTestMode: Bool) {
             let metaRequestInterceptor = NimbusFANRequestInterceptor(appId: appKey)
             if (enableTestMode) {
                 Nimbus.shared.testMode = true
                 metaRequestInterceptor.forceTestAd = true
             }
             NimbusRequestManager.requestInterceptors?.append(metaRequestInterceptor)
-            Nimbus.shared.renderers = [.forNetwork("facebook"): NimbusFANAdRenderer()]        
-        }
+            Nimbus.shared.renderers = [.forNetwork("facebook"): NimbusFANAdRenderer()]
+            if #available(iOS 14, *) {
+                FBAdSettings.setAdvertiserTrackingEnabled(advertiserTrackingEnabled)
+            }
+        }       
     #endif
     
     // MARK: - Private Functions

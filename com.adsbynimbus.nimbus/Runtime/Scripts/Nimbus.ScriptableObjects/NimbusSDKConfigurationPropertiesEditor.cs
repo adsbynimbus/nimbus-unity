@@ -32,6 +32,8 @@ namespace Nimbus.ScriptableObjects {
 
 		private SerializedProperty _iosMetaAppId;
 
+		private SerializedProperty _iosMetaAdvertiserTrackingEnabled;
+
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
 			_apiKey = serializedObject.FindProperty("apiKey");
@@ -82,6 +84,7 @@ namespace Nimbus.ScriptableObjects {
 			
 			// IOS Meta UI
 			_iosMetaAppId = serializedObject.FindProperty("iosMetaAppID");
+			_iosMetaAdvertiserTrackingEnabled = serializedObject.FindProperty("iosMetaAdvertiserTrackingEnabled");
 		}
 
 		private void OnDisable() {
@@ -204,6 +207,8 @@ namespace Nimbus.ScriptableObjects {
 
 				#if UNITY_IOS
 					EditorGUILayout.PropertyField((_iosMetaAppId));
+					EditorGUILayout.PropertyField((_iosMetaAdvertiserTrackingEnabled));
+					GUILayout.Space(10);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 

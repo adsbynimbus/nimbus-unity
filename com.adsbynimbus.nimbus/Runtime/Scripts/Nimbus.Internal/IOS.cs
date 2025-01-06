@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -110,10 +111,10 @@ namespace Nimbus.Internal {
 				vungle.InitializeNativeSDK();
 				_interceptors.Add(vungle);
 			#endif
-			#if NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_META
 				Debug.unityLogger.Log("Initializing iOS Meta SDK");
 				var appID = configuration.GetMetaData();
-				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
+				var meta = new MetaIOS(appID, configuration.iosMetaAdvertiserTrackingEnabled, configuration.enableSDKInTestMode);
 				meta.InitializeNativeSDK();
 			#endif
 		}
