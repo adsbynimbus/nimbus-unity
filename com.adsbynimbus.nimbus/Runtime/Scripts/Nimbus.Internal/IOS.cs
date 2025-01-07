@@ -116,6 +116,7 @@ namespace Nimbus.Internal {
 				var appID = configuration.GetMetaData();
 				var meta = new MetaIOS(appID, configuration.iosMetaAdvertiserTrackingEnabled, configuration.enableSDKInTestMode);
 				meta.InitializeNativeSDK();
+				_interceptors.Add(meta);
 			#endif
 		}
 

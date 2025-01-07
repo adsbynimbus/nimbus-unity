@@ -20,6 +20,7 @@ import NimbusSDK
 #endif
 #if NIMBUS_ENABLE_META
 import NimbusSDK
+import FBAudienceNetwork
 #endif
 
 @objc public class NimbusManager: NSObject {
@@ -108,6 +109,9 @@ import NimbusSDK
             if #available(iOS 14, *) {
                 FBAdSettings.setAdvertiserTrackingEnabled(advertiserTrackingEnabled)
             }
+        }
+        @objc public class func fetchMetaBiddingToken() -> String {
+            return FBAdSettings.bidderToken
         }       
     #endif
     

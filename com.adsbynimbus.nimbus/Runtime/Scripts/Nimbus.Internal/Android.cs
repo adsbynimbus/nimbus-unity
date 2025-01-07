@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -69,6 +70,12 @@ namespace Nimbus.Internal {
 				var vungle = new VungleAndroid(applicationContext, vungleAppId);
 				vungle.InitializeNativeSDK();
 				_interceptors.Add(vungle);
+			#endif
+			#if NIMBUS_ENABLE_META
+				var metaAppId = configuration.GetMetaData();
+				var meta = new MetaAndroid(_currentActivity, metaAppId);
+				meta.InitializeNativeSDK();
+				_interceptors.Add(meta);
 			#endif
 		}
 

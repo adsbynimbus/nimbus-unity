@@ -124,5 +124,9 @@ extern "C" {
         [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey) advertiserTrackingEnabled: advertiserTrackingEnabled
          enableTestMode: enableTestMode];
     }
+    
+    const char* _fetchMetaBiddingToken() {
+        return strdup([[NimbusManager fetchMetaBiddingToken] UTF8String]);
+    }
 #endif
 }
