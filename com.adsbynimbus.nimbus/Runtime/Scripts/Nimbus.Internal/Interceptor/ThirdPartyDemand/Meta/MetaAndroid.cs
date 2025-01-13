@@ -15,7 +15,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		}
 		
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
-			Debug.unityLogger.Log("METABIDDINGTOKEN", "DO WE GET HERE!?!?!?");
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}

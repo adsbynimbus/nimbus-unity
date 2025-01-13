@@ -30,10 +30,10 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_VUNGLE
 					Dependencies.Add("'NimbusVungleKit'");
 				#endif
-				#if NIMBUS_ENABLE_META 
-					Dependencies.Add("'NimbusRequestFANKit'");
-					Dependencies.Add("'NimbusRenderFANKit'");
-				#endif
+				//#if NIMBUS_ENABLE_META 
+					//Dependencies.Add("'NimbusRequestFANKit'");
+					//Dependencies.Add("'NimbusRenderFANKit'");
+				//#endif
 				
 				var path = buildPath + "/Podfile";
 				var lines = File.ReadAllLines(path);
@@ -132,7 +132,11 @@ namespace Nimbus.Editor {
 			var plistPath = path + "/Info.plist";
 			var plist = new PlistDocument();
 			plist.ReadFromString(File.ReadAllText(plistPath));
-
+			var nsUserTracking = plist.root.values.TryGetValue("NSUserTrackingUsageDescription", out var existingNsUserTracking)
+				? existingNsUserTracking.AsDict()
+				: plist.root.CreateDict("NSUserTrackingUsageDescription");
+			nsUserTracking.SetString("NSUserTrackingUsageDescription", "We need to track usages for Meta");
+			
 			var array = plist.root.values.TryGetValue(SkaAdNetworkEditor.SkaKey, out var existingArray)
 				? existingArray.AsArray()
 				: plist.root.CreateArray(SkaAdNetworkEditor.SkaKey);

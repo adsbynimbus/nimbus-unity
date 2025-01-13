@@ -10,6 +10,8 @@ import Foundation
 import NimbusRenderStaticKit
 import NimbusRenderVideoKit
 import NimbusKit
+import AppTrackingTransparency
+import AdSupport
 #if NIMBUS_ENABLE_APS
 import NimbusRequestAPSKit
 import DTBiOSSDK
@@ -19,7 +21,6 @@ import VungleAdsSDK
 import NimbusSDK
 #endif
 #if NIMBUS_ENABLE_META
-import NimbusSDK
 import FBAudienceNetwork
 #endif
 
@@ -54,6 +55,28 @@ import FBAudienceNetwork
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): videoRenderer,
         ]
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .authorized:
+                // Tracking authorization dialog was shown
+                // and we are authorized
+                print("Authorized")
+                
+                // Now that we are authorized we can get the IDFA
+                print(ASIdentifierManager.shared().advertisingIdentifier)
+            case .denied:
+                // Tracking authorization dialog was
+                // shown and permission is denied
+                print("Denied")
+            case .notDetermined:
+                // Tracking authorization dialog has not been shown
+                print("Not Determined")
+            case .restricted:
+                print("Restricted")
+            @unknown default:
+                print("Unknown")
+            }
+        }
     }
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
@@ -99,20 +122,18 @@ import FBAudienceNetwork
     #if NIMBUS_ENABLE_META
         @objc public class func initializeMeta(appKey: String, 
             advertiserTrackingEnabled: Bool, enableTestMode: Bool) {
-            let metaRequestInterceptor = NimbusFANRequestInterceptor(appId: appKey)
+            FBAdSettings.setMediationService("Ads By Nimbus")
             if (enableTestMode) {
                 Nimbus.shared.testMode = true
-                metaRequestInterceptor.forceTestAd = true
             }
-            NimbusRequestManager.requestInterceptors?.append(metaRequestInterceptor)
             Nimbus.shared.renderers = [.forNetwork("facebook"): NimbusFANAdRenderer()]
-            if #available(iOS 14, *) {
-                FBAdSettings.setAdvertiserTrackingEnabled(advertiserTrackingEnabled)
+            if #available(iOS 14.5, *), ATTrackingManager.trackingAuthorizationStatus == .authorized {
+                FBAdSettings.setAdvertiserTrackingEnabled(true)
             }
         }
         @objc public class func fetchMetaBiddingToken() -> String {
             return FBAdSettings.bidderToken
-        }       
+        }    
     #endif
     
     // MARK: - Private Functions
