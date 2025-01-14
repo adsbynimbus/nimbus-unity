@@ -43,8 +43,6 @@ namespace Nimbus.Editor {
 		
 		private SerializedProperty _iosMetaAppId;
 		
-		private SerializedProperty _iosMetaAdvertiserTrackingEnabled;
-		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -98,7 +96,6 @@ namespace Nimbus.Editor {
 			
 			// IOS Meta UI
 			_iosMetaAppId = serializedObject.FindProperty("iosMetaAppID");
-			_iosMetaAdvertiserTrackingEnabled = serializedObject.FindProperty("iosMetaAdvertiserTrackingEnabled");
 		}
 
 
@@ -214,7 +211,6 @@ namespace Nimbus.Editor {
 
 				#if UNITY_IOS
 					EditorGUILayout.PropertyField((_iosMetaAppId));
-					EditorGUILayout.PropertyField((_iosMetaAdvertiserTrackingEnabled));
 					GUILayout.Space(10);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif

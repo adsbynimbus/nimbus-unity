@@ -55,28 +55,6 @@ import FBAudienceNetwork
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): videoRenderer,
         ]
-        ATTrackingManager.requestTrackingAuthorization { status in
-            switch status {
-            case .authorized:
-                // Tracking authorization dialog was shown
-                // and we are authorized
-                print("Authorized")
-                
-                // Now that we are authorized we can get the IDFA
-                print(ASIdentifierManager.shared().advertisingIdentifier)
-            case .denied:
-                // Tracking authorization dialog was
-                // shown and permission is denied
-                print("Denied")
-            case .notDetermined:
-                // Tracking authorization dialog has not been shown
-                print("Not Determined")
-            case .restricted:
-                print("Restricted")
-            @unknown default:
-                print("Unknown")
-            }
-        }
     }
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
@@ -120,8 +98,7 @@ import FBAudienceNetwork
     #endif
     
     #if NIMBUS_ENABLE_META
-        @objc public class func initializeMeta(appKey: String, 
-            advertiserTrackingEnabled: Bool, enableTestMode: Bool) {
+        @objc public class func initializeMeta(appKey: String, enableTestMode: Bool) {
             FBAdSettings.setMediationService("Ads By Nimbus")
             if (enableTestMode) {
                 Nimbus.shared.testMode = true

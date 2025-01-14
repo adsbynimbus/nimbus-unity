@@ -120,9 +120,8 @@ extern "C" {
 #endif
 
 #if NIMBUS_ENABLE_META
-    void _initializeMeta(const char* appKey, bool advertiserTrackingEnabled, bool enableTestMode) {
-        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey) advertiserTrackingEnabled: advertiserTrackingEnabled
-         enableTestMode: enableTestMode];
+    void _initializeMeta(const char* appKey, bool enableTestMode) {
+        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey) enableTestMode: enableTestMode];
     }
     
     const char* _fetchMetaBiddingToken() {

@@ -114,7 +114,7 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_META
 				Debug.unityLogger.Log("Initializing iOS Meta SDK");
 				var appID = configuration.GetMetaData();
-				var meta = new MetaIOS(appID, configuration.iosMetaAdvertiserTrackingEnabled, configuration.enableSDKInTestMode);
+				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
 			#endif
