@@ -132,10 +132,6 @@ namespace Nimbus.Editor {
 			var plistPath = path + "/Info.plist";
 			var plist = new PlistDocument();
 			plist.ReadFromString(File.ReadAllText(plistPath));
-			var nsUserTracking = plist.root.values.TryGetValue("NSUserTrackingUsageDescription", out var existingNsUserTracking)
-				? existingNsUserTracking.AsDict()
-				: plist.root.CreateDict("NSUserTrackingUsageDescription");
-			nsUserTracking.SetString("NSUserTrackingUsageDescription", "We need to track usages for Meta");
 			
 			var array = plist.root.values.TryGetValue(SkaAdNetworkEditor.SkaKey, out var existingArray)
 				? existingArray.AsArray()

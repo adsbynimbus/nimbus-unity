@@ -8,6 +8,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 	internal class MetaAndroid : IInterceptor, IProvider {
 		private const string NimbusMetaPackage = "com.adsbynimbus.request.FANDemandProvider";
 		private readonly string _appID;
+		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
 
 		public MetaAndroid(string appID) {
@@ -24,8 +25,10 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			bidRequest.User.Ext.FacebookBuyerId = data;
 			if (bidRequest.Imp.Length > 0) {
 				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
-				//below forces test ad
-				//bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+				if (_testMode)
+				{
+					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+				}
 			}
 
 			return bidRequest;
@@ -33,15 +36,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
-			Debug.unityLogger.Log("METABIDDINGTOKEN", "DO WE GET HERE");
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			var buyerId = meta.GetStatic<string>("bidderToken");
 			Debug.unityLogger.Log("METABIDDINGTOKEN", buyerId);
 			return buyerId;
 		}
 		
-		public MetaAndroid(AndroidJavaObject applicationContext, string appID) {
+		public MetaAndroid(AndroidJavaObject applicationContext, bool testMode, string appID) {
 			_applicationContext = applicationContext;
+			_testMode = testMode;
 			_appID = appID;
 		}
 		

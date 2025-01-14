@@ -73,7 +73,7 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_META
 				var metaAppId = configuration.GetMetaData();
-				var meta = new MetaAndroid(_currentActivity, metaAppId);
+				var meta = new MetaAndroid(_currentActivity, configuration.enableSDKInTestMode, metaAppId);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
 			#endif
