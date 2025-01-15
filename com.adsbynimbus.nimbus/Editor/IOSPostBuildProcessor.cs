@@ -30,10 +30,6 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_VUNGLE
 					Dependencies.Add("'NimbusVungleKit'");
 				#endif
-				//#if NIMBUS_ENABLE_META 
-					//Dependencies.Add("'NimbusRequestFANKit'");
-					//Dependencies.Add("'NimbusRenderFANKit'");
-				//#endif
 				
 				var path = buildPath + "/Podfile";
 				var lines = File.ReadAllLines(path);
@@ -43,6 +39,13 @@ namespace Nimbus.Editor {
 					{
 						lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
 					}
+					#if NIMBUS_ENABLE_META 
+						//added FBAudienceNetwork pod itself instead of Nimbus subspecs due to FB cocoapod limitations
+						if (lines[i].Contains("UnityFramework") && i+1 < lines.Length)
+						{
+							lines[i+1] = $"pod 'FBAudienceNetwork'\n{lines[i+1]}";
+						}
+					#endif
 				}
 				File.WriteAllLines(path, lines);
 			}

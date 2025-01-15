@@ -19,7 +19,5 @@
     <!--The below pod does not include subspecs because those are added dynamically in IOSPostBuildProcessor.cs-->
     <iosPod name="NimbusSDK" version="2.24.2" bitcodeEnabled="false" 
             addToAllTargets="true"/>
-    <iosPod name="FBAudienceNetwork" bitcodeEnabled="false"
-            addToAllTargets="false"/>
   </iosPods>
 </dependencies>
