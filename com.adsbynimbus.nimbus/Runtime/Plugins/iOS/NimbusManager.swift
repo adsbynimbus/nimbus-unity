@@ -89,7 +89,7 @@ import FBAudienceNetwork
         @objc public class func initializeVungle(appKey: String) {
             let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
             NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
-            Nimbus.shared.renderers = [.forNetwork("vungle"): NimbusVungleAdRenderer()]
+            Nimbus.shared.renderers[.vungle] = NimbusVungleAdRenderer()
         }
         
         @objc public class func fetchVungleBuyerId() -> String {
@@ -103,7 +103,7 @@ import FBAudienceNetwork
             if (enableTestMode) {
                 Nimbus.shared.testMode = true
             }
-            Nimbus.shared.renderers = [.forNetwork("facebook"): NimbusFANAdRenderer()]
+            Nimbus.shared.renderers[.facebook] = NimbusFANAdRenderer()
             if #available(iOS 14.5, *), ATTrackingManager.trackingAuthorizationStatus == .authorized {
                 FBAdSettings.setAdvertiserTrackingEnabled(true)
             }
