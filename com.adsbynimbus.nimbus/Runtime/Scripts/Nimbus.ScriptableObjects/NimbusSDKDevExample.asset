@@ -34,6 +34,5 @@ MonoBehaviour:
     AdUnitType: 3
   androidVungleAppID: 
   iosVungleAppID: 
-  androidMetaAppID: 191445434271484
-  iosMetaAppID: 191445434271484
-  iosMetaAdvertiserTrackingEnabled: 0
+  androidMetaAppID: 
+  iosMetaAppID: 
