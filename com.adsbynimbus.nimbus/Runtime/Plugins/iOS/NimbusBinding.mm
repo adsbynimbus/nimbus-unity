@@ -18,10 +18,12 @@
 extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
-                                     bool enableUnityLogs) {
+                                     bool enableUnityLogs,
+                                     bool enableSDKInTestMode) {
         [NimbusManager initializeNimbusSDKWithPublisher: GetStringParam(publisher)
                                                  apiKey: GetStringParam(apikey)
-                                        enableUnityLogs: enableUnityLogs];
+                                        enableUnityLogs: enableUnityLogs
+                                        enableSDKInTestMode: enableSDKInTestMode];
     }
 
      void _renderAd(int adUnitInstanceId,
@@ -120,8 +122,8 @@ extern "C" {
 #endif
 
 #if NIMBUS_ENABLE_META
-    void _initializeMeta(const char* appKey, bool enableTestMode) {
-        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey) enableTestMode: enableTestMode];
+    void _initializeMeta(const char* appKey) {
+        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey)];
     }
     
     const char* _fetchMetaBiddingToken() {

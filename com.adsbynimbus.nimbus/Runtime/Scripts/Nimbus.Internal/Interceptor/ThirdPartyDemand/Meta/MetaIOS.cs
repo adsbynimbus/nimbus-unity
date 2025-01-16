@@ -14,7 +14,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		private readonly bool _testMode;
 		
 		[DllImport("__Internal")]
-		private static extern void _initializeMeta(string appKey, bool enableTestMode);
+		private static extern void _initializeMeta(string appKey);
 
 		[DllImport("__Internal")]
 		private static extern string _fetchMetaBiddingToken();
@@ -29,6 +29,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			bidRequest.User.Ext.FacebookBuyerId = data;
 			if (bidRequest.Imp.Length > 0) {
 				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
+				if (_testMode) {
+					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+				}
 			}
 
 			return bidRequest;
@@ -47,7 +50,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		}
 
 		public void InitializeNativeSDK() {
-			_initializeMeta(_appID, _testMode);
+			_initializeMeta(_appID);
 		}
 
 	}

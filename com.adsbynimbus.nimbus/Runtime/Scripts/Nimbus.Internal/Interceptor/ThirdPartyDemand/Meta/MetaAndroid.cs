@@ -25,6 +25,10 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			bidRequest.User.Ext.FacebookBuyerId = data;
 			if (bidRequest.Imp.Length > 0) {
 				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
+				if (_testMode)
+				{
+					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+				}
 			}
 
 			return bidRequest;

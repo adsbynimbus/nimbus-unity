@@ -30,7 +30,8 @@ namespace Nimbus.Internal {
 		private static extern void _initializeSDKWithPublisher(
 			string publisher,
 			string apiKey,
-			bool enableUnityLogs);
+			bool enableUnityLogs,
+			bool enableSDKInTestMode);
 
 		[DllImport("__Internal")]
 		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
@@ -86,7 +87,7 @@ namespace Nimbus.Internal {
 			
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
-				configuration.enableUnityLogs);
+				configuration.enableUnityLogs, configuration.enableSDKInTestMode);
 			
 			var plist = GetPlistJson();
 			if (StaticMethod.InitializeInterceptor() || !plist.IsNullOrEmpty()) {

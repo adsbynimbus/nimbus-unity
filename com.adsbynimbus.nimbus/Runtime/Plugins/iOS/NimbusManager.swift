@@ -45,7 +45,8 @@ import FBAudienceNetwork
     @objc public class func initializeNimbusSDK(
         publisher: String,
         apiKey: String,
-        enableUnityLogs: Bool
+        enableUnityLogs: Bool,
+        enableSDKInTestMode: Bool
     ) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
@@ -55,6 +56,7 @@ import FBAudienceNetwork
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): videoRenderer,
         ]
+        Nimbus.shared.testMode = enableSDKInTestMode
     }
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
@@ -98,11 +100,8 @@ import FBAudienceNetwork
     #endif
     
     #if NIMBUS_ENABLE_META
-        @objc public class func initializeMeta(appKey: String, enableTestMode: Bool) {
+        @objc public class func initializeMeta(appKey: String) {
             FBAdSettings.setMediationService("Ads By Nimbus")
-            if (enableTestMode) {
-                Nimbus.shared.testMode = true
-            }
             Nimbus.shared.renderers[.facebook] = NimbusFANAdRenderer()
             if #available(iOS 14.5, *), ATTrackingManager.trackingAuthorizationStatus == .authorized {
                 FBAdSettings.setAdvertiserTrackingEnabled(true)
