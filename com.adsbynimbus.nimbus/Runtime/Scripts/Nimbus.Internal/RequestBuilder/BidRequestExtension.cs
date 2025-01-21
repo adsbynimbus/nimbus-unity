@@ -74,9 +74,13 @@ namespace Nimbus.Internal.RequestBuilder {
 		
 		public static BidRequest SetUsPrivacy(this BidRequest bidRequest, string usPrivacyString) {
 			bidRequest.Regs ??= new Regs { };
-			bidRequest.Regs.Ext ??= new RegExt {
-				UsPrivacy = usPrivacyString
-			};
+			if (!usPrivacyString.IsNullOrEmpty())
+			{
+				bidRequest.Regs.Ext ??= new RegExt
+				{
+					UsPrivacy = usPrivacyString
+				};
+			}
 			return bidRequest;
 		}
 		
