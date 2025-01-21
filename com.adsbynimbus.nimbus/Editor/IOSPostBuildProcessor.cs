@@ -39,6 +39,13 @@ namespace Nimbus.Editor {
 					{
 						lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
 					}
+					#if NIMBUS_ENABLE_META 
+						//added FBAudienceNetwork pod itself instead of Nimbus subspecs due to FB cocoapod limitations
+						if (lines[i].Contains("UnityFramework") && i+1 < lines.Length)
+						{
+							lines[i+1] = $"pod 'FBAudienceNetwork'\n{lines[i+1]}";
+						}
+					#endif
 				}
 				File.WriteAllLines(path, lines);
 			}
@@ -68,6 +75,14 @@ namespace Nimbus.Editor {
 				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_VUNGLE");
 				// Enable MACRO for C++ code
 				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_VUNGLE");
+			#endif
+			
+			#if NIMBUS_ENABLE_META
+				var projectGuid = pbx.ProjectGuid();
+				// Enable MACRO for Swift code
+				pbx.SetBuildProperty(projectGuid, "SWIFT_ACTIVE_COMPILATION_CONDITIONS", "NIMBUS_ENABLE_META");
+				// Enable MACRO for C++ code
+				pbx.SetBuildProperty(projectGuid, "GCC_PREPROCESSOR_DEFINITIONS", "NIMBUS_ENABLE_META");
 			#endif
 
 			// Unity-IPhone
@@ -120,7 +135,7 @@ namespace Nimbus.Editor {
 			var plistPath = path + "/Info.plist";
 			var plist = new PlistDocument();
 			plist.ReadFromString(File.ReadAllText(plistPath));
-
+			
 			var array = plist.root.values.TryGetValue(SkaAdNetworkEditor.SkaKey, out var existingArray)
 				? existingArray.AsArray()
 				: plist.root.CreateArray(SkaAdNetworkEditor.SkaKey);

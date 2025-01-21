@@ -26,5 +26,11 @@ namespace OpenRTB.Request {
 
         [JsonProperty("skadn", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public Skadn Skadn;
+
+        [JsonProperty("facebook_app_id", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string FacebookAppId;
+
+        [JsonProperty("facebook_test_ad_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string MetaTestAdType;
     }
 }

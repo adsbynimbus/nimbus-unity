@@ -38,6 +38,11 @@ namespace Nimbus.Editor {
 		
 		private SerializedProperty _iosVungleAppId;
 		
+		// Meta
+		private SerializedProperty _androidMetaAppId;
+		
+		private SerializedProperty _iosMetaAppId;
+		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -84,6 +89,13 @@ namespace Nimbus.Editor {
 			
 			// IOS Vungle UI
 			_iosVungleAppId = serializedObject.FindProperty("iosVungleAppID");
+			
+			// Meta
+			// Android Meta UI
+			_androidMetaAppId = serializedObject.FindProperty("androidMetaAppID");
+			
+			// IOS Meta UI
+			_iosMetaAppId = serializedObject.FindProperty("iosMetaAppID");
 		}
 
 
@@ -144,7 +156,7 @@ namespace Nimbus.Editor {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 
@@ -187,6 +199,26 @@ namespace Nimbus.Editor {
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
 				#endif
 			#endif
+			
+			#if NIMBUS_ENABLE_META
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Meta Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField((_androidMetaAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField((_iosMetaAppId));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Meta data", MessageType.Warning);
+				#endif
+			#endif
 
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create")) {
@@ -220,6 +252,12 @@ namespace Nimbus.Editor {
 				
 				#if NIMBUS_ENABLE_VUNGLE
 					if (!ValidateVungleData()) {
+						return;
+					}
+				#endif
+				
+				#if NIMBUS_ENABLE_META
+					if (!ValidateMetaData()) {
 						return;
 					}
 				#endif	
@@ -342,7 +380,22 @@ namespace Nimbus.Editor {
 					"Vungle SDK has been included, the Vungle App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
-			ApsSlotData[] slotData = null;
+			return true;
+		}
+		
+		private bool ValidateMetaData() {
+			string appId = null;
+			#if UNITY_ANDROID
+				appId = _androidMetaAppId.stringValue;
+			#elif UNITY_IOS
+				appId = _iosMetaAppId.stringValue;
+			#endif
+			
+			if (appId.IsNullOrEmpty()) {
+				Debug.unityLogger.LogError("Nimbus", 
+					"Meta SDK has been included, the Meta App ID cannot be empty, object NimbusAdsManager not created");
+				return false;
+			}
 			return true;
 		}
 	}

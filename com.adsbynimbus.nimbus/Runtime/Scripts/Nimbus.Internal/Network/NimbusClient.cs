@@ -53,7 +53,8 @@ namespace Nimbus.Internal.Network {
 				const string nimbusResponse = "{\"message\": \"in Editor mode, network request will not be made\"}";
 #else
 				// This will throw an exception if the bid request is missing required data from Nimbus 
-				var body = JsonConvert.SerializeObject(bidRequest);
+				var body = JsonConvert.SerializeObject(bidRequest, new JsonSerializerSettings() { 
+															NullValueHandling = NullValueHandling.Ignore });
 				Debug.unityLogger.Log("Nimbus", $"BID REQUEST: {body}");
 				HttpContent jsonBody = new StringContent(body, Encoding.UTF8, "application/json");
 				var serverResponse = await Client.PostAsync(_nimbusEndpoint, jsonBody, _ctx.Token);

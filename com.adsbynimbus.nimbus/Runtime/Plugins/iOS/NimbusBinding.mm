@@ -18,10 +18,12 @@
 extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
-                                     bool enableUnityLogs) {
+                                     bool enableUnityLogs,
+                                     bool enableSDKInTestMode) {
         [NimbusManager initializeNimbusSDKWithPublisher: GetStringParam(publisher)
                                                  apiKey: GetStringParam(apikey)
-                                        enableUnityLogs: enableUnityLogs];
+                                        enableUnityLogs: enableUnityLogs
+                                        enableSDKInTestMode: enableSDKInTestMode];
     }
 
      void _renderAd(int adUnitInstanceId,
@@ -117,6 +119,15 @@ extern "C" {
     const char* _fetchVungleBuyerId() {
         return strdup([[NimbusManager fetchVungleBuyerId] UTF8String]);
     }
+#endif
+
+#if NIMBUS_ENABLE_META
+    void _initializeMeta(const char* appKey) {
+        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey)];
+    }
     
+    const char* _fetchMetaBiddingToken() {
+        return strdup([[NimbusManager fetchMetaBiddingToken] UTF8String]);
+    }
 #endif
 }

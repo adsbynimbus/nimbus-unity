@@ -10,6 +10,8 @@ import Foundation
 import NimbusRenderStaticKit
 import NimbusRenderVideoKit
 import NimbusKit
+import AppTrackingTransparency
+import AdSupport
 #if NIMBUS_ENABLE_APS
 import NimbusRequestAPSKit
 import DTBiOSSDK
@@ -17,6 +19,9 @@ import DTBiOSSDK
 #if NIMBUS_ENABLE_VUNGLE
 import VungleAdsSDK
 import NimbusSDK
+#endif
+#if NIMBUS_ENABLE_META
+import FBAudienceNetwork
 #endif
 
 @objc public class NimbusManager: NSObject {
@@ -40,7 +45,8 @@ import NimbusSDK
     @objc public class func initializeNimbusSDK(
         publisher: String,
         apiKey: String,
-        enableUnityLogs: Bool
+        enableUnityLogs: Bool,
+        enableSDKInTestMode: Bool
     ) {
         Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
         Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
@@ -50,6 +56,7 @@ import NimbusSDK
             .forAuctionType(.static): NimbusStaticAdRenderer(),
             .forAuctionType(.video): videoRenderer,
         ]
+        Nimbus.shared.testMode = enableSDKInTestMode
     }
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
@@ -84,12 +91,25 @@ import NimbusSDK
         @objc public class func initializeVungle(appKey: String) {
             let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
             NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
-            Nimbus.shared.renderers = [.forNetwork("vungle"): NimbusVungleAdRenderer()]
+            Nimbus.shared.renderers[.vungle] = NimbusVungleAdRenderer()
         }
         
         @objc public class func fetchVungleBuyerId() -> String {
             return VungleAds.getBiddingToken()
         }
+    #endif
+    
+    #if NIMBUS_ENABLE_META
+        @objc public class func initializeMeta(appKey: String) {
+            FBAdSettings.setMediationService("Ads By Nimbus")
+            Nimbus.shared.renderers[.facebook] = NimbusFANAdRenderer()
+            if #available(iOS 14.5, *), ATTrackingManager.trackingAuthorizationStatus == .authorized {
+                FBAdSettings.setAdvertiserTrackingEnabled(true)
+            }
+        }
+        @objc public class func fetchMetaBiddingToken() -> String {
+            return FBAdSettings.bidderToken
+        }    
     #endif
     
     // MARK: - Private Functions

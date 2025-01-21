@@ -10,5 +10,10 @@ namespace Nimbus.Editor {
 		{
 			return $@"implementation ""com.adsbynimbus.android:extension-vungle:{SdkVersion}""";
 		}
+		
+		public static string MetaBuildDependencies()
+		{
+			return $@"implementation ""com.adsbynimbus.android:extension-facebook:2.+""";
+		}
 	}
 }

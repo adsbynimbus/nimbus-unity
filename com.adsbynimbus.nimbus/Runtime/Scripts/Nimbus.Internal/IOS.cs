@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -29,7 +30,8 @@ namespace Nimbus.Internal {
 		private static extern void _initializeSDKWithPublisher(
 			string publisher,
 			string apiKey,
-			bool enableUnityLogs);
+			bool enableUnityLogs,
+			bool enableSDKInTestMode);
 
 		[DllImport("__Internal")]
 		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
@@ -85,7 +87,7 @@ namespace Nimbus.Internal {
 			
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
-				configuration.enableUnityLogs);
+				configuration.enableUnityLogs, configuration.enableSDKInTestMode);
 			
 			var plist = GetPlistJson();
 			if (StaticMethod.InitializeInterceptor() || !plist.IsNullOrEmpty()) {
@@ -109,6 +111,13 @@ namespace Nimbus.Internal {
 				var vungle = new VungleIOS(appID);
 				vungle.InitializeNativeSDK();
 				_interceptors.Add(vungle);
+			#endif
+			#if NIMBUS_ENABLE_META
+				Debug.unityLogger.Log("Initializing iOS Meta SDK");
+				var appID = configuration.GetMetaData();
+				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
+				meta.InitializeNativeSDK();
+				_interceptors.Add(meta);
 			#endif
 		}
 

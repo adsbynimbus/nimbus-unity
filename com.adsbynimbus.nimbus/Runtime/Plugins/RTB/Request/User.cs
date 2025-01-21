@@ -36,5 +36,8 @@ namespace OpenRTB.Request {
         
         [JsonProperty("vungle_buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string VungleBuyerId;
+
+        [JsonProperty("facebook_buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string FacebookBuyerId;
     }
 }
