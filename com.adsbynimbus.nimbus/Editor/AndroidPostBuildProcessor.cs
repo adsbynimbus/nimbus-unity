@@ -43,7 +43,7 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 			packagingWriter.Flush();
 			packagingWriter.Close();
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");

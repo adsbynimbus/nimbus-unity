@@ -30,6 +30,9 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_VUNGLE
 					Dependencies.Add("'NimbusVungleKit'");
 				#endif
+				#if NIMBUS_ENABLE_ADMOB
+					Dependencies.Add("'NimbusAdMobKit'");
+				#endif
 				
 				var path = buildPath + "/Podfile";
 				var lines = File.ReadAllLines(path);
@@ -103,7 +106,7 @@ namespace Nimbus.Editor {
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unityRenderingHeaderFile);
 			pbx.AddPublicHeaderToBuild(unityFrameworkGuid, unitySharedDeclsHeaderFile);
 			pbx.WriteToFile(pbxPath);
-			AddSkaAdNetworkIdsToPlist(path);
+			AddItemsToPlist(path);
 		}
 
 		private static void ChangeUnityFrameworkHeader(string path) {
@@ -127,11 +130,11 @@ namespace Nimbus.Editor {
 			}
 		}
 
-		private static void AddSkaAdNetworkIdsToPlist(string path) {
-			if (!File.Exists(SkaAdNetworkEditor.SkaAdSavePath)) {
+		private static void AddItemsToPlist(string path) {
+			if (!File.Exists(SkaAdNetworkEditor.SkaAdSavePath))
+			{
 				return;
 			}
-
 			var plistPath = path + "/Info.plist";
 			var plist = new PlistDocument();
 			plist.ReadFromString(File.ReadAllText(plistPath));
@@ -155,8 +158,17 @@ namespace Nimbus.Editor {
 					array.AddDict().SetString(SkaAdNetworkEditor.SkaItem, id);
 				}
 			}
-
 			Debug.unityLogger.Log($"Writing SkAdNetwork ids to {path}");
+			#if NIMBUS_ENABLE_ADMOB
+				foreach (var id in File.ReadLines("Assets/Editor/AdMobIds")) {
+					var trimmedID = id.Trim();
+					if (trimmedID.Contains("ios"))
+					{
+						trimmedID = trimmedID.Remove(0, 4);
+						plist.root.SetString("GADApplicationIdentifier",trimmedID);
+					}
+				}
+			#endif
 			plist.WriteToFile(plistPath);
 		}
 	}
