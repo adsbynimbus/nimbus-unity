@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
@@ -118,6 +119,13 @@ namespace Nimbus.Internal {
 				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
+			#endif
+			#if NIMBUS_ENABLE_ADMOB
+				Debug.unityLogger.Log("Initializing iOS AdMob SDK");
+				var (appID, adUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobIOS(appID, adUnitIds, configuration.enableSDKInTestMode);
+				admob.InitializeNativeSDK();
+				_interceptors.Add(admob);
 			#endif
 		}
 

@@ -111,13 +111,14 @@ namespace Nimbus.Internal {
 		}
 
 		
-		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
+		internal async void LoadJsonResponseAsync(Task<string> jsonBody, bool error) {
 			await Task.Run(async () => {
 				var response = "";
 				try {
 					response = await jsonBody;
 				} catch (Exception e) { }
-				if (response.Contains("message")) {
+				
+				if (error) {
 					Debug.unityLogger.Log("Nimbus",$"RESPONSE ERROR: {response}");
 					ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
 					_adEvents.FireOnAdErrorEvent(this);

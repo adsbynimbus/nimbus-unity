@@ -123,5 +123,15 @@ namespace Nimbus.ScriptableObjects {
 		#endif
 			return appID;
 		}
+		
+		public Tuple<string, AdMobAdUnit[]> GetAdMobData() {
+			var appID = androidAdMobAppID;
+			var adUnitIds = androidAdMobAdUnitData;
+			#if UNITY_IOS
+				appID = iosAdMobAppID;
+				adUnitIds =  iosAdMobAdUnitData;
+			#endif
+			return new Tuple<string, AdMobAdUnit[]>(appID, adUnitIds);
+		}
 	}
 }

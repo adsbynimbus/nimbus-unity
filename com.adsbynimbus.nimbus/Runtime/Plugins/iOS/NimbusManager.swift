@@ -23,6 +23,11 @@ import NimbusSDK
 #if NIMBUS_ENABLE_META
 import FBAudienceNetwork
 #endif
+#if NIMBUS_ENABLE_ADMOB
+import NimbusSDK
+import GoogleMobileAds
+import NimbusRequestKit
+#endif
 
 @objc public class NimbusManager: NSObject {
     
@@ -110,6 +115,57 @@ import FBAudienceNetwork
         @objc public class func fetchMetaBiddingToken() -> String {
             return FBAdSettings.bidderToken
         }    
+    #endif
+    
+    #if NIMBUS_ENABLE_ADMOB
+        @objc public class func initializeAdMob() {
+            GADMobileAds.sharedInstance().start(completionHandler: nil)
+            Nimbus.shared.renderers[.forNetwork("admob")] = NimbusAdMobAdRenderer()
+        }
+        @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String) -> String {
+            let provider = { (signalRequest, callback) in
+                            GADMobileAds.generateSignal(signalRequest, completionHandler: callback)
+                        }
+            var signalRequest: GADSignalRequest = GADBannerSignalRequest(signalType: "requester_type_2")
+            switch adUnitType {
+                case 0, 1:
+                    let bannerSignalRequest = GADBannerSignalRequest(signalType: "requester_type_2")
+                    bannerSignalRequest.adSize = GADAdSizeFromCGSize(CGSize(width: 320, height: 50))
+                    signalRequest = bannerSignalRequest
+                    break
+                case 2:
+                    signalRequest = GADInterstitialSignalRequest(signalType: "requester_type_2")
+                    break
+                case 3:
+                    signalRequest = GADRewardedSignalRequest(signalType: "requester_type_2")
+                    break
+                default:
+                    break
+            }
+            signalRequest.adUnitID = adUnitId
+            signalRequest.requestAgent = "nimbus"
+            
+            let extras = GADExtras()
+            extras.additionalParameters = ["query_info_type": "requester_type_2"]
+            signalRequest.register(extras)
+            var signalString = ""
+            let group = DispatchGroup()
+            group.enter()
+            provider(signalRequest) { signal, error in
+                    defer { group.leave() }
+                    
+                    if let error {
+                        Nimbus.shared.logger.log("Couldn't generate AdMob request, error: \(error.localizedDescription)", level: .debug)
+                    }
+                    if let signal {
+                        Nimbus.shared.logger.log(signal.signalString, level: .debug)
+
+                        signalString = signal.signalString
+                    }
+                }
+            group.wait()
+            return signalString
+        }
     #endif
     
     // MARK: - Private Functions

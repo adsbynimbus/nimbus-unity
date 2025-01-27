@@ -39,5 +39,9 @@ namespace OpenRTB.Request {
 
         [JsonProperty("facebook_buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string FacebookBuyerId;
+        
+        [JsonProperty("admob_gde_signals", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string AdMobSignals;
+        
     }
 }

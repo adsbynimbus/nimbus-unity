@@ -130,4 +130,14 @@ extern "C" {
         return strdup([[NimbusManager fetchMetaBiddingToken] UTF8String]);
     }
 #endif
+
+#if NIMBUS_ENABLE_ADMOB
+    void _initializeAdMob() {
+        [NimbusManager initializeAdMob];
+    }
+    
+    const char* _getAdMobRequestModifiers(int adUnitType, const char* adUnitId) {
+        return strdup([[NimbusManager getAdMobRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId)] UTF8String]);
+    }
+#endif
 }
