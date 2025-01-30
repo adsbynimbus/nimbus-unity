@@ -136,8 +136,8 @@ extern "C" {
         [NimbusManager initializeAdMob];
     }
     
-    const char* _getAdMobRequestModifiers(int adUnitType, const char* adUnitId) {
-        return strdup([[NimbusManager getAdMobRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId)] UTF8String]);
+    const char* _getAdMobRequestModifiers(int adUnitType, const char* adUnitId, int width, int height) {
+        return strdup([[NimbusManager getAdMobRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId)  width: width height: height] UTF8String]);
     }
 #endif
 }

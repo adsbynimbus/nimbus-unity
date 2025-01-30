@@ -122,15 +122,31 @@ import NimbusRequestKit
             GADMobileAds.sharedInstance().start(completionHandler: nil)
             Nimbus.shared.renderers[.forNetwork("admob")] = NimbusAdMobAdRenderer()
         }
-        @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String) -> String {
+        @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {    
+           /*var signalString = ""
+           switch adUnitType {
+                case 0, 1:
+                    signalString = FetchAdMobBannerSignal(adUnitId, width, height)
+                    break
+                case 2:
+                    signalString = FetchAdMobInterstitialSignal(adUnitId)
+                    break
+                case 3:
+                    signalString = FetchAdMobInterstitialSignal(adUnitId)
+                    break
+                default:
+                    break
+            }
+            return signalString*/
             let provider = { (signalRequest, callback) in
                             GADMobileAds.generateSignal(signalRequest, completionHandler: callback)
                         }
+            Nimbus.shared.logger.log("adUnitType \(adUnitType) adUnitId: \(adUnitId)", level: .debug)
             var signalRequest: GADSignalRequest = GADBannerSignalRequest(signalType: "requester_type_2")
             switch adUnitType {
                 case 0, 1:
                     let bannerSignalRequest = GADBannerSignalRequest(signalType: "requester_type_2")
-                    bannerSignalRequest.adSize = GADAdSizeFromCGSize(CGSize(width: 320, height: 50))
+                    bannerSignalRequest.adSize = GADAdSizeFromCGSize(CGSize(width: width, height: height))
                     signalRequest = bannerSignalRequest
                     break
                 case 2:

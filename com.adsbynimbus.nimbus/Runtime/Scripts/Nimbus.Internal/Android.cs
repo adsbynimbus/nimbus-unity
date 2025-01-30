@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Utility;
@@ -76,6 +77,11 @@ namespace Nimbus.Internal {
 				var meta = new MetaAndroid(_currentActivity, configuration.enableSDKInTestMode, metaAppId);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
+			#endif
+			#if NIMBUS_ENABLE_ADMOB
+				var (appID, adUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobAndroid(_currentActivity, appID, adUnitIds, configuration.enableSDKInTestMode);
+				_interceptors.Add(admob);
 			#endif
 		}
 

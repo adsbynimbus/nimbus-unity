@@ -278,7 +278,7 @@ namespace Nimbus.Editor {
 				#if UNITY_ANDROID
 					EditorGUILayout.PropertyField((_androidAdMobAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-					EditorDrawUtility.DrawArray(_androidAdMobUnitData, "Android Ad Unit Id Data");
+					EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "Android Ad Unit Id Data");
 				#endif
 
 				#if UNITY_IOS

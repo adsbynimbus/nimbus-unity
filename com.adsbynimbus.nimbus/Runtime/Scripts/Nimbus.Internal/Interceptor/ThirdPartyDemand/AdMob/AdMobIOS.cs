@@ -15,25 +15,36 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		private readonly bool _testMode;
 		private readonly AdMobAdUnit[] _adUnitIds;
 		private AdUnitType _type;
+		private string _adUnitId;
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeAdMob();
 
 		[DllImport("__Internal")]
-		private static extern string _getAdMobRequestModifiers(int adUnitType, string adUnitId);
+		private static extern string _getAdMobRequestModifiers(int adUnitType, string adUnitId, int width, int height);
 
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data)
 		{
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			//maybe pass w/h to initialize ad format? NimbusAdFormat
-			var adMobSignals = _getAdMobRequestModifiers((int) _type, data);
+			var width = 0;
+			var height = 0;
+			if (!bidRequest.Imp.IsNullOrEmpty())
+			{
+				if (bidRequest.Imp[0].Banner != null)
+				{
+					width = bidRequest.Imp[0].Banner.W ?? 0;
+					height = bidRequest.Imp[0].Banner.H ?? 0;
+				}
+			}
+			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
 			}
 			bidRequest.User.Ext.AdMobSignals = adMobSignals;
 			Debug.unityLogger.Log("AdMob Signals", adMobSignals);
+			
 			return bidRequest;
 		}
 
@@ -43,6 +54,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			{
 				if (adUnit.AdUnitType == type)
 				{
+					_adUnitId = adUnit.AdUnitId;
 					_type = type;
 					Debug.unityLogger.Log("AdMob AdUnitId", adUnit.AdUnitId);
 					return adUnit.AdUnitId;
