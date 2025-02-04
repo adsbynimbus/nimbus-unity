@@ -8,7 +8,7 @@ using UnityEngine;
 [assembly:InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 	internal class AdMobAndroid : IInterceptor, IProvider {
-		private const string NimbusAdMobPackage = "com.adsbynimbus.request.NimbusRequestsAdmob";
+		private const string NimbusAdMobPackage = "com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal";
 
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
@@ -64,21 +64,31 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				}
 			}
 			// data is the adUnitId
-			var adMob = new AndroidJavaClass(NimbusAdMobPackage);
-			var adMobSignal = "";
-			switch (_adUnitType)
+			try
 			{
-				case AdUnitType.Banner: case AdUnitType.Undefined:
-					adMobSignal = adMob.CallStatic<string>("fetchAdMobBannerSignal", data, width, height);
-					break;
-				case AdUnitType.Interstitial:
-					adMobSignal = adMob.CallStatic<string>("fetchAdMobInterstitialSignal", data);
-					break;
-				case AdUnitType.Rewarded:
-					adMobSignal = adMob.CallStatic<string>("fetchAdMobRewardedSignal", data);
-					break;
+				var adMob = new AndroidJavaClass(NimbusAdMobPackage);
+				var adMobSignal = "";
+				switch (_adUnitType)
+				{
+					case AdUnitType.Banner:
+					case AdUnitType.Undefined:
+						adMobSignal = adMob.CallStatic<string>("fetchAdMobBannerSignal", data);
+						break;
+					case AdUnitType.Interstitial:
+						adMobSignal = adMob.CallStatic<string>("fetchAdMobInterstitialSignal", data);
+						break;
+					case AdUnitType.Rewarded:
+						adMobSignal = adMob.CallStatic<string>("fetchAdMobRewardedSignal", data);
+						break;
+				}
+				
+				Debug.unityLogger.Log("AdMob AdUnitSignal", adMobSignal);
+				bidRequest.User.Ext.AdMobSignals = adMobSignal;
 			}
-			bidRequest.User.Ext.AdMobSignals = adMobSignal;
+			catch (AndroidJavaException e)
+			{
+				Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
+			}
 			return bidRequest;
 		}
 	}

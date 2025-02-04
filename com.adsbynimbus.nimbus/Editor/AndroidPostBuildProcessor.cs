@@ -51,14 +51,15 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 					trimmedID = id.Trim();
 					if (trimmedID.Contains("android"))
 					{
-						trimmedID = trimmedID.Remove(0, 4);
+						trimmedID = trimmedID.Remove(0, 8);
+						break;
 					}
 				}
 				//put saved appId in AndroidManifest
 				var sb = new StringBuilder();
 				var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
 				var metaData =
-					$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>\"";
+					$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
 				using (var sr = new StreamReader(manifestPath)) {
 					string line;
 					do {
@@ -89,7 +90,8 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 					builder.AppendLine(AndroidBuildDependencies.MetaBuildDependencies());
 				#endif
 				#if NIMBUS_ENABLE_ADMOB
-					builder.AppendLine(AndroidBuildDependencies.AdMobBuildDependencies());
+					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
+					builder.AppendLine(AndroidBuildDependencies.AdMobGoogleBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");

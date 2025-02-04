@@ -16,9 +16,14 @@ namespace Nimbus.Editor {
 			return @"implementation ""com.adsbynimbus.android:extension-facebook:2.+""";
 		}
 		
-		public static string AdMobBuildDependencies()
+		public static string AdMobNimbusBuildDependency()
 		{
-			return @"implementation ""com.adsbynimbus.android:extension-admob:2.+""\nimplementation ""com.google.android.gms:play-services-ads:23.+""";
+			return @"implementation ""com.adsbynimbus.android:extension-admob:2.+""";
+		}
+
+		public static string AdMobGoogleBuildDependency()
+		{
+			return @"implementation ""com.google.android.gms:play-services-ads:23.+""";
 		}
 	}
 }
