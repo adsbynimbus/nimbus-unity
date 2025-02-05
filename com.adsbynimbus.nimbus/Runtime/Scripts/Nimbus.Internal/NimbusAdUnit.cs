@@ -125,7 +125,7 @@ namespace Nimbus.Internal {
 				}
 				_adWasReturned = true;
 				BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
-				BidResponse.Ext.useNewRenderer = true;
+				BidResponse.Ext.UseNewRenderer = true;
 				RawBidResponse = JsonConvert.SerializeObject(BidResponse);
 				Debug.unityLogger.Log("Nimbus",$"BID RESPONSE: {RawBidResponse}");
 				_adEvents.FireOnAdLoadedEvent(this);

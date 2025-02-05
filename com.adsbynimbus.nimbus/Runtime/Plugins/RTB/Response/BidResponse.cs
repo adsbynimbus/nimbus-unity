@@ -50,6 +50,6 @@ namespace OpenRTB.Response {
         
         [DefaultValue(true)]
         [JsonProperty("use_new_renderer", DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool useNewRenderer;
+        public bool UseNewRenderer;
     }
 }
