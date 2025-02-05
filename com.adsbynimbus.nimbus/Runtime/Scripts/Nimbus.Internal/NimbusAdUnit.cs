@@ -123,10 +123,11 @@ namespace Nimbus.Internal {
 					_adEvents.FireOnAdErrorEvent(this);
 					return;
 				}
-				Debug.unityLogger.Log("Nimbus",$"BID RESPONSE: {response}");
 				_adWasReturned = true;
-				RawBidResponse = response;
 				BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
+				BidResponse.Ext.useNewRenderer = true;
+				RawBidResponse = JsonConvert.SerializeObject(BidResponse);
+				Debug.unityLogger.Log("Nimbus",$"BID RESPONSE: {RawBidResponse}");
 				_adEvents.FireOnAdLoadedEvent(this);
 			});
 		}
