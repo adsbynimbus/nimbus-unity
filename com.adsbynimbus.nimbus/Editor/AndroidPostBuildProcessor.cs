@@ -91,7 +91,7 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				#endif
 				#if NIMBUS_ENABLE_ADMOB
 					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
-					builder.AppendLine(AndroidBuildDependencies.AdMobGoogleBuildDependency());
+					builder.AppendLine(AndroidBuildDependencies.AdMobCollectionFixBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");

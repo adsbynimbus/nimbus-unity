@@ -1,6 +1,6 @@
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {
-		private const string SdkVersion = "2.23.0";
+		private const string SdkVersion = "2.26.1";
 
 		public static string APSBuildDependencies() {
 			return @"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""";
@@ -18,12 +18,13 @@ namespace Nimbus.Editor {
 		
 		public static string AdMobNimbusBuildDependency()
 		{
-			return @"implementation ""com.adsbynimbus.android:extension-admob:2.+""";
+			return $@"implementation (""com.adsbynimbus.android:extension-admob:{SdkVersion}"")" + "{exclude group: 'androidx.collection', module: 'collection'}";
 		}
-
-		public static string AdMobGoogleBuildDependency()
+		
+		//this is needed because of a weird error caused by the Unity Build System
+		public static string AdMobCollectionFixBuildDependency()
 		{
-			return @"implementation ""com.google.android.gms:play-services-ads:23.+""";
+			return @"implementation ""androidx.collection:collection:1.4.5""";
 		}
 	}
 }
