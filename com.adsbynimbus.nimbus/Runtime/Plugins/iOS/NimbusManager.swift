@@ -36,10 +36,6 @@ import NimbusRequestKit
     private let adUnitInstanceId: Int
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
-    private var adView: NimbusAdView?
-    private var nimbusAdVC: NimbusAdViewController?
-    private lazy var thirdPartyInterstitialAdManager = ThirdPartyInterstitialAdManager()
-    private var thirdPartyInterstitialAdController: AdController?
     
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
@@ -123,64 +119,29 @@ import NimbusRequestKit
             Nimbus.shared.renderers[.forNetwork("admob")] = NimbusAdMobAdRenderer()
         }
         @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {    
-           /*var signalString = ""
-           switch adUnitType {
-                case 0, 1:
-                    signalString = FetchAdMobBannerSignal(adUnitId, width, height)
-                    break
-                case 2:
-                    signalString = FetchAdMobInterstitialSignal(adUnitId)
-                    break
-                case 3:
-                    signalString = FetchAdMobInterstitialSignal(adUnitId)
-                    break
-                default:
-                    break
-            }
-            return signalString*/
-            let provider = { (signalRequest, callback) in
-                            GADMobileAds.generateSignal(signalRequest, completionHandler: callback)
-                        }
-            Nimbus.shared.logger.log("adUnitType \(adUnitType) adUnitId: \(adUnitId)", level: .debug)
-            var signalRequest: GADSignalRequest = GADBannerSignalRequest(signalType: "requester_type_2")
             switch adUnitType {
-                case 0, 1:
-                    let bannerSignalRequest = GADBannerSignalRequest(signalType: "requester_type_2")
-                    bannerSignalRequest.adSize = GADAdSizeFromCGSize(CGSize(width: width, height: height))
-                    signalRequest = bannerSignalRequest
-                    break
-                case 2:
-                    signalRequest = GADInterstitialSignalRequest(signalType: "requester_type_2")
-                    break
-                case 3:
-                    signalRequest = GADRewardedSignalRequest(signalType: "requester_type_2")
-                    break
-                default:
-                    break
-            }
-            signalRequest.adUnitID = adUnitId
-            signalRequest.requestAgent = "nimbus"
-            
-            let extras = GADExtras()
-            extras.additionalParameters = ["query_info_type": "requester_type_2"]
-            signalRequest.register(extras)
-            var signalString = ""
-            let group = DispatchGroup()
-            group.enter()
-            provider(signalRequest) { signal, error in
-                    defer { group.leave() }
-                    
-                    if let error {
-                        Nimbus.shared.logger.log("Couldn't generate AdMob request, error: \(error.localizedDescription)", level: .debug)
-                    }
-                    if let signal {
-                        Nimbus.shared.logger.log(signal.signalString, level: .debug)
-
-                        signalString = signal.signalString
-                    }
-                }
-            group.wait()
-            return signalString
+               case 0, 1:
+                   let request = NimbusRequest.forBannerAd(position: "banner", format: NimbusAdFormat(width: width, height: height))
+                          .withAdMobBanner(adUnitId: adUnitId)
+                  
+                   request.interceptors?.first?.modifyRequest(request: request)
+                   return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
+               case 2:
+                   let request = NimbusRequest.forInterstitialAd(position: "interstitial")
+                       .withAdMobInterstitial(adUnitId: adUnitId)
+                 
+                   request.interceptors?.first?.modifyRequest(request: request)
+                   return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
+               case 3:
+                   let request = NimbusRequest.forRewardedVideo(position: "rewarded")
+                       .withAdMobRewarded(adUnitId: adUnitId)
+                
+                   request.interceptors?.first?.modifyRequest(request: request)
+                   return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
+               default:
+                   break
+           }
+           return ""
         }
     #endif
     
@@ -210,13 +171,6 @@ import NimbusRequestKit
         guard let viewController = unityViewController() else { return }
         
         if isBlocking {
-            adView = NimbusAdView(adPresentingViewController: viewController)
-            guard let adView = adView else { return }
-            adView.delegate = self
-            adView.volume = 100
-            adView.isBlocking = true
-            adView.showsSKOverlay = true
-            
             let companionAd: NimbusCompanionAd
             if UIDevice.current.orientation.isLandscape {
                 companionAd = NimbusCompanionAd(width: 480, height: 320, renderMode: .endCard)
@@ -224,74 +178,34 @@ import NimbusRequestKit
                 companionAd = NimbusCompanionAd(width: 320, height: 480, renderMode: .endCard)
             }
             
-            if ThirdPartyDemandNetwork.exists(for: nimbusAd) {
-                thirdPartyInterstitialAdController = try? thirdPartyInterstitialAdManager.render(
-                    ad: nimbusAd,
-                    adPresentingViewController: viewController,
-                    companionAd: companionAd
-                )
-                guard let thirdPartyInterstitialAdController else {
-                    Nimbus.shared.logger.log("Unable to render ad for network: \(nimbusAd.network)", level: .error)
-                    return
-                }
-                
-                thirdPartyInterstitialAdController.delegate = self
-                thirdPartyInterstitialAdController.start()
-            } else {
-                nimbusAdVC = NimbusAdViewController(
-                    adView: adView,
-                    ad: nimbusAd,
-                    companionAd: companionAd,
-                    closeButtonDelay: closeButtonDelay,
-                    isRewardedAd: isRewarded
-                )
-                guard let nimbusAdVC = nimbusAdVC else { return }
-                
-                // Instead of the VC sent in by the publisher, we are creating the blocking VC here
-                adView.adPresentingViewController = nimbusAdVC
-                nimbusAdVC.modalPresentationStyle = .fullScreen
-                nimbusAdVC.delegate = self
-                
-                viewController.present(nimbusAdVC, animated: true)
-                
-                nimbusAdVC.renderAndStart()
+            do {
+                adController = try Nimbus.loadBlocking(ad: nimbusAd, presentingViewController: viewController, delegate: self, companionAd: companionAd)
+                adController?.volume = 100
+                adController?.start()
+            } catch {
+                Nimbus.shared.logger.log(error.localizedDescription, level: .error)
+                return
             }
-            
-            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
         } else {
-            adView = NimbusAdView(adPresentingViewController: viewController)
-            adView?.delegate = self
-            guard let adView = adView else { return }
-            
-            viewController.view.addSubview(adView)
-            
-            adView.translatesAutoresizingMaskIntoConstraints = false
-            if nimbusAd.isInterstitial {
+            let contentView = UIView()
+                contentView.translatesAutoresizingMaskIntoConstraints = false
+                viewController.view.addSubview(contentView)
+                
                 NSLayoutConstraint.activate([
-                    adView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-                    adView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
-                    adView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-                    adView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+                    contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
                 ])
-            } else {
-                NSLayoutConstraint.activate([
-                    adView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    adView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-                    adView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-                    adView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
-                ])
-            }
-                        
-            adView.render(ad: nimbusAd)
-            adView.start()
-            
-            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
+                            
+            adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)
         }
+        
+        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
     }
     
     @objc public func destroyExistingAd() {
-        adView?.destroy()
-        nimbusAdVC?.dismiss(animated: true)
+        adController?.destroy()
         removeReferenceFromManagerDictionary()
     }
     
