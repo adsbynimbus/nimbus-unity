@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace OpenRTB.Response {
@@ -38,13 +39,17 @@ namespace OpenRTB.Response {
 
         [JsonProperty("duration", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int Duration;
-
-        [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        
+        [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Populate)]
         public BidExt Ext;
     }
 
     public struct BidExt {
         [JsonProperty("skadn", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public SkadnResponse Skadn;
+        
+        [DefaultValue(true)]
+        [JsonProperty("use_new_renderer", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public bool UseNewRenderer;
     }
 }
