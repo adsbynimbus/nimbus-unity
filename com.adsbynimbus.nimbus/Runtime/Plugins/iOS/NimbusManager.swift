@@ -163,7 +163,14 @@ import NimbusRequestKit
             return
         }
         
-        guard let nimbusAd = try? JSONDecoder().decode(NimbusAd.self, from: data) else {
+        guard
+            let decodedData = Data(base64Encoded: data)
+        else {
+            Nimbus.shared.logger.log("Unable to decode base64Encoded data", level: .error)
+            return
+        }
+        
+        guard let nimbusAd = try? JSONDecoder().decode(NimbusAd.self, from: decodedData) else {
             Nimbus.shared.logger.log("Unable to get NimbusAd from bid response data", level: .error)
             return
         }

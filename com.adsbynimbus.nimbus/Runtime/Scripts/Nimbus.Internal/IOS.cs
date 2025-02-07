@@ -145,8 +145,8 @@ namespace Nimbus.Internal {
 					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
 				}
 			}
-
-			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, isRewarded, closeButtonDelay);
+			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
+			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay);
 		}
 
 		internal override string GetSessionID() {

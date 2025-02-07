@@ -38,6 +38,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 					height = bidRequest.Imp[0].Banner.H ?? 0;
 				}
 			}
+			Debug.unityLogger.Log("AdMob AdUnitId", data);
 			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
@@ -56,7 +57,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				{
 					_adUnitId = adUnit.AdUnitId;
 					_type = type;
-					Debug.unityLogger.Log("AdMob AdUnitId", adUnit.AdUnitId);
 					return adUnit.AdUnitId;
 				}
 			}
