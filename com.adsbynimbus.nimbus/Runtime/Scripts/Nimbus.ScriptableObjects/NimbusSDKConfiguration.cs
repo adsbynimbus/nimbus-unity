@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Nimbus.ScriptableObjects {
 	[CreateAssetMenu(fileName = "Nimbus SDK Configuration", menuName = "Nimbus/Create SDK Configuration", order = 0)]
 	public class NimbusSDKConfiguration : ScriptableObject {
+		public const string UnitySdkVersion = "1.7.0";
 		[HideInInspector] public string publisherKey;
 		[HideInInspector] public string apiKey;
 		[HideInInspector] public bool enableSDKInTestMode;
