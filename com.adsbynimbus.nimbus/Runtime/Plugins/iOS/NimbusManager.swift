@@ -182,7 +182,7 @@ import NimbusRequestKit
             }
             
             do {
-                adController = try Nimbus.loadBlocking(ad: nimbusAd, presentingViewController: viewController, delegate: self, companionAd: companionAd)
+                adController = try Nimbus.loadBlocking(ad: nimbusAd, presentingViewController: viewController, delegate: self, isRewarded: isRewarded, companionAd: companionAd)
                 adController?.volume = 100
                 adController?.start()
             } catch {

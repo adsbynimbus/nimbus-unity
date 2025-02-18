@@ -39,10 +39,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				}
 			}
 
-			if (_type == AdUnitType.Interstitial)
-			{
-				bidRequest.Imp[0].Video = null;
-			}
 			Debug.unityLogger.Log("AdMob AdUnitId", data);
 			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
 			if (bidRequest.User.Ext == null) {
