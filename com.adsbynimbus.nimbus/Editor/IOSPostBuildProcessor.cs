@@ -30,9 +30,6 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_VUNGLE
 					Dependencies.Add("'NimbusVungleKit'");
 				#endif
-				#if NIMBUS_ENABLE_ADMOB
-					Dependencies.Add("'NimbusAdMobKit'");
-				#endif
 				
 				var path = buildPath + "/Podfile";
 				var lines = File.ReadAllLines(path);
@@ -47,6 +44,13 @@ namespace Nimbus.Editor {
 						if (lines[i].Contains("UnityFramework") && i+1 < lines.Length)
 						{
 							lines[i+1] = $"pod 'FBAudienceNetwork'\n{lines[i+1]}";
+						}
+					#endif
+					#if NIMBUS_ENABLE_ADMOB
+						//added Google AdMob SDK pod itself instead of Nimbus subspecs due to AdMob cocoapod limitations
+						if (lines[i].Contains("UnityFramework") && i+1 < lines.Length)
+						{
+							lines[i+1] = $"  pod 'Google-Mobile-Ads-SDK', '11.13.0'\n{lines[i+1]}";
 						}
 					#endif
 				}

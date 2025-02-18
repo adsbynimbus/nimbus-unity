@@ -24,7 +24,6 @@ import NimbusSDK
 import FBAudienceNetwork
 #endif
 #if NIMBUS_ENABLE_ADMOB
-import NimbusSDK
 import GoogleMobileAds
 import NimbusRequestKit
 #endif
@@ -36,6 +35,7 @@ import NimbusRequestKit
     private let adUnitInstanceId: Int
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
+
     
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
@@ -115,7 +115,6 @@ import NimbusRequestKit
     
     #if NIMBUS_ENABLE_ADMOB
         @objc public class func initializeAdMob() {
-            GADMobileAds.sharedInstance().start(completionHandler: nil)
             Nimbus.shared.renderers[.forNetwork("admob")] = NimbusAdMobAdRenderer()
         }
         @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {    
@@ -123,19 +122,16 @@ import NimbusRequestKit
                case 0, 1:
                    let request = NimbusRequest.forBannerAd(position: "banner", format: NimbusAdFormat(width: width, height: height))
                           .withAdMobBanner(adUnitId: adUnitId)
-                  
                    request.interceptors?.first?.modifyRequest(request: request)
                    return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
                case 2:
                    let request = NimbusRequest.forInterstitialAd(position: "interstitial")
                        .withAdMobInterstitial(adUnitId: adUnitId)
-                 
                    request.interceptors?.first?.modifyRequest(request: request)
                    return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
                case 3:
                    let request = NimbusRequest.forRewardedVideo(position: "rewarded")
                        .withAdMobRewarded(adUnitId: adUnitId)
-                
                    request.interceptors?.first?.modifyRequest(request: request)
                    return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
                default:
@@ -268,12 +264,4 @@ extension NimbusManager: AdControllerDelegate {
         )
         destroyExistingAd()
     }
-}
-
-extension NimbusManager: NimbusAdViewControllerDelegate {
-    public func viewWillAppear(animated: Bool) {}
-    public func viewDidAppear(animated: Bool) {}
-    public func viewWillDisappear(animated: Bool) {}
-    public func viewDidDisappear(animated: Bool) {}
-    public func didCloseAd(adView: NimbusAdView) { adView.destroy() }
 }
