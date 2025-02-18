@@ -265,3 +265,11 @@ extension NimbusManager: AdControllerDelegate {
         destroyExistingAd()
     }
 }
+
+extension NimbusManager: NimbusAdViewControllerDelegate {
+    public func viewWillAppear(animated: Bool) {}
+    public func viewDidAppear(animated: Bool) {}
+    public func viewWillDisappear(animated: Bool) {}
+    public func viewDidDisappear(animated: Bool) {}
+    public func didCloseAd(adView: NimbusAdView) { adController?.destroy() }
+}
