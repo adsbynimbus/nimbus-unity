@@ -12,6 +12,7 @@ using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
@@ -40,7 +41,6 @@ namespace Nimbus.Runtime.Scripts {
                 IOS
 #endif
 					();
-
 				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
 				NimbusEvents = new AdEvents();
 				_regulations = new GlobalRtbRegulation();
@@ -54,12 +54,23 @@ namespace Nimbus.Runtime.Scripts {
 				Destroy(gameObject);
 			}
 		}
-
-		private IEnumerator Start() {
+		private IEnumerator Start()
+		{
 			yield return new WaitForEndOfFrame();
 			AutoUnsubscribe();
 			AutoSubscribe();
+			SceneManager.sceneLoaded -= OnSceneLoaded;
+
+			// SceneLoaded gets called BEFORE Start on app/game start
+			SceneManager.sceneLoaded += OnSceneLoaded;
 			yield return null;
+		}
+		
+		// Listener for sceneLoaded
+		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+		{
+			AutoUnsubscribe();
+			AutoSubscribe();
 		}
 
 		private void OnDisable() {

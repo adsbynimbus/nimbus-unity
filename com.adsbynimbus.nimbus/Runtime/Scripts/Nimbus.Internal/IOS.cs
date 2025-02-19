@@ -101,29 +101,29 @@ namespace Nimbus.Internal {
 			
 			#if NIMBUS_ENABLE_APS
 				Debug.unityLogger.Log("Initializing iOS APS SDK");
-				var (appID, slots) = configuration.GetApsData();
-				var aps = new ApsIOS(appID, slots, configuration.enableSDKInTestMode);
+				var (apsAppID, slots) = configuration.GetApsData();
+				var aps = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
 			#if NIMBUS_ENABLE_VUNGLE
 				Debug.unityLogger.Log("Initializing iOS Vungle SDK");
-				var appID = configuration.GetVungleData();
-				var vungle = new VungleIOS(appID);
+				var vungleAppID = configuration.GetVungleData();
+				var vungle = new VungleIOS(vungleAppID);
 				vungle.InitializeNativeSDK();
 				_interceptors.Add(vungle);
 			#endif
 			#if NIMBUS_ENABLE_META
 				Debug.unityLogger.Log("Initializing iOS Meta SDK");
-				var appID = configuration.GetMetaData();
-				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
+				var metaAppID = configuration.GetMetaData();
+				var meta = new MetaIOS(metaAppID, configuration.enableSDKInTestMode);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
 				Debug.unityLogger.Log("Initializing iOS AdMob SDK");
-				var (appID, adUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobIOS(appID, adUnitIds, configuration.enableSDKInTestMode);
+				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobIOS(adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
 				admob.InitializeNativeSDK();
 				_interceptors.Add(admob);
 			#endif
