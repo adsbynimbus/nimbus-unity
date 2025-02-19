@@ -22,10 +22,12 @@ import NimbusSDK
 #endif
 #if NIMBUS_ENABLE_META
 import FBAudienceNetwork
+import NimbusSDK
 #endif
 #if NIMBUS_ENABLE_ADMOB
 import GoogleMobileAds
 import NimbusRequestKit
+import NimbusSDK
 #endif
 
 @objc public class NimbusManager: NSObject {
