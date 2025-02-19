@@ -3,12 +3,12 @@ namespace Nimbus.Editor {
 		private const string SdkVersion = "2.26.1";
 
 		public static string APSBuildDependencies() {
-			return @"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""";
+			return $@"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""";
 		}
 		
 		public static string VungleBuildDependencies()
 		{
-			return @"implementation ""com.adsbynimbus.android:extension-vungle:{SdkVersion}""";
+			return $@"implementation ""com.adsbynimbus.android:extension-vungle:{SdkVersion}""";
 		}
 		
 		public static string MetaBuildDependencies()

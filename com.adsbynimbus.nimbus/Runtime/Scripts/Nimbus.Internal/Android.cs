@@ -58,8 +58,8 @@ namespace Nimbus.Internal {
 			}
 
 			#if NIMBUS_ENABLE_APS
-				var (appID, slots) = configuration.GetApsData();
-				var aps = new ApsAndroid(_currentActivity, appID, slots, configuration.enableSDKInTestMode);
+				var (apsAppID, slots) = configuration.GetApsData();
+				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
@@ -79,8 +79,8 @@ namespace Nimbus.Internal {
 				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
-				var (appID, adUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobAndroid(_currentActivity, appID, adUnitIds, configuration.enableSDKInTestMode);
+				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
 				_interceptors.Add(admob);
 			#endif
 		}
