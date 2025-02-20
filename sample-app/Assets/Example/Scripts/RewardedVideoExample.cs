@@ -85,7 +85,7 @@ namespace Example.Scripts {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			if (skipped) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad was completed and the use can be rewarded {nimbusAdUnit.InstanceID}, " +
+				$" {nimbusAdUnit.InstanceID}, " +
 				$"network: {nimbusAdUnit.BidResponse.Network}, " +
 				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
 				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");

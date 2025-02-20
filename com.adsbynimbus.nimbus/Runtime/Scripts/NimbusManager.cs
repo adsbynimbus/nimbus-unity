@@ -69,12 +69,16 @@ namespace Nimbus.Runtime.Scripts {
 		// Listener for sceneLoaded
 		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
+			Debug.unityLogger.Log("NimbusManager.cs OnSceneLoaded",
+				"OnSceneLoaded Called");
 			AutoUnsubscribe();
 			AutoSubscribe();
 		}
 
 		private void OnDisable() {
-			_ctx.Cancel();
+			Debug.unityLogger.Log("NimbusManager.cs OnDisable",
+				"OnDisable Called");
+			_ctx?.Cancel();
 			AutoUnsubscribe();
 		}
 
