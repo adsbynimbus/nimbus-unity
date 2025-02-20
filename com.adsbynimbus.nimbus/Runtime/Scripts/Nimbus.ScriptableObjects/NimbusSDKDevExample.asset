@@ -32,23 +32,3 @@ MonoBehaviour:
     AdUnitType: 1
   - SlotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
     AdUnitType: 3
-  androidVungleAppID: 
-  iosVungleAppID: 
-  androidMetaAppID: 
-  iosMetaAppID: 
-  androidAdMobAppID: ca-app-pub-1368919009399326~9625312498
-  androidAdMobAdUnitData:
-  - AdUnitId: ca-app-pub-3940256099942544/1034588957
-    AdUnitType: 1
-  - AdUnitId: ca-app-pub-3940256099942544/1601565169
-    AdUnitType: 2
-  - AdUnitId: ca-app-pub-3940256099942544/7720821778
-    AdUnitType: 3
-  iosAdMobAppID: ca-app-pub-1368919009399326~6999149154
-  iosAdMobAdUnitData:
-  - AdUnitId: ca-app-pub-3940256099942544/5666886961
-    AdUnitType: 1
-  - AdUnitId: ca-app-pub-3940256099942544/7468135367
-    AdUnitType: 2
-  - AdUnitId: ca-app-pub-3940256099942544/6407740107
-    AdUnitType: 3

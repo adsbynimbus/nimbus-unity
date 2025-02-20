@@ -42,7 +42,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				{
 					_adUnitId = adUnit.AdUnitId;
 					_adUnitType = type;
-					Debug.unityLogger.Log("AdMob AdUnitId", adUnit.AdUnitId);
 					return adUnit.AdUnitId;
 				}
 			}
@@ -82,7 +81,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 						break;
 				}
 				
-				Debug.unityLogger.Log("AdMob AdUnitSignal", adMobSignal);
 				bidRequest.User.Ext.AdMobSignals = adMobSignal;
 			}
 			catch (AndroidJavaException e)

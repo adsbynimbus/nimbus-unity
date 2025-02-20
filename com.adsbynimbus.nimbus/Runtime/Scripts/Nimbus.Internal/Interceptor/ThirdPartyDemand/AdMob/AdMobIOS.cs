@@ -39,13 +39,11 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				}
 			}
 
-			Debug.unityLogger.Log("AdMob AdUnitId", data);
 			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
 			}
 			bidRequest.User.Ext.AdMobSignals = adMobSignals;
-			Debug.unityLogger.Log("AdMob Signals", adMobSignals);
 			
 			return bidRequest;
 		}
