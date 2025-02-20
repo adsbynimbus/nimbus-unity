@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Utility;
@@ -57,8 +58,8 @@ namespace Nimbus.Internal {
 			}
 
 			#if NIMBUS_ENABLE_APS
-				var (appID, slots) = configuration.GetApsData();
-				var aps = new ApsAndroid(_currentActivity, appID, slots, configuration.enableSDKInTestMode);
+				var (apsAppID, slots) = configuration.GetApsData();
+				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
@@ -76,6 +77,11 @@ namespace Nimbus.Internal {
 				var meta = new MetaAndroid(_currentActivity, configuration.enableSDKInTestMode, metaAppId);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
+			#endif
+			#if NIMBUS_ENABLE_ADMOB
+				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
+				_interceptors.Add(admob);
 			#endif
 		}
 

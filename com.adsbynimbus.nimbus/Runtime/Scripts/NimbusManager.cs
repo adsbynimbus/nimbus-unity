@@ -12,6 +12,7 @@ using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
@@ -40,7 +41,6 @@ namespace Nimbus.Runtime.Scripts {
                 IOS
 #endif
 					();
-
 				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
 				NimbusEvents = new AdEvents();
 				_regulations = new GlobalRtbRegulation();
@@ -54,16 +54,27 @@ namespace Nimbus.Runtime.Scripts {
 				Destroy(gameObject);
 			}
 		}
-
-		private IEnumerator Start() {
+		private IEnumerator Start()
+		{
 			yield return new WaitForEndOfFrame();
 			AutoUnsubscribe();
 			AutoSubscribe();
+			SceneManager.sceneLoaded -= OnSceneLoaded;
+
+			// SceneLoaded gets called BEFORE Start on app/game start
+			SceneManager.sceneLoaded += OnSceneLoaded;
 			yield return null;
+		}
+		
+		// Listener for sceneLoaded
+		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+		{
+			AutoUnsubscribe();
+			AutoSubscribe();
 		}
 
 		private void OnDisable() {
-			_ctx.Cancel();
+			_ctx?.Cancel();
 			AutoUnsubscribe();
 		}
 
@@ -487,13 +498,15 @@ namespace Nimbus.Runtime.Scripts {
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
 			Task<string> responseJson;
+			var error = false;
 			try {
 				responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
 			} catch (Exception e) { 
 				responseJson = Task.FromException<string>(e);
+				error = true;
 			}
 			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
-			adUnit.LoadJsonResponseAsync(responseJson);
+			adUnit.LoadJsonResponseAsync(responseJson, error);
 			return adUnit;
 		}
 		

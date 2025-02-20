@@ -1,6 +1,7 @@
 #if UNITY_EDITOR && UNITY_ANDROID
 using System.IO;
 using System.Text;
+using Nimbus.Internal.Utility;
 using UnityEditor.Android;
 
 namespace Nimbus.Editor {
@@ -43,7 +44,39 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 			packagingWriter.Flush();
 			packagingWriter.Close();
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META
+			#if NIMBUS_ENABLE_ADMOB
+				//pull saved appId from file
+				var trimmedID = "";
+				foreach (var id in File.ReadLines("Assets/Editor/AdMobIds")) {
+					trimmedID = id.Trim();
+					if (trimmedID.Contains("android"))
+					{
+						trimmedID = trimmedID.Remove(0, 8);
+						break;
+					}
+				}
+				//put saved appId in AndroidManifest
+				var sb = new StringBuilder();
+				var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
+				var metaData =
+					$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
+				using (var sr = new StreamReader(manifestPath)) {
+					string line;
+					do {
+						line = sr.ReadLine();
+						sb.AppendLine(line);
+					} while (line != null && !line.ToLower().Contains("<application"));
+					
+					sb.Append(metaData);
+					sb.AppendLine();
+					sb.Append(sr.ReadToEnd());
+				}
+				using (var sr = new StreamWriter(manifestPath)) {
+					sr.Write(sb.ToString());
+				}
+			#endif
+			
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
@@ -55,6 +88,10 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				#endif
 				#if NIMBUS_ENABLE_META
 					builder.AppendLine(AndroidBuildDependencies.MetaBuildDependencies());
+				#endif
+				#if NIMBUS_ENABLE_ADMOB
+					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
+					builder.AppendLine(AndroidBuildDependencies.AdMobCollectionFixBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");

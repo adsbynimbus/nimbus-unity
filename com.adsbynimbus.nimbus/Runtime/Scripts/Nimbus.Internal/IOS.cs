@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
@@ -100,24 +101,31 @@ namespace Nimbus.Internal {
 			
 			#if NIMBUS_ENABLE_APS
 				Debug.unityLogger.Log("Initializing iOS APS SDK");
-				var (appID, slots) = configuration.GetApsData();
-				var aps = new ApsIOS(appID, slots, configuration.enableSDKInTestMode);
+				var (apsAppID, slots) = configuration.GetApsData();
+				var aps = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
 			#if NIMBUS_ENABLE_VUNGLE
 				Debug.unityLogger.Log("Initializing iOS Vungle SDK");
-				var appID = configuration.GetVungleData();
-				var vungle = new VungleIOS(appID);
+				var vungleAppID = configuration.GetVungleData();
+				var vungle = new VungleIOS(vungleAppID);
 				vungle.InitializeNativeSDK();
 				_interceptors.Add(vungle);
 			#endif
 			#if NIMBUS_ENABLE_META
 				Debug.unityLogger.Log("Initializing iOS Meta SDK");
-				var appID = configuration.GetMetaData();
-				var meta = new MetaIOS(appID, configuration.enableSDKInTestMode);
+				var metaAppID = configuration.GetMetaData();
+				var meta = new MetaIOS(metaAppID, configuration.enableSDKInTestMode);
 				meta.InitializeNativeSDK();
 				_interceptors.Add(meta);
+			#endif
+			#if NIMBUS_ENABLE_ADMOB
+				Debug.unityLogger.Log("Initializing iOS AdMob SDK");
+				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobIOS(adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
+				admob.InitializeNativeSDK();
+				_interceptors.Add(admob);
 			#endif
 		}
 
@@ -137,8 +145,8 @@ namespace Nimbus.Internal {
 					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
 				}
 			}
-
-			_renderAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RawBidResponse, isBlocking, isRewarded, closeButtonDelay);
+			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
+			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay);
 		}
 
 		internal override string GetSessionID() {

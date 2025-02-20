@@ -111,24 +111,29 @@ namespace Nimbus.Internal {
 		}
 
 		
-		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
+		internal async void LoadJsonResponseAsync(Task<string> jsonBody, bool error) {
 			await Task.Run(async () => {
 				var response = "";
-				try {
+				try
+				{
 					response = await jsonBody;
-				} catch (Exception e) { }
-				if (response.Contains("message")) {
-					Debug.unityLogger.Log("Nimbus",$"RESPONSE ERROR: {response}");
-					ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
+					if (error)
+					{
+						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: {response}");
+						ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
+						_adEvents.FireOnAdErrorEvent(this);
+						return;
+					}
+					_adWasReturned = true;
+					BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
+					BidResponse.Ext.UseNewRenderer = true;
+					RawBidResponse = JsonConvert.SerializeObject(BidResponse);
+					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
+					_adEvents.FireOnAdLoadedEvent(this);
+				} catch (Exception e)
+				{
 					_adEvents.FireOnAdErrorEvent(this);
-					return;
 				}
-				_adWasReturned = true;
-				BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
-				BidResponse.Ext.UseNewRenderer = true;
-				RawBidResponse = JsonConvert.SerializeObject(BidResponse);
-				Debug.unityLogger.Log("Nimbus",$"BID RESPONSE: {RawBidResponse}");
-				_adEvents.FireOnAdLoadedEvent(this);
 			});
 		}
 

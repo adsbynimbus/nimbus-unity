@@ -1,6 +1,6 @@
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {
-		private const string SdkVersion = "2.23.0";
+		private const string SdkVersion = "2.26.1";
 
 		public static string APSBuildDependencies() {
 			return $@"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""";
@@ -13,7 +13,18 @@ namespace Nimbus.Editor {
 		
 		public static string MetaBuildDependencies()
 		{
-			return $@"implementation ""com.adsbynimbus.android:extension-facebook:2.+""";
+			return $@"implementation ""com.adsbynimbus.android:extension-facebook:{SdkVersion}""";
+		}
+		
+		public static string AdMobNimbusBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-admob:{SdkVersion}"")";
+		}
+		
+		//this is needed because of a weird error caused by the Unity Build System
+		public static string AdMobCollectionFixBuildDependency()
+		{
+			return @"implementation ""androidx.collection:collection:1.4.5""";
 		}
 	}
 }
