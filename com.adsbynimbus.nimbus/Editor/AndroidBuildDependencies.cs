@@ -13,12 +13,12 @@ namespace Nimbus.Editor {
 		
 		public static string MetaBuildDependencies()
 		{
-			return @"implementation ""com.adsbynimbus.android:extension-facebook:2.+""";
+			return $@"implementation ""com.adsbynimbus.android:extension-facebook:{SdkVersion}""";
 		}
 		
 		public static string AdMobNimbusBuildDependency()
 		{
-			return $@"implementation (""com.adsbynimbus.android:extension-admob:{SdkVersion}"")" + "{exclude group: 'androidx.collection', module: 'collection'}";
+			return $@"implementation (""com.adsbynimbus.android:extension-admob:{SdkVersion}"")";
 		}
 		
 		//this is needed because of a weird error caused by the Unity Build System

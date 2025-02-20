@@ -132,7 +132,7 @@ namespace Nimbus.Internal {
 					_adEvents.FireOnAdLoadedEvent(this);
 				} catch (Exception e)
 				{
-					Debug.unityLogger.LogError("Nimbus", $"RESPONSE ERROR: Response: {response} error: {e.Message}");
+					_adEvents.FireOnAdErrorEvent(this);
 				}
 			});
 		}

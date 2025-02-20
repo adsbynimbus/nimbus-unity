@@ -117,7 +117,7 @@ import NimbusSDK
     
     #if NIMBUS_ENABLE_ADMOB
         @objc public class func initializeAdMob() {
-            Nimbus.shared.renderers[.forNetwork("admob")] = NimbusAdMobAdRenderer()
+            Nimbus.shared.renderers[.admob] = NimbusAdMobAdRenderer()
         }
         @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {    
             switch adUnitType {
