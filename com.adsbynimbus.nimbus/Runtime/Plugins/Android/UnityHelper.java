@@ -56,7 +56,7 @@ public final class UnityHelper {
                     activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener));
                 }
             } catch (Exception e) {
-                Log.d("UnityHelper.render()", Log.getStackTraceString(e));
+                callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering ad", null));
             }
         }
     }
