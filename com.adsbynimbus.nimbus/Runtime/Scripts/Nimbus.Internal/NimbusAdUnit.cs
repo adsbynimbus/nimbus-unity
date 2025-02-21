@@ -129,7 +129,14 @@ namespace Nimbus.Internal {
 					BidResponse.Ext.UseNewRenderer = true;
 					RawBidResponse = JsonConvert.SerializeObject(BidResponse);
 					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
-					_adEvents.FireOnAdLoadedEvent(this);
+					if (RawBidResponse != "")
+					{
+						_adEvents.FireOnAdLoadedEvent(this);
+					}
+					else
+					{
+						_adEvents.FireOnAdErrorEvent(this);
+					}
 				} catch (Exception e)
 				{
 					_adEvents.FireOnAdErrorEvent(this);
