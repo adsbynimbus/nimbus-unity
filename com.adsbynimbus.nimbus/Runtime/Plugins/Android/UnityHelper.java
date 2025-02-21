@@ -4,6 +4,7 @@ import static android.view.ViewGroup.LayoutParams.*;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,25 +34,29 @@ public final class UnityHelper {
     public static void render(Object obj, String jsonResponse, boolean isBlocking, int closeButtonDelay, Object listener) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
-            final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
-            if (isBlocking) {
-                nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
-                        Configuration.ORIENTATION_LANDSCAPE ?
-                        CompanionAd.Companion.end(480, 320) : CompanionAd.Companion.end(320, 480)};
-                
-                activity.runOnUiThread(() -> {
-                    BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelay * 1000);
-                    final AdController controller = Renderer.loadBlockingAd(nimbusResponse, activity);
-                    final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
-                    if (controller != null) {
-                              callback.onAdRendered(controller);
-                              controller.start();
-                    } else {
-                        callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
-                    }
-                });
-            } else {
-                activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener));
+            try {
+                final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
+                if (isBlocking) {
+                    nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
+                            Configuration.ORIENTATION_LANDSCAPE ?
+                            CompanionAd.Companion.end(480, 320) : CompanionAd.Companion.end(320, 480)};
+
+                    activity.runOnUiThread(() -> {
+                        BlockingAdRenderer.setsCloseButtonDelayRender(closeButtonDelay * 1000);
+                        final AdController controller = Renderer.loadBlockingAd(nimbusResponse, activity);
+                        final NimbusAdManager.Listener callback = (NimbusAdManager.Listener) listener;
+                        if (controller != null) {
+                            callback.onAdRendered(controller);
+                            controller.start();
+                        } else {
+                            callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering blocking ad", null));
+                        }
+                    });
+                } else {
+                    activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener));
+                }
+            } catch (Exception e) {
+                callback.onError(new NimbusError(NimbusError.ErrorType.RENDERER_ERROR, "Error rendering ad", null));
             }
         }
     }

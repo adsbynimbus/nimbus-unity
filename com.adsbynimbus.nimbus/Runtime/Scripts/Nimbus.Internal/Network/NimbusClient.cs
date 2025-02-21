@@ -38,7 +38,6 @@ namespace Nimbus.Internal.Network {
 			Client.DefaultRequestHeaders.Add("X-Openrtb-Version", "2.5");
 			Client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip");
 			Client.Timeout = TimeSpan.FromSeconds(10);
-
 			var path = ProductionPath;
 			if (configuration.enableSDKInTestMode) path = TestingPath;
 			_nimbusEndpoint = Format(_nimbusEndpoint, configuration.publisherKey, path);
