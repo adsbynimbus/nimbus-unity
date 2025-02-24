@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using DefaultNamespace;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine;
 namespace Nimbus.ScriptableObjects {
 	[CreateAssetMenu(fileName = "Nimbus SDK Configuration", menuName = "Nimbus/Create SDK Configuration", order = 0)]
 	public class NimbusSDKConfiguration : ScriptableObject {
-		public const string UnitySdkVersion = "1.8.0";
+		public const string UnitySdkVersion = VersionConstants.UnitySdkVersion;
 		[HideInInspector] public string publisherKey;
 		[HideInInspector] public string apiKey;
 		[HideInInspector] public bool enableSDKInTestMode;

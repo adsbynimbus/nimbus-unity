@@ -1,6 +1,23 @@
+using System.Text;
+using DefaultNamespace;
+
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {
-		private const string SdkVersion = "2.26.1";
+		private const string SdkVersion = VersionConstants.AndroidSdkVersion;
+
+		//used if EDM4U is not implemented
+		public static string BuildDependencies()
+		{
+			var builder = new StringBuilder();
+			builder.AppendLine("");
+			builder.AppendLine("dependencies {");
+			builder.AppendLine($@"implementation ""com.adsbynimbus.android:nimbus:{SdkVersion}""");
+			builder.AppendLine($@"implementation ""com.adsbynimbus.android:nimbus-vast:{SdkVersion}""");
+			builder.AppendLine($@"implementation ""io.github.pdvrieze.xmlutil:serialization:0.90.3""");
+			builder.AppendLine("}");
+			return builder.ToString();
+
+		}
 
 		public static string APSBuildDependencies() {
 			return $@"implementation ""com.adsbynimbus.android:extension-aps:{SdkVersion}""";
