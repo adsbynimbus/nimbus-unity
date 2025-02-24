@@ -40,8 +40,14 @@ namespace Nimbus.Editor {
 			    Dependencies.Add("'NimbusRequestFANKit'");
 				Dependencies.Add("'NimbusRenderFANKit'");
 			#endif
-			CreatePodfile(buildPath);
 			var path = buildPath + "/Podfile";
+			if (!File.Exists(path)) {
+				CreatePodfile(buildPath);
+				Debug.unityLogger.Log($"Copying generating pod file to {path}");
+			}
+			else {
+				Debug.unityLogger.Log("Podfile already exists");
+			}
 			var lines = File.ReadAllLines(path);
 			for(int i = 0 ; i < lines.Length ; i++)
 			{
@@ -131,15 +137,10 @@ end";
 		
 		private static void CreatePodfile(string pathToBuiltProject)
 		{
-			var dependencies = BuildDependencies();
-			var destPodfilePath = pathToBuiltProject + "/Podfile";
-			if (!File.Exists(destPodfilePath)) {
-				File.WriteAllText(destPodfilePath, dependencies);
-				Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
-			}
-			else {
-				Debug.unityLogger.Log("Podfile already exists");
-			}
+			var fullDependencies = BuildDependencies();
+			var destPodfilePath = pathToBuiltProject + "/Podfile"; 
+			File.WriteAllText(destPodfilePath, fullDependencies); 
+			Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
 		}
 
 		
@@ -155,7 +156,7 @@ end";
 			}
 
 			builder.AppendLine("def sdk_dependencies");
-			builder.AppendLine($"  pod 'NimbusSDK', '{SdkVersion}']");
+			builder.AppendLine($"  pod 'NimbusSDK', '{SdkVersion}'");
 			builder.AppendLine("end");
 
 

@@ -30,28 +30,20 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
     }
 }";
 
-		private const string RepoString = @"
-				allprojects {
-					repositories {
-						maven {
-							url = uri(""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"")
-							credentials {
-								username = ""*""
-							}
+		private const string RepoString = @"dependencyResolutionManagement {
+    repositories {
+				        maven {
+							url ""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"" 
 							content {
-				                includeGroup(""com.adsbynimbus.android"")
-				                includeGroup(""com.adsbynimbus.openrtb"")
-				                includeGroup(""com.iab.omid.library.adsbynimbus"")
-				            }
+                includeGroupByRegex("".*\\.adsbynimbus.*"")
 						}
-					}
-				}";
+        }}}";
 		public int callbackOrder => 999;
 
 		public void OnPostGenerateGradleAndroidProject(string path)
 		{
 			WriteGradleProps(path + "/../gradle.properties");
-			var repoWriter = File.AppendText(path + "/build.gradle");
+			var repoWriter = File.AppendText(path + "/../settings.gradle");
 			repoWriter.WriteLine(RepoString);
 			repoWriter.Flush();
 			repoWriter.Close();
@@ -136,9 +128,9 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 		{
 			if(!File.ReadAllText(path + "/../gradle.properties").Contains("nimbus"))
 			{
-				var Dependencies = AndroidBuildDependencies.BuildDependencies();
+				var dependencies = AndroidBuildDependencies.BuildDependencies();
 				var buildWriter = File.AppendText(path + "/build.gradle");
-				buildWriter.WriteLine(Dependencies);
+				buildWriter.WriteLine(dependencies);
 				buildWriter.Flush();
 				buildWriter.Close();
 			}
