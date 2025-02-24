@@ -30,7 +30,8 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
     }
 }";
 
-		private const string RepoString = @"dependencyResolutionManagement {
+		private const string RepoString = @"
+dependencyResolutionManagement {
     repositories {
 				        maven {
 							url ""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"" 
