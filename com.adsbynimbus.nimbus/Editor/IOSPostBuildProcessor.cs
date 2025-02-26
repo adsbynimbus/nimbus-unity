@@ -195,6 +195,10 @@ end";
 				flags.Add("NIMBUS_ENABLE_ADMOB");
 			#endif
 			
+			#if NIMBUS_ENABLE_MINTEGRAL
+				flags.Add("NIMBUS_ENABLE_MINTEGRAL");
+			#endif
+			
 			if (flags.Count > 0)
 			{
 				var projectGuid = pbx.ProjectGuid();

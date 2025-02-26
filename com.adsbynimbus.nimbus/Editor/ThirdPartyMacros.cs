@@ -19,6 +19,7 @@ namespace Nimbus.Editor {
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
 		private const string MetaMacro = "NIMBUS_ENABLE_META";
 		private const string AdMobMacro = "NIMBUS_ENABLE_ADMOB";
+		private const string MintegralMacro = "NIMBUS_ENABLE_MINTEGRAL";
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
@@ -26,6 +27,7 @@ namespace Nimbus.Editor {
 		private const string VunglePartnerStr = "Vungle";
 		private const string MetaPartnerStr = "Meta";
 		private const string AdMobPartnerStr = "AdMob";
+		private const string MintegralPartnerStr = "Mintegral";
 
 		private void OnEnable() {
 			UpdateSettings();
