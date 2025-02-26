@@ -12,6 +12,7 @@ using UnityEngine;
 namespace Nimbus.Editor {
 	public class PostProcessIOS : MonoBehaviour
 	{
+		private const string SdkVersion = VersionConstants.IosSdkVersion;
 		private static readonly List<string> Dependencies = new List<string>
 		{
 			"'NimbusKit'",
@@ -38,8 +39,14 @@ namespace Nimbus.Editor {
 			    Dependencies.Add("'NimbusRequestFANKit'");
 				Dependencies.Add("'NimbusRenderFANKit'");
 			#endif
-			
 			var path = buildPath + "/Podfile";
+			if (!File.Exists(path)) {
+				CreatePodfile(buildPath);
+				Debug.unityLogger.Log($"Copying generating pod file to {path}");
+			}
+			else {
+				Debug.unityLogger.Log("Podfile already exists");
+			}
 			var lines = File.ReadAllLines(path);
 			for(int i = 0 ; i < lines.Length ; i++)
 			{
@@ -125,6 +132,39 @@ post_install do |installer|
 end";
 			
 			File.AppendAllText(path, postInstallScript);
+		}
+		
+		private static void CreatePodfile(string pathToBuiltProject)
+		{
+			var fullDependencies = BuildDependencies();
+			var destPodfilePath = pathToBuiltProject + "/Podfile"; 
+			File.WriteAllText(destPodfilePath, fullDependencies); 
+			Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
+		}
+
+		
+		private static string BuildDependencies() {
+			var builder = new StringBuilder();
+			
+			builder.AppendLine(@"platform :ios, '13.0'
+				use_frameworks!
+				source 'https://cdn.cocoapods.org/'
+				");
+			if (SdkVersion.Contains("internal")) {
+				builder.AppendLine("source 'git@github.com:adsbynimbus/Specs.git'");
+			}
+
+			builder.AppendLine("def sdk_dependencies");
+			builder.AppendLine($"  pod 'NimbusSDK', '{SdkVersion}'");
+			builder.AppendLine("end");
+
+
+			builder.AppendLine(@"
+			target 'UnityFramework' do
+			  sdk_dependencies
+			end
+			");
+			return builder.ToString();
 		}
 	}
 

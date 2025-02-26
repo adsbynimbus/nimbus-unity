@@ -30,10 +30,26 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
     }
 }";
 
+		private const string RepoString = @"
+dependencyResolutionManagement {
+    repositories {
+				        maven {
+							url ""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"" 
+							content {
+                includeGroupByRegex("".*\\.adsbynimbus.*"")
+						}
+        }}}";
 		public int callbackOrder => 999;
 
-		public void OnPostGenerateGradleAndroidProject(string path) {
+		public void OnPostGenerateGradleAndroidProject(string path)
+		{
+			WriteGradleProps(path + "/../gradle.properties");
+			var repoWriter = File.AppendText(path + "/../settings.gradle");
+			repoWriter.WriteLine(RepoString);
+			repoWriter.Flush();
+			repoWriter.Close();
 			
+			RunEdm4uCheck(path);
 			var proguardWriter = File.AppendText(path + "/proguard-unity.txt");
 			proguardWriter.WriteLine(KeepRules);
 			proguardWriter.Flush();
@@ -99,6 +115,26 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				apsBuildWriter.Flush();
 				apsBuildWriter.Close();
 			#endif
+		}
+		private static void WriteGradleProps(string gradleFile) {
+			var propWriter = File.AppendText(gradleFile);
+			propWriter.WriteLine(@"
+				android.useAndroidX=true
+				");
+			propWriter.Flush();
+			propWriter.Close();
+		}
+
+		private static void RunEdm4uCheck(string path)
+		{
+			if(!File.ReadAllText(path + "/../gradle.properties").Contains("nimbus"))
+			{
+				var dependencies = AndroidBuildDependencies.BuildDependencies();
+				var buildWriter = File.AppendText(path + "/build.gradle");
+				buildWriter.WriteLine(dependencies);
+				buildWriter.Flush();
+				buildWriter.Close();
+			}
 		}
 	}
 }
