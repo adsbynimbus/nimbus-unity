@@ -1,4 +1,4 @@
-namespace DefaultNamespace
+namespace Nimbus
 {
     public static class VersionConstants
     {

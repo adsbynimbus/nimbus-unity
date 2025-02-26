@@ -1,5 +1,4 @@
 using System.Text;
-using DefaultNamespace;
 
 namespace Nimbus.Editor {
 	public static class AndroidBuildDependencies {

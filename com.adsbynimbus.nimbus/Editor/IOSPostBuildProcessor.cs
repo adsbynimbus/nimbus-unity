@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DefaultNamespace;
 using Nimbus.Internal.Utility;
 using UnityEditor;
 using UnityEditor.Callbacks;

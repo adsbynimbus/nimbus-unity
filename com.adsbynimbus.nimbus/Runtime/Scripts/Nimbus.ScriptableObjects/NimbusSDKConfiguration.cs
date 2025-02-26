@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using DefaultNamespace;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using UnityEngine;
