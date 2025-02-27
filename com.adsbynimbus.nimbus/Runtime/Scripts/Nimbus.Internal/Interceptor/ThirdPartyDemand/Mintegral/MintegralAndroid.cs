@@ -8,7 +8,7 @@ using UnityEngine;
 [assembly:InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 	internal class MintegralAndroid : IInterceptor, IProvider {
-		private const string NimbusAdMobPackage = "com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal";
+		private const string NimbusMintegralPackage = "com.adsbynimbus.request.MintegralDemandProvider";
 
 		private readonly string _appID;
 		private readonly string _appKey;
@@ -17,6 +17,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		private AdUnitType _adUnitType;
 		private string _adUnitId;
+		private string _adUnitPlacementId;
 		private readonly AndroidJavaObject _applicationContext;
 		
 		public MintegralAndroid(string appID, string appKey, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
@@ -35,7 +36,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		}
 		
 		public void InitializeNativeSDK() {
-			//do nothing
+			var mintegral = new AndroidJavaClass("com.adsbynimbus.request.MintegralDemandProvider");
+			mintegral.CallStatic("initialize", _appID, _appKey);
 		}
 		
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
@@ -44,6 +46,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 				if (adUnit.AdUnitType == type)
 				{
 					_adUnitId = adUnit.AdUnitId;
+					_adUnitPlacementId = adUnit.AdUnitPlacementId;
 					_adUnitType = type;
 					return adUnit.AdUnitId;
 				}
@@ -55,41 +58,25 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			var width = 0;
-			var height = 0;
-			if (!bidRequest.Imp.IsNullOrEmpty())
-			{
-				if (bidRequest.Imp[0].Banner != null)
-				{
-					width = bidRequest.Imp[0].Banner.W ?? 0;
-					height = bidRequest.Imp[0].Banner.H ?? 0;
-				}
-			}
-			// data is the adUnitId
 			try
 			{
-				var adMob = new AndroidJavaClass(NimbusAdMobPackage);
-				var adMobSignal = "";
-				switch (_adUnitType)
-				{
-					case AdUnitType.Banner:
-					case AdUnitType.Undefined:
-						adMobSignal = adMob.CallStatic<string>("fetchAdMobBannerSignal", data);
-						break;
-					case AdUnitType.Interstitial:
-						adMobSignal = adMob.CallStatic<string>("fetchAdMobInterstitialSignal", data);
-						break;
-					case AdUnitType.Rewarded:
-						adMobSignal = adMob.CallStatic<string>("fetchAdMobRewardedSignal", data);
-						break;
+				var mintegralBidManager = new AndroidJavaClass("com.mbridge.msdk.mbbid.out.BidManager");
+				var buyerId = mintegralBidManager.CallStatic<string>("getBuyerUid", _applicationContext);
+				var mintegralMbConfiguration = new AndroidJavaClass("com.mbridge.msdk.out.MBConfiguration");
+				var sdkVersion = mintegralMbConfiguration.GetStatic<string>("SDK_VERSION");
+				if (bidRequest.User.Ext == null) {
+					bidRequest.User.Ext = new UserExt();
 				}
-				
-				bidRequest.User.Ext.AdMobSignals = adMobSignal;
+				var mintegralObj = new MintegralObj();
+				mintegralObj.MintegralBuyerId = buyerId;
+				mintegralObj.MintegralSdkVersion = sdkVersion;
+				bidRequest.User.Ext.MintegralSdkObj = mintegralObj;
 			}
 			catch (AndroidJavaException e)
 			{
-				Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
+				Debug.unityLogger.Log("Mintegral ERROR", e.Message);
 			}
+
 			return bidRequest;
 		}
 	}

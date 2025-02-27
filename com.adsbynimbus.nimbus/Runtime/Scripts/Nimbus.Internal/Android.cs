@@ -36,6 +36,8 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
 		
+		private ThirdPartyAdUnit[] mintegralAdUnits;
+		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
 
@@ -84,9 +86,11 @@ namespace Nimbus.Internal {
 				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
 				_interceptors.Add(admob);
 			#endif
-			#if NIMBUS_ENABLE_ADMOB
+			#if NIMBUS_ENABLE_MINTEGRAL
 				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
-				var mintegral = new MintegralAndroid(_currentActivity, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				mintegralAdUnits = adUnitIds;
+				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
+				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
 				_interceptors.Add(mintegral);
 			#endif
 		}
@@ -103,9 +107,19 @@ namespace Nimbus.Internal {
 				holdTime = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
 			}
-
+			Debug.unityLogger.Log("SHOWING AD");
+			var mintegralAdUnitId = "";
+			var mintegralAdUnitPlacementId = "";
+			foreach (ThirdPartyAdUnit adUnit in mintegralAdUnits)
+			{
+				if (adUnit.AdUnitType == nimbusAdUnit.AdType)
+				{
+					mintegralAdUnitId = adUnit.AdUnitId;
+					mintegralAdUnitPlacementId = adUnit.AdUnitPlacementId;
+				}
+			}
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, holdTime,
-				listener);
+				listener, mintegralAdUnitId, mintegralAdUnitPlacementId);
 		}
 		
 		internal override string GetSessionID() {
