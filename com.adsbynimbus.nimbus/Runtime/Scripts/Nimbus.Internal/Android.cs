@@ -5,6 +5,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -82,6 +83,11 @@ namespace Nimbus.Internal {
 				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
 				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
 				_interceptors.Add(admob);
+			#endif
+			#if NIMBUS_ENABLE_ADMOB
+				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
+				var mintegral = new MintegralAndroid(_currentActivity, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				_interceptors.Add(mintegral);
 			#endif
 		}
 

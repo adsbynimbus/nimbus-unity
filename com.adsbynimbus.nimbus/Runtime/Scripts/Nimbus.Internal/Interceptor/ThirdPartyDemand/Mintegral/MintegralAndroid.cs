@@ -6,11 +6,12 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
-	internal class AdMobAndroid : IInterceptor, IProvider {
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
+	internal class MintegralAndroid : IInterceptor, IProvider {
 		private const string NimbusAdMobPackage = "com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal";
 
 		private readonly string _appID;
+		private readonly string _appKey;
 		private readonly bool _enableTestMode;
 		private readonly bool _testMode;
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
@@ -18,15 +19,17 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		private string _adUnitId;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public AdMobAndroid(string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
+		public MintegralAndroid(string appID, string appKey, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
 			_appID = appID;
+			_appKey = appKey;
 			_adUnitIds = adUnitIds;
 			_testMode = enableTestMode;
 		}
 		
-		public AdMobAndroid(AndroidJavaObject applicationContext, string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
+		public MintegralAndroid(AndroidJavaObject applicationContext, string appID, string appKey, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
 			_applicationContext = applicationContext;
 			_appID = appID;
+			_appKey = appKey;
 			_adUnitIds = adUnitIds;
 			_enableTestMode = enableTestMode;
 		}

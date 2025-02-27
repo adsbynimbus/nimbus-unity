@@ -127,7 +127,9 @@ dependencyResolutionManagement {
 
 		private static void RunEdm4uCheck(string path)
 		{
-			if(!File.ReadAllText(path + "/../gradle.properties").Contains("nimbus"))
+			if ( !File.Exists("Packages/manifest.json") )
+				return;
+			if(!File.ReadAllText("Packages/manifest.json").Contains("com.google.external-dependency-manager"))
 			{
 				var dependencies = AndroidBuildDependencies.BuildDependencies();
 				var buildWriter = File.AppendText(path + "/build.gradle");

@@ -15,6 +15,8 @@ namespace Nimbus.Editor {
 		private bool _iosMetaIsEnabled;
 		private bool _androidAdMobIsEnabled;
 		private bool _iosAdMobIsEnabled;
+		private bool _androidMintegralIsEnabled;
+		private bool _iosMintegralIsEnabled;
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
 		private const string MetaMacro = "NIMBUS_ENABLE_META";
@@ -234,6 +236,53 @@ namespace Nimbus.Editor {
 			
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+						
+			// START OF MINTEGRAL
+			EditorGUILayout.LabelField("Mintegral Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			var mintegralAndroidStatus = _androidMintegralIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {mintegralAndroidStatus}", headerStyle);
+			GUILayout.Space(2);
+			var androidMintegralbuttonText = _androidMintegralIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Mintegral", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "Mintegral", "Android");
+			if (GUILayout.Button(androidMintegralbuttonText)) {
+				if (_androidAdMobIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Mintegral App Id to the " +
+					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					FocusOnGameManager(MintegralPartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			var mintegralIosStatus = _iosMintegralIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {mintegralIosStatus}", headerStyle);
+			GUILayout.Space(2);
+			var mintegralIosButtonText = _iosMintegralIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Mintegral", "Ios")
+				: string.Format(ButtonMessageTemplate, "Enable", "Mintegral", "Ios");
+			if (GUILayout.Button(mintegralIosButtonText)) {
+				if (_iosMintegralIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MintegralMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS, MintegralMacro);
+					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Mintegral App Id to the " +
+					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					FocusOnGameManager(MintegralPartnerStr);
+				}
+			}
+			// END OF MINTEGRAL
+			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 		}
 		
 		private void OnInspectorUpdate() {
@@ -249,6 +298,8 @@ namespace Nimbus.Editor {
 			_iosMetaIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MetaMacro);
 			_androidAdMobIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, AdMobMacro);
 			_iosAdMobIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, AdMobMacro);
+			_androidMintegralIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, MintegralMacro);
+			_iosMintegralIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MintegralMacro);
 		}
 
 

@@ -39,6 +39,11 @@ namespace Nimbus.Editor {
 			    Dependencies.Add("'NimbusRequestFANKit'");
 				Dependencies.Add("'NimbusRenderFANKit'");
 			#endif
+			
+			#if NIMBUS_ENABLE_MINTEGRAL
+				Dependencies.Add("'NimbusMintegralKit'");
+			#endif
+			
 			var path = buildPath + "/Podfile";
 			if (!File.Exists(path)) {
 				CreatePodfile(buildPath);
