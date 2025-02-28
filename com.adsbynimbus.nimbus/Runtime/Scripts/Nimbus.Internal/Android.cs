@@ -118,7 +118,7 @@ namespace Nimbus.Internal {
 					mintegralAdUnitPlacementId = adUnit.AdUnitPlacementId;
 				}
 			}
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, holdTime,
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
 				listener, mintegralAdUnitId, mintegralAdUnitPlacementId);
 		}
 		

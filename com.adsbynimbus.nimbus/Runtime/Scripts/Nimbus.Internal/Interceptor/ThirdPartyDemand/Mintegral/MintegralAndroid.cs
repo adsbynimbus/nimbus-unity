@@ -37,7 +37,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		
 		public void InitializeNativeSDK() {
 			var mintegral = new AndroidJavaClass("com.adsbynimbus.request.MintegralDemandProvider");
-			mintegral.CallStatic("initialize", _appID, _appKey);
+			mintegral.CallStatic("initialize", _appID, _appKey, null);
 		}
 		
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {

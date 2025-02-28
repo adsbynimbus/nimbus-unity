@@ -31,7 +31,7 @@ import java.util.HashMap;
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
     
-    public static void render(Object obj, String jsonResponse, boolean isBlocking, int closeButtonDelay, Object listener, 
+    public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener, 
             String mintegralAdUnitId, String mintegralAdUnitPlacementId) {
         if (obj instanceof Activity) {
             //calling this here as the method needs to be fixed on the Android SDK side
@@ -42,6 +42,7 @@ public final class UnityHelper {
                 nimbusResponse.renderInfoOverride.put("adUnitId", mintegralAdUnitId);
                 nimbusResponse.renderInfoOverride.put("placement", mintegralAdUnitPlacementId);
             }
+            nimbusResponse.renderInfoOverride.put("is_rewarded", String.valueOf(isRewarded));
             if (isBlocking) {
                 nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
                         Configuration.ORIENTATION_LANDSCAPE ?
