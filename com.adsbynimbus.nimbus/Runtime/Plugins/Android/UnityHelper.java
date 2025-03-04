@@ -25,6 +25,7 @@ import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
 import com.adsbynimbus.request.RequestManager;
+import com.adsbynimbus.request.MintegralDemandProvider;
 
 import java.util.HashMap;
 

@@ -30,6 +30,7 @@ namespace Nimbus.Editor {
 		private const string MetaPartnerStr = "Meta";
 		private const string AdMobPartnerStr = "AdMob";
 		private const string MintegralPartnerStr = "Mintegral";
+		Vector2 scrollPos;
 
 		private void OnEnable() {
 			UpdateSettings();
@@ -45,7 +46,8 @@ namespace Nimbus.Editor {
 		private void OnGUI() {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
-
+			EditorGUILayout.BeginVertical();
+			scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(800), GUILayout.Height(600));
 			EditorGUILayout.LabelField("Enable Third Party SDK Support", headerStyle);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 4);
 
@@ -249,7 +251,7 @@ namespace Nimbus.Editor {
 				? string.Format(ButtonMessageTemplate, "Remove", "Mintegral", "Android")
 				: string.Format(ButtonMessageTemplate, "Enable", "Mintegral", "Android");
 			if (GUILayout.Button(androidMintegralbuttonText)) {
-				if (_androidAdMobIsEnabled) {
+				if (_androidMintegralIsEnabled) {
 					RemoveBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
 				}
 				else {
@@ -283,6 +285,9 @@ namespace Nimbus.Editor {
 			
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			
+			EditorGUILayout.EndScrollView();
+			EditorGUILayout.EndVertical();
 		}
 		
 		private void OnInspectorUpdate() {
