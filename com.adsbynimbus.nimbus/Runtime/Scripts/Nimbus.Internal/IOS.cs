@@ -5,6 +5,7 @@ using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -126,6 +127,13 @@ namespace Nimbus.Internal {
 				var admob = new AdMobIOS(adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
 				admob.InitializeNativeSDK();
 				_interceptors.Add(admob);
+			#endif
+			#if NIMBUS_ENABLE_MINTEGRAL
+				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
+				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
+				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				mintegral.InitializeNativeSDK();
+				_interceptors.Add(mintegral);
 			#endif
 		}
 

@@ -42,5 +42,10 @@ namespace Nimbus.Editor {
 		{
 			return @"implementation ""androidx.collection:collection:1.4.5""";
 		}
+
+		public static string MintegralBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-mintegral:{SdkVersion}"")";
+		}
 	}
 }

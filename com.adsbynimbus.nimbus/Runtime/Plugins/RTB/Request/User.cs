@@ -43,5 +43,17 @@ namespace OpenRTB.Request {
         [JsonProperty("admob_gde_signals", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AdMobSignals;
         
+        [JsonProperty("mintegral_sdk", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public MintegralObj MintegralSdkObj;
+        
+    }
+
+    public class MintegralObj
+    {
+        [JsonProperty("buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string MintegralBuyerId;
+        
+        [JsonProperty("sdkv", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string MintegralSdkVersion;
     }
 }

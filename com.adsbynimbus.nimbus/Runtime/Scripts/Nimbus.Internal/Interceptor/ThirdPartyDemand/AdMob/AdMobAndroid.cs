@@ -13,18 +13,18 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
 		private readonly bool _testMode;
-		private readonly AdMobAdUnit[] _adUnitIds;
+		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		private AdUnitType _adUnitType;
 		private string _adUnitId;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public AdMobAndroid(string appID, AdMobAdUnit[] adUnitIds, bool enableTestMode) {
+		public AdMobAndroid(string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
 			_appID = appID;
 			_adUnitIds = adUnitIds;
 			_testMode = enableTestMode;
 		}
 		
-		public AdMobAndroid(AndroidJavaObject applicationContext, string appID, AdMobAdUnit[] adUnitIds, bool enableTestMode) {
+		public AdMobAndroid(AndroidJavaObject applicationContext, string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
 			_applicationContext = applicationContext;
 			_appID = appID;
 			_adUnitIds = adUnitIds;
@@ -36,7 +36,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		}
 		
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
-			foreach (AdMobAdUnit adUnit in _adUnitIds)
+			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
 				if (adUnit.AdUnitType == type)
 				{

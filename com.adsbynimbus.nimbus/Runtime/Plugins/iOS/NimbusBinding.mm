@@ -140,4 +140,16 @@ extern "C" {
         return strdup([[NimbusManager getAdMobRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId)  width: width height: height] UTF8String]);
     }
 #endif
+
+#if NIMBUS_ENABLE_MINTEGRAL
+    void _initializeMintegral(const char* appId, const char* appKey) {
+        [NimbusManager initializeMintegralWithAppId: GetStringParam(appId) 
+                                                appKey: GetStringParam(appKey) ];
+    }
+    
+    const char* _getMintegralRequestModifiers(int adUnitType, const char* adUnitId, const char* placementId, int width, int height) {
+        return strdup([[NimbusManager getMintegralRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId) 
+            adUnitPlacementId: GetStringParam(placementId) width: width height: height] UTF8String]);
+    }
+#endif
 }

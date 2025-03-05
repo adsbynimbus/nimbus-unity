@@ -42,6 +42,17 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _iosAdMobAppId;
 		private ReorderableList _iosAdMobAdUnitDataList = null;
 		private SerializedProperty _iosAdMobAdUnitData = null;
+		
+		// Mintegral
+		private SerializedProperty _androidMintegralAppId;
+		private SerializedProperty _androidMintegralAppKey;
+		private ReorderableList _androidMintegralAdUnitDataList = null;
+		private SerializedProperty _androidMintegralAdUnitData = null;
+		
+		private SerializedProperty _iosMintegralAppId;
+		private SerializedProperty _iosMintegralAppKey;
+		private ReorderableList _iosMintegralAdUnitDataList = null;
+		private SerializedProperty _iosMintegralAdUnitData = null;
 
 
 		private void OnEnable() {
@@ -125,6 +136,39 @@ namespace Nimbus.ScriptableObjects {
 			_iosAdMobAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosAdMobAdUnitDataList.headerHeight = 0f;
 			_iosAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobAdUnitData;
+			
+			// Mintegral
+			// Android Mintegral UI
+			_androidMintegralAppId = serializedObject.FindProperty("androidMintegralAppID");
+			_androidMintegralAppKey = serializedObject.FindProperty("androidMintegralAppKey");
+			_androidMintegralAdUnitData = serializedObject.FindProperty("androidMintegralAdUnitData");
+			_androidMintegralAdUnitDataList = new ReorderableList(
+				serializedObject, _androidMintegralAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_androidMintegralAdUnitData.isExpanded = true;
+			_androidMintegralAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_androidMintegralAdUnitDataList.headerHeight = 0f;
+			_androidMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAdUnitData;
+			
+			// IOS Mintegral UI
+			_iosMintegralAppId = serializedObject.FindProperty("iosMintegralAppID");
+			_iosMintegralAppKey = serializedObject.FindProperty("iosMintegralAppKey");
+			_iosMintegralAdUnitData = serializedObject.FindProperty("iosMintegralAdUnitData");
+			_iosMintegralAdUnitDataList = new ReorderableList(
+				serializedObject, _iosMintegralAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_iosMintegralAdUnitData.isExpanded = true;
+			_iosMintegralAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_iosMintegralAdUnitDataList.headerHeight = 0f;
+			_iosMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAdUnitData;
 		}
 
 		private void OnDisable() {
@@ -132,6 +176,8 @@ namespace Nimbus.ScriptableObjects {
 			_iosApsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
 			_androidAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobAdUnitData;
 			_iosAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobAdUnitData;
+			_androidMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralAdUnitData;
+			_iosMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralAdUnitData;
 			var config = target as NimbusSDKConfiguration;
 			if (config == null) return;
 			config.Sanitize();
@@ -188,6 +234,30 @@ namespace Nimbus.ScriptableObjects {
 				fieldRect.y += fieldRect.height;
 			}
 		}
+		
+		private void OnDrawElementMintegralAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			#if UNITY_ANDROID
+				var item = _androidMintegralAdUnitData.GetArrayElementAtIndex(index);
+			#endif
+			#if UNITY_IOS
+				var item = _iosMintegralAdUnitData.GetArrayElementAtIndex(index);
+			#endif
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
 
 		public override void OnInspectorGUI() {
 			serializedObject.Update();
@@ -215,7 +285,7 @@ namespace Nimbus.ScriptableObjects {
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -299,6 +369,29 @@ namespace Nimbus.ScriptableObjects {
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter AdMob data", MessageType.Warning);
+				#endif
+			#endif
+			
+			#if NIMBUS_ENABLE_MINTEGRAL
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Mintegral Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField((_androidMintegralAppId));
+					EditorGUILayout.PropertyField((_androidMintegralAppKey));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_androidMintegralAdUnitData, "Android Ad Unit Id Data");
+				#endif
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField((_iosMintegralAppId));
+					EditorGUILayout.PropertyField((_iosMintegralAppKey));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_iosMintegralAdUnitData, "iOS Ad Unit Id Data");
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Mintegral data", MessageType.Warning);
 				#endif
 			#endif
 			

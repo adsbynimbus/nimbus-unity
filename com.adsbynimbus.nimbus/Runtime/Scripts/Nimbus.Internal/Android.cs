@@ -5,6 +5,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -34,6 +35,8 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _nimbus;
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
+		
+		private ThirdPartyAdUnit[] mintegralAdUnits;
 		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
@@ -83,6 +86,14 @@ namespace Nimbus.Internal {
 				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
 				_interceptors.Add(admob);
 			#endif
+			#if NIMBUS_ENABLE_MINTEGRAL
+				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
+				mintegralAdUnits = adUnitIds;
+				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
+				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				mintegral.InitializeNativeSDK();
+				_interceptors.Add(mintegral);
+			#endif
 		}
 
 
@@ -97,9 +108,19 @@ namespace Nimbus.Internal {
 				holdTime = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
 			}
-
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, holdTime,
-				listener);
+			Debug.unityLogger.Log("SHOWING AD");
+			var mintegralAdUnitId = "";
+			var mintegralAdUnitPlacementId = "";
+			foreach (ThirdPartyAdUnit adUnit in mintegralAdUnits)
+			{
+				if (adUnit.AdUnitType == nimbusAdUnit.AdType)
+				{
+					mintegralAdUnitId = adUnit.AdUnitId;
+					mintegralAdUnitPlacementId = adUnit.AdUnitPlacementId;
+				}
+			}
+			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
+				listener, mintegralAdUnitId, mintegralAdUnitPlacementId);
 		}
 		
 		internal override string GetSessionID() {
