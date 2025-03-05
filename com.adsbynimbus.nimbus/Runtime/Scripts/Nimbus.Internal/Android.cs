@@ -91,6 +91,7 @@ namespace Nimbus.Internal {
 				mintegralAdUnits = adUnitIds;
 				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif
 		}

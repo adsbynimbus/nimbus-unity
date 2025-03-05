@@ -36,8 +36,18 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		}
 		
 		public void InitializeNativeSDK() {
-			var mintegral = new AndroidJavaClass("com.adsbynimbus.request.MintegralDemandProvider");
-			mintegral.CallStatic("initialize", _appID, _appKey, null);
+			try
+			{
+				var mintegralDemandClass = new AndroidJavaClass(NimbusMintegralPackage);
+				AndroidJavaObject nullObject = null;
+				var mintegralCompanionObject = mintegralDemandClass.GetStatic<AndroidJavaObject> ("Companion");
+				mintegralCompanionObject.Call("initialize", _appID, _appKey, nullObject);
+			}
+			catch (AndroidJavaException e)
+			{
+				Debug.unityLogger.Log("Mintegral Initialization ERROR", e.Message);
+			}
+
 		}
 		
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {

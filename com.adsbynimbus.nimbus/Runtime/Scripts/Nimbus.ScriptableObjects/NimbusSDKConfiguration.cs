@@ -2,13 +2,11 @@ using System;
 using System.IO;
 using System.Text;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using UnityEngine;
 
 namespace Nimbus.ScriptableObjects {
 	[CreateAssetMenu(fileName = "Nimbus SDK Configuration", menuName = "Nimbus/Create SDK Configuration", order = 0)]
 	public class NimbusSDKConfiguration : ScriptableObject {
-		public const string UnitySdkVersion = "1.8.0";
 		[HideInInspector] public string publisherKey;
 		[HideInInspector] public string apiKey;
 		[HideInInspector] public bool enableSDKInTestMode;
@@ -49,7 +47,7 @@ namespace Nimbus.ScriptableObjects {
 		public void Sanitize() {
 			publisherKey = publisherKey?.Trim();
 			apiKey = apiKey?.Trim();
-			#if NIMBUS_ENABLE_APS
+			#if NIMBUS_ENABLE_APS 
 				androidAppID = androidAppID?.Trim();
 				iosAppID = iosAppID?.Trim();
 
@@ -100,7 +98,6 @@ namespace Nimbus.ScriptableObjects {
 					}
 				}
 			#endif
-			
 			#if NIMBUS_ENABLE_MINTEGRAL
 				androidMintegralAppID = androidMintegralAppID?.Trim();
 				androidMintegralAppKey = androidMintegralAppKey?.Trim();
@@ -111,7 +108,7 @@ namespace Nimbus.ScriptableObjects {
 						androidMintegralAdUnitData[i].AdUnitId = androidMintegralAdUnitData[i].AdUnitId?.Trim();
 					}
 				}
-				
+					
 				if (iosMintegralAdUnitData != null) {
 					for (var i = 0; i < iosMintegralAdUnitData.Length; i++) {
 						iosMintegralAdUnitData[i].AdUnitId = iosMintegralAdUnitData[i].AdUnitId?.Trim();
@@ -159,5 +156,18 @@ namespace Nimbus.ScriptableObjects {
 			#endif
 			return new Tuple<string, ThirdPartyAdUnit[]>(appID, adUnitIds);
 		}
+		
+		public Tuple<string, string, ThirdPartyAdUnit[]> GetMintegralData() {
+			var appID = androidMintegralAppID;
+			var appKey = androidMintegralAppKey;
+			var adUnitIds = androidMintegralAdUnitData;
+			#if UNITY_IOS
+				appID = iosMintegralAppID;
+				appKey = iosMintegralAppKey;
+				adUnitIds =  iosMintegralAdUnitData;
+			#endif
+			return new Tuple<string, string, ThirdPartyAdUnit[]>(appID, appKey, adUnitIds);
+		}
+
 	}
 }
