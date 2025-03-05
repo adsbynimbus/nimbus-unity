@@ -168,7 +168,7 @@ namespace Nimbus.Editor {
 			// IOS Mintegral UI
 			_iosMintegralAppId = serializedObject.FindProperty("iosMintegralAppID");
 			_iosMintegralAppKey = serializedObject.FindProperty("iosMintegralAppKey");
-			_iosMintegralAdUnitData = serializedObject.FindProperty("iosMintegraldUnitData");
+			_iosMintegralAdUnitData = serializedObject.FindProperty("iosMintegralAdUnitData");
 			_iosMintegralAdUnitDataList = new ReorderableList(
 				serializedObject, _iosAdMobAdUnitData,
 				true,
