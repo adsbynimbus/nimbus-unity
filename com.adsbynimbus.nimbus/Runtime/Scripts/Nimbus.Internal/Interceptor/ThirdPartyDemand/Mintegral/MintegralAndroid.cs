@@ -39,9 +39,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			try
 			{
 				var mintegralDemandClass = new AndroidJavaClass(NimbusMintegralPackage);
-				AndroidJavaObject nullObject = null;
-				var mintegralCompanionObject = mintegralDemandClass.GetStatic<AndroidJavaObject> ("Companion");
-				mintegralCompanionObject.Call("initialize", _appID, _appKey, nullObject);
+				mintegralDemandClass.CallStatic("initialize", _appID, _appKey);
 			}
 			catch (AndroidJavaException e)
 			{
