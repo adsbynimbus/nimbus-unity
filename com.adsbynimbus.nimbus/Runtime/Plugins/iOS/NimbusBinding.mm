@@ -30,9 +30,12 @@ extern "C" {
                     const char* bidResponse,
                     bool isBlocking,
                     bool isRewarded,
-                    double closeButtonDelay) {
+                    double closeButtonDelay, 
+                    const char* mintegralAdUnitId,
+                    const char* mintegralAdUnitPlacementId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay];
+            renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
+            mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)];
     }
 
     void _destroyAd(int adUnitInstanceId) {
@@ -147,9 +150,8 @@ extern "C" {
                                                 appKey: GetStringParam(appKey) ];
     }
     
-    const char* _getMintegralRequestModifiers(int adUnitType, const char* adUnitId, const char* placementId, int width, int height) {
-        return strdup([[NimbusManager getMintegralRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId) 
-            adUnitPlacementId: GetStringParam(placementId) width: width height: height] UTF8String]);
+    const char* _getMintegralRequestModifiers() {
+        return strdup([[NimbusManager getMintegralRequestModifiers] UTF8String]);
     }
 #endif
 }

@@ -47,12 +47,7 @@ import NimbusSDK
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
     #endif
-    
-    #if NIMBUS_ENABLE_MINTEGRAL
-    private static var mintegralInterceptor: NimbusRequestInterceptor?
-    private static var mintegralAdUnitId: String = ""
-    private static var mintegralAdUnitPlacementId: String?
-    #endif
+ 
     
     // MARK: - Class Functions
     
@@ -159,9 +154,7 @@ import NimbusSDK
             MTGSDK.sharedInstance().setAppID(appId, apiKey: appKey)
             Nimbus.shared.renderers[.mintegral] = NimbusMintegralAdRenderer()
         }
-        @objc public class func getMintegralRequestModifiers(adUnitType: Int, adUnitId: String, adUnitPlacementId: String, width: Int, height: Int) -> String {
-            mintegralAdUnitId = adUnitId
-            mintegralAdUnitPlacementId = adUnitPlacementId
+        @objc public class func getMintegralRequestModifiers() -> String {
             let buyeruid =  (MTGBiddingSDK.buyerUID() != nil) ? MTGBiddingSDK.buyerUID() : ""
             let sdkv = MTGSDK.sdkVersion()
             return "{\"buyeruid\":\"\(buyeruid ?? "")\",\"sdkv\":\"\(sdkv)\"}"
@@ -180,7 +173,8 @@ import NimbusSDK
     
     // MARK: - Public Functions
     
-    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval) {
+    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -198,7 +192,7 @@ import NimbusSDK
             return
         }
         #if NIMBUS_ENABLE_MINTEGRAL
-        let interceptor = NimbusMintegralRequestInterceptor(adUnitId: NimbusManager.mintegralAdUnitId, placementId: NimbusManager.mintegralAdUnitPlacementId)
+        let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
         nimbusAd.renderInfo = interceptor.renderInfo(for: nimbusAd)
         #endif
         guard let viewController = unityViewController() else { return }

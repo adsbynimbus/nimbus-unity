@@ -21,7 +21,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		private static extern void _initializeMintegral(string appID, string appKey);
 
 		[DllImport("__Internal")]
-		private static extern string _getMintegralRequestModifiers(int adUnitType, string adUnitId, string placementId, int width, int height);
+		private static extern string _getMintegralRequestModifiers();
 
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data)
 		{
@@ -39,7 +39,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 				}
 			}
 
-			var mintegralObjectStr = _getMintegralRequestModifiers((int) _type, data, _adUnitPlacementId, width, height);
+			var mintegralObjectStr = _getMintegralRequestModifiers();
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
 			}

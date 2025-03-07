@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
@@ -108,17 +109,21 @@ namespace Nimbus.Internal {
 				holdTime = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
 			}
-			Debug.unityLogger.Log("SHOWING AD");
 			var mintegralAdUnitId = "";
 			var mintegralAdUnitPlacementId = "";
-			foreach (ThirdPartyAdUnit adUnit in mintegralAdUnits)
-			{
-				if (adUnit.AdUnitType == nimbusAdUnit.AdType)
+			#if NIMBUS_ENABLE_MINTEGRAL
+				try
 				{
-					mintegralAdUnitId = adUnit.AdUnitId;
-					mintegralAdUnitPlacementId = adUnit.AdUnitPlacementId;
+					var minteralAdUnit =
+						mintegralAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+					mintegralAdUnitId = minteralAdUnit.AdUnitId;
+					mintegralAdUnitPlacementId = minteralAdUnit.AdUnitPlacementId;
 				}
-			}
+				catch (Exception e)
+				{
+					Debug.unityLogger.LogException(e);
+				}
+			#endif
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
 				listener, mintegralAdUnitId, mintegralAdUnitPlacementId);
 		}
