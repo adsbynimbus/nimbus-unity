@@ -139,7 +139,7 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 
 		private static void RunEdm4uCheck(string path)
 		{
-			if ( !File.Exists("Packages/manifest.json") )
+			if (!File.Exists("Packages/manifest.json"))
 				return;
 			if(!File.ReadAllText("Packages/manifest.json").Contains("com.google.external-dependency-manager"))
 			{
