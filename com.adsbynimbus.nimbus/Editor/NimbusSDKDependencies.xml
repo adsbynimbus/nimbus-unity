@@ -1,11 +1,6 @@
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.adsbynimbus.android:nimbus:2.26.1">
-      <repositories>
-        <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.adsbynimbus.android:nimbus-vast:2.26.1">
+    <androidPackage spec="com.adsbynimbus.android:nimbus:2.27.0">
       <repositories>
         <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
       </repositories>
@@ -17,7 +12,7 @@
 
   <iosPods>
     <!--The below pod does not include subspecs because those are added dynamically in IOSPostBuildProcessor.cs-->
-    <iosPod name="NimbusSDK" version="2.25.5" bitcodeEnabled="false" 
+    <iosPod name="NimbusSDK" version="2.26.0" bitcodeEnabled="false" 
             addToAllTargets="false"/>
   </iosPods>
 </dependencies>
