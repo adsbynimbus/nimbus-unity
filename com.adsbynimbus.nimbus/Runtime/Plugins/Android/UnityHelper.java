@@ -25,16 +25,23 @@ import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
 import com.adsbynimbus.request.RequestManager;
+import com.adsbynimbus.request.MintegralDemandProvider;
 
 import java.util.HashMap;
 
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
     
-    public static void render(Object obj, String jsonResponse, boolean isBlocking, int closeButtonDelay, Object listener) {
+    public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener, 
+            String mintegralAdUnitId, String mintegralAdUnitPlacementId) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
+            if (mintegralAdUnitId != "") {
+                nimbusResponse.renderInfoOverride.put("adUnitId", mintegralAdUnitId);
+                nimbusResponse.renderInfoOverride.put("placement", mintegralAdUnitPlacementId);
+            }
+            nimbusResponse.renderInfoOverride.put("is_rewarded", String.valueOf(isRewarded));
             if (isBlocking) {
                 nimbusResponse.companionAds = new CompanionAd[]{activity.getResources().getConfiguration().orientation ==
                         Configuration.ORIENTATION_LANDSCAPE ?

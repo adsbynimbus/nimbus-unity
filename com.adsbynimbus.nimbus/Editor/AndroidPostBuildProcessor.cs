@@ -30,22 +30,31 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
     }
 }";
 
-		private const string RepoString = @"
-dependencyResolutionManagement {
-    repositories {
-				        maven {
-							url ""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"" 
-							content {
-                includeGroupByRegex("".*\\.adsbynimbus.*"")
-						}
-        }}}";
 		public int callbackOrder => 999;
 
 		public void OnPostGenerateGradleAndroidProject(string path)
 		{
+			var extraRepositories = "";
+			#if NIMBUS_ENABLE_MINTEGRAL
+				extraRepositories =
+					@"
+					maven {
+					url ""https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea""  
+											content {
+												includeGroupByRegex("".*\\.mbridge.*"")
+											}}";
+			#endif
+			string repoString = @"
+				dependencyResolutionManagement {
+				    repositories {
+								        maven {
+											url ""https://adsbynimbus-public.s3.amazonaws.com/android/sdks"" 
+											content {
+				                includeGroupByRegex("".*\\.adsbynimbus.*"")
+										}" + extraRepositories + "}}}";
 			WriteGradleProps(path + "/../gradle.properties");
 			var repoWriter = File.AppendText(path + "/../settings.gradle");
-			repoWriter.WriteLine(RepoString);
+			repoWriter.WriteLine(repoString);
 			repoWriter.Flush();
 			repoWriter.Close();
 			
@@ -92,7 +101,7 @@ dependencyResolutionManagement {
 				}
 			#endif
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
@@ -108,6 +117,9 @@ dependencyResolutionManagement {
 				#if NIMBUS_ENABLE_ADMOB
 					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
 					builder.AppendLine(AndroidBuildDependencies.AdMobCollectionFixBuildDependency());
+				#endif
+				#if NIMBUS_ENABLE_MINTEGRAL
+					builder.AppendLine(AndroidBuildDependencies.MintegralBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");
@@ -127,9 +139,9 @@ dependencyResolutionManagement {
 
 		private static void RunEdm4uCheck(string path)
 		{
-			if ( !File.Exists("Packages/manifest.json"))
+			if (!File.Exists("Packages/manifest.json"))
 				return;
-			if (!File.ReadAllText("Packages/manifest.json").Contains("com.google.external-dependency-manager"))
+			if(!File.ReadAllText("Packages/manifest.json").Contains("com.google.external-dependency-manager"))
 			{
 				var dependencies = AndroidBuildDependencies.BuildDependencies();
 				var buildWriter = File.AppendText(path + "/build.gradle");

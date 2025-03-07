@@ -30,9 +30,12 @@ extern "C" {
                     const char* bidResponse,
                     bool isBlocking,
                     bool isRewarded,
-                    double closeButtonDelay) {
+                    double closeButtonDelay, 
+                    const char* mintegralAdUnitId,
+                    const char* mintegralAdUnitPlacementId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay];
+            renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
+            mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)];
     }
 
     void _destroyAd(int adUnitInstanceId) {
@@ -138,6 +141,17 @@ extern "C" {
     
     const char* _getAdMobRequestModifiers(int adUnitType, const char* adUnitId, int width, int height) {
         return strdup([[NimbusManager getAdMobRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId)  width: width height: height] UTF8String]);
+    }
+#endif
+
+#if NIMBUS_ENABLE_MINTEGRAL
+    void _initializeMintegral(const char* appId, const char* appKey) {
+        [NimbusManager initializeMintegralWithAppId: GetStringParam(appId) 
+                                                appKey: GetStringParam(appKey) ];
+    }
+    
+    const char* _getMintegralRequestModifiers() {
+        return strdup([[NimbusManager getMintegralRequestModifiers] UTF8String]);
     }
 #endif
 }

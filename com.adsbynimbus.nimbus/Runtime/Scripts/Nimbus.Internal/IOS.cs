@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Nimbus.Internal.Interceptor;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -36,7 +39,7 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
-			double closeButtonDelay);
+			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -83,6 +86,9 @@ namespace Nimbus.Internal {
 		private Device _deviceCache;
 		private string _sessionId;
 		
+		private ThirdPartyAdUnit[] mintegralAdUnits;
+
+		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
 			
@@ -127,6 +133,14 @@ namespace Nimbus.Internal {
 				admob.InitializeNativeSDK();
 				_interceptors.Add(admob);
 			#endif
+			#if NIMBUS_ENABLE_MINTEGRAL
+				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
+				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
+				mintegralAdUnits = adUnitIds;
+				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				mintegral.InitializeNativeSDK();
+				_interceptors.Add(mintegral);
+			#endif
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
@@ -145,8 +159,23 @@ namespace Nimbus.Internal {
 					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
 				}
 			}
+			var mintegralAdUnitId = "";
+			var mintegralAdUnitPlacementId = "";
+			#if NIMBUS_ENABLE_MINTEGRAL
+				try
+				{
+					var minteralAdUnit =
+						mintegralAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+					mintegralAdUnitId = minteralAdUnit.AdUnitId;
+					mintegralAdUnitPlacementId = minteralAdUnit.AdUnitPlacementId;
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.LogException(e);
+				}
+			#endif
 			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay);
+			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId);
 		}
 
 		internal override string GetSessionID() {

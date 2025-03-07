@@ -29,19 +29,25 @@ import GoogleMobileAds
 import NimbusRequestKit
 import NimbusSDK
 #endif
+#if NIMBUS_ENABLE_MINTEGRAL
+import MTGSDK
+import MTGSDKBidding
+import NimbusSDK
+#endif
 
 @objc public class NimbusManager: NSObject {
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
     private let adUnitInstanceId: Int
+    
     private var nimbusAdManager: NimbusAdManager?
     private var adController: AdController?
 
-    
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
     #endif
+ 
     
     // MARK: - Class Functions
     
@@ -143,6 +149,18 @@ import NimbusSDK
         }
     #endif
     
+    #if NIMBUS_ENABLE_MINTEGRAL
+        @objc public class func initializeMintegral(appId: String, appKey: String) {
+            MTGSDK.sharedInstance().setAppID(appId, apiKey: appKey)
+            Nimbus.shared.renderers[.mintegral] = NimbusMintegralAdRenderer()
+        }
+        @objc public class func getMintegralRequestModifiers() -> String {
+            let buyeruid =  (MTGBiddingSDK.buyerUID() != nil) ? MTGBiddingSDK.buyerUID() : ""
+            let sdkv = MTGSDK.sdkVersion()
+            return "{\"buyeruid\":\"\(buyeruid ?? "")\",\"sdkv\":\"\(sdkv)\"}"
+        }
+    #endif
+    
     // MARK: - Private Functions
     
     private init(adUnitInstanceId: Int) {
@@ -155,7 +173,8 @@ import NimbusSDK
     
     // MARK: - Public Functions
     
-    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval) {
+    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -168,11 +187,14 @@ import NimbusSDK
             return
         }
         
-        guard let nimbusAd = try? JSONDecoder().decode(NimbusAd.self, from: decodedData) else {
+        guard var nimbusAd = try? JSONDecoder().decode(NimbusAd.self, from: decodedData) else {
             Nimbus.shared.logger.log("Unable to get NimbusAd from bid response data", level: .error)
             return
         }
-        
+        #if NIMBUS_ENABLE_MINTEGRAL
+        let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
+        nimbusAd.renderInfo = interceptor.renderInfo(for: nimbusAd)
+        #endif
         guard let viewController = unityViewController() else { return }
         
         if isBlocking {

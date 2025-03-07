@@ -2,13 +2,11 @@ using System;
 using System.IO;
 using System.Text;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using UnityEngine;
 
 namespace Nimbus.ScriptableObjects {
 	[CreateAssetMenu(fileName = "Nimbus SDK Configuration", menuName = "Nimbus/Create SDK Configuration", order = 0)]
 	public class NimbusSDKConfiguration : ScriptableObject {
-		public const string UnitySdkVersion = VersionConstants.UnitySdkVersion;
 		[HideInInspector] public string publisherKey;
 		[HideInInspector] public string apiKey;
 		[HideInInspector] public bool enableSDKInTestMode;
@@ -31,10 +29,17 @@ namespace Nimbus.ScriptableObjects {
 		
 		// AdMob Data
 		[HideInInspector] public string androidAdMobAppID;
-		[HideInInspector] public AdMobAdUnit[] androidAdMobAdUnitData;
+		[HideInInspector] public ThirdPartyAdUnit[] androidAdMobAdUnitData;
 		[HideInInspector] public string iosAdMobAppID;
-		[HideInInspector] public AdMobAdUnit[] iosAdMobAdUnitData;
+		[HideInInspector] public ThirdPartyAdUnit[] iosAdMobAdUnitData;
 		
+		// Mintegral Data
+		[HideInInspector] public string androidMintegralAppID;
+		[HideInInspector] public string androidMintegralAppKey;
+		[HideInInspector] public ThirdPartyAdUnit[] androidMintegralAdUnitData;
+		[HideInInspector] public string iosMintegralAppID;
+		[HideInInspector] public string iosMintegralAppKey;
+		[HideInInspector] public ThirdPartyAdUnit[] iosMintegralAdUnitData;
 		private void OnValidate() {
 			Sanitize();
 		}
@@ -42,7 +47,7 @@ namespace Nimbus.ScriptableObjects {
 		public void Sanitize() {
 			publisherKey = publisherKey?.Trim();
 			apiKey = apiKey?.Trim();
-			#if NIMBUS_ENABLE_APS
+			#if NIMBUS_ENABLE_APS 
 				androidAppID = androidAppID?.Trim();
 				iosAppID = iosAppID?.Trim();
 
@@ -93,6 +98,23 @@ namespace Nimbus.ScriptableObjects {
 					}
 				}
 			#endif
+			#if NIMBUS_ENABLE_MINTEGRAL
+				androidMintegralAppID = androidMintegralAppID?.Trim();
+				androidMintegralAppKey = androidMintegralAppKey?.Trim();
+				iosMintegralAppID = iosMintegralAppID?.Trim();
+				iosMintegralAppKey = iosMintegralAppKey?.Trim();
+				if (androidMintegralAdUnitData != null) {
+					for (var i = 0; i < androidMintegralAdUnitData.Length; i++) {
+						androidMintegralAdUnitData[i].AdUnitId = androidMintegralAdUnitData[i].AdUnitId?.Trim();
+					}
+				}
+					
+				if (iosMintegralAdUnitData != null) {
+					for (var i = 0; i < iosMintegralAdUnitData.Length; i++) {
+						iosMintegralAdUnitData[i].AdUnitId = iosMintegralAdUnitData[i].AdUnitId?.Trim();
+					}
+				}
+			#endif
 		}
 		
 
@@ -125,14 +147,27 @@ namespace Nimbus.ScriptableObjects {
 			return appID;
 		}
 		
-		public Tuple<string, AdMobAdUnit[]> GetAdMobData() {
+		public Tuple<string, ThirdPartyAdUnit[]> GetAdMobData() {
 			var appID = androidAdMobAppID;
 			var adUnitIds = androidAdMobAdUnitData;
 			#if UNITY_IOS
 				appID = iosAdMobAppID;
 				adUnitIds =  iosAdMobAdUnitData;
 			#endif
-			return new Tuple<string, AdMobAdUnit[]>(appID, adUnitIds);
+			return new Tuple<string, ThirdPartyAdUnit[]>(appID, adUnitIds);
 		}
+		
+		public Tuple<string, string, ThirdPartyAdUnit[]> GetMintegralData() {
+			var appID = androidMintegralAppID;
+			var appKey = androidMintegralAppKey;
+			var adUnitIds = androidMintegralAdUnitData;
+			#if UNITY_IOS
+				appID = iosMintegralAppID;
+				appKey = iosMintegralAppKey;
+				adUnitIds =  iosMintegralAdUnitData;
+			#endif
+			return new Tuple<string, string, ThirdPartyAdUnit[]>(appID, appKey, adUnitIds);
+		}
+
 	}
 }

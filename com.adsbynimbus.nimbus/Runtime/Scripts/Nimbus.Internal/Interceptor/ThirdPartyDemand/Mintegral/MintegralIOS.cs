@@ -1,27 +1,27 @@
-using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
-using OpenRTB.Enumerations;
 using OpenRTB.Request;
-using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
-	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
-	internal class AdMobIOS : IInterceptor, IProvider {
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
+	#if UNITY_IOS && NIMBUS_ENABLE_MINTEGRAL
+	internal class MintegralIOS : IInterceptor, IProvider {
 		private readonly string _appID;
+		private readonly string _appKey;
 		private readonly bool _testMode;
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		private AdUnitType _type;
-		private string _adUnitId;
+		private string _adUnitId = "";
+		private string _adUnitPlacementId = "";
 		
 		[DllImport("__Internal")]
-		private static extern void _initializeAdMob();
+		private static extern void _initializeMintegral(string appID, string appKey);
 
 		[DllImport("__Internal")]
-		private static extern string _getAdMobRequestModifiers(int adUnitType, string adUnitId, int width, int height);
+		private static extern string _getMintegralRequestModifiers();
 
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data)
 		{
@@ -39,12 +39,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				}
 			}
 
-			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
+			var mintegralObjectStr = _getMintegralRequestModifiers();
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
 			}
-			bidRequest.User.Ext.AdMobSignals = adMobSignals;
-			
+			var mintegralObject = JsonConvert.DeserializeObject(mintegralObjectStr, typeof(MintegralObj)) as MintegralObj;
+			if (mintegralObject != null)
+			{
+				bidRequest.User.Ext.MintegralSdkObj = mintegralObject;
+			}
 			return bidRequest;
 		}
 
@@ -55,6 +58,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				if (adUnit.AdUnitType == type)
 				{
 					_adUnitId = adUnit.AdUnitId;
+					_adUnitPlacementId = adUnit.AdUnitPlacementId;
 					_type = type;
 					return adUnit.AdUnitId;
 				}
@@ -62,14 +66,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			return "";
 		}
 
-		public AdMobIOS(string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
+		public MintegralIOS(string appID, string appKey, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
 			_appID = appID;
+			_appKey = appKey;
 			_adUnitIds = adUnitIds;
 			_testMode = enableTestMode;
 		}
 
 		public void InitializeNativeSDK() {
-			_initializeAdMob();
+			_initializeMintegral(_appID, _appKey);
 		}
 
 	}

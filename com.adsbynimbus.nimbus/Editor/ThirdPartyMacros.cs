@@ -15,10 +15,13 @@ namespace Nimbus.Editor {
 		private bool _iosMetaIsEnabled;
 		private bool _androidAdMobIsEnabled;
 		private bool _iosAdMobIsEnabled;
+		private bool _androidMintegralIsEnabled;
+		private bool _iosMintegralIsEnabled;
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
 		private const string MetaMacro = "NIMBUS_ENABLE_META";
 		private const string AdMobMacro = "NIMBUS_ENABLE_ADMOB";
+		private const string MintegralMacro = "NIMBUS_ENABLE_MINTEGRAL";
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
@@ -26,6 +29,8 @@ namespace Nimbus.Editor {
 		private const string VunglePartnerStr = "Vungle";
 		private const string MetaPartnerStr = "Meta";
 		private const string AdMobPartnerStr = "AdMob";
+		private const string MintegralPartnerStr = "Mintegral";
+		Vector2 scrollPos;
 
 		private void OnEnable() {
 			UpdateSettings();
@@ -41,7 +46,8 @@ namespace Nimbus.Editor {
 		private void OnGUI() {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
-
+			EditorGUILayout.BeginVertical();
+			scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(800), GUILayout.Height(600));
 			EditorGUILayout.LabelField("Enable Third Party SDK Support", headerStyle);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 4);
 
@@ -232,6 +238,55 @@ namespace Nimbus.Editor {
 			
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+						
+			// START OF MINTEGRAL
+			EditorGUILayout.LabelField("Mintegral Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			var mintegralAndroidStatus = _androidMintegralIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {mintegralAndroidStatus}", headerStyle);
+			GUILayout.Space(2);
+			var androidMintegralbuttonText = _androidMintegralIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Mintegral", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "Mintegral", "Android");
+			if (GUILayout.Button(androidMintegralbuttonText)) {
+				if (_androidMintegralIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
+					EditorUtil.LogWithHelpBox("Don't forget to add your Android Mintegral App Id and App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
+					FocusOnGameManager(MintegralPartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			var mintegralIosStatus = _iosMintegralIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {mintegralIosStatus}", headerStyle);
+			GUILayout.Space(2);
+			var mintegralIosButtonText = _iosMintegralIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Mintegral", "iOS")
+				: string.Format(ButtonMessageTemplate, "Enable", "Mintegral", "iOS");
+			if (GUILayout.Button(mintegralIosButtonText)) {
+				if (_iosMintegralIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MintegralMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS, MintegralMacro);
+					EditorUtil.LogWithHelpBox(
+						"Don't forget to add your iOS Mintegral App Id and App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
+					FocusOnGameManager(MintegralPartnerStr);
+				}
+			}
+			// END OF MINTEGRAL
+			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			
+			EditorGUILayout.EndScrollView();
+			EditorGUILayout.EndVertical();
 		}
 		
 		private void OnInspectorUpdate() {
@@ -247,6 +302,8 @@ namespace Nimbus.Editor {
 			_iosMetaIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MetaMacro);
 			_androidAdMobIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, AdMobMacro);
 			_iosAdMobIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, AdMobMacro);
+			_androidMintegralIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, MintegralMacro);
+			_iosMintegralIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MintegralMacro);
 		}
 
 

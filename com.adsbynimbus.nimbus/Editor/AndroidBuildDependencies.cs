@@ -11,11 +11,9 @@ namespace Nimbus.Editor {
 			builder.AppendLine("");
 			builder.AppendLine("dependencies {");
 			builder.AppendLine($@"implementation ""com.adsbynimbus.android:nimbus:{SdkVersion}""");
-			builder.AppendLine($@"implementation ""com.adsbynimbus.android:nimbus-vast:{SdkVersion}""");
 			builder.AppendLine($@"implementation ""io.github.pdvrieze.xmlutil:serialization:0.90.3""");
 			builder.AppendLine("}");
 			return builder.ToString();
-
 		}
 
 		public static string APSBuildDependencies() {
@@ -41,6 +39,11 @@ namespace Nimbus.Editor {
 		public static string AdMobCollectionFixBuildDependency()
 		{
 			return @"implementation ""androidx.collection:collection:1.4.5""";
+		}
+
+		public static string MintegralBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-mintegral:{SdkVersion}"")";
 		}
 	}
 }
