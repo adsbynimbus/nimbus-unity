@@ -256,8 +256,7 @@ namespace Nimbus.Editor {
 				}
 				else {
 					SetBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
-					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Mintegral App Id and App Key to the " +
-					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					EditorUtil.LogWithHelpBox("Don't forget to add your Android Mintegral App Id and App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(MintegralPartnerStr);
 				}
 			}
