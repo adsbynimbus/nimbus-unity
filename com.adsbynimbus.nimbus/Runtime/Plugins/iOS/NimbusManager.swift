@@ -34,6 +34,10 @@ import MTGSDK
 import MTGSDKBidding
 import NimbusSDK
 #endif
+#if NIMBUS_ENABLE_UNITY_ADS
+import NimbusSDK
+import UnityAds
+#endif
 
 @objc public class NimbusManager: NSObject {
     
@@ -158,6 +162,16 @@ import NimbusSDK
             let buyeruid =  (MTGBiddingSDK.buyerUID() != nil) ? MTGBiddingSDK.buyerUID() : ""
             let sdkv = MTGSDK.sdkVersion()
             return "{\"buyeruid\":\"\(buyeruid ?? "")\",\"sdkv\":\"\(sdkv)\"}"
+        }
+    #endif
+    
+    #if NIMBUS_ENABLE_UNITY_ADS
+    @objc public class func initializeUnityAds(gameId: String) {
+            Nimbus.shared.renderers[.unity] = NimbusUnityAdRenderer()
+            let _ = NimbusUnityRequestInterceptor(gameId: gameId)
+        }
+        @objc public class func fetchUnityAdsToken() -> String {
+            return UnityAds.getToken() ?? ""
         }
     #endif
     

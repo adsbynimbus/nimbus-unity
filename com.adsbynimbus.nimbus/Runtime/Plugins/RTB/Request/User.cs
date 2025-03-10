@@ -46,6 +46,9 @@ namespace OpenRTB.Request {
         [JsonProperty("mintegral_sdk", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public MintegralObj MintegralSdkObj;
         
+        [JsonProperty("unity_buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string UnityBuyerId;
+        
     }
 
     public class MintegralObj

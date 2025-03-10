@@ -11,13 +11,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 	#if UNITY_IOS && NIMBUS_ENABLE_UNITY_ADS
 	internal class UnityAdsIOS : IInterceptor, IProvider {
 		private readonly string _gameID;
-		private readonly bool _testMode;
 		
 		[DllImport("__Internal")]
-		private static extern void _initializeUnityAds();
+		private static extern void _initializeUnityAds(string gameId);
         
 		[DllImport("__Internal")]
-		private static extern string _fetchMetaBiddingToken();
+		private static extern string _fetchUnityAdsToken();
 
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
 			if (data.IsNullOrEmpty()) {
@@ -26,31 +25,23 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
 			}
-			bidRequest.User.Ext.FacebookBuyerId = data;
-			if (bidRequest.Imp.Length > 0) {
-				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
-				if (_testMode) {
-					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
-				}
-			}
-
+			bidRequest.User.Ext.UnityBuyerId = data;
 			return bidRequest;
 		}
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
-			var biddingToken = _fetchMetaBiddingToken();
-			Debug.unityLogger.Log("METABIDDINGTOKEN", biddingToken);
+			var biddingToken = _fetchUnityAdsToken();
+			Debug.unityLogger.Log("Unity Token", biddingToken);
 			return biddingToken;
 		}
 
-		public MetaIOS(string appID, bool enableTestMode) {
-			_appID = appID;
-			_testMode = enableTestMode;
+		public UnityAdsIOS(string gameID) {
+			_gameID = gameID;
 		}
 
 		public void InitializeNativeSDK() {
-			_initializeUnityAds();
+			_initializeUnityAds(_gameID);
 		}
 
 	}
