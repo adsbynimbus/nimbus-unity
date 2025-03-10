@@ -101,7 +101,7 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				}
 			#endif
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
