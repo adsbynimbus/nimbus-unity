@@ -7,6 +7,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -94,6 +95,13 @@ namespace Nimbus.Internal {
 				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
+			#endif
+			#if NIMBUS_ENABLE_UNITY_ADS
+				var unityAdsGameId = configuration.GetUnityAdsData();
+				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
+				var unityAds = new UnityAdsAndroid(applicationContext, configuration.enableSDKInTestMode, unityAdsGameId);
+				unityAds.InitializeNativeSDK();
+				_interceptors.Add(unityAds);
 			#endif
 		}
 
