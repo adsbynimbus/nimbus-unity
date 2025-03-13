@@ -52,6 +52,7 @@ namespace Nimbus.Internal {
 			_connectionTypeHelper = new AndroidJavaClass(ConnectionHelper);
 			_build = new AndroidJavaClass(AndroidBuild);
 			_buildVersion = new AndroidJavaClass(AndroidBuildVersion);
+			var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 
 			var androidLogger = new AndroidJavaObject(AndroidLogger, 0);
 			_nimbus.CallStatic("addLogger", androidLogger);
@@ -71,7 +72,6 @@ namespace Nimbus.Internal {
 			
 			#if NIMBUS_ENABLE_VUNGLE
 				var vungleAppId = configuration.GetVungleData();
-				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 				Debug.unityLogger.Log(vungleAppId);
 				var vungle = new VungleAndroid(applicationContext, vungleAppId);
 				vungle.InitializeNativeSDK();
@@ -91,14 +91,12 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_MINTEGRAL
 				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
 				mintegralAdUnits = adUnitIds;
-				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
 				var unityAdsGameId = configuration.GetUnityAdsData();
-				var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 				var unityAds = new UnityAdsAndroid(applicationContext, configuration.enableSDKInTestMode, unityAdsGameId);
 				unityAds.InitializeNativeSDK();
 				_interceptors.Add(unityAds);
