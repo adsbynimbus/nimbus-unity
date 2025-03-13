@@ -54,6 +54,10 @@ namespace Nimbus.ScriptableObjects {
 		private ReorderableList _iosMintegralAdUnitDataList = null;
 		private SerializedProperty _iosMintegralAdUnitData = null;
 
+		// Unity Ads
+		private SerializedProperty _androidUnityAdsGameId;
+
+		private SerializedProperty _iosUnityAdsGameId;
 
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
@@ -169,6 +173,13 @@ namespace Nimbus.ScriptableObjects {
 			_iosMintegralAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosMintegralAdUnitDataList.headerHeight = 0f;
 			_iosMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAdUnitData;
+			
+			// Unity Ads
+			// Android Unity Ads UI
+			_androidUnityAdsGameId = serializedObject.FindProperty("androidUnityAdsGameID");
+			
+			// IOS Unity Ads UI
+			_iosUnityAdsGameId = serializedObject.FindProperty("iosUnityAdsGameID");
 		}
 
 		private void OnDisable() {
@@ -285,7 +296,7 @@ namespace Nimbus.ScriptableObjects {
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -392,6 +403,26 @@ namespace Nimbus.ScriptableObjects {
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Mintegral data", MessageType.Warning);
+				#endif
+			#endif
+			
+			#if NIMBUS_ENABLE_UNITY_ADS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Unity Ads Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField(_androidUnityAdsGameId);
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField(_iosUnityAdsGameId);
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Unity Ads data", MessageType.Warning);
 				#endif
 			#endif
 			

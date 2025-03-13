@@ -17,11 +17,14 @@ namespace Nimbus.Editor {
 		private bool _iosAdMobIsEnabled;
 		private bool _androidMintegralIsEnabled;
 		private bool _iosMintegralIsEnabled;
+		private bool _androidUnityAdsIsEnabled;
+		private bool _iosUnityAdsIsEnabled;
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
 		private const string MetaMacro = "NIMBUS_ENABLE_META";
 		private const string AdMobMacro = "NIMBUS_ENABLE_ADMOB";
 		private const string MintegralMacro = "NIMBUS_ENABLE_MINTEGRAL";
+		private const string UnityAdsMacro = "NIMBUS_ENABLE_UNITY_ADS";
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
@@ -30,6 +33,7 @@ namespace Nimbus.Editor {
 		private const string MetaPartnerStr = "Meta";
 		private const string AdMobPartnerStr = "AdMob";
 		private const string MintegralPartnerStr = "Mintegral";
+		private const string UnityAdsPartnerStr = "Unity Ads";
 		Vector2 scrollPos;
 
 		private void OnEnable() {
@@ -285,6 +289,52 @@ namespace Nimbus.Editor {
 			GUILayout.Space(10);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 			
+			// START OF UNITY ADS
+			EditorGUILayout.LabelField("Unity Ads Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			var unityAdsAndroidStatus = _androidUnityAdsIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {unityAdsAndroidStatus}", headerStyle);
+			GUILayout.Space(2);
+			var androidUnityAdsbuttonText = _androidUnityAdsIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Unity Ads", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "Unity Ads", "Android");
+			if (GUILayout.Button(androidUnityAdsbuttonText)) {
+				if (_androidUnityAdsIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, UnityAdsMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, UnityAdsMacro);
+					EditorUtil.LogWithHelpBox("Don't forget to add your Android Unity Ads Game Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
+					FocusOnGameManager(UnityAdsPartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			var unityAdsIosStatus = _iosUnityAdsIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {unityAdsIosStatus}", headerStyle);
+			GUILayout.Space(2);
+			var unityAdsIosButtonText = _iosUnityAdsIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "Unity Ads", "iOS")
+				: string.Format(ButtonMessageTemplate, "Enable", "Unity Ads", "iOS");
+			if (GUILayout.Button(unityAdsIosButtonText)) {
+				if (_iosUnityAdsIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, UnityAdsMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS, UnityAdsMacro);
+					EditorUtil.LogWithHelpBox(
+						"Don't forget to add your iOS Unity Ads Game Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
+					FocusOnGameManager(UnityAdsPartnerStr);
+				}
+			}
+			// END OF UNITY ADS
+			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			
 			EditorGUILayout.EndScrollView();
 			EditorGUILayout.EndVertical();
 		}
@@ -304,6 +354,8 @@ namespace Nimbus.Editor {
 			_iosAdMobIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, AdMobMacro);
 			_androidMintegralIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, MintegralMacro);
 			_iosMintegralIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MintegralMacro);
+			_androidUnityAdsIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, UnityAdsMacro);
+			_iosUnityAdsIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, UnityAdsMacro);
 		}
 
 

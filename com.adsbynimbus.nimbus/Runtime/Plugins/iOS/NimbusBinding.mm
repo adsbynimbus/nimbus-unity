@@ -154,4 +154,14 @@ extern "C" {
         return strdup([[NimbusManager getMintegralRequestModifiers] UTF8String]);
     }
 #endif
+
+#if NIMBUS_ENABLE_UNITY_ADS
+    void _initializeUnityAds(const char* gameId) {
+        [NimbusManager initializeUnityAdsWithGameId: GetStringParam(gameId)];
+    }
+    
+    const char* _fetchUnityAdsToken() {
+        return strdup([[NimbusManager fetchUnityAdsToken] UTF8String]);
+    }
+#endif
 }

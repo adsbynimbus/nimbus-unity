@@ -101,7 +101,7 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				}
 			#endif
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
@@ -116,10 +116,15 @@ if (androidComponents.pluginVersion < new com.android.build.api.AndroidPluginVer
 				#endif
 				#if NIMBUS_ENABLE_ADMOB
 					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
-					builder.AppendLine(AndroidBuildDependencies.AdMobCollectionFixBuildDependency());
 				#endif
 				#if NIMBUS_ENABLE_MINTEGRAL
 					builder.AppendLine(AndroidBuildDependencies.MintegralBuildDependency());
+				#endif
+				#if NIMBUS_ENABLE_UNITY_ADS
+					builder.AppendLine(AndroidBuildDependencies.UnityAdsBuildDependency());
+				#endif
+				#if NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_UNITY_ADS
+					builder.AppendLine(AndroidBuildDependencies.CollectionFixBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");

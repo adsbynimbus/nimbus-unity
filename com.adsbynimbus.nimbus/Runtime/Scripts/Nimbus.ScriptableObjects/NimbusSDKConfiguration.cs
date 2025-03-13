@@ -40,6 +40,11 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public string iosMintegralAppID;
 		[HideInInspector] public string iosMintegralAppKey;
 		[HideInInspector] public ThirdPartyAdUnit[] iosMintegralAdUnitData;
+		
+		//Unity Ads Data
+		[HideInInspector] public string androidUnityAdsGameID;
+		[HideInInspector] public string iosUnityAdsGameID;
+		
 		private void OnValidate() {
 			Sanitize();
 		}
@@ -115,6 +120,11 @@ namespace Nimbus.ScriptableObjects {
 					}
 				}
 			#endif
+			
+			#if NIMBUS_ENABLE_UNITY_ADS
+				androidUnityAdsGameID = androidUnityAdsGameID?.Trim();
+				iosUnityAdsGameID = iosUnityAdsGameID?.Trim();
+			#endif
 		}
 		
 
@@ -167,6 +177,15 @@ namespace Nimbus.ScriptableObjects {
 				adUnitIds =  iosMintegralAdUnitData;
 			#endif
 			return new Tuple<string, string, ThirdPartyAdUnit[]>(appID, appKey, adUnitIds);
+		}
+		
+		public string GetUnityAdsData()
+		{
+			var appID = androidUnityAdsGameID;
+			#if UNITY_IOS
+				appID = iosUnityAdsGameID;
+			#endif
+			return appID;
 		}
 
 	}

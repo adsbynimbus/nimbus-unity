@@ -35,15 +35,20 @@ namespace Nimbus.Editor {
 			return $@"implementation (""com.adsbynimbus.android:extension-admob:{SdkVersion}"")";
 		}
 		
-		//this is needed because of a weird error caused by the Unity Build System
-		public static string AdMobCollectionFixBuildDependency()
+		//this is needed for AdMob and Unity Ads Integrations because of a weird error caused by the Unity Build System
+		public static string CollectionFixBuildDependency()
 		{
-			return @"implementation ""androidx.collection:collection:1.4.5""";
+			return @"implementation (""androidx.collection:collection:1.4.5"")";
 		}
 
 		public static string MintegralBuildDependency()
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-mintegral:{SdkVersion}"")";
+		}
+
+		public static string UnityAdsBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-unity:{SdkVersion}"")";
 		}
 	}
 }

@@ -8,6 +8,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -140,6 +141,13 @@ namespace Nimbus.Internal {
 				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
+			#endif
+			#if NIMBUS_ENABLE_UNITY_ADS
+				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
+				var unityGameId = configuration.GetUnityAdsData();
+				var unityAds = new UnityAdsIOS(unityGameId);
+				unityAds.InitializeNativeSDK();
+				_interceptors.Add(unityAds);
 			#endif
 		}
 

@@ -43,6 +43,10 @@ namespace Nimbus.Editor {
 			#if NIMBUS_ENABLE_MINTEGRAL
 				Dependencies.Add("'NimbusMintegralKit'");
 			#endif
+
+			#if NIMBUS_ENABLE_UNITY_ADS
+				Dependencies.Add("'NimbusUnityKit'");
+			#endif
 			
 			var path = buildPath + "/Podfile";
 			if (!File.Exists(path)) {
@@ -202,6 +206,10 @@ end";
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
 				flags.Add("NIMBUS_ENABLE_MINTEGRAL");
+			#endif
+
+			#if NIMBUS_ENABLE_UNITY_ADS
+				flags.Add("NIMBUS_ENABLE_UNITY_ADS");
 			#endif
 			
 			if (flags.Count > 0)

@@ -63,6 +63,11 @@ namespace Nimbus.Editor {
 		private ReorderableList _iosMintegralAdUnitDataList = null;
 		private SerializedProperty _iosMintegralAdUnitData = null;
 		
+		// Unity Ads
+		private SerializedProperty _androidUnityAdsGameId;
+		
+		private SerializedProperty _iosUnityAdsGameId;
+		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -180,6 +185,13 @@ namespace Nimbus.Editor {
 			_iosMintegralAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosMintegralAdUnitDataList.headerHeight = 0f;
 			_iosMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAdUnitData;
+			
+			// Unity Ads
+			// Android Unity Ads UI
+			_androidUnityAdsGameId = serializedObject.FindProperty("androidUnityAdsGameID");
+			
+			// IOS Unity Ads UI
+			_iosUnityAdsGameId = serializedObject.FindProperty("iosUnityAdsGameID");
 		}
 
 
@@ -272,11 +284,11 @@ namespace Nimbus.Editor {
 			_enableUnityLogs = EditorGUILayout.Toggle("Enable Unity Logger", _enableUnityLogs);
 			_enableSDKInTestMode = EditorGUILayout.Toggle("Enable SDK In Test Mode", _enableSDKInTestMode);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
-
+			EditorGUIUtility.labelWidth = 200.0f; 
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 
@@ -385,6 +397,26 @@ namespace Nimbus.Editor {
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Mintegral data", MessageType.Warning);
 				#endif
 			#endif
+			
+			#if NIMBUS_ENABLE_UNITY_ADS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Unity Ads Configuration", headerStyle);
+				#if UNITY_ANDROID
+					EditorGUILayout.PropertyField(_androidUnityAdsGameId);
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if UNITY_IOS
+					EditorGUILayout.PropertyField(_iosUnityAdsGameId);
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Unity Ads data", MessageType.Warning);
+				#endif
+			#endif
 
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create")) {
@@ -444,6 +476,12 @@ namespace Nimbus.Editor {
 				
 				#if NIMBUS_ENABLE_MINTEGRAL
 					if (!ValidateMintegralData()) {
+						return;
+					}
+				#endif
+				
+				#if NIMBUS_ENABLE_UNITY_ADS
+					if (!ValidateUnityAdsData()) {
 						return;
 					}
 				#endif	
@@ -763,6 +801,22 @@ namespace Nimbus.Editor {
 						$"Mintegral SDK has been included, Mintegral cannot contain duplicate ad type {adUnit.AdUnitType} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}
+			}
+			return true;
+		}
+		
+		private bool ValidateUnityAdsData() {
+			string appId = null;
+			#if UNITY_ANDROID
+				appId = _androidUnityAdsGameId.stringValue;
+			#elif UNITY_IOS
+				appId = _iosUnityAdsGameId.stringValue;
+			#endif
+			
+			if (appId.IsNullOrEmpty()) {
+				Debug.unityLogger.LogError("Nimbus", 
+					"Unity Ads SDK has been included, the Unity Ads Game ID cannot be empty, object NimbusAdsManager not created");
+				return false;
 			}
 			return true;
 		}
