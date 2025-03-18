@@ -129,16 +129,16 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
 				Debug.unityLogger.Log("Initializing iOS AdMob SDK");
-				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobIOS(adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
+				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobIOS(adMobAppID, adMobAdUnitIds, configuration.enableSDKInTestMode);
 				admob.InitializeNativeSDK();
 				_interceptors.Add(admob);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
 				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
-				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
-				mintegralAdUnits = adUnitIds;
-				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
+				mintegralAdUnits = mintegralAdUnitIds;
+				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, mintegralAdUnitIds, configuration.enableSDKInTestMode);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif
