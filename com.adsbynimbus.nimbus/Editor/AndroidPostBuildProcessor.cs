@@ -12,24 +12,24 @@ namespace Nimbus.Editor {
 -keep class com.adsbynimbus.** { *; }";
 
 		private const string PackagingOptions = @"
-android {
-	packagingOptions {
-    	pickFirst ""META-INF/*.kotlin_module""
-	}
-}
-androidComponents.finalizeDsl { dsl ->
-    if (dsl.compileSdk == 34) {
-		dependencies {
-			constraints {
-				implementation(""androidx.core:core-ktx:1.13.1"")
-                implementation(""androidx.fragment:fragment:1.7.1"")
-                implementation(""androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"")
-                implementation(""androidx.media3:media3-exoplayer:1.3.1"")
-                implementation(""androidx.media3:media3-exoplayer-hls:1.3.1"")
-            }
-        }
-    }
-}";
+			android {
+				packagingOptions {
+					pickFirst ""META-INF/*.kotlin_module""
+				}
+			}
+			androidComponents.finalizeDsl { dsl ->
+				if (dsl.compileSdk == 34) {
+					dependencies {
+						constraints {
+							implementation(""androidx.core:core-ktx:1.13.1"")
+							implementation(""androidx.fragment:fragment:1.7.1"")
+							implementation(""androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"")
+							implementation(""androidx.media3:media3-exoplayer:1.3.1"")
+							implementation(""androidx.media3:media3-exoplayer-hls:1.3.1"")
+						}
+					}
+				}
+			}";
 
 		public int callbackOrder => 999;
 
