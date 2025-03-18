@@ -84,14 +84,14 @@ namespace Nimbus.Internal {
 				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
-				var (adMobAppID, adUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adUnitIds, configuration.enableSDKInTestMode);
+				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
+				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adMobAdUnitIds, configuration.enableSDKInTestMode);
 				_interceptors.Add(admob);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
-				var (mintegralAppID, mintegralAppKey, adUnitIds) = configuration.GetMintegralData();
-				mintegralAdUnits = adUnitIds;
-				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, adUnitIds, configuration.enableSDKInTestMode);
+				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
+				mintegralAdUnits = mintegralAdUnitIds;
+				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, mintegralAdUnitIds, configuration.enableSDKInTestMode);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif
