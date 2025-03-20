@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Nimbus.Internal.Utility;
 using OpenRTB.Response;
 using UnityEngine;
 
@@ -111,34 +112,25 @@ namespace Nimbus.Internal {
 		}
 
 		
-		internal async void LoadJsonResponseAsync(Task<string> jsonBody, bool error) {
+		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
 			await Task.Run(async () => {
-				var response = "";
 				try
 				{
-					response = await jsonBody;
-					if (error)
+					var response = await jsonBody;
+					if (response.IsNullOrEmpty())
 					{
-						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: {response}");
-						ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
+						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty");
 						_adEvents.FireOnAdErrorEvent(this);
 						return;
 					}
-					_adWasReturned = true;
 					BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
-					BidResponse.Ext.UseNewRenderer = true;
-					RawBidResponse = JsonConvert.SerializeObject(BidResponse);
+					_adWasReturned = true;
+					RawBidResponse = response;
 					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
-					if (RawBidResponse != "")
-					{
-						_adEvents.FireOnAdLoadedEvent(this);
-					}
-					else
-					{
-						_adEvents.FireOnAdErrorEvent(this);
-					}
+					_adEvents.FireOnAdLoadedEvent(this);
 				} catch (Exception e)
 				{
+					Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: {e.Message}");
 					_adEvents.FireOnAdErrorEvent(this);
 				}
 			});
