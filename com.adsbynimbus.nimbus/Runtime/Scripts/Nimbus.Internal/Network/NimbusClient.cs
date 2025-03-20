@@ -48,14 +48,15 @@ namespace Nimbus.Internal.Network {
 			// getting the UserAgent on a mobile device can fail on the first attempt to retrieve
 			// it's not an issue try again on the next ad call.
 			if (bidRequest.Device.Ua.IsNullOrEmpty()) {
-				return "{\"message\": \"UserAgent could not be retrieved from the platform at the moment, try again.\"}";
+				Debug.unityLogger.LogError("Nimbus", "UserAgent could not be retrieved from the platform at the moment, try again");
 			}
 			
 			#pragma warning disable CS1998
 				return await Task.Run(async () => {
 			#pragma warning restore CS1998
 			#if UNITY_EDITOR
-				const string nimbusResponse = "{\"message\": \"in Editor mode, network request will not be made\"}";
+				Debug.unityLogger.LogError("Nimbus", "In Editor mode, network request will not be made");
+				return "";
 			#else
 				// This will throw an exception if the bid request is missing required data from Nimbus 
 				var body = JsonConvert.SerializeObject(bidRequest, new JsonSerializerSettings() { 
@@ -69,29 +70,28 @@ namespace Nimbus.Internal.Network {
 					return "{\"message\": \"Application Closed\"}";
 				}
 				var nimbusResponse = await serverResponse.Content.ReadAsStringAsync();
-				if (nimbusResponse.IsNullOrEmpty())
+				switch ((int)serverResponse.StatusCode)
 				{
-					switch ((int)serverResponse.StatusCode)
-					{
-						case 400:
-							nimbusResponse = "{\"status_code\": 400, \"message\": \"POST data was malformed\"}";
-							break;
-						case 404:
-							nimbusResponse = "{\"status_code\": 404,\"message\": \"No bids returned\"}";
-							break;
-						case 429:
-							nimbusResponse = "{\"status_code\": 429,\"message\": \"Rate limited\"}";
-							break;
-						case 500:
-							nimbusResponse = "{\"status_code\": 500,\"message\": \"Server is unavailable\"}";
-							break;
-						default:
-							nimbusResponse = $"{{\"status_code\": {(int)serverResponse.StatusCode},\"message\": \"Unknown network error occurred\"}}";
-							break;
-					}
+					case 200:
+						return nimbusResponse;
+					case 400:
+						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 400: POST data was malformed");
+						break;
+					case 404:
+						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 404: No bids returned");
+						break;
+					case 429:
+						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 429: Rate Limited");
+						break;
+					case 500:
+						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 500: Server is Unavailable");
+						break;
+					default:
+						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Unknown Network Error Occurred");
+						break;
 				}
 				#endif
-				return nimbusResponse;
+				return "";
 			});
 		}
 	}

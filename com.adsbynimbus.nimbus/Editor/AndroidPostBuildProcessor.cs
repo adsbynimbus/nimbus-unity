@@ -29,6 +29,22 @@ namespace Nimbus.Editor {
 						}
 					}
 				}
+			}
+			// Always update Androidx Collection to 1.4.5
+			dependencies {
+			    constraints {
+			        implementation(""androidx.collection:collection:1.4.5"")
+			    }
+			}
+			// Force Play Services Ads Indentifier to 18.1.0 if using Java 8
+			afterEvaluate {
+			    android.compileOptions {
+			        if (targetCompatibility < JavaVersion.VERSION_11 && !isCoreLibraryDesugaringEnabled) {
+			            configurations.configureEach {
+			                resolutionStrategy.force(""com.google.android.gms:play-services-ads-identifier:18.1.0"")
+			            }
+			        }
+			    }
 			}";
 
 		public int callbackOrder => 999;
@@ -123,9 +139,6 @@ namespace Nimbus.Editor {
 				#endif
 				#if NIMBUS_ENABLE_UNITY_ADS
 					builder.AppendLine(AndroidBuildDependencies.UnityAdsBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_UNITY_ADS
-					builder.AppendLine(AndroidBuildDependencies.CollectionFixBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");
