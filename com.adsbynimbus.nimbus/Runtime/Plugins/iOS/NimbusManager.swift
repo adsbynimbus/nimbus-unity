@@ -154,6 +154,7 @@ import UnityAds
                      )
                  }
                 let group = DispatchGroup()
+                group.enter()
                 Task {
                     token = try await AdMobRequestBridge().generateSignal(request: request)
                     group.leave()
