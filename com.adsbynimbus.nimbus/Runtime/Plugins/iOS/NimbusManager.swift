@@ -129,26 +129,31 @@ import UnityAds
         @objc public class func initializeAdMob() {
             Nimbus.shared.renderers[.admob] = NimbusAdMobAdRenderer()
         }
-        @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {    
-            switch adUnitType {
-               case 0, 1:
-                   let request = NimbusRequest.forBannerAd(position: "banner", format: NimbusAdFormat(width: width, height: height))
-                          .withAdMobBanner(adUnitId: adUnitId)
-                   request.interceptors?.first?.modifyRequest(request: request)
-                   return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
-               case 2:
-                   let request = NimbusRequest.forInterstitialAd(position: "interstitial")
-                       .withAdMobInterstitial(adUnitId: adUnitId)
-                   request.interceptors?.first?.modifyRequest(request: request)
-                   return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
-               case 3:
-                   let request = NimbusRequest.forRewardedVideo(position: "rewarded")
-                       .withAdMobRewarded(adUnitId: adUnitId)
-                   request.interceptors?.first?.modifyRequest(request: request)
-                   return request.user?.extensions?["admob_gde_signals"]?.value as? String ?? ""
-               default:
-                   break
-           }
+        @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {
+            var token: String = ""
+            do {
+                let request: GADSignalRequest = switch adUnitType {
+                    case 0, 1: try NimbusAdType.banner.adMobSignalRequest(
+                         adUnitId: adUnitId,
+                         bannerSize: CGSize(width: width, height: height)
+                     )
+                    case 2: try NimbusAdType.interstitial.adMobSignalRequest(
+                            adUnitId: adUnitId
+                        )
+                    case 3: try NimbusAdType.rewarded.adMobSignalRequest(
+                            adUnitId: adUnitId
+                        )
+                    default: try NimbusAdType.banner.adMobSignalRequest(
+                            adUnitId: adUnitId,
+                            bannerSize: CGSize(width: width, height: height)
+                        )
+                }
+                let group = DispatchGroup()
+                group.wait(for: {token = try await AdMobRequestBridge().generateSignal(request: request)})
+                return token
+             } catch (let e){
+                 Nimbus.shared.logger.log("Unable to generate admob signal: \(e)", level: .error)
+             }
            return ""
         }
     #endif
@@ -158,10 +163,12 @@ import UnityAds
             MTGSDK.sharedInstance().setAppID(appId, apiKey: appKey)
             Nimbus.shared.renderers[.mintegral] = NimbusMintegralAdRenderer()
         }
-        @objc public class func getMintegralRequestModifiers() -> String {
-            let buyeruid =  (MTGBiddingSDK.buyerUID() != nil) ? MTGBiddingSDK.buyerUID() : ""
-            let sdkv = MTGSDK.sdkVersion()
-            return "{\"buyeruid\":\"\(buyeruid ?? "")\",\"sdkv\":\"\(sdkv)\"}"
+        @MainActor @objc public class func getMintegralRequestModifiers() -> String {
+            guard let data = try? JSONEncoder().encode(MintegralRequestBridge().tokenData),
+            let jsonString = String(data: data, encoding: .utf8) else {
+                   return "{}"
+            }
+            return jsonString
         }
     #endif
     
@@ -206,8 +213,10 @@ import UnityAds
             return
         }
         #if NIMBUS_ENABLE_MINTEGRAL
-        let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
-        nimbusAd.renderInfo = interceptor.renderInfo(for: nimbusAd)
+            let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
+            if let renderInfo = interceptor.renderInfo(for: nimbusAd) {
+                nimbusAd.renderInfo = AnyRenderInfo(renderInfo)
+            }
         #endif
         guard let viewController = unityViewController() else { return }
         
@@ -310,4 +319,17 @@ extension NimbusManager: NimbusAdViewControllerDelegate {
     public func viewWillDisappear(animated: Bool) {}
     public func viewDidDisappear(animated: Bool) {}
     public func didCloseAd(adView: NimbusAdView) { adController?.destroy() }
+}
+
+extension DispatchGroup {
+    func wait(for task: @escaping () async throws -> Void) {
+        enter()
+        
+        Task {
+            defer { self.leave() }
+            try await task()
+        }
+        
+        _ = wait(timeout: .now() + 0.5)
+    }
 }
