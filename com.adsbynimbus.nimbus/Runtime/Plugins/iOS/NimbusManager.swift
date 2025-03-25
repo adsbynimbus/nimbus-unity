@@ -131,35 +131,25 @@ import UnityAds
         }
         @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {
             var token: String = ""
-            var request: GADSignalRequest
             do {
-                 switch adUnitType {
-                 case 0, 1:
-                     request = try NimbusAdType.banner.adMobSignalRequest(
+                let request: GADSignalRequest = switch adUnitType {
+                    case 0, 1: try NimbusAdType.banner.adMobSignalRequest(
                          adUnitId: adUnitId,
                          bannerSize: CGSize(width: width, height: height)
                      )
-                 case 2:
-                     request = try NimbusAdType.interstitial.adMobSignalRequest(
-                         adUnitId: adUnitId
-                     )
-                 case 3:
-                     request = try NimbusAdType.rewarded.adMobSignalRequest(
-                         adUnitId: adUnitId
-                     )
-                 default:
-                     request = try NimbusAdType.banner.adMobSignalRequest(
-                         adUnitId: adUnitId,
-                         bannerSize: CGSize(width: width, height: height)
-                     )
-                 }
-                let group = DispatchGroup()
-                group.enter()
-                Task {
-                    token = try await AdMobRequestBridge().generateSignal(request: request)
-                    group.leave()
+                    case 2: try NimbusAdType.interstitial.adMobSignalRequest(
+                            adUnitId: adUnitId
+                        )
+                    case 3: try NimbusAdType.rewarded.adMobSignalRequest(
+                            adUnitId: adUnitId
+                        )
+                    default: try NimbusAdType.banner.adMobSignalRequest(
+                            adUnitId: adUnitId,
+                            bannerSize: CGSize(width: width, height: height)
+                        )
                 }
-                group.wait(timeout: .now() + 0.5)
+                let group = DispatchGroup()
+                group.wait(for: {token = try await AdMobRequestBridge().generateSignal(request: request)})
                 return token
              } catch (let e){
                  Nimbus.shared.logger.log("Unable to generate admob signal: \(e)", level: .error)
@@ -174,8 +164,11 @@ import UnityAds
             Nimbus.shared.renderers[.mintegral] = NimbusMintegralAdRenderer()
         }
         @MainActor @objc public class func getMintegralRequestModifiers() -> String {
-            let tokenData = MintegralRequestBridge().tokenData
-            return "{\"buyeruid\":\"\(tokenData["buyeruid"] ?? "")\",\"sdkv\":\"\(tokenData["sdkv"] ?? "")\"}"
+            guard let data = try? JSONEncoder().encode(MintegralRequestBridge().tokenData),
+            let jsonString = String(data: data, encoding: .utf8) else {
+                   return "{}"
+            }
+            return jsonString
         }
     #endif
     
@@ -326,4 +319,17 @@ extension NimbusManager: NimbusAdViewControllerDelegate {
     public func viewWillDisappear(animated: Bool) {}
     public func viewDidDisappear(animated: Bool) {}
     public func didCloseAd(adView: NimbusAdView) { adController?.destroy() }
+}
+
+extension DispatchGroup {
+    func wait(for task: @escaping () async throws -> Void) {
+        enter()
+        
+        Task {
+            defer { self.leave() }
+            try await task()
+        }
+        
+        _ = wait(timeout: .now() + 0.5)
+    }
 }
