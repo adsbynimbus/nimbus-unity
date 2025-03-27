@@ -44,8 +44,8 @@ import java.util.concurrent.TimeoutException;
 
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
-    
-    public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener, 
+    static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener,
             String mintegralAdUnitId, String mintegralAdUnitPlacementId) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
@@ -78,7 +78,6 @@ public final class UnityHelper {
     }
     
     public static String fetchAdMobSignal(int adType, String data) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<String> callableTask = () -> {
             switch(adType) {
                 case 1:
@@ -92,14 +91,6 @@ public final class UnityHelper {
             }
         };
         Future<String> future = executor.submit(callableTask);
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
-                executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-        }
         try {
             return future.get(500, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
