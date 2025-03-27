@@ -28,7 +28,7 @@ namespace Nimbus.Editor {
 		private const string AdMobPartnerStr = "AdMob";
 		private const string MintegralPartnerStr = "Mintegral";
 		private const string UnityAdsPartnerStr = "Unity Ads";
-		Vector2 scrollPos;
+		Vector2 _scrollPos;
 
 		private void OnEnable() {
 			UpdateSettings();
@@ -45,7 +45,7 @@ namespace Nimbus.Editor {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			EditorGUILayout.BeginVertical();
-			scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(800), GUILayout.Height(600));
+			_scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.Width(800), GUILayout.Height(600));
 			EditorGUILayout.LabelField("Enable Third Party SDK Support", headerStyle);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 4);
 
@@ -203,10 +203,10 @@ namespace Nimbus.Editor {
 			var unityAdsStatus = _unityAdsIsEnabled ? Enabled : Disabled;
 			EditorGUILayout.LabelField($"Macro is set for Android is: {unityAdsStatus}", headerStyle);
 			GUILayout.Space(2);
-			var unityAdsbuttonText = _unityAdsIsEnabled
+			var unityAdsButtonText = _unityAdsIsEnabled
 				? string.Format(ButtonMessageTemplate, "Remove", "Unity Ads")
 				: string.Format(ButtonMessageTemplate, "Enable", "Unity Ads");
-			if (GUILayout.Button(unityAdsbuttonText)) {
+			if (GUILayout.Button(unityAdsButtonText)) {
 				if (_unityAdsIsEnabled) {
 					RemoveBuildMacroForGroup(BuildTargetGroup.Android, UnityAdsMacro);
 					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, UnityAdsMacro);
