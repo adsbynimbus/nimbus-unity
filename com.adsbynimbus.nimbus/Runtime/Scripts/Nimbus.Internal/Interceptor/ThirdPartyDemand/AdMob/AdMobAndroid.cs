@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.CompilerServices;
-using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -18,11 +16,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		private string _adUnitId;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public AdMobAndroid(string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
-			_appID = appID;
-			_adUnitIds = adUnitIds;
-			_testMode = enableTestMode;
-		}
 		
 		public AdMobAndroid(AndroidJavaObject applicationContext, string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
 			_applicationContext = applicationContext;
@@ -65,22 +58,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			// data is the adUnitId
 			try
 			{
-				var adMob = new AndroidJavaClass(NimbusAdMobPackage);
-				var adMobSignal = "";
-				switch (_adUnitType)
-				{
-					case AdUnitType.Banner:
-					case AdUnitType.Undefined:
-						adMobSignal = adMob.CallStatic<string>("fetchAdMobBannerSignal", data);
-						break;
-					case AdUnitType.Interstitial:
-						adMobSignal = adMob.CallStatic<string>("fetchAdMobInterstitialSignal", data);
-						break;
-					case AdUnitType.Rewarded:
-						adMobSignal = adMob.CallStatic<string>("fetchAdMobRewardedSignal", data);
-						break;
-				}
-				
+				var unityHelper = new AndroidJavaClass("com.adsbynimbus.unity.UnityHelper");
+				var adMobSignal = unityHelper.CallStatic<string>("fetchAdMobSignal", (int) _adUnitType, data);
+
 				bidRequest.User.Ext.AdMobSignals = adMobSignal;
 			}
 			catch (AndroidJavaException e)
