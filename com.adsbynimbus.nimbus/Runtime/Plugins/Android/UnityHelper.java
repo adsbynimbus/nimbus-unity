@@ -2,14 +2,19 @@ package com.adsbynimbus.unity;
 
 import static android.view.ViewGroup.LayoutParams.*;
 
+import static com.adsbynimbus.internal.Logger.log;
+
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.adsbynimbus.Nimbus;
 import com.adsbynimbus.NimbusAdManager;
 import com.adsbynimbus.NimbusError;
 import com.adsbynimbus.openrtb.request.App;
@@ -24,13 +29,23 @@ import com.adsbynimbus.render.CompanionAd;
 import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
+import com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
-    
-    public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener, 
+    static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener,
             String mintegralAdUnitId, String mintegralAdUnitPlacementId) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
@@ -62,6 +77,28 @@ public final class UnityHelper {
         }
     }
     
+    public static String fetchAdMobSignal(int adType, String data) {
+        Callable<String> callableTask = () -> {
+            switch(adType) {
+                case 1:
+                    return NimbusRequestsAdMobInternal.fetchAdMobBannerSignal(data);
+                case 2:
+                    return NimbusRequestsAdMobInternal.fetchAdMobInterstitialSignal(data);
+                case 3:
+                    return NimbusRequestsAdMobInternal.fetchAdMobRewardedSignal(data);
+                default:
+                    return "";
+            }
+        };
+        Future<String> future = executor.submit(callableTask);
+        try {
+            return future.get(500, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            log(Log.DEBUG, "Unable to retrieve AdMob Bidding token");
+        }
+        return "";
+    }
+
     public static void addListener(Object controller, Object listener) {
         if (controller instanceof AdController) {
             ((AdController) controller).listeners().add((AdController.Listener) listener);
