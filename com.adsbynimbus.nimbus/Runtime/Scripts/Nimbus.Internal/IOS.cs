@@ -149,6 +149,12 @@ namespace Nimbus.Internal {
 				unityAds.InitializeNativeSDK();
 				_interceptors.Add(unityAds);
 			#endif
+			#if NIMBUS_ENABLE_MOBILEFUSE
+				Debug.unityLogger.Log("Initializing iOS MobileFuse SDK");
+				var mobileFuse = new MobileFuseIOS();
+				mobileFuse.InitializeNativeSDK();
+				_interceptors.Add(mobileFuse);
+			#endif
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {

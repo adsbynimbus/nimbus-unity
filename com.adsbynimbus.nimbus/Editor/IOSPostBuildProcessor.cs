@@ -48,6 +48,10 @@ namespace Nimbus.Editor {
 				Dependencies.Add("'NimbusUnityKit'");
 			#endif
 			
+			#if NIMBUS_ENABLE_MOBILEFUSE
+				Dependencies.Add("'NimbusMobileFuseKit'");
+			#endif
+			
 			var path = buildPath + "/Podfile";
 			if (!File.Exists(path)) {
 				CreatePodfile(buildPath);
@@ -210,6 +214,10 @@ end";
 
 			#if NIMBUS_ENABLE_UNITY_ADS
 				flags.Add("NIMBUS_ENABLE_UNITY_ADS");
+			#endif
+			
+			#if NIMBUS_ENABLE_MOBILEFUSE
+				flags.Add("NIMBUS_ENABLE_MOBILEFUSE");
 			#endif
 			
 			if (flags.Count > 0)

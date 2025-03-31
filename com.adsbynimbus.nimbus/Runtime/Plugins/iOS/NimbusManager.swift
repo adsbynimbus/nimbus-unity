@@ -38,6 +38,10 @@ import NimbusSDK
 import NimbusSDK
 import UnityAds
 #endif
+#if NIMBUS_ENABLE_MOBILEFUSE
+import NimbusSDK
+#endif
+
 
 @objc public class NimbusManager: NSObject {
     
@@ -179,6 +183,27 @@ import UnityAds
         }
         @objc public class func fetchUnityAdsToken() -> String {
             return UnityAds.getToken() ?? ""
+        }
+    #endif
+    
+    #if NIMBUS_ENABLE_MOBILEFUSE
+        @objc public class func initializeMobileFuse() {
+            Nimbus.shared.renderers[.mobileFuse] = NimbusMobileFuseAdRenderer()
+            let _ = NimbusMobileFuseRequestInterceptor()
+        }
+        @objc public class func fetchMobileFuseToken() -> String {
+            var tokenData: [String : String] = ["":""]
+            do {
+                let group = DispatchGroup()
+                group.wait(for: {tokenData = try await MobileFuseRequestBridge().tokenData})
+                guard let data = try? JSONEncoder().encode(tokenData),
+                let jsonString = String(data: data, encoding: .utf8) else {
+                       return "{}"
+                }
+                return jsonString
+            } catch (let e) {
+                Nimbus.shared.logger.log("Unable to fetch MobileFuse token: \(e)", level: .error)
+            }
         }
     #endif
     

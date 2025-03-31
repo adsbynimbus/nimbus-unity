@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OpenRTB.Request {
     public class User {
@@ -48,6 +49,9 @@ namespace OpenRTB.Request {
         
         [JsonProperty("unity_buyeruid", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string UnityBuyerId;
+        
+        [JsonProperty("mfx_buyerdata", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public JObject MobileFuseBuyerData;
         
     }
 
