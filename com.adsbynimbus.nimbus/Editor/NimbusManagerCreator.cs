@@ -331,100 +331,122 @@ namespace Nimbus.Editor {
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 
-			#if NIMBUS_ENABLE_APS
+			#if NIMBUS_ENABLE_APS_ANDROID || NIMBUS_ENABLE_APS_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_androidAppId));
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_iosAppId));
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
+				#if NIMBUS_ENABLE_APS_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
+				#endif
+				#if NIMBUS_ENABLE_APS_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
+				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter APS data", MessageType.Warning);
 				#endif
 			#endif	
 			
-			#if NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_VUNGLE_ANDROID || NIMBUS_ENABLE_VUNGLE_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_androidVungleAppId));
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_iosVungleAppId));
+				#if NIMBUS_ENABLE_VUNGLE_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidVungleAppId));
+				#endif
+				#if NIMBUS_ENABLE_VUNGLE_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosVungleAppId));
+				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_META
+			#if NIMBUS_ENABLE_META_ANDROID || NIMBUS_ENABLE_META_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Meta Configuration", headerStyle);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_androidMetaAppId));
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_iosMetaAppId));
+				#if NIMBUS_ENABLE_META_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidMetaAppId));
+				#endif
+				#if NIMBUS_ENABLE_META_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosMetaAppId));
+				#endif
 				GUILayout.Space(10);
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Meta data", MessageType.Warning);
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_ADMOB
+			#if NIMBUS_ENABLE_ADMOB_ANDROID || NIMBUS_ENABLE_ADMOB_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("AdMob Configuration", headerStyle);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_androidAdMobAppId));
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "AdMob Android Ad Unit Id Data");
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_iosAdMobAppId));
-				GUILayout.Space(10);
-				EditorDrawUtility.DrawArray(_iosAdMobAdUnitData, "AdMob iOS Ad Unit Id Data");
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#if NIMBUS_ENABLE_ADMOB_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidAdMobAppId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "AdMob Android Ad Unit Id Data");
+				#endif
+				#if NIMBUS_ENABLE_ADMOB_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosAdMobAppId));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_iosAdMobAdUnitData, "AdMob iOS Ad Unit Id Data");
+				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter AdMob data", MessageType.Warning);
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_MINTEGRAL
+			#if NIMBUS_ENABLE_MINTEGRAL_ANDROID || NIMBUS_ENABLE_MINTEGRAL_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Mintegral Configuration", headerStyle);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_androidMintegralAppId));
-				EditorGUILayout.PropertyField((_androidMintegralAppKey));
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				EditorDrawUtility.DrawArray(_androidMintegralAdUnitData, "Mintegral Android Ad Unit Id Data");
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField((_iosMintegralAppId));
-				EditorGUILayout.PropertyField((_iosMintegralAppKey));
-				GUILayout.Space(10);
-				EditorDrawUtility.DrawArray(_iosMintegralAdUnitData, "Mintegral iOS Ad Unit Id Data");
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidMintegralAppId));
+					EditorGUILayout.PropertyField((_androidMintegralAppKey));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_androidMintegralAdUnitData, "Mintegral Android Ad Unit Id Data");
+				#endif
+				#if NIMBUS_ENABLE_MINTEGRAL_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosMintegralAppId));
+					EditorGUILayout.PropertyField((_iosMintegralAppKey));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_iosMintegralAdUnitData, "Mintegral iOS Ad Unit Id Data");
+				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Mintegral data", MessageType.Warning);
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_UNITY_ADS
+			#if NIMBUS_ENABLE_UNITY_ADS_ANDROID || NIMBUS_ENABLE_VUNGLE
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Unity Ads Configuration", headerStyle);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField(_androidUnityAdsGameId);
-				GUILayout.Space(10);
-				EditorGUILayout.PropertyField(_iosUnityAdsGameId);
+				#if NIMBUS_ENABLE_UNITY_ADS_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_androidUnityAdsGameId);
+				#endif
+				#if NIMBUS_ENABLE_UNITY_ADS_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_iosUnityAdsGameId);
+				#endif
 				GUILayout.Space(10);
 
 				#if !UNITY_ANDROID && !UNITY_IOS
@@ -439,17 +461,17 @@ namespace Nimbus.Editor {
 				_asset.enableUnityLogs = _enableUnityLogs;
 				_asset.enableSDKInTestMode = _enableSDKInTestMode;
 
-				#if NIMBUS_ENABLE_APS
+				#if NIMBUS_ENABLE_APS_ANDROID || NIMBUS_ENABLE_APS_IOS
 					HandleApsSlots(true);
 					HandleApsSlots(false);
 				#endif
 				
-				#if NIMBUS_ENABLE_ADMOB
+				#if NIMBUS_ENABLE_ADMOB_ANDROID || NIMBUS_ENABLE_ADMOB_IOS
 					HandleAdMobAdUnitData(true);
 					HandleAdMobAdUnitData(false);
 				#endif
 				
-				#if NIMBUS_ENABLE_MINTEGRAL
+				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID || NIMBUS_ENABLE_MINTEGRAL_IOS
 					HandleMintegralAdUnitData(true);
 					HandleMintegralAdUnitData(false);
 				#endif
@@ -467,7 +489,7 @@ namespace Nimbus.Editor {
 					return;
 				}
 
-				#if NIMBUS_ENABLE_APS
+				#if NIMBUS_ENABLE_APS_ANDROID || NIMBUS_ENABLE_APS_IOS
 					if (!ValidateApsData(true)) {
 						return;
 					}					
@@ -476,19 +498,19 @@ namespace Nimbus.Editor {
 					}
 				#endif
 				
-				#if NIMBUS_ENABLE_VUNGLE
+				#if NIMBUS_ENABLE_VUNGLE_ANDROID || NIMBUS_ENABLE_VUNGLE_IOS
 					if (!ValidateVungleData()) {
 						return;
 					}
 				#endif
 				
-				#if NIMBUS_ENABLE_META
+				#if NIMBUS_ENABLE_META_ANDROID || NIMBUS_ENABLE_META_IOS
 					if (!ValidateMetaData()) {
 						return;
 					}
 				#endif	
 				
-				#if NIMBUS_ENABLE_ADMOB
+				#if NIMBUS_ENABLE_ADMOB_ANDROID || NIMBUS_ENABLE_ADMOB_IOS
 					if (!ValidateAdMobData(true)) {
 						return;
 					}
@@ -497,7 +519,7 @@ namespace Nimbus.Editor {
 					}
 				#endif
 				
-				#if NIMBUS_ENABLE_MINTEGRAL
+				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID || NIMBUS_ENABLE_MINTEGRAL_IOS
 					if (!ValidateMintegralData(true)) {
 						return;
 					}
@@ -506,7 +528,7 @@ namespace Nimbus.Editor {
 					}
 				#endif
 				
-				#if NIMBUS_ENABLE_UNITY_ADS
+				#if NIMBUS_ENABLE_UNITY_ADS_ANDROID || NIMBUS_ENABLE_UNITY_ADS_IOS
 					if (!ValidateUnityAdsData()) {
 						return;
 					}
