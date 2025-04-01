@@ -379,6 +379,9 @@ namespace Nimbus.Editor {
 			}
 			// END OF UNITY ADS
 			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			
 			// START OF MOBILEFUSE
 			EditorGUILayout.LabelField("MobileFuse Build Macro Settings:", headerStyle);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);

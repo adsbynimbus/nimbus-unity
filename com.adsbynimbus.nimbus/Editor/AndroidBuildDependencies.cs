@@ -44,5 +44,10 @@ namespace Nimbus.Editor {
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-unity:{SdkVersion}"")";
 		}
+
+		public static string MobileFuseBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-mobilefuse:{SdkVersion}"")";
+		}
 	}
 }
