@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using JetBrains.Annotations;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Internal.Utility;
@@ -65,7 +66,6 @@ namespace Nimbus.Editor {
 		
 		// Unity Ads
 		private SerializedProperty _androidUnityAdsGameId;
-		
 		private SerializedProperty _iosUnityAdsGameId;
 		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
@@ -91,7 +91,7 @@ namespace Nimbus.Editor {
 			_androidApsSlots.isExpanded = true;
 			_androidApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_androidApsSlotIdList.headerHeight = 0f;
-			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
+			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsAndroidSlotData;
 
 			// IOS APS UI
 			_iosAppId = serializedObject.FindProperty("iosAppID");
@@ -106,7 +106,7 @@ namespace Nimbus.Editor {
 			_iosApsSlots.isExpanded = true;
 			_iosApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosApsSlotIdList.headerHeight = 0f;
-			_iosApsSlotIdList.drawElementCallback += OnDrawElementApsSlotData;
+			_iosApsSlotIdList.drawElementCallback += OnDrawElementApsIOSSlotData;
 			
 			// Vungle
 			// Android Vungle UI
@@ -136,7 +136,7 @@ namespace Nimbus.Editor {
 			_androidAdMobAdUnitData.isExpanded = true;
 			_androidAdMobAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_androidAdMobAdUnitDataList.headerHeight = 0f;
-			_androidAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobAdUnitData;
+			_androidAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobAndroidAdUnitData;
 			
 			// IOS AdMob UI
 			_iosAdMobAppId = serializedObject.FindProperty("iosAdMobAppID");
@@ -151,7 +151,7 @@ namespace Nimbus.Editor {
 			_iosAdMobAdUnitData.isExpanded = true;
 			_iosAdMobAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosAdMobAdUnitDataList.headerHeight = 0f;
-			_iosAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobAdUnitData;
+			_iosAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobIOSAdUnitData;
 			
 			//Mintegral
 			// Android Mintegral UI
@@ -168,7 +168,7 @@ namespace Nimbus.Editor {
 			_androidMintegralAdUnitData.isExpanded = true;
 			_androidMintegralAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_androidMintegralAdUnitDataList.headerHeight = 0f;
-			_androidMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAdUnitData;
+			_androidMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAndroidAdUnitData;
 			
 			// IOS Mintegral UI
 			_iosMintegralAppId = serializedObject.FindProperty("iosMintegralAppID");
@@ -184,7 +184,7 @@ namespace Nimbus.Editor {
 			_iosMintegralAdUnitData.isExpanded = true;
 			_iosMintegralAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosMintegralAdUnitDataList.headerHeight = 0f;
-			_iosMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralAdUnitData;
+			_iosMintegralAdUnitDataList.drawElementCallback += OnDrawElementMintegralIOSAdUnitData;
 			
 			// Unity Ads
 			// Android Unity Ads UI
@@ -196,24 +196,36 @@ namespace Nimbus.Editor {
 
 
 		private void OnDisable() {
-			_androidApsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
-			_iosApsSlotIdList.drawElementCallback -= OnDrawElementApsSlotData;
-			_androidAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobAdUnitData;
-			_iosAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobAdUnitData;
-			_androidMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralAdUnitData;
-			_iosMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralAdUnitData;
+			_androidApsSlotIdList.drawElementCallback -= OnDrawElementApsAndroidSlotData;
+			_iosApsSlotIdList.drawElementCallback -= OnDrawElementApsIOSSlotData;
+			_androidAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobAndroidAdUnitData;
+			_iosAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobIOSAdUnitData;
+			_androidMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralAndroidAdUnitData;
+			_iosMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralIOSAdUnitData;
 		}
 
-		private void OnDrawElementApsSlotData(Rect rect, int index, bool isActive, bool isFocused) {
+		private void OnDrawElementApsAndroidSlotData(Rect rect, int index, bool isActive, bool isFocused) {
 			var fieldRect = rect;
 			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _androidApsSlots.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
 
-			#if UNITY_ANDROID
-				var item = _androidApsSlots.GetArrayElementAtIndex(index);
-			#endif
-			#if UNITY_IOS
-				var item = _iosApsSlots.GetArrayElementAtIndex(index);
-			#endif
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
+		private void OnDrawElementApsIOSSlotData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _iosApsSlots.GetArrayElementAtIndex(index);
 			item.isExpanded = true;
 			var itr = item.Copy();
 
@@ -229,15 +241,28 @@ namespace Nimbus.Editor {
 			}
 		}
 		
-		private void OnDrawElementAdMobAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+		private void OnDrawElementAdMobAndroidAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
 			var fieldRect = rect;
 			fieldRect.height = EditorGUIUtility.singleLineHeight;
-			#if UNITY_ANDROID
-				var item = _androidAdMobAdUnitData.GetArrayElementAtIndex(index);
-			#endif
-			#if UNITY_IOS
-				var item = _iosAdMobAdUnitData.GetArrayElementAtIndex(index);
-			#endif
+			var item = _androidAdMobAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
+		private void OnDrawElementAdMobIOSAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _iosAdMobAdUnitData.GetArrayElementAtIndex(index);
 			item.isExpanded = true;
 			var itr = item.Copy();
 
@@ -253,15 +278,29 @@ namespace Nimbus.Editor {
 			}
 		}
 		
-		private void OnDrawElementMintegralAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+		private void OnDrawElementMintegralAndroidAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
 			var fieldRect = rect;
 			fieldRect.height = EditorGUIUtility.singleLineHeight;
-		#if UNITY_ANDROID
-				var item = _androidMintegralAdUnitData.GetArrayElementAtIndex(index);
-		#endif
-		#if UNITY_IOS
+			var item = _androidMintegralAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
+		
+		private void OnDrawElementMintegralIOSAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
 			var item = _iosMintegralAdUnitData.GetArrayElementAtIndex(index);
-		#endif
 			item.isExpanded = true;
 			var itr = item.Copy();
 
@@ -292,20 +331,21 @@ namespace Nimbus.Editor {
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 
-			#if NIMBUS_ENABLE_APS
+			#if NIMBUS_ENABLE_APS_ANDROID || NIMBUS_ENABLE_APS_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
-				#if UNITY_ANDROID
+				#if NIMBUS_ENABLE_APS_ANDROID
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-					EditorDrawUtility.DrawArray(_androidApsSlots, "Android Slot Id Data");
+					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
-
-				#if UNITY_IOS
+				#if NIMBUS_ENABLE_APS_IOS
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-					EditorDrawUtility.DrawArray(_iosApsSlots, "iOS Slot Id Data");
+					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
 				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
@@ -313,18 +353,17 @@ namespace Nimbus.Editor {
 				#endif
 			#endif	
 			
-			#if NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_VUNGLE_ANDROID || NIMBUS_ENABLE_VUNGLE_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Vungle Configuration", headerStyle);
-				#if UNITY_ANDROID
+				#if NIMBUS_ENABLE_VUNGLE_ANDROID
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidVungleAppId));
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
-
-				#if UNITY_IOS
+				#if NIMBUS_ENABLE_VUNGLE_IOS
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosVungleAppId));
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
@@ -332,41 +371,39 @@ namespace Nimbus.Editor {
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_META
+			#if NIMBUS_ENABLE_META_ANDROID || NIMBUS_ENABLE_META_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Meta Configuration", headerStyle);
-				#if UNITY_ANDROID
-					EditorGUILayout.PropertyField((_androidMetaAppId));
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				#endif
-
-				#if UNITY_IOS
-					EditorGUILayout.PropertyField((_iosMetaAppId));
+				#if NIMBUS_ENABLE_META_ANDROID
 					GUILayout.Space(10);
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorGUILayout.PropertyField((_androidMetaAppId));
 				#endif
-
+				#if NIMBUS_ENABLE_META_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosMetaAppId));
+				#endif
+				GUILayout.Space(10);
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Meta data", MessageType.Warning);
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_ADMOB
+			#if NIMBUS_ENABLE_ADMOB_ANDROID || NIMBUS_ENABLE_ADMOB_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("AdMob Configuration", headerStyle);
-				#if UNITY_ANDROID
+				#if NIMBUS_ENABLE_ADMOB_ANDROID
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAdMobAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-					EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "Android Ad Unit Id Data");
+					EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "AdMob Android Ad Unit Id Data");
 				#endif
-
-				#if UNITY_IOS
+				#if NIMBUS_ENABLE_ADMOB_IOS
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosAdMobAppId));
 					GUILayout.Space(10);
-					EditorDrawUtility.DrawArray(_iosAdMobAdUnitData, "iOS Ad Unit Id Data");
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_iosAdMobAdUnitData, "AdMob iOS Ad Unit Id Data");
 				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
@@ -374,23 +411,23 @@ namespace Nimbus.Editor {
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_MINTEGRAL
+			#if NIMBUS_ENABLE_MINTEGRAL_ANDROID || NIMBUS_ENABLE_MINTEGRAL_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Mintegral Configuration", headerStyle);
-				#if UNITY_ANDROID
+				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidMintegralAppId));
 					EditorGUILayout.PropertyField((_androidMintegralAppKey));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-					EditorDrawUtility.DrawArray(_androidMintegralAdUnitData, "Android Ad Unit Id Data");
+					EditorDrawUtility.DrawArray(_androidMintegralAdUnitData, "Mintegral Android Ad Unit Id Data");
 				#endif
-
-				#if UNITY_IOS
+				#if NIMBUS_ENABLE_MINTEGRAL_IOS
+					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosMintegralAppId));
 					EditorGUILayout.PropertyField((_iosMintegralAppKey));
 					GUILayout.Space(10);
-					EditorDrawUtility.DrawArray(_iosMintegralAdUnitData, "iOS Ad Unit Id Data");
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_iosMintegralAdUnitData, "Mintegral iOS Ad Unit Id Data");
 				#endif
 
 				#if !UNITY_ANDROID && !UNITY_IOS
@@ -398,20 +435,19 @@ namespace Nimbus.Editor {
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_UNITY_ADS
+			#if NIMBUS_ENABLE_UNITY_ADS_ANDROID || NIMBUS_ENABLE_VUNGLE
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Unity Ads Configuration", headerStyle);
-				#if UNITY_ANDROID
-					EditorGUILayout.PropertyField(_androidUnityAdsGameId);
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
-				#endif
-
-				#if UNITY_IOS
-					EditorGUILayout.PropertyField(_iosUnityAdsGameId);
+				#if NIMBUS_ENABLE_UNITY_ADS_ANDROID
 					GUILayout.Space(10);
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorGUILayout.PropertyField(_androidUnityAdsGameId);
 				#endif
+				#if NIMBUS_ENABLE_UNITY_ADS_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_iosUnityAdsGameId);
+				#endif
+				GUILayout.Space(10);
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Unity Ads data", MessageType.Warning);
@@ -425,16 +461,25 @@ namespace Nimbus.Editor {
 				_asset.enableUnityLogs = _enableUnityLogs;
 				_asset.enableSDKInTestMode = _enableSDKInTestMode;
 
-				#if NIMBUS_ENABLE_APS
-					HandleApsSlots();
+				#if NIMBUS_ENABLE_APS_ANDROID
+					HandleApsSlots(_androidApsSlots, out _asset.androidApsSlotData);
+				#endif
+				#if NIMBUS_ENABLE_APS_IOS
+					HandleApsSlots(_iosApsSlots, out _asset.iosApsSlotData);
 				#endif
 				
-				#if NIMBUS_ENABLE_ADMOB
-					HandleAdMobAdUnitData();
+				#if NIMBUS_ENABLE_ADMOB_ANDROID
+					HandleAdMobAdUnitData(_androidAdMobAdUnitData, out _asset.androidAdMobAdUnitData);
+				#endif
+				#if NIMBUS_ENABLE_ADMOB_IOS
+					HandleAdMobAdUnitData(_iosAdMobAdUnitData, out _asset.iosAdMobAdUnitData);
 				#endif
 				
-				#if NIMBUS_ENABLE_MINTEGRAL
-					HandleMintegralAdUnitData();
+				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID
+					HandleMintegralAdUnitData(_androidMintegralAdUnitData, out _asset.androidMintegralAdUnitData);
+				#endif
+				#if NIMBUS_ENABLE_MINTEGRAL_IOS
+					HandleMintegralAdUnitData(_iosMintegralAdUnitData, out _asset.iosMintegralAdUnitData);
 				#endif
 				
 				_asset.Sanitize();
@@ -450,41 +495,85 @@ namespace Nimbus.Editor {
 					return;
 				}
 
-				#if NIMBUS_ENABLE_APS
-					if (!ValidateApsData()) {
+				#if NIMBUS_ENABLE_APS_ANDROID
+					if (!ValidateApsData("Android", _androidAppId, _asset.androidApsSlotData)) {
 						return;
 					}
+					_asset.androidAppID = _androidAppId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_APS_IOS
+					if (!ValidateApsData("iOS", _iosAppId, _asset.iosApsSlotData)) {
+						return;
+					}
+					_asset.iosAppID = _iosAppId.stringValue;
 				#endif
 				
-				#if NIMBUS_ENABLE_VUNGLE
-					if (!ValidateVungleData()) {
+				#if NIMBUS_ENABLE_VUNGLE_ANDROID
+					if (!ValidateVungleData("Android", _androidVungleAppId)) {
 						return;
 					}
+					_asset.androidVungleAppID = _androidVungleAppId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_VUNGLE_IOS
+					if (!ValidateVungleData("iOS", _iosVungleAppId)) {
+						return;
+					}
+					_asset.iosVungleAppID = _iosVungleAppId.stringValue;
 				#endif
 				
-				#if NIMBUS_ENABLE_META
-					if (!ValidateMetaData()) {
+				#if NIMBUS_ENABLE_META_ANDROID
+					if (!ValidateMetaData("Android", _androidMetaAppId)) {
 						return;
 					}
-				#endif	
-				
-				#if NIMBUS_ENABLE_ADMOB
-					if (!ValidateAdMobData()) {
+					_asset.androidMetaAppID = _androidMetaAppId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_META_IOS
+					if (!ValidateMetaData("iOS", _iosMetaAppId)) {
 						return;
 					}
+					_asset.iosMetaAppID = _iosMetaAppId.stringValue;
 				#endif
 				
-				#if NIMBUS_ENABLE_MINTEGRAL
-					if (!ValidateMintegralData()) {
+				#if NIMBUS_ENABLE_ADMOB_ANDROID
+					if (!ValidateAdMobData("Android", _androidAdMobAppId, _asset.androidAdMobAdUnitData)) {
 						return;
 					}
+					_asset.androidAdMobAppID = _androidAdMobAppId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_ADMOB_IOS
+					if (!ValidateAdMobData("iOS", _iosAdMobAppId, _asset.iosAdMobAdUnitData)) {
+						return;
+					}
+					_asset.iosAdMobAppID = _iosAdMobAppId.stringValue;
 				#endif
 				
-				#if NIMBUS_ENABLE_UNITY_ADS
-					if (!ValidateUnityAdsData()) {
+				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID
+					if (!ValidateMintegralData("Android", _androidMintegralAppId, _androidMintegralAppKey, _asset.androidMintegralAdUnitData)) {
 						return;
 					}
-				#endif	
+					_asset.androidMintegralAppID = _androidMintegralAppId.stringValue;
+					_asset.androidMintegralAppKey = _androidMintegralAppKey.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_MINTEGRAL_IOS
+					if (!ValidateMintegralData("iOS", _iosMintegralAppId, _iosMintegralAppKey, _asset.iosMintegralAdUnitData)) {
+						return;
+					}
+					_asset.iosMintegralAppID = _iosMintegralAppId.stringValue;
+					_asset.iosMintegralAppKey = _iosMintegralAppKey.stringValue;
+				#endif
+				
+				#if NIMBUS_ENABLE_UNITY_ADS_ANDROID
+					if (!ValidateUnityAdsData("Android", _androidUnityAdsGameId)) {
+						return;
+					}
+					_asset.androidUnityAdsGameID = _androidUnityAdsGameId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_UNITY_ADS_IOS
+					if (!ValidateUnityAdsData("iOS", _iosUnityAdsGameId)) {
+						return;
+					}
+					_asset.iosUnityAdsGameID = _iosUnityAdsGameId.stringValue;
+				#endif
 
 				AssetDatabase.CreateAsset(_asset,
 					"Packages/com.adsbynimbus.nimbus/Runtime/Scripts/Nimbus.ScriptableObjects/NimbusSDKConfiguration.asset");
@@ -504,13 +593,7 @@ namespace Nimbus.Editor {
 		}
 
 
-		private void HandleApsSlots() {
-			SerializedProperty slotData = null;
-			#if UNITY_ANDROID
-				slotData = _androidApsSlots;
-			# elif UNITY_IOS
-				slotData = _iosApsSlots;
-			#endif
+		private void HandleApsSlots(SerializedProperty slotData, out ApsSlotData[] platformSlots) {
 			var apsSlotData = new List<ApsSlotData>();
 			for (var i = 0; i < slotData.arraySize; i++) {
 				var item = slotData.GetArrayElementAtIndex(i);
@@ -526,38 +609,16 @@ namespace Nimbus.Editor {
 				}
 
 				apsSlotData.Add(apsData);
-			}	
-
-			#if UNITY_ANDROID
-				_asset.androidApsSlotData = apsSlotData.ToArray();
-			# elif UNITY_IOS
-				_asset.iosApsSlotData = apsSlotData.ToArray();
-			#endif
+			}
+			platformSlots = apsSlotData.ToArray();
 		}	
 
-		private bool ValidateApsData() {
-			string appId = null;
-			#if UNITY_ANDROID
-				appId = _androidAppId.stringValue;
-			#elif UNITY_IOS
-				appId = _iosAppId.stringValue;
-			#endif
-			
-			if (appId.IsNullOrEmpty()) {
+		private bool ValidateApsData(string platform, SerializedProperty appId, ApsSlotData[] slotData) {
+			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
 					"APS SDK has been included, the APS App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
-			ApsSlotData[] slotData = null;
-
-			// ReSharper disable once ConvertToConstant.Local
-			var platform = "Android";
-			#if UNITY_ANDROID
-				slotData = _asset.androidApsSlotData;
-			# elif UNITY_IOS
-				slotData = _asset.iosApsSlotData;
-				platform = "iOS";
-			#endif
 			
 			if (slotData == null || slotData.Length == 0) {
 				Debug.unityLogger.LogError("Nimbus", 
@@ -591,46 +652,26 @@ namespace Nimbus.Editor {
 			return true;
 		}
 		
-		private bool ValidateVungleData() {
-			string appId = null;
-			#if UNITY_ANDROID
-				appId = _androidVungleAppId.stringValue;
-			#elif UNITY_IOS
-				appId = _iosVungleAppId.stringValue;
-			#endif
-			
-			if (appId.IsNullOrEmpty()) {
+		private bool ValidateVungleData(string platform, SerializedProperty appId) { 
+			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"Vungle SDK has been included, the Vungle App ID cannot be empty, object NimbusAdsManager not created");
+					$"Vungle SDK has been included, the {platform} Vungle App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
 			return true;
 		}
 		
-		private bool ValidateMetaData() {
-			string appId = null;
-			#if UNITY_ANDROID
-				appId = _androidMetaAppId.stringValue;
-			#elif UNITY_IOS
-				appId = _iosMetaAppId.stringValue;
-			#endif
-			
-			if (appId.IsNullOrEmpty()) {
+		private bool ValidateMetaData(string platform, SerializedProperty appId) {
+			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"Meta SDK has been included, the Meta App ID cannot be empty, object NimbusAdsManager not created");
-				return false;
+					$"Meta SDK has been included, the {platform} Meta App ID cannot be empty, object NimbusAdsManager not created");
+				return false; 
 			}
 			return true;
 		}
 
-		private void HandleAdMobAdUnitData()
+		private void HandleAdMobAdUnitData(SerializedProperty adUnitData, out ThirdPartyAdUnit[] adUnits)
 		{
-			SerializedProperty adUnitData = null;
-			#if UNITY_ANDROID
-				adUnitData = _androidAdMobAdUnitData;
-			# elif UNITY_IOS
-				adUnitData = _iosAdMobAdUnitData;
-			#endif
 			var adUnitList = new List<ThirdPartyAdUnit>();
 			for (var i = 0; i < adUnitData.arraySize; i++) {
 				var item = adUnitData.GetArrayElementAtIndex(i);
@@ -646,37 +687,17 @@ namespace Nimbus.Editor {
 				}
 
 				adUnitList.Add(adMobData);
-			}	
-
-			#if UNITY_ANDROID
-				_asset.androidAdMobAdUnitData = adUnitList.ToArray();
-			# elif UNITY_IOS
-				_asset.iosAdMobAdUnitData = adUnitList.ToArray();
-			#endif
+			}
+			adUnits = adUnitList.ToArray();
 		}
 		
-		private bool ValidateAdMobData() {
-			string appId = null;
-			#if UNITY_ANDROID
-				appId = _androidAdMobAppId.stringValue;
-			#elif UNITY_IOS
-				appId = _iosAdMobAppId.stringValue;
-			#endif
+		private bool ValidateAdMobData(string platform, SerializedProperty appId, ThirdPartyAdUnit[] adUnitData) {
 			
-			if (appId.IsNullOrEmpty()) {
+			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"AdMob SDK has been included, the AdMob App ID cannot be empty, object NimbusAdsManager not created");
+					$"AdMob SDK has been included, the {platform} AdMob App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
-			
-			ThirdPartyAdUnit[] adUnitData = null;
-			var platform = "Android";
-			#if UNITY_ANDROID
-				adUnitData = _asset.androidAdMobAdUnitData;
-			# elif UNITY_IOS
-				adUnitData = _asset.iosAdMobAdUnitData;
-				platform = "iOS";
-			#endif
 			
 			if (adUnitData == null || adUnitData.Length == 0) {
 				Debug.unityLogger.LogError("Nimbus", 
@@ -710,14 +731,8 @@ namespace Nimbus.Editor {
 			return true;
 		}
 		
-		private void HandleMintegralAdUnitData()
+		private void HandleMintegralAdUnitData(SerializedProperty adUnitData, out ThirdPartyAdUnit[] adUnits)
 		{
-			SerializedProperty adUnitData = null;
-			#if UNITY_ANDROID
-				adUnitData = _androidMintegralAdUnitData;
-			# elif UNITY_IOS
-				adUnitData = _iosMintegralAdUnitData;
-			#endif
 			var adUnitList = new List<ThirdPartyAdUnit>();
 			for (var i = 0; i < adUnitData.arraySize; i++) {
 				var item = adUnitData.GetArrayElementAtIndex(i);
@@ -733,45 +748,22 @@ namespace Nimbus.Editor {
 				}
 
 				adUnitList.Add(mintegralData);
-			}	
-
-			#if UNITY_ANDROID
-				_asset.androidMintegralAdUnitData = adUnitList.ToArray();
-			# elif UNITY_IOS
-				_asset.iosMintegralAdUnitData = adUnitList.ToArray();
-			#endif
+			}
+			adUnits = adUnitList.ToArray();
 		}
 		
-		private bool ValidateMintegralData() {
-			string appId = null;
-			string appKey = null;
-			#if UNITY_ANDROID
-				appId = _androidMintegralAppId.stringValue;
-				appKey = _androidMintegralAppKey.stringValue;
-			#elif UNITY_IOS
-				appId = _iosMintegralAppId.stringValue;
-				appKey = _iosMintegralAppKey.stringValue;
-			#endif
+		private bool ValidateMintegralData(string platform, SerializedProperty appId, SerializedProperty appKey, ThirdPartyAdUnit[] adUnitData) {
 			
-			if (appId.IsNullOrEmpty()) {
+			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"Mintegral SDK has been included, the Mintegral App ID cannot be empty, object NimbusAdsManager not created");
+					$"Mintegral SDK has been included, the {platform} Mintegral App ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
-			if (appKey.IsNullOrEmpty()) {
+			if (appKey.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"Mintegral SDK has been included, the Mintegral App Key cannot be empty, object NimbusAdsManager not created");
+					$"Mintegral SDK has been included, the {platform} Mintegral App Key cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
-			
-			ThirdPartyAdUnit[] adUnitData = null;
-			var platform = "Android";
-			#if UNITY_ANDROID
-				adUnitData = _asset.androidMintegralAdUnitData;
-			# elif UNITY_IOS
-				adUnitData = _asset.iosMintegralAdUnitData;
-				platform = "iOS";
-			#endif
 			
 			if (adUnitData == null || adUnitData.Length == 0) {
 				Debug.unityLogger.LogError("Nimbus", 
@@ -805,17 +797,10 @@ namespace Nimbus.Editor {
 			return true;
 		}
 		
-		private bool ValidateUnityAdsData() {
-			string appId = null;
-			#if UNITY_ANDROID
-				appId = _androidUnityAdsGameId.stringValue;
-			#elif UNITY_IOS
-				appId = _iosUnityAdsGameId.stringValue;
-			#endif
-			
-			if (appId.IsNullOrEmpty()) {
+		private bool ValidateUnityAdsData(string platform, SerializedProperty gameId) {
+			if (gameId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
-					"Unity Ads SDK has been included, the Unity Ads Game ID cannot be empty, object NimbusAdsManager not created");
+					$"Unity Ads SDK has been included, the {platform} Unity Ads Game ID cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
 			return true;
