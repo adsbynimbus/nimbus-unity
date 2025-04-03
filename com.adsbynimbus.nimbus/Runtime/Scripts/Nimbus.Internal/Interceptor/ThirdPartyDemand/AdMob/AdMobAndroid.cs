@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
@@ -59,31 +58,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			// data is the adUnitId
 			try
 			{
-				var adMob = new AndroidJavaClass(NimbusAdMobPackage);
-				var adMobSignal = "";
-				var timeUnit = new AndroidJavaClass("java.util.concurrent.TimeUnit");
-				var timeUnitMillis = timeUnit.CallStatic<AndroidJavaObject>("valueOf", "MILLISECONDS");
-				switch (_adUnitType)
-				{
-					case AdUnitType.Banner:
-					case AdUnitType.Undefined:
-						Debug.unityLogger.Log("AdMob BannerId: ", data);
-						var bannerFuture = adMob.CallStatic<AndroidJavaObject>("fetchAdMobBannerSignal", data);
-						adMobSignal = bannerFuture.Call<string>("get", 500L, timeUnitMillis);
-						Debug.unityLogger.Log("AdMob AdUnitSignal: ", adMobSignal);
-						break;
-					case AdUnitType.Interstitial:
-						var interstitialFuture = adMob.CallStatic<AndroidJavaObject>("fetchAdMobInterstitialSignal", data);
-						adMobSignal = interstitialFuture.Call<string>("get", 500L, timeUnitMillis);
-						break;
-					case AdUnitType.Rewarded:
-						var rewardedFuture = adMob.CallStatic<AndroidJavaObject>("fetchAdMobRewardedSignal", data);
-						adMobSignal = rewardedFuture.Call<string>("get", 500L, timeUnitMillis);
-						break;
-				}
+				var unityHelper = new AndroidJavaClass("com.adsbynimbus.unity.UnityHelper");
+				var adMobSignal = unityHelper.CallStatic<string>("fetchAdMobSignal", (int) _adUnitType, data);
+
 				bidRequest.User.Ext.AdMobSignals = adMobSignal;
 			}
-			catch (Exception e)
+			catch (AndroidJavaException e)
 			{
 				Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
 			}
