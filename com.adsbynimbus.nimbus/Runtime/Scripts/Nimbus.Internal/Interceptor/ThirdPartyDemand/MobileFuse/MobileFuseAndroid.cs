@@ -30,11 +30,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			var token = "";
 			try
 			{
-				var timeUnit = new AndroidJavaClass("java.util.concurrent.TimeUnit");
-				var timeUnitMillis = timeUnit.CallStatic<AndroidJavaObject>("valueOf", "MILLISECONDS");
-				var unityHelper = new AndroidJavaClass("com.adsbynimbus.request.internal.NimbusRequestsMobileFuseInternal");
-				var future = unityHelper.CallStatic<AndroidJavaObject>("token");
-				token = future.Call<String>("get", 500L, timeUnitMillis);
+				token = BridgeHelpers.GetStringFromJavaFuture(
+					"com.adsbynimbus.request.internal.NimbusRequestsMobileFuseInternal",
+					"token", new object[]{},  500L);
 				Debug.unityLogger.Log("MobileFuse Token", token);
 			}
 			catch (Exception e)
