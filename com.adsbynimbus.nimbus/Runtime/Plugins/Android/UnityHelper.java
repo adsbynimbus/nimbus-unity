@@ -29,7 +29,6 @@ import com.adsbynimbus.render.CompanionAd;
 import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
-import com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,28 +74,6 @@ public final class UnityHelper {
                 activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener));
             }
         }
-    }
-    
-    public static String fetchAdMobSignal(int adType, String data) {
-        Callable<String> callableTask = () -> {
-            switch(adType) {
-                case 1:
-                    return NimbusRequestsAdMobInternal.fetchAdMobBannerSignal(data);
-                case 2:
-                    return NimbusRequestsAdMobInternal.fetchAdMobInterstitialSignal(data);
-                case 3:
-                    return NimbusRequestsAdMobInternal.fetchAdMobRewardedSignal(data);
-                default:
-                    return "";
-            }
-        };
-        Future<String> future = executor.submit(callableTask);
-        try {
-            return future.get(500, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            log(Log.DEBUG, "Unable to retrieve AdMob Bidding token");
-        }
-        return "";
     }
 
     public static void addListener(Object controller, Object listener) {
