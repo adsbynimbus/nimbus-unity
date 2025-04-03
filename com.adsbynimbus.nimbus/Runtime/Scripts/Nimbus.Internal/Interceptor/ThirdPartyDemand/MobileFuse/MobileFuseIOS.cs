@@ -8,7 +8,7 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 	#if UNITY_IOS && NIMBUS_ENABLE_MOBILEFUSE
 	internal class MobileFuseIOS : IInterceptor, IProvider {
 		

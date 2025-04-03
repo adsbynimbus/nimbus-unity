@@ -1,17 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
-	internal class UnityAdsAndroid : IInterceptor, IProvider {
-		private const string NimbusUnityAdsPackage = "com.adsbynimbus.request.UnityDemandProvider";
-		private const string UnityAdsPackage = "com.unity3d.ads.UnityAds";
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
+	internal class MobileFuseAndroid : IInterceptor, IProvider {
 		private readonly string _gameID;
 		private readonly bool _testMode;
-		private readonly AndroidJavaObject _applicationContext;
 		
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
 			if (data.IsNullOrEmpty()) {
@@ -20,32 +20,31 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			if (bidRequest.User.Ext == null) {
 				bidRequest.User.Ext = new UserExt();
 			}
-			bidRequest.User.Ext.UnityBuyerId = data;
+			var mobileFuseObject = JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject;
+			bidRequest.User.Ext.MobileFuseBuyerData = mobileFuseObject;
 			return bidRequest;
 		}
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
-			var unityAds = new AndroidJavaClass(UnityAdsPackage);
-			var token = unityAds.CallStatic<string>("getToken");
-			if (token == null)
+			var token = "";
+			try
 			{
-				return "";
+				var timeUnit = new AndroidJavaClass("java.util.concurrent.TimeUnit");
+				var timeUnitMillis = timeUnit.CallStatic<AndroidJavaObject>("valueOf", "MILLISECONDS");
+				var unityHelper = new AndroidJavaClass("com.adsbynimbus.request.internal.NimbusRequestsMobileFuseInternal");
+				var future = unityHelper.CallStatic<AndroidJavaObject>("token");
+				token = future.Call<String>("get", 500L, timeUnitMillis);
+				Debug.unityLogger.Log("MobileFuse Token", token);
 			}
-
-			Debug.unityLogger.Log("Unity Ads Token", token);
+			catch (Exception e)
+			{
+				Debug.unityLogger.Log("Unable to retrieve MobileFuse Token", e.Message);
+			}
 			return token;
 		}
-		
-		public UnityAdsAndroid(AndroidJavaObject applicationContext, bool testMode, string gameID) {
-			_applicationContext = applicationContext;
-			_testMode = testMode;
-			_gameID = gameID;
-		}
-		
 		public void InitializeNativeSDK() {
-			var unityAds = new AndroidJavaClass(NimbusUnityAdsPackage);
-			unityAds.CallStatic("initialize", _applicationContext, _gameID);
+			// No initialization needed
 		}
 	}
 }
