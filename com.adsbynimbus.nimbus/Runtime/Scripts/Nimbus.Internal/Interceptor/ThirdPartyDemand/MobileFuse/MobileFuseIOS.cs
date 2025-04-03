@@ -19,7 +19,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 		private static extern string _fetchMobileFuseToken();
 
 		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
-			if (data.IsNullOrEmpty() || data == "{}") {
+			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
 			if (bidRequest.User.Ext == null) {

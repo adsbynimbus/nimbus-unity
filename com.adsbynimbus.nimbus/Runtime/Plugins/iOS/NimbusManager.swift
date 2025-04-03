@@ -165,7 +165,7 @@ import NimbusSDK
         @MainActor @objc public class func getMintegralRequestModifiers() -> String {
             guard let data = try? JSONEncoder().encode(MintegralRequestBridge().tokenData),
             let jsonString = String(data: data, encoding: .utf8) else {
-                   return "{}"
+                   return ""
             }
             return jsonString
         }
@@ -193,7 +193,7 @@ import NimbusSDK
                 group.wait(for: {tokenData = try await MobileFuseRequestBridge().tokenData})
                 guard let data = try? JSONEncoder().encode(tokenData),
                 let jsonString = String(data: data, encoding: .utf8) else {
-                       return "{}"
+                       return ""
                 }
                 return jsonString
             } catch (let e) {
