@@ -164,4 +164,13 @@ extern "C" {
         return strdup([[NimbusManager fetchUnityAdsToken] UTF8String]);
     }
 #endif
+#if NIMBUS_ENABLE_MOBILEFUSE
+    void _initializeMobileFuse() {
+        [NimbusManager initializeMobileFuse];
+    }
+    
+    const char* _fetchMobileFuseToken() {
+        return strdup([[NimbusManager fetchMobileFuseToken] UTF8String]);
+    }
+#endif
 }

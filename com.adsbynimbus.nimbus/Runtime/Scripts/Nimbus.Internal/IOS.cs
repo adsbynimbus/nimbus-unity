@@ -10,6 +10,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -148,6 +149,12 @@ namespace Nimbus.Internal {
 				var unityAds = new UnityAdsIOS(unityGameId);
 				unityAds.InitializeNativeSDK();
 				_interceptors.Add(unityAds);
+			#endif
+			#if NIMBUS_ENABLE_MOBILEFUSE
+				Debug.unityLogger.Log("Initializing iOS MobileFuse SDK");
+				var mobileFuse = new MobileFuseIOS();
+				mobileFuse.InitializeNativeSDK();
+				_interceptors.Add(mobileFuse);
 			#endif
 		}
 

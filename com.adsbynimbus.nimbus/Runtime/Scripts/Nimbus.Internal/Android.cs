@@ -7,6 +7,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -100,6 +101,11 @@ namespace Nimbus.Internal {
 				var unityAds = new UnityAdsAndroid(applicationContext, configuration.enableSDKInTestMode, unityAdsGameId);
 				unityAds.InitializeNativeSDK();
 				_interceptors.Add(unityAds);
+			#endif
+			#if NIMBUS_ENABLE_MOBILEFUSE
+				var mobileFuse = new MobileFuseAndroid();
+				// No Initialization Needed
+				_interceptors.Add(mobileFuse);
 			#endif
 		}
 

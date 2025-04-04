@@ -49,23 +49,25 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
           // data is the adUnitId
           try
           {
-             var adMob = new AndroidJavaClass(NimbusAdMobPackage);
              var adMobSignal = "";
-             var timeUnit = new AndroidJavaClass("java.util.concurrent.TimeUnit");
-             var timeUnitMillis = timeUnit.CallStatic<AndroidJavaObject>("valueOf", "MILLISECONDS");
+             var args = new object[] {data};
              switch (_adUnitType)
              {
                 case AdUnitType.Banner:
                 case AdUnitType.Undefined:
-                   var bannerFuture = adMob.CallStatic<AndroidJavaObject>("fetchAdMobBannerSignal", data);
-                   adMobSignal = bannerFuture.Call<string>("get", 500L, timeUnitMillis); break;
+                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
+                      NimbusAdMobPackage,
+                      "fetchAdMobBannerSignal", args, 500L);
+                   break;
                 case AdUnitType.Interstitial:
-                   var interstitialFuture = adMob.CallStatic<AndroidJavaObject>("fetchAdMobInterstitialSignal", data);
-                   adMobSignal = interstitialFuture.Call<string>("get", 500L, timeUnitMillis);
+                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
+                      NimbusAdMobPackage,
+                      "fetchAdMobInterstitialSignal", args, 500L);
                    break;
                 case AdUnitType.Rewarded:
-                   var rewardedFuture = adMob.CallStatic<AndroidJavaObject>("fetchAdMobRewardedSignal", data);
-                   adMobSignal = rewardedFuture.Call<string>("get", 500L, timeUnitMillis);
+                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
+                      NimbusAdMobPackage,
+                      "fetchAdMobRewardedSignal", args, 500L);
                    break;
              }
              bidRequest.User.Ext.AdMobSignals = adMobSignal;
