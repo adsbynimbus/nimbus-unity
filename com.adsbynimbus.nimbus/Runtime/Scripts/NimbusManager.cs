@@ -518,7 +518,10 @@ namespace Nimbus.Runtime.Scripts {
 		
 		private class GlobalRtbRegulation {
 			internal bool Coppa;
+			internal bool GdprApplies;
 			internal string GdprConsentString;
+			internal string GppConsentString;
+			internal string GppSectionId;
 			internal string UsPrivacyString;
 		}
 		
