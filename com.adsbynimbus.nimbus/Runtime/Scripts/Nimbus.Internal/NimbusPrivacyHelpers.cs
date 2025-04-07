@@ -48,18 +48,31 @@ namespace Nimbus.Internal
             }
             if (privacyObject.ContainsKey("usPrivacyString"))
             {
-                regulations.Ext ??= new RegExt();
-                regulations.Ext.UsPrivacy = privacyObject["usPrivacyString"].ToObject<String>();
+                if (!privacyObject["usPrivacyString"].ToObject<String>().IsNullOrEmpty())
+                {
+                    regulations.Ext ??= new RegExt();
+                    regulations.Ext.UsPrivacy = privacyObject["usPrivacyString"].ToObject<String>();
+                }
             }
             if (privacyObject.ContainsKey("gppConsentString"))
             {
-                regulations.Ext ??= new RegExt();
-                regulations.Ext.GPP = privacyObject["gppConsentString"].ToObject<String>();
+                if (!privacyObject["gppConsentString"].ToObject<String>().IsNullOrEmpty())
+                {
+                    regulations.Ext ??= new RegExt();
+                    regulations.Ext.GPP = privacyObject["gppConsentString"].ToObject<String>();
+                }
             }
             if (privacyObject.ContainsKey("gppSectionId"))
             {
-                regulations.Ext ??= new RegExt();
-                regulations.Ext.GPPSIDs = privacyObject["gppSectionId"].ToObject<String>();
+                if (!privacyObject["gppSectionId"].ToObject<String>().IsNullOrEmpty())
+                {
+                    regulations.Ext ??= new RegExt();
+                    regulations.Ext.GPPSIDs = privacyObject["gppSectionId"].ToObject<String>();
+                }
+            }
+            if (regulations.Ext == null)
+            {
+                return null;
             }
             return regulations;
         }

@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace OpenRTB.Request {
     public class Regs {
-        [JsonProperty("coppa")] public int Coppa;
+        [JsonProperty("coppa", DefaultValueHandling = DefaultValueHandling.Ignore)] public int Coppa;
 
         [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public RegExt Ext;
