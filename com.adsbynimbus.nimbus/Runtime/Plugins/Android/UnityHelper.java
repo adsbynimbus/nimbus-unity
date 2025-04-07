@@ -90,6 +90,43 @@ public final class UnityHelper {
             }
         }
     }
+    
+    public static String getPrivacyStrings(Object obj) {
+             final String gdprApplies = "IABTCF_gdprApplies";
+             final String usPrivacyString = "IABUSPrivacy_String";
+             final String gppString = "IABGPP_HDR_GppString";
+             final String gppSidString = "IABGPP_GppSID";
+             if (obj instanceof Activity) {
+                 final Activity activity = (Activity) obj;
+                 SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
+                 JSONObject regExt = new JSONObject();
+                 try {
+                     regExt.put("gdprApplies", sharedPreferences.getString(gdprApplies, ""));
+                 } catch (JSONException e) {
+                     Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 }
+                 try {
+                     regExt.put("usPrivacyString", sharedPreferences.getString(usPrivacyString, ""));
+                 } catch (JSONException e) {
+                     Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 }
+                 try {
+                     regExt.put("gppConsentString", sharedPreferences.getString(gppString, ""));
+                 } catch (JSONException e) {
+                     Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 }
+                 try {
+                     regExt.put("gppSectionId", sharedPreferences.getString(gppSidString, ""));
+                 } catch (JSONException e) {
+                     Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 }
+                 if (regExt.equals(new JSONObject())) {
+                     return "";
+                 }
+                 return regExt.toString();
+             }
+             return "";
+         }
 
     static final class BannerHandler implements Runnable, NimbusAdManager.Listener,
         AdController.Listener {
