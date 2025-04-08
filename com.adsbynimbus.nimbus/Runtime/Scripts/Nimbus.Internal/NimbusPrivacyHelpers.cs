@@ -28,7 +28,7 @@ namespace Nimbus.Internal
                 var helperClass = new AndroidJavaClass("com.adsbynimbus.unity.UnityHelper");
                 privacyStrings =  helperClass.CallStatic<String>("getPrivacyStrings", currentActivity);
             #endif
-            Debug.unityLogger.LogError("nimbus privacy", privacyStrings);
+            Debug.unityLogger.Log("Nimbus privacy", privacyStrings);
             if (privacyStrings.IsNullOrEmpty() || privacyStrings == "{}") {
                 return null;
             }

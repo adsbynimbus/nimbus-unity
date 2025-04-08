@@ -19,9 +19,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			if (bidRequest.User.Ext == null) {
-				bidRequest.User.Ext = new UserExt();
-			}
+			bidRequest.User ??= new User();
+			bidRequest.User.Ext ??= new UserExt();
 			bidRequest.User.Ext.FacebookBuyerId = data;
 			if (bidRequest.Imp.Length > 0) {
 				bidRequest.Imp[0].Ext.FacebookAppId = _appID;

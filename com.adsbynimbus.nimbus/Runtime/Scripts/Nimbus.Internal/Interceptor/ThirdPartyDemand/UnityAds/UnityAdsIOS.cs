@@ -22,9 +22,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			if (bidRequest.User.Ext == null) {
-				bidRequest.User.Ext = new UserExt();
-			}
+			bidRequest.User ??= new User();
+			bidRequest.User.Ext ??= new UserExt();
 			bidRequest.User.Ext.UnityBuyerId = data;
 			return bidRequest;
 		}

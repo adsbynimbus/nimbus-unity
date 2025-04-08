@@ -70,6 +70,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
                       "fetchAdMobRewardedSignal", args, 500L);
                    break;
              }
+             bidRequest.User ??= new User();
+             bidRequest.User.Ext ??= new UserExt();
              bidRequest.User.Ext.AdMobSignals = adMobSignal;
           }
           catch (Exception e)
