@@ -12,7 +12,7 @@
 
   <iosPods>
     <!--The below pod does not include subspecs because those are added dynamically in IOSPostBuildProcessor.cs-->
-    <iosPod name="NimbusSDK" version="2.27.0" bitcodeEnabled="false" 
+    <iosPod name="NimbusSDK" version="2.27.1" bitcodeEnabled="false" 
             addToAllTargets="false"/>
   </iosPods>
 </dependencies>
