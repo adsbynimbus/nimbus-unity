@@ -109,22 +109,22 @@ public final class UnityHelper {
              try {
                  regExt.put("gdprApplies", sharedPreferences.getString(gdprApplies, ""));
              } catch (JSONException e) {
-                 Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve GDPR Enabled String");
              }
              try {
                  regExt.put("usPrivacyString", sharedPreferences.getString(usPrivacyString, ""));
              } catch (JSONException e) {
-                 Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve US Privacy String");
              }
              try {
                  regExt.put("gppConsentString", sharedPreferences.getString(gppString, ""));
              } catch (JSONException e) {
-                 Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve GPP Consent String");
              }
              try {
                  regExt.put("gppSectionId", sharedPreferences.getString(gppSidString, ""));
              } catch (JSONException e) {
-                 Log.e("Nimbus Privacy Retrieval Error", Objects.requireNonNull(e.getLocalizedMessage()));
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve GPP Section ID");
              }
              if (regExt.equals(new JSONObject())) {
                  return "";
