@@ -40,9 +40,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			}
 
 			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
-			if (bidRequest.User.Ext == null) {
-				bidRequest.User.Ext = new UserExt();
-			}
+			bidRequest.User ??= new User();
+			bidRequest.User.Ext ??= new UserExt();
 			bidRequest.User.Ext.AdMobSignals = adMobSignals;
 			
 			return bidRequest;

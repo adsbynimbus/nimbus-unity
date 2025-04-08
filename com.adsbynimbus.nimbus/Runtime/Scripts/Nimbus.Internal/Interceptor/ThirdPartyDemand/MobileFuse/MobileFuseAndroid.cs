@@ -17,10 +17,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			if (data.IsNullOrEmpty()) {
 				return bidRequest;
 			}
-			if (bidRequest.User.Ext == null) {
-				bidRequest.User.Ext = new UserExt();
-			}
 			var mobileFuseObject = JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject;
+			bidRequest.User ??= new User();
+			bidRequest.User.Ext ??= new UserExt();
 			bidRequest.User.Ext.MobileFuseBuyerData = mobileFuseObject;
 			return bidRequest;
 		}
