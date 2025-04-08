@@ -173,4 +173,8 @@ extern "C" {
         return strdup([[NimbusManager fetchMobileFuseToken] UTF8String]);
     }
 #endif
+
+    const char* _getPrivacyStrings() {
+        return strdup([[NimbusManager getPrivacyStrings] UTF8String]);
+    }
 }

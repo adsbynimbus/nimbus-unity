@@ -22,7 +22,7 @@ namespace Nimbus.Runtime.Scripts {
 		private bool _isTheApplicationBackgrounded;
 		private NimbusClient _nimbusClient;
 		private NimbusAPI _nimbusPlatformAPI;
-		private GlobalRtbRegulation _regulations;
+		private Regs _regulations;
 		private CancellationTokenSource _ctx;
 
 		public AdEvents NimbusEvents;
@@ -43,8 +43,12 @@ namespace Nimbus.Runtime.Scripts {
 					();
 				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
 				NimbusEvents = new AdEvents();
-				_regulations = new GlobalRtbRegulation();
 				_nimbusPlatformAPI.InitializeSDK(_configuration);
+				var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
+				if (privacyRegs != null)
+				{
+					_regulations = privacyRegs;
+				}
 				_ctx = new CancellationTokenSource();
 				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				Instance = this;
@@ -415,16 +419,6 @@ namespace Nimbus.Runtime.Scripts {
 
 			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
-		
-		/// <summary>
-		///     If this inventory is subject to GDPR regulations use this function to pass in RTB GDPR information for all Nimbus requests
-		/// </summary>
-		/// <param name="gdprConsentString">
-		///		If the user is subject to GDPR pass in the CMP generated consent string
-		/// </param>
-		public void SetGdprConsent(string gdprConsentString) {
-			_regulations.GdprConsentString = gdprConsentString;
-		}
 	
 		/// <summary>
 		///     If this inventory is subject to CCPA regulations use this function to pass in RTB CCPA information for all Nimbus requests
@@ -433,7 +427,8 @@ namespace Nimbus.Runtime.Scripts {
 		///		The user generated CCPA consent string
 		/// </param>
 		public void SetUsPrivacyString(string usPrivacyString) {
-			_regulations.UsPrivacyString = usPrivacyString;
+			_regulations.Ext ??= new RegExt();
+			_regulations.Ext.UsPrivacy = usPrivacyString;
 		}
 		
 		/// <summary>
@@ -443,7 +438,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Signals that the inventory is under that age of 13
 		/// </param>
 		public void SetCoppa(bool isCoppa) {
-			_regulations.Coppa = isCoppa;
+			_regulations.Coppa = isCoppa ? 1 : 0;
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
 		
@@ -465,9 +460,7 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		private void SetRegulations(BidRequest bidRequest) {
-			bidRequest.SetCoppa(_regulations.Coppa);
-			bidRequest.SetGdprConsentString(_regulations.GdprConsentString);
-			bidRequest.SetUsPrivacy(_regulations.UsPrivacyString);
+			bidRequest.Regs = _regulations;
 		}
 
 		private BidRequest ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
@@ -518,7 +511,10 @@ namespace Nimbus.Runtime.Scripts {
 		
 		private class GlobalRtbRegulation {
 			internal bool Coppa;
+			internal bool GdprApplies;
 			internal string GdprConsentString;
+			internal string GppConsentString;
+			internal string GppSectionId;
 			internal string UsPrivacyString;
 		}
 		

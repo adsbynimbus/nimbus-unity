@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace OpenRTB.Request {
     public class Regs {
-        [JsonProperty("coppa")] public int Coppa;
+        [JsonProperty("coppa", DefaultValueHandling = DefaultValueHandling.Ignore)] public int Coppa;
 
         [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public RegExt Ext;
@@ -15,10 +15,10 @@ namespace OpenRTB.Request {
         [JsonProperty("us_privacy", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string UsPrivacy;
 
-        [JsonProperty("gpp")]
+        [JsonProperty("gpp", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string GPP;
 
-        [JsonProperty("gpp_sid")]
+        [JsonProperty("gpp_sid", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string GPPSIDs;
     }
 }

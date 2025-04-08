@@ -5,6 +5,8 @@ import static android.view.ViewGroup.LayoutParams.*;
 import static com.adsbynimbus.internal.Logger.log;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,9 +32,13 @@ import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -90,6 +96,43 @@ public final class UnityHelper {
             }
         }
     }
+    
+    public static String getPrivacyStrings(Object obj) {
+         final String gdprApplies = "IABTCF_gdprApplies";
+         final String usPrivacyString = "IABUSPrivacy_String";
+         final String gppString = "IABGPP_HDR_GppString";
+         final String gppSidString = "IABGPP_GppSID";
+         if (obj instanceof Activity) {
+             final Activity activity = (Activity) obj;
+             SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
+             JSONObject regExt = new JSONObject();
+             try {
+                 regExt.put("gdprApplies", sharedPreferences.getString(gdprApplies, ""));
+             } catch (JSONException e) {
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve GDPR Enabled String");
+             }
+             try {
+                 regExt.put("usPrivacyString", sharedPreferences.getString(usPrivacyString, ""));
+             } catch (JSONException e) {
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve US Privacy String");
+             }
+             try {
+                 regExt.put("gppConsentString", sharedPreferences.getString(gppString, ""));
+             } catch (JSONException e) {
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve GPP Consent String");
+             }
+             try {
+                 regExt.put("gppSectionId", sharedPreferences.getString(gppSidString, ""));
+             } catch (JSONException e) {
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve GPP Section ID");
+             }
+             if (regExt.equals(new JSONObject())) {
+                 return "";
+             }
+             return regExt.toString();
+         }
+             return "";
+         }
 
     static final class BannerHandler implements Runnable, NimbusAdManager.Listener,
         AdController.Listener {

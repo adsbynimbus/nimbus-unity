@@ -202,6 +202,26 @@ import NimbusSDK
         }
     #endif
     
+    @objc public class func getPrivacyStrings() -> String {
+        var privacyStrings: [String:String] = [:]
+        let gdprAppliesKey = "IABTCF_gdprApplies"
+        let gppConsentStringKey = "IABGPP_HDR_GppString"
+        let gppSectionIdKey = "IABGPP_GppSID"
+        let usPrivacyStringKey = "IABUSPrivacy_String"
+        
+        if UserDefaults.standard.object(forKey: gdprAppliesKey) != nil {
+            privacyStrings["gdprApplies"] = String(UserDefaults.standard.integer(forKey: gdprAppliesKey))
+        }
+        privacyStrings["gppConsentString"] = UserDefaults.standard.string(forKey: gppConsentStringKey)
+        privacyStrings["gppSectionId"] = UserDefaults.standard.string(forKey: gppSectionIdKey)
+        privacyStrings["usPrivacyString"] = UserDefaults.standard.string(forKey: usPrivacyStringKey)
+        guard let data = try? JSONEncoder().encode(privacyStrings),
+        let jsonString = String(data: data, encoding: .utf8) else {
+               return ""
+        }
+        return jsonString
+    }
+    
     // MARK: - Private Functions
     
     private init(adUnitInstanceId: Int) {
