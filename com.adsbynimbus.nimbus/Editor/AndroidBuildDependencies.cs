@@ -49,5 +49,13 @@ namespace Nimbus.Editor {
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-mobilefuse:{SdkVersion}"")";
 		}
+
+		public static string LiveRampBuildDependencies()
+		{
+			var builder = new StringBuilder();
+			builder.AppendLine($@"implementation (""com.adsbynimbus.android:extension-liveramp:{SdkVersion}"")");
+			builder.AppendLine($@"implementation (""com.liveramp:ats:v2.+"")");
+			return builder.ToString();
+		}
 	}
 }
