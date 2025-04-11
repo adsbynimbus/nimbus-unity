@@ -233,7 +233,7 @@ import LRAtsSDK
     }
     
     #if NIMBUS_ENABLE_LIVERAMP
-        @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
+    @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
                                                hasConsentForNoLegislation: Bool) {
             if (phoneNumber != "") {
                 liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, phoneNumber: phoneNumber, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
@@ -246,7 +246,7 @@ import LRAtsSDK
         
         @objc public class func getLiveRampData() -> String {
             let identifierData: LRIdentifierData
-            var liveRampData: String = ""
+            var nimbusExtendedIds: [NimbusExtendedId] = []
 
             if let liveRampEmail {
                 identifierData = LREmailIdentifier(liveRampEmail)
@@ -258,20 +258,24 @@ import LRAtsSDK
             LRAts.shared.getEnvelope(identifierData) {envelope, error in
                 if let envelope {
                     if let unwrappedEnvelope = envelope.envelope {
- 
-                        guard let data = try? JSONEncoder().encode(NimbusExtendedId(
-                            source: "liveramp.com",
-                            uids: [.init(id: unwrappedEnvelope, extensions: ["rtiPartner": NimbusCodable("idl")])]
-                        )),
-                        let jsonString = String(data: data, encoding: .utf8) else {
-                            return
-                        }
-                        liveRampData = jsonString
+                        nimbusExtendedIds.append(
+                            NimbusExtendedId(
+                                source: "liveramp.com",
+                                uids: [.init(id: unwrappedEnvelope, extensions: ["rtiPartner": NimbusCodable("idl")])]
+                            ))
+                    }
+                    
+                    if let pairIds = envelope.pairIds {
+                        let uids = pairIds.map { NimbusExtendedId.UID(id: $0, atype: 571187) }
+                        nimbusExtendedIds.append(NimbusExtendedId(source: "google.com", uids: uids))
                     }
                 }
-                
             }
-            return liveRampData
+            guard let data = try? JSONEncoder().encode(nimbusExtendedIds),
+            let jsonString = String(data: data, encoding: .utf8) else {
+                return ""
+            }
+            return jsonString
         }
     #endif
     
@@ -424,5 +428,16 @@ extension DispatchGroup {
         }
         
         _ = wait(timeout: .now() + 0.5)
+    }
+}
+
+extension LREnvelope {
+    // This helper decodes Pair IDs from LiveRamp envelope
+    var pairIds: [String]? {
+        guard let envelope25, let decodedPair = Data(base64Encoded: envelope25),
+              let pairIds = try? JSONSerialization.jsonObject(with: decodedPair) as? [String]
+        else { return nil }
+        
+        return pairIds
     }
 }

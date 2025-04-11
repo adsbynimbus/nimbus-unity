@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal;
+using Nimbus.Internal.LiveRamp;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
 using Nimbus.Internal.Utility;
@@ -441,6 +442,35 @@ namespace Nimbus.Runtime.Scripts {
 			_regulations.Coppa = isCoppa ? 1 : 0;
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
+
+		/// <summary>
+		///     This method will initialize the LiveRamp Identity SDK
+		/// </summary>
+		/// <param name="configId">
+		///		Config ID provided by LiveRamp
+		/// </param>
+		/// <param name="hasConsentForNoLegislation">
+		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
+		/// </param>
+		/// <param name="email">
+		///		E-mail address used to identify the user
+		/// </param>
+		///  <param name="phoneNumber">
+		///		Optional phone if email isn't known, only US is supported
+		/// </param>
+		public void initializeLiveRamp(String configId,
+			Boolean hasConsentForNoLegislation, String email = "", 
+			String phoneNumber = "")
+		{
+			#if NIMBUS_ENABLE_LIVERAMP
+				NimbusLiveRampHelpers.initializeLiveRamp(configId, _configuration.enableSDKInTestMode, hasConsentForNoLegislation, 
+					email, phoneNumber);
+			#else
+				Debug.unityLogger.LogError("Nimbus",
+					"Please remember to enable LiveRamp in the Unity Editor \"Nimbus\" Dropdown under \"Third Party SDK Settings\"");
+				return;
+			#endif
+		}
 		
 		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
 			_configuration = configuration;
@@ -504,6 +534,9 @@ namespace Nimbus.Runtime.Scripts {
 				SetTest(_configuration.enableSDKInTestMode).
 				SetReportingPosition(position).
 				SetOMInformation(_nimbusClient.platformSdkv);
+			#if NIMBUS_ENABLE_LIVERAMP
+				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
+			#endif
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;

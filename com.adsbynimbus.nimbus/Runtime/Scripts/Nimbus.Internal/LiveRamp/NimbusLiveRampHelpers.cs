@@ -31,14 +31,17 @@ namespace Nimbus.Internal.LiveRamp
             #endif
         }
 
-        public static BidRequest getLiveRampData(BidRequest bidRequest)
+        public static BidRequest addLiveRampToRequest(BidRequest bidRequest)
         {
             var liveRampData = "";
+            Eid[] eidsObject = {};
             #if UNITY_IOS
                liveRampData = _getLiveRampData();
-               var liveRampObject = JsonConvert.DeserializeObject(liveRampData, typeof(JObject)) as JObject;
+               eidsObject = JsonConvert.DeserializeObject(liveRampData, typeof(Eid[])) as Eid[];
             #endif
-            
+            bidRequest.User ??= new User();
+            bidRequest.User.Ext ??= new UserExt();
+            bidRequest.User.Ext.Eids = eidsObject;
             return bidRequest;
         }
     }
