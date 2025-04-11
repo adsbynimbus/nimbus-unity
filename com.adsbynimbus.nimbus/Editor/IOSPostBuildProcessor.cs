@@ -97,6 +97,7 @@ post_install do |installer|
     'MTGSDKNewInterstitial',
     'MTGSDKReward',
     'UnityAds',
+	'NimbusLiveRampKit',
 	'LRAtsSDK'
   ]
 
