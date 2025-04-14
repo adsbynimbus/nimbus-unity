@@ -14,15 +14,14 @@ namespace Nimbus.Internal.LiveRamp
         #if UNITY_IOS
             [DllImport("__Internal")]
             private static extern void _initializeLiveRamp(String configId, String email, 
-                String phoneNumber, Boolean isTestMode, 
-                Boolean hasConsentForNoLegislation);
+                String phoneNumber, Boolean isTestMode, Boolean hasConsentForNoLegislation);
 
             [DllImport("__Internal")]
             private static extern string _getLiveRampData();
         #endif
 
-        public static void initializeLiveRamp(String configId, Boolean isTestMode, 
-            Boolean hasConsentForNoLegislation, String email = "", 
+        public static void initializeLiveRamp(String configId, 
+            Boolean hasConsentForNoLegislation, Boolean isTestMode, String email = "", 
             String phoneNumber = "")
         {
             #if UNITY_IOS
@@ -46,7 +45,7 @@ namespace Nimbus.Internal.LiveRamp
                 {
                     liveRampData = BridgeHelpers.GetStringFromJavaFuture(
                         "com.adsbynimbus.request.internal.NimbusRequestLiverampInternal",
-                        "fetchLiveRampEnvelope", new object[]{},500L);
+                        "fetchLiverampEnvelope", new object[]{},500L);
                 }
                 catch (Exception e)
                 {

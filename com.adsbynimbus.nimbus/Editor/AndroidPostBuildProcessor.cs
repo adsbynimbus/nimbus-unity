@@ -61,6 +61,15 @@ namespace Nimbus.Editor {
 												includeGroupByRegex("".*\\.mbridge.*"")
 											}}";
 			#endif
+			#if NIMBUS_ENABLE_LIVERAMP
+				extraRepositories +=
+					@"        
+						maven {
+						url = uri(""https://sdk-android-prod.launch.liveramp.com"")
+							content {
+							includeGroupByRegex("".*\\.liveramp.*"")
+							}}";
+			#endif
 			string repoString = @"
 				dependencyResolutionManagement {
 				    repositories {

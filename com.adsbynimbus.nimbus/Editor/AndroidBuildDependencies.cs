@@ -54,7 +54,7 @@ namespace Nimbus.Editor {
 		{
 			var builder = new StringBuilder();
 			builder.AppendLine($@"implementation (""com.adsbynimbus.android:extension-liveramp:{SdkVersion}"")");
-			builder.AppendLine($@"implementation (""com.liveramp:ats:v2.+"")");
+			builder.AppendLine($@"implementation (""com.liveramp:ats:v2.9.0"")");
 			return builder.ToString();
 		}
 	}

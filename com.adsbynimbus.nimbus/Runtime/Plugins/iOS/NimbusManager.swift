@@ -233,7 +233,7 @@ import LRAtsSDK
     }
     
     #if NIMBUS_ENABLE_LIVERAMP
-    @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
+        @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
                                                hasConsentForNoLegislation: Bool) {
             if (phoneNumber != "") {
                 liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, phoneNumber: phoneNumber, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
