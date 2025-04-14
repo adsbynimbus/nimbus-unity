@@ -25,7 +25,12 @@ namespace Nimbus.Runtime.Scripts {
 		private NimbusAPI _nimbusPlatformAPI;
 		private Regs _regulations;
 		private CancellationTokenSource _ctx;
-
+		#if NIMBUS_ENABLE_LIVERAMP
+			private String liveRampConfigId;
+			private Boolean lrHasConsentForNoLegislation;
+			private String liveRampEmail;
+			private String liveRampPhoneNumber;
+		#endif
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
 
@@ -53,6 +58,12 @@ namespace Nimbus.Runtime.Scripts {
 				_ctx = new CancellationTokenSource();
 				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				Instance = this;
+				#if NIMBUS_ENABLE_LIVERAMP
+					if (!liveRampConfigId.IsNullOrEmpty())
+					{
+						initializeLiveRamp(liveRampConfigId, lrHasConsentForNoLegislation, liveRampEmail, liveRampPhoneNumber);
+					}
+				#endif
 				DontDestroyOnLoad(gameObject);
 			}
 			else if (Instance != this) {
@@ -463,8 +474,19 @@ namespace Nimbus.Runtime.Scripts {
 			String phoneNumber = "")
 		{
 			#if NIMBUS_ENABLE_LIVERAMP
-				NimbusLiveRampHelpers.initializeLiveRamp(configId, _configuration.enableSDKInTestMode, hasConsentForNoLegislation, 
-					email, phoneNumber);
+				// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
+				if (Instance == null)
+				{
+					liveRampConfigId = configId;
+					lrHasConsentForNoLegislation = hasConsentForNoLegislation;
+					liveRampEmail = email;
+					liveRampPhoneNumber = phoneNumber;
+				}
+				else
+				{
+					NimbusLiveRampHelpers.initializeLiveRamp(configId, _configuration.enableSDKInTestMode, hasConsentForNoLegislation, 
+						email, phoneNumber);
+				}
 			#else
 				Debug.unityLogger.LogError("Nimbus",
 					"Please remember to enable LiveRamp in the Unity Editor \"Nimbus\" Dropdown under \"Third Party SDK Settings\"");
