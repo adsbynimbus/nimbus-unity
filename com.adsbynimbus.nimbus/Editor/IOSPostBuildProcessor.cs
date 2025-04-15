@@ -25,6 +25,11 @@ namespace Nimbus.Editor {
 		{
 			if (target != BuildTarget.iOS) return;
 			
+			#if NIMBUS_ENABLE_LIVERAMP
+				Dependencies.Add("'NimbusRequestKit'");
+				Dependencies.Add("'NimbusLiveRampKit'");
+			#endif
+			
 			#if NIMBUS_ENABLE_APS
 				Dependencies.Add("'NimbusRequestAPSKit'");
 			#endif
@@ -91,7 +96,9 @@ post_install do |installer|
     'MTGSDKBidding',
     'MTGSDKNewInterstitial',
     'MTGSDKReward',
-    'UnityAds'
+    'UnityAds',
+	'NimbusLiveRampKit',
+	'LRAtsSDK'
   ]
 
   main_project = installer.aggregate_targets.first.user_project
@@ -191,6 +198,10 @@ end";
 			pbx.ReadFromFile(pbxPath);
 
 			var flags = new List<string>();
+			
+			#if NIMBUS_ENABLE_LIVERAMP
+				flags.Add("NIMBUS_ENABLE_LIVERAMP");    
+			#endif
 			
 			#if NIMBUS_ENABLE_APS
 				flags.Add("NIMBUS_ENABLE_APS");    

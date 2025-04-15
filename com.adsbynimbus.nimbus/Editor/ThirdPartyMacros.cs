@@ -6,7 +6,10 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Nimbus.Editor {
-	public class ThirdPartyMacros : EditorWindow {
+	public class ThirdPartyMacros : EditorWindow
+	{
+		private bool _androidLiveRampIsEnabled;
+		private bool _iosLiveRampIsEnabled;
 		private bool _androidApsIsEnabled;
 		private bool _iosApsIsEnabled;
 		private bool _androidVungleIsEnabled;
@@ -21,6 +24,7 @@ namespace Nimbus.Editor {
 		private bool _iosUnityAdsIsEnabled;
 		private bool _androidMobileFuseIsEnabled;
 		private bool _iosMobileFuseIsEnabled;
+		private const string LiveRampMacro = "NIMBUS_ENABLE_LIVERAMP";
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
 		private const string MetaMacro = "NIMBUS_ENABLE_META";
@@ -29,6 +33,7 @@ namespace Nimbus.Editor {
 		private const string UnityAdsMacro = "NIMBUS_ENABLE_UNITY_ADS";
 		private const string MobileFuseMacro = "NIMBUS_ENABLE_MOBILEFUSE";
 		// Android-specific Macros (for Unity Editor Configurations only)
+		private const string LiveRampAndroidMacro = "NIMBUS_ENABLE_LIVERAMP_ANDROID";
 		private const string ApsAndroidMacro = "NIMBUS_ENABLE_APS_ANDROID";
 		private const string VungleAndroidMacro = "NIMBUS_ENABLE_VUNGLE_ANDROID";
 		private const string MetaAndroidMacro = "NIMBUS_ENABLE_META_ANDROID";
@@ -37,6 +42,7 @@ namespace Nimbus.Editor {
 		private const string UnityAdsAndroidMacro = "NIMBUS_ENABLE_UNITY_ADS_ANDROID";
 		private const string MobileFuseAndroidMacro = "NIMBUS_ENABLE_MOBILEFUSE_ANDROID";
 		// iOS-specific Macros (for Unity Editor Configurations only)
+		private const string LiveRampIOSMacro = "NIMBUS_ENABLE_LIVERAMP_IOS";
 		private const string ApsIOSMacro = "NIMBUS_ENABLE_APS_IOS";
 		private const string VungleIOSMacro = "NIMBUS_ENABLE_VUNGLE_IOS";
 		private const string MetaIOSMacro = "NIMBUS_ENABLE_META_IOS";
@@ -48,6 +54,7 @@ namespace Nimbus.Editor {
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
 		private const string ButtonMessageTemplate = @"{0} {1} Build Macro For {2}?";
+		private const string LiveRampPartnerStr = "LiveRamp";
 		private const string ApsPartnerStr = "APS";
 		private const string VunglePartnerStr = "Vungle";
 		private const string MetaPartnerStr = "Meta";
@@ -76,6 +83,53 @@ namespace Nimbus.Editor {
 			scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(800), GUILayout.Height(600));
 			EditorGUILayout.LabelField("Enable Third Party SDK Support", headerStyle);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 4);
+			
+			// START OF LIVERAMP
+			EditorGUILayout.LabelField("LiveRamp Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			var liveRampAndroidStatus = _androidLiveRampIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {liveRampAndroidStatus}", headerStyle);
+			GUILayout.Space(2);
+			var androidLiveRampButtonText = _androidLiveRampIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "LiveRamp", "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", "LiveRamp", "Android");
+			if (GUILayout.Button(androidLiveRampButtonText)) {
+				if (_androidLiveRampIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, LiveRampMacro);
+					RemoveBuildMacroForBothPlatforms(LiveRampAndroidMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, LiveRampMacro); 
+					SetBuildMacroForBothPlatforms(LiveRampAndroidMacro);
+					FocusOnGameManager(LiveRampPartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			var liveRampIosStatus = _iosLiveRampIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {liveRampIosStatus}", headerStyle);
+			GUILayout.Space(2);
+			var liveRampAndroidbuttonText = _iosLiveRampIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", "LiveRamp", "Ios")
+				: string.Format(ButtonMessageTemplate, "Enable", "LiveRamp", "Ios");
+			if (GUILayout.Button(liveRampAndroidbuttonText)) {
+				if (_iosLiveRampIsEnabled) { 
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, LiveRampMacro);
+					RemoveBuildMacroForBothPlatforms(LiveRampIOSMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS, LiveRampMacro);
+					SetBuildMacroForBothPlatforms(LiveRampIOSMacro);
+					FocusOnGameManager(LiveRampPartnerStr);
+				}
+			}
+			// END OF LIVERAMP
+			
+			GUILayout.Space(10);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 
 			// START OF APS
 			EditorGUILayout.LabelField("APS Build Macro Settings:", headerStyle);
@@ -438,6 +492,8 @@ namespace Nimbus.Editor {
 			Repaint();
 		}
 		private void UpdateSettings() {
+			_androidLiveRampIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, LiveRampAndroidMacro);
+			_iosLiveRampIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, LiveRampIOSMacro);
 			_androidApsIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, ApsAndroidMacro);
 			_iosApsIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, ApsIOSMacro);
 			_androidVungleIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, VungleAndroidMacro);
