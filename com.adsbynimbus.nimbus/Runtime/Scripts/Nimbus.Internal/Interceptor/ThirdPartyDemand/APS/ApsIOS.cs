@@ -41,7 +41,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 
 			foreach (var slot in _slotData) {
 				var (w, h) = AdTypeToDim(slot.AdUnitType);
-				if (slot.AdUnitType == AdUnitType.Rewarded) {
+				if (slot.AdUnitType == AdUnitType.InterstitialVideo ||
+					slot.AdUnitType == AdUnitType.Rewarded) {
 					_addAPSSlot(slot.SlotId, w, h, true);
 					continue;
 				}
@@ -52,12 +53,16 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 
 		private static Tuple<int, int> AdTypeToDim(AdUnitType type) {
 			switch (type) {
-				case AdUnitType.Undefined:
-					return new Tuple<int, int>(0, 0);
-				case AdUnitType.Banner:
+				case AdUnitType.Banner320X50:
 					return new Tuple<int, int>(320, 50);
-				case AdUnitType.Interstitial:
-					return new Tuple<int, int>(320, 480);
+				case AdUnitType.Banner300X250:
+					return new Tuple<int, int>(300, 250);
+				case AdUnitType.Banner728X90:
+					return new Tuple<int, int>(728, 90);
+				case AdUnitType.InterstitialDisplay:
+					return new Tuple<int, int>(Screen.width, Screen.height);
+				case AdUnitType.InterstitialVideo:
+					return new Tuple<int, int>(Screen.width, Screen.height);
 				case AdUnitType.Rewarded:
 					return new Tuple<int, int>(Screen.width, Screen.height);
 				default:
@@ -82,7 +87,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 
 			var (w, h) = AdTypeToDim(type);
 			// ReSharper disable once InvertIf
-			if (type == AdUnitType.Rewarded) {
+			if (type == AdUnitType.InterstitialDisplay || type == AdUnitType.InterstitialVideo ||
+				type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;
