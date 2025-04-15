@@ -481,21 +481,6 @@ namespace Nimbus.ScriptableObjects {
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_MOBILEFUSE_ANDROID || NIMBUS_ENABLE_MOBILEFUSE_IOS
-				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
-				GUILayout.Space(10);
-				EditorGUILayout.LabelField("MobileFuse Configuration", headerStyle);
-				#if NIMBUS_ENABLE_MOBILEFUSE_ANDROID
-					GUILayout.Space(10);
-					EditorGUILayout.LabelField("MobileFuse is Enabled for Android", EditorStyles.label);
-				#endif
-								
-				#if NIMBUS_ENABLE_MOBILEFUSE_IOS
-					GUILayout.Space(10);
-					EditorGUILayout.LabelField("MobileFuse is Enabled for iOS", EditorStyles.label);
-				#endif
-			#endif
-			
 			serializedObject.ApplyModifiedProperties();
 		}
 	}
