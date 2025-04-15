@@ -327,7 +327,7 @@ namespace Nimbus.Editor {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 
@@ -435,7 +435,7 @@ namespace Nimbus.Editor {
 				#endif
 			#endif
 			
-			#if NIMBUS_ENABLE_UNITY_ADS_ANDROID || NIMBUS_ENABLE_VUNGLE
+			#if NIMBUS_ENABLE_UNITY_ADS_ANDROID || NIMBUS_ENABLE_UNITY_ADS_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("Unity Ads Configuration", headerStyle);
@@ -451,6 +451,21 @@ namespace Nimbus.Editor {
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Unity Ads data", MessageType.Warning);
+				#endif
+			#endif
+
+			#if NIMBUS_ENABLE_MOBILEFUSE_ANDROID || NIMBUS_ENABLE_MOBILEFUSE_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("MobileFuse Configuration", headerStyle);
+				#if NIMBUS_ENABLE_MOBILEFUSE_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.LabelField("MobileFuse is Enabled for Android", EditorStyles.label);
+				#endif
+
+				#if NIMBUS_ENABLE_MOBILEFUSE_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.LabelField("MobileFuse is Enabled for iOS", EditorStyles.label);
 				#endif
 			#endif
 
