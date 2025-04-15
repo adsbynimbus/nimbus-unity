@@ -29,7 +29,14 @@ namespace Nimbus.Internal.LiveRamp
             #endif
             #if UNITY_ANDROID
                 var liveRamp = new AndroidJavaClass("com.adsbynimbus.request.LiveRampExtension");
-                liveRamp.CallStatic("initialize", configId, email, phoneNumber, hasConsentForNoLegislation);
+                if (isTestMode)
+                {
+                    liveRamp.CallStatic("initializeTestMode", configId, email);
+                }
+                else
+                {
+                    liveRamp.CallStatic("initialize", configId, email, phoneNumber, hasConsentForNoLegislation);
+                }
             #endif
         }
 

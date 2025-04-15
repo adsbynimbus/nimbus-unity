@@ -441,7 +441,8 @@ namespace Nimbus.Runtime.Scripts {
 			_regulations.Coppa = isCoppa ? 1 : 0;
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
-
+		
+		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>
 		///     This method will initialize the LiveRamp Identity SDK
 		/// </summary>
@@ -450,9 +451,10 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		/// <param name="hasConsentForNoLegislation">
 		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
+		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
 		/// </param>
 		/// <param name="email">
-		///		E-mail address used to identify the user
+		///		Email is the preferred method for identifying a user, if null will attempt to use phone number
 		/// </param>
 		///  <param name="phoneNumber">
 		///		Optional phone if email isn't known, only US is supported
@@ -460,20 +462,15 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="testMode">
 		///		Optional parameter if debugging / testing
 		/// </param>
-		public static void initializeLiveRamp(String configId,
-			Boolean hasConsentForNoLegislation, String email = "", 
-			String phoneNumber = "", Boolean testMode = false)
-		{
-			#if NIMBUS_ENABLE_LIVERAMP
-				// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
-				NimbusLiveRampHelpers.initializeLiveRamp(configId, hasConsentForNoLegislation, testMode,
-						email, phoneNumber);
-			#else
-				Debug.unityLogger.LogError("Nimbus",
-					"Please remember to enable LiveRamp in the Unity Editor \"Nimbus\" Dropdown under \"Third Party SDK Settings\"");
-				return;
-			#endif
-		}
+			public static void initializeLiveRamp(String configId,
+				Boolean hasConsentForNoLegislation, String email, 
+				String phoneNumber = "", Boolean testMode = false)
+			{
+					// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
+					NimbusLiveRampHelpers.initializeLiveRamp(configId, hasConsentForNoLegislation, testMode,
+							email, phoneNumber);
+			}
+		#endif
 		
 		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
 			_configuration = configuration;
