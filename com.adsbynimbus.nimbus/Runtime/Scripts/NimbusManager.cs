@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal;
+using Nimbus.Internal.LiveRamp;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
 using Nimbus.Internal.Utility;
@@ -24,7 +25,6 @@ namespace Nimbus.Runtime.Scripts {
 		private NimbusAPI _nimbusPlatformAPI;
 		private Regs _regulations;
 		private CancellationTokenSource _ctx;
-
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
 
@@ -442,6 +442,36 @@ namespace Nimbus.Runtime.Scripts {
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
 		
+		#if NIMBUS_ENABLE_LIVERAMP
+		/// <summary>
+		///     This method will initialize the LiveRamp Identity SDK
+		/// </summary>
+		/// <param name="configId">
+		///		Config ID provided by LiveRamp
+		/// </param>
+		/// <param name="hasConsentForNoLegislation">
+		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
+		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
+		/// </param>
+		/// <param name="email">
+		///		Email is the preferred method for identifying a user, if null will attempt to use phone number
+		/// </param>
+		///  <param name="phoneNumber">
+		///		Optional phone if email isn't known, only US is supported
+		/// </param>
+		/// <param name="testMode">
+		///		Optional parameter if debugging / testing
+		/// </param>
+			public static void initializeLiveRamp(String configId,
+				Boolean hasConsentForNoLegislation, String email, 
+				String phoneNumber = "", Boolean testMode = false)
+			{
+					// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
+					NimbusLiveRampHelpers.initializeLiveRamp(configId, hasConsentForNoLegislation, testMode,
+							email, phoneNumber);
+			}
+		#endif
+		
 		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
 			_configuration = configuration;
 		}
@@ -504,6 +534,9 @@ namespace Nimbus.Runtime.Scripts {
 				SetTest(_configuration.enableSDKInTestMode).
 				SetReportingPosition(position).
 				SetOMInformation(_nimbusClient.platformSdkv);
+			#if NIMBUS_ENABLE_LIVERAMP
+				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
+			#endif
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;
