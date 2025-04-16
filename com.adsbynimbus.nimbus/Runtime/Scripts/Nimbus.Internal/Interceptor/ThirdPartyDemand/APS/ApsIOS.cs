@@ -72,39 +72,42 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0) {
 			var found = false;
-			
 			foreach (ApsSlotData slot in _slotData){
 				if (type == AdUnitType.Banner)
 				{
 					if (width == 320 && height == 50 && slot.APSAdUnitType == APSAdUnitType.Display320X50)
 					{
 						found = true;
+						break;
 					}
 					if (width == 300 && height == 250 && slot.APSAdUnitType == APSAdUnitType.Display300X250)
 					{
 						found = true;
+						break;
 					}
 					if (width == 728 && height == 90 && slot.APSAdUnitType == APSAdUnitType.Display728X90)
 					{
 						found = true;
+						break;
 					}
 				}
-				else if (type == AdUnitType.Interstitial)
+				if (type == AdUnitType.Interstitial)
 				{
 					if (slot.APSAdUnitType == APSAdUnitType.InterstitialDisplay ||
 					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
 					{
 						found = true;
+						break;
 					}
 				}
-				else
+				if (type == AdUnitType.Rewarded)
 				{
 					if (slot.APSAdUnitType == APSAdUnitType.RewardedVideo)
 					{
 						found = true;
+						break;
 					}
 				}
-				break;
 			}
 			
 			if (!found) {
