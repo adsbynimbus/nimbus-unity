@@ -9,9 +9,10 @@ using UnityEngine;
 
 namespace Nimbus.Internal.LiveRamp
 {
+    #if NIMBUS_ENABLE_LIVERAMP
     public class NimbusLiveRampHelpers
     {
-        #if UNITY_IOS
+        #if UNITY_IOS 
             [DllImport("__Internal")]
             private static extern void _initializeLiveRamp(String configId, String email, 
                 String phoneNumber, Boolean isTestMode, Boolean hasConsentForNoLegislation);
@@ -70,6 +71,7 @@ namespace Nimbus.Internal.LiveRamp
             return bidRequest;
         }
     }
+#endif
 }
         
         

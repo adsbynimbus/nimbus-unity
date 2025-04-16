@@ -72,6 +72,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0) {
 			var found = false;
+			var interstitialVideo = false;
 			foreach (ApsSlotData slot in _slotData){
 				if (type == AdUnitType.Banner)
 				{
@@ -97,6 +98,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
 					{
 						found = true;
+						interstitialVideo = (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo);
 						break;
 					}
 				}
@@ -116,7 +118,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 
 			var w = width;
 			var h = height;
-			if (type == AdUnitType.Interstitial ||
+			if (interstitialVideo ||
 			    type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;

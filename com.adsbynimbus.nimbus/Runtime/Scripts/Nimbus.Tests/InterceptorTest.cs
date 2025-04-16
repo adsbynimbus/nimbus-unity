@@ -39,15 +39,15 @@ namespace Nimbus.Tests {
 						new[] {
 							new ApsSlotData {
 								SlotId = "rewarded_video_slot",
-								AdUnitType = AdUnitType.Rewarded,
+								APSAdUnitType = APSAdUnitType.RewardedVideo,
 							},
 							new ApsSlotData {
 								SlotId = "interstitial_slot",
-								AdUnitType = AdUnitType.Interstitial,
+								APSAdUnitType = APSAdUnitType.InterstitialDisplay,
 							},
 							new ApsSlotData {
 								SlotId = "banner_slot",
-								AdUnitType = AdUnitType.Banner,
+								APSAdUnitType = APSAdUnitType.Display320X50,
 							}
 						})
 				),
@@ -75,15 +75,15 @@ namespace Nimbus.Tests {
 						new[] {
 							new ApsSlotData {
 								SlotId = "rewarded_video_slot",
-								AdUnitType = AdUnitType.Rewarded,
+								APSAdUnitType = APSAdUnitType.RewardedVideo,
 							},
 							new ApsSlotData {
 								SlotId = "interstitial_slot",
-								AdUnitType = AdUnitType.Interstitial,
+								APSAdUnitType = APSAdUnitType.InterstitialDisplay,
 							},
 							new ApsSlotData {
 								SlotId = "banner_slot",
-								AdUnitType = AdUnitType.Banner,
+								APSAdUnitType = APSAdUnitType.Display320X50,
 							}
 						})
 				),
