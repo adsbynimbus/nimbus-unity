@@ -11,11 +11,6 @@ namespace Nimbus.Internal {
 		Banner = 1,
 		Interstitial = 2,
 		Rewarded = 3,
-		Banner320X50 = 4,
-		Banner300X250 = 5,
-		Banner728X90 = 6,
-		InterstitialDisplay = 7,
-		InterstitialVideo = 8
 	}
 
 

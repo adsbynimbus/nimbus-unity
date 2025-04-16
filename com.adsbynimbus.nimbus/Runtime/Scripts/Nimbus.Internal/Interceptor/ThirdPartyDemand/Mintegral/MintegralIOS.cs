@@ -51,7 +51,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return bidRequest;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0)
 		{
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{

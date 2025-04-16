@@ -497,9 +497,18 @@ namespace Nimbus.Runtime.Scripts {
 			if (_nimbusPlatformAPI.Interceptors() == null) {
 				return bidRequest;
 			}
-			
+			var width = 0;
+			var height = 0;
+			if (!bidRequest.Imp.IsNullOrEmpty())
+			{
+				if (bidRequest.Imp[0].Banner != null)
+				{
+					width = bidRequest.Imp[0].Banner.W ?? 0;
+					height = bidRequest.Imp[0].Banner.H ?? 0;
+				}
+			}
 			foreach (var interceptor in _nimbusPlatformAPI.Interceptors()) {
-				var data = interceptor.GetProviderRtbDataFromNativeSDK(adUnitType, isFullScreen);
+				var data = interceptor.GetProviderRtbDataFromNativeSDK(adUnitType, isFullScreen, width, height);
 				bidRequest = interceptor.ModifyRequest(bidRequest, data);
 			}
 			return bidRequest;

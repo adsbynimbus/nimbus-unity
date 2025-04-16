@@ -40,9 +40,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			_initializeAPSRequestHelper(_appID, TimeoutInSeconds, _enableTestMode);
 
 			foreach (var slot in _slotData) {
-				var (w, h) = AdTypeToDim(slot.AdUnitType);
-				if (slot.AdUnitType == AdUnitType.InterstitialVideo ||
-					slot.AdUnitType == AdUnitType.Rewarded) {
+				var (w, h) = AdTypeToDim(slot.APSAdUnitType);
+				if (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo ||
+					slot.APSAdUnitType == APSAdUnitType.RewardedVideo) {
 					_addAPSSlot(slot.SlotId, w, h, true);
 					continue;
 				}
@@ -51,44 +51,70 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			}
 		}
 
-		private static Tuple<int, int> AdTypeToDim(AdUnitType type) {
+		private static Tuple<int, int> AdTypeToDim(APSAdUnitType type) {
 			switch (type) {
-				case AdUnitType.Banner320X50:
+				case APSAdUnitType.Display320X50:
 					return new Tuple<int, int>(320, 50);
-				case AdUnitType.Banner300X250:
+				case APSAdUnitType.Display300X250:
 					return new Tuple<int, int>(300, 250);
-				case AdUnitType.Banner728X90:
+				case APSAdUnitType.Display728X90:
 					return new Tuple<int, int>(728, 90);
-				case AdUnitType.InterstitialDisplay:
+				case APSAdUnitType.InterstitialDisplay:
 					return new Tuple<int, int>(Screen.width, Screen.height);
-				case AdUnitType.InterstitialVideo:
+				case APSAdUnitType.InterstitialVideo:
 					return new Tuple<int, int>(Screen.width, Screen.height);
-				case AdUnitType.Rewarded:
+				case APSAdUnitType.RewardedVideo:
 					return new Tuple<int, int>(Screen.width, Screen.height);
 				default:
 					return new Tuple<int, int>(0, 0);
 			}
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0) {
 			var found = false;
-			// ReSharper disable once ForCanBeConvertedToForeach
-			// ReSharper disable once LoopCanBeConvertedToQuery
-			for (var i = 0; i < _slotData.Length; i++) {
-				if (_slotData[i].AdUnitType != type) continue;
-				found = true;
+			
+			foreach (ApsSlotData slot in _slotData){
+				if (type == AdUnitType.Banner)
+				{
+					if (width == 320 && height == 50 && slot.APSAdUnitType == APSAdUnitType.Display320X50)
+					{
+						found = true;
+					}
+					if (width == 300 && height == 250 && slot.APSAdUnitType == APSAdUnitType.Display300X250)
+					{
+						found = true;
+					}
+					if (width == 728 && height == 90 && slot.APSAdUnitType == APSAdUnitType.Display728X90)
+					{
+						found = true;
+					}
+				}
+				else if (type == AdUnitType.Interstitial)
+				{
+					if (slot.APSAdUnitType == APSAdUnitType.InterstitialDisplay ||
+					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
+					{
+						found = true;
+					}
+				}
+				else
+				{
+					if (slot.APSAdUnitType == APSAdUnitType.RewardedVideo)
+					{
+						found = true;
+					}
+				}
 				break;
 			}
-
+			
 			if (!found) {
 				return null;
 			}
 
-
-			var (w, h) = AdTypeToDim(type);
-			// ReSharper disable once InvertIf
-			if (type == AdUnitType.InterstitialDisplay || type == AdUnitType.InterstitialVideo ||
-				type == AdUnitType.Rewarded) {
+			var w = width;
+			var h = height;
+			if (type == AdUnitType.Interstitial ||
+			    type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;

@@ -30,7 +30,7 @@ namespace Nimbus.Internal.Interceptor {
 		}
 
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0) {
 			return "";
 		}
 
