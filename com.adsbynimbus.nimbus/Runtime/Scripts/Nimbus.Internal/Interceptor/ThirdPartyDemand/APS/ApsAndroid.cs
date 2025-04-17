@@ -56,9 +56,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 				case APSAdUnitType.Display728X90:
 					return new Tuple<int, int>(728, 90);
 				case APSAdUnitType.InterstitialDisplay:
-					return new Tuple<int, int>(Screen.width, Screen.height);
+					return new Tuple<int, int>(320, 480);
 				case APSAdUnitType.InterstitialVideo:
-					return new Tuple<int, int>(Screen.width, Screen.height);
+					return new Tuple<int, int>(320, 480);
 				case APSAdUnitType.RewardedVideo:
 					return new Tuple<int, int>(Screen.width, Screen.height);
 				default:
@@ -69,6 +69,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		
 		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0) {
 			var found = false;
+			var interstitialVideo = false;
 			foreach (ApsSlotData slot in _slotData){
 				if (type == AdUnitType.Banner)
 				{
@@ -94,6 +95,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
 					{
 						found = true;
+						interstitialVideo = (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo);
 						break;
 					}
 				}
@@ -108,13 +110,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			}
 			
 			if (!found) {
+				Debug.unityLogger.LogError("Nimbus", 
+					"APS NOT FOUND");
 				return null;
 			}
 
 			var w = width;
 			var h = height;
-			if (type == AdUnitType.Interstitial ||
-			    type == AdUnitType.Rewarded) {
+			if (interstitialVideo || type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;
