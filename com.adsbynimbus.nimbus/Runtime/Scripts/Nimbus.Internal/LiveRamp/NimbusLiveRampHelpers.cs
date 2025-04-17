@@ -71,11 +71,7 @@ namespace Nimbus.Internal.LiveRamp
             return bidRequest;
         }
     }
-<<<<<<< HEAD
 #endif
-=======
-    #endif
->>>>>>> main
 }
         
         

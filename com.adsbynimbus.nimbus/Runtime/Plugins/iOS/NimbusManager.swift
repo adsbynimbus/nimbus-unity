@@ -431,13 +431,15 @@ extension DispatchGroup {
     }
 }
 
-extension LREnvelope {
-    // This helper decodes Pair IDs from LiveRamp envelope
-    var pairIds: [String]? {
-        guard let envelope25, let decodedPair = Data(base64Encoded: envelope25),
-              let pairIds = try? JSONSerialization.jsonObject(with: decodedPair) as? [String]
-        else { return nil }
-        
-        return pairIds
+#if NIMBUS_ENABLE_LIVERAMP
+    extension LREnvelope {
+        // This helper decodes Pair IDs from LiveRamp envelope
+        var pairIds: [String]? {
+            guard let envelope25, let decodedPair = Data(base64Encoded: envelope25),
+                  let pairIds = try? JSONSerialization.jsonObject(with: decodedPair) as? [String]
+            else { return nil }
+            
+            return pairIds
+        }
     }
-}
+#endif
