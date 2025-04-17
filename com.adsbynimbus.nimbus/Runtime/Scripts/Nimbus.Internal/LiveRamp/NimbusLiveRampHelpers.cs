@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace Nimbus.Internal.LiveRamp
 {
+    #if NIMBUS_ENABLE_LIVERAMP
     public class NimbusLiveRampHelpers
     {
         #if UNITY_IOS
@@ -70,6 +71,7 @@ namespace Nimbus.Internal.LiveRamp
             return bidRequest;
         }
     }
+    #endif
 }
         
         
