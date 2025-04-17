@@ -10,7 +10,7 @@ namespace Nimbus.Internal {
 		Undefined = 0,
 		Banner = 1,
 		Interstitial = 2,
-		Rewarded = 3,
+		Rewarded = 3
 	}
 
 
