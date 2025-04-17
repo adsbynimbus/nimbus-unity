@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Utility;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -58,6 +60,9 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _androidUnityAdsGameId;
 
 		private SerializedProperty _iosUnityAdsGameId;
+
+		// Needed so error messages aren't spammed
+		private bool _errorLogged;
 
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
@@ -356,11 +361,13 @@ namespace Nimbus.ScriptableObjects {
 				#endif
 			#endif
 			
+			
 			#if NIMBUS_ENABLE_APS_ANDROID || NIMBUS_ENABLE_APS_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
 				#if NIMBUS_ENABLE_APS_ANDROID
+			ValidateApsSlots("Android", _androidApsSlots);
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAppId));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
@@ -497,6 +504,42 @@ namespace Nimbus.ScriptableObjects {
 			#endif
 			
 			serializedObject.ApplyModifiedProperties();
+		}
+		
+		private void ValidateApsSlots(string platform, SerializedProperty slotData) {
+			var apsSlotData = new List<ApsSlotData>();
+			for (var i = 0; i < slotData.arraySize; i++) {
+				var item = slotData.GetArrayElementAtIndex(i);
+				var slotId = item.FindPropertyRelative("SlotId");
+
+				var apsData = new ApsSlotData {
+					SlotId = slotId?.stringValue
+				};
+
+				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
+				if (adUnitType != null) {
+					apsData.APSAdUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
+				}
+
+				apsSlotData.Add(apsData);
+			}
+			var platformSlots = apsSlotData.ToArray();
+			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
+			foreach (var apsSlot in platformSlots) {
+				if (!seenAdTypes.ContainsKey(apsSlot.APSAdUnitType)) {
+					seenAdTypes.Add(apsSlot.APSAdUnitType, true);
+				}
+				else {
+					if (!_errorLogged)
+					{
+						Debug.unityLogger.LogError("Nimbus", 
+							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.APSAdUnitType} for {platform}, object NimbusAdsManager not created");
+						_errorLogged = true;
+					}
+					return;
+				}
+			}
+			_errorLogged = false;
 		}
 	}
 }

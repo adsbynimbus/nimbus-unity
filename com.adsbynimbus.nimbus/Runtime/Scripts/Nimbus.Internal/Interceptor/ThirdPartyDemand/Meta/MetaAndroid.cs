@@ -33,7 +33,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			return bidRequest;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0)
 		{
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			var buyerId = meta.GetStatic<string>("bidderToken");
