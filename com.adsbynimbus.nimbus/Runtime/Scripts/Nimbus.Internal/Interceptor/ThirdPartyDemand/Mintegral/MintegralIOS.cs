@@ -40,9 +40,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			}
 
 			var mintegralObjectStr = _getMintegralRequestModifiers();
-			if (bidRequest.User.Ext == null) {
-				bidRequest.User.Ext = new UserExt();
-			}
+			bidRequest.User ??= new User();
+			bidRequest.User.Ext ??= new UserExt();
 			var mintegralObject = JsonConvert.DeserializeObject(mintegralObjectStr, typeof(MintegralObj)) as MintegralObj;
 			if (mintegralObject != null)
 			{
