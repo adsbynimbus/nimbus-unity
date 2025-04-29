@@ -768,9 +768,11 @@ namespace Nimbus.Editor {
 			for (var i = 0; i < adUnitData.arraySize; i++) {
 				var item = adUnitData.GetArrayElementAtIndex(i);
 				var adUnitId = item.FindPropertyRelative("AdUnitId");
+				var adUnitPlacementId = item.FindPropertyRelative("AdUnitPlacementId");
 
 				var mintegralData  = new ThirdPartyAdUnit() {
-					AdUnitId = adUnitId?.stringValue
+					AdUnitId = adUnitId?.stringValue,
+					AdUnitPlacementId = adUnitPlacementId?.stringValue
 				};
 
 				var adUnitType = item.FindPropertyRelative("AdUnitType");

@@ -72,9 +72,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 				var buyerId = mintegralBidManager.CallStatic<string>("getBuyerUid", _applicationContext);
 				var mintegralMbConfiguration = new AndroidJavaClass("com.mbridge.msdk.out.MBConfiguration");
 				var sdkVersion = mintegralMbConfiguration.GetStatic<string>("SDK_VERSION");
-				if (bidRequest.User.Ext == null) {
-					bidRequest.User.Ext = new UserExt();
-				}
+				bidRequest.User ??= new User();
+				bidRequest.User.Ext ??= new UserExt();
 				var mintegralObj = new MintegralObj();
 				mintegralObj.MintegralBuyerId = buyerId;
 				mintegralObj.MintegralSdkVersion = sdkVersion;
