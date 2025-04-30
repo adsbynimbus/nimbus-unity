@@ -31,6 +31,8 @@ import com.adsbynimbus.render.CompanionAd;
 import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
+import com.adsbynimbus.request.internal.NimbusSessionExtension.incrementedSignal;
+import kotlinx.serialization.json.Json;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -133,6 +135,9 @@ public final class UnityHelper {
          }
              return "";
          }
+    public static String getSessionInfo() {
+        return Json.Default.encodeToString(incrementedSignal());
+    }
 
     static final class BannerHandler implements Runnable, NimbusAdManager.Listener,
         AdController.Listener {

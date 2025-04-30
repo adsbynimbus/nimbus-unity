@@ -46,6 +46,8 @@ import LRAtsSDK
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
+    private static let session = Session()
+    
     private let adUnitInstanceId: Int
     
     private var nimbusAdManager: NimbusAdManager?
@@ -226,6 +228,15 @@ import LRAtsSDK
         privacyStrings["gppSectionId"] = UserDefaults.standard.string(forKey: gppSectionIdKey)
         privacyStrings["usPrivacyString"] = UserDefaults.standard.string(forKey: usPrivacyStringKey)
         guard let data = try? JSONEncoder().encode(privacyStrings),
+        let jsonString = String(data: data, encoding: .utf8) else {
+               return ""
+        }
+        return jsonString
+    }
+    
+    @objc public class func getSessionInfo() -> String {
+        session.recordRequest()
+        guard let data = try? JSONEncoder().encode(session),
         let jsonString = String(data: data, encoding: .utf8) else {
                return ""
         }

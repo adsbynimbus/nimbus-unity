@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OpenRTB.Request {
     public class BidRequest {
@@ -45,6 +46,9 @@ namespace OpenRTB.Request {
 
         [JsonProperty("wseat", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string[] WSeat;
+        
+        [JsonProperty("custom_signals", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public JObject CustomSignals;
     }
 
     public class BidRequestExt {
