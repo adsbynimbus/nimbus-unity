@@ -30,7 +30,7 @@ namespace Nimbus.Internal.Session
                 }
                 catch (Exception e)
                 {
-                    Debug.unityLogger.Log("LiveRamp Request Info ERROR", e.Message);
+                    Debug.unityLogger.Log("Session Info ERROR", e.Message);
                 }
             #endif
             if (sessionInfo.IsNullOrEmpty())
