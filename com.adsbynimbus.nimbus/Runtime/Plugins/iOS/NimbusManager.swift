@@ -10,6 +10,7 @@ import Foundation
 import NimbusRenderStaticKit
 import NimbusRenderVideoKit
 import NimbusKit
+import NimbusCoreKit
 import AppTrackingTransparency
 import AdSupport
 #if NIMBUS_ENABLE_APS
@@ -235,10 +236,16 @@ import LRAtsSDK
     }
     
     @objc public class func getSessionInfo() -> String {
-        session.recordRequest()
-        guard let data = try? JSONEncoder().encode(session),
+        let group = DispatchGroup()
+        var sessionKeys: [String:Int] = [:]
+        group.wait(for: {
+            await session.recordRequest()
+            await sessionKeys["depth"] = session.requests()
+            await sessionKeys["duration"] = session.duration();
+        })
+        guard let data = try? JSONEncoder().encode(["session": sessionKeys]),
         let jsonString = String(data: data, encoding: .utf8) else {
-               return ""
+            return ""
         }
         return jsonString
     }
