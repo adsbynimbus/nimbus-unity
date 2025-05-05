@@ -3,6 +3,7 @@ package com.adsbynimbus.unity;
 import static android.view.ViewGroup.LayoutParams.*;
 
 import static com.adsbynimbus.internal.Logger.log;
+import static com.adsbynimbus.request.internal.NimbusSessionExtension.incrementedSignal;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +21,7 @@ import com.adsbynimbus.Nimbus;
 import com.adsbynimbus.NimbusAdManager;
 import com.adsbynimbus.NimbusError;
 import com.adsbynimbus.openrtb.request.App;
+import com.adsbynimbus.openrtb.request.Signals;
 import com.adsbynimbus.openrtb.response.BidResponse;
 import com.adsbynimbus.openrtb.request.Format;
 import com.adsbynimbus.openrtb.request.Position;
@@ -31,7 +33,7 @@ import com.adsbynimbus.render.CompanionAd;
 import com.adsbynimbus.render.Renderer;
 import com.adsbynimbus.request.NimbusRequest;
 import com.adsbynimbus.request.NimbusResponse;
-import com.adsbynimbus.request.internal.NimbusSessionExtension.incrementedSignal;
+
 import kotlinx.serialization.json.Json;
 
 import org.json.JSONException;
@@ -136,7 +138,7 @@ public final class UnityHelper {
              return "";
          }
     public static String getSessionInfo() {
-        return Json.Default.encodeToString(incrementedSignal());
+        return Json.Default.encodeToString(Signals.Companion.serializer(), incrementedSignal());
     }
 
     static final class BannerHandler implements Runnable, NimbusAdManager.Listener,

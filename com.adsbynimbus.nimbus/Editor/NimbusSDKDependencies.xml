@@ -1,13 +1,12 @@
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.adsbynimbus.android:nimbus:2.28.3">
+    <androidPackage spec="com.adsbynimbus.android:nimbus:2.29.0">
       <repositories>
         <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
       </repositories>
     </androidPackage>
-    <!--The below package is needed to resolve gradle issues with the above nimbus-vast package-->
-    <androidPackage spec="io.github.pdvrieze.xmlutil:serialization:0.90.3">
-    </androidPackage>
+    <!--The below package is needed to resolve gradle issues with APS-->
+    <androidPackage spec="com.google.android.material:material:1.12.0"/>
   </androidPackages>
 
   <iosPods>
