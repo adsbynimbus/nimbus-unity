@@ -9,6 +9,7 @@ using Nimbus.Internal;
 using Nimbus.Internal.LiveRamp;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
+using Nimbus.Internal.Session;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
@@ -537,6 +538,7 @@ namespace Nimbus.Runtime.Scripts {
 			#if NIMBUS_ENABLE_LIVERAMP
 				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
 			#endif
+			bidRequest = NimbusSessionHelpers.addSessionToRequest(bidRequest);
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;

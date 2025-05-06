@@ -40,16 +40,12 @@ namespace OpenRTB.Response {
         [JsonProperty("duration", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int Duration;
         
-        [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public BidExt Ext;
     }
 
     public struct BidExt {
         [JsonProperty("skadn", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public SkadnResponse Skadn;
-        
-        [DefaultValue(true)]
-        [JsonProperty("use_new_renderer", DefaultValueHandling = DefaultValueHandling.Populate)]
-        public bool UseNewRenderer;
     }
 }

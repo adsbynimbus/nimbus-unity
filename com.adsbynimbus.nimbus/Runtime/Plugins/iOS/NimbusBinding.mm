@@ -177,6 +177,11 @@ extern "C" {
     const char* _getPrivacyStrings() {
         return strdup([[NimbusManager getPrivacyStrings] UTF8String]);
     }
+    
+    const char* _getSessionInfo() {
+        return strdup([[NimbusManager getSessionInfo] UTF8String]);
+    }
+    
 #if NIMBUS_ENABLE_LIVERAMP
     void _initializeLiveRamp(const char* configId, const char* email, const char* phoneNumber, bool isTestMode, bool hasConsentForNoLegislation) {
         [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) phoneNumber:GetStringParam(phoneNumber) isTestMode:isTestMode hasConsentForNoLegislation:hasConsentForNoLegislation];
