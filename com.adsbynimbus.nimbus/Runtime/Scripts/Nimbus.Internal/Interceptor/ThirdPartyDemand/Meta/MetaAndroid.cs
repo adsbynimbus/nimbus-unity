@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -15,33 +17,35 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			_appID = appID;
 		}
 		
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.FacebookBuyerId = data;
-			if (bidRequest.Imp.Length > 0) {
-				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("facebook_buyeruid", data);
+			if (bidRequest.Imp.Length > 0)
+			{
+				var impExt = new ImpExt();
+				impExt.FacebookAppId = _appID;
 				if (_testMode)
 				{
-					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+					impExt.MetaTestAdType = "IMG_16_9_LINK";
 				}
+				bidRequestDelta.impressionExtension = impExt;
 			}
-
-			return bidRequest;
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
+			AndroidJNI.AttachCurrentThread();
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			var buyerId = meta.GetStatic<string>("bidderToken");
 			Debug.unityLogger.Log("METABIDDINGTOKEN", buyerId);
 			return buyerId;
 		}
 		
-		public MetaAndroid(AndroidJavaObject applicationContext, bool testMode, string appID) {
+		private MetaAndroid(AndroidJavaObject applicationContext, bool testMode, string appID) {
 			_applicationContext = applicationContext;
 			_testMode = testMode;
 			_appID = appID;
@@ -50,6 +54,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		public void InitializeNativeSDK() {
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			meta.CallStatic("initialize", _applicationContext, _appID);
+		}
+		
+		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return await Task<BidRequestDelta>.Run(async () =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
 		}
 	}
 }

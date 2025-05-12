@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -86,9 +87,8 @@ namespace Nimbus.Internal.RequestBuilder {
 		
 		public static BidRequest SetGdprConsentString(this BidRequest bidRequest, string consentString) {
 			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt {
-				Consent = consentString
-			};
+			bidRequest.User.Ext ??= new JObject();
+			bidRequest.User.Ext["consent"] = consentString;
 			return bidRequest;
 		}
 		

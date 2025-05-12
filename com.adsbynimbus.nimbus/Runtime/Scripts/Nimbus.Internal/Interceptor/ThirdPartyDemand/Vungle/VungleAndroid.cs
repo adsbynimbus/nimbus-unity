@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
@@ -23,20 +25,18 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			_appID = appID;
 		}
 		
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.VungleBuyerId = data;
-
-			
-			return bidRequest;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("vungle_buyeruid", data);
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
+			AndroidJNI.AttachCurrentThread();
 			var vungle = new AndroidJavaClass(VunglePackage);
 			var buyerId = vungle.CallStatic<string>("getBiddingToken", _applicationContext);
 			return buyerId;
@@ -45,6 +45,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		public void InitializeNativeSDK() {
 			var vungle = new AndroidJavaClass(NimbusVunglePackage);
 			vungle.CallStatic("initialize", _appID);
+		}
+		
+		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return await Task<BidRequestDelta>.Run(async () =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
 		}
 	}
 }

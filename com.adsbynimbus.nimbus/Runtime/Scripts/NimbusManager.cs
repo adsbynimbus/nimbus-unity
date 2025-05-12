@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
@@ -498,11 +500,22 @@ namespace Nimbus.Runtime.Scripts {
 			if (_nimbusPlatformAPI.Interceptors() == null) {
 				return bidRequest;
 			}
-			
-			foreach (var interceptor in _nimbusPlatformAPI.Interceptors()) {
-				var data = interceptor.GetProviderRtbDataFromNativeSDK(adUnitType, isFullScreen);
-				bidRequest = interceptor.ModifyRequest(bidRequest, data);
+
+			var interceptorTasks = new List<Task<BidRequestDelta>>();
+			foreach (var interceptor in _nimbusPlatformAPI.Interceptors())
+			{
+				interceptorTasks.Add(interceptor.ModifyRequestAsync(adUnitType, isFullScreen, bidRequest));
 			}
+			try
+			{
+				var results = Task.WhenAll(interceptorTasks).Result;
+				bidRequest = BidRequestDeltaManager.ApplyDeltas(results, bidRequest);
+			}
+			catch (Exception e)
+			{
+				Debug.unityLogger.Log($"NIMBUS INTERCEPTORS ERRROR: {e.Message} /n {e.StackTrace}");
+			}
+
 			return bidRequest;
 		}
 

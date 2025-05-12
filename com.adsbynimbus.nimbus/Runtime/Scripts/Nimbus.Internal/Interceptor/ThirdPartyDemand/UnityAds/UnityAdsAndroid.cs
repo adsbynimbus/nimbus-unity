@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -13,25 +15,24 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.UnityBuyerId = data;
-			return bidRequest;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("unity_buyeruid", data);
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
+			AndroidJNI.AttachCurrentThread();
 			var unityAds = new AndroidJavaClass(UnityAdsPackage);
 			var token = unityAds.CallStatic<string>("getToken");
 			if (token == null)
 			{
 				return "";
 			}
-
 			Debug.unityLogger.Log("Unity Ads Token", token);
 			return token;
 		}
@@ -45,6 +46,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		public void InitializeNativeSDK() {
 			var unityAds = new AndroidJavaClass(NimbusUnityAdsPackage);
 			unityAds.CallStatic("initialize", _applicationContext, _gameID);
+		}
+		
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
 		}
 	}
 }
