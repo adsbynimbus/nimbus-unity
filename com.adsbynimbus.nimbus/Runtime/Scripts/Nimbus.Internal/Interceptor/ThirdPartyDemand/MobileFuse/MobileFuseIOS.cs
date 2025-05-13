@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
@@ -18,18 +20,17 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 		[DllImport("__Internal")]
 		private static extern string _fetchMobileFuseToken();
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			var mobileFuseObject = JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject;
-			bidRequest.User.Ext.MobileFuseBuyerData = mobileFuseObject;
-			return bidRequest;
+			bidRequestDelta.complexUserExt = 
+				new KeyValuePair<string,JObject>("mfx_buyerdata", JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject);
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchMobileFuseToken();
 			Debug.unityLogger.Log("MobileFuse Token", biddingToken);
@@ -39,7 +40,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 		public void InitializeNativeSDK() {
 			_initializeMobileFuse();
 		}
-
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
+		}
 	}
 #endif
 }

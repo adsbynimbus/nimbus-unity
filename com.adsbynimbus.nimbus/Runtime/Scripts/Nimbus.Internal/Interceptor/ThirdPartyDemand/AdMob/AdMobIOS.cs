@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Enumerations;
@@ -23,10 +25,11 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		[DllImport("__Internal")]
 		private static extern string _getAdMobRequestModifiers(int adUnitType, string adUnitId, int width, int height);
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data)
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
 		{
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
 			var width = 0;
 			var height = 0;
@@ -40,14 +43,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			}
 
 			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.AdMobSignals = adMobSignals;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", adMobSignals);
 			
-			return bidRequest;
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
@@ -69,6 +70,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 
 		public void InitializeNativeSDK() {
 			_initializeAdMob();
+		}
+		
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
 		}
 
 	}

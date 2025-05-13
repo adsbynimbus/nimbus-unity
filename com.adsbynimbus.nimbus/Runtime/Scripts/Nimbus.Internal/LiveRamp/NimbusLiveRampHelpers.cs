@@ -44,7 +44,6 @@ namespace Nimbus.Internal.LiveRamp
         public static BidRequest addLiveRampToRequest(BidRequest bidRequest)
         {
             var liveRampData = "";
-            Eid[] eidsObject = {};
             #if UNITY_IOS
                 liveRampData = _getLiveRampData();
             #endif
@@ -64,10 +63,10 @@ namespace Nimbus.Internal.LiveRamp
             {
                 return bidRequest;
             }
-            eidsObject = JsonConvert.DeserializeObject(liveRampData, typeof(Eid[])) as Eid[];
+            var eidsObject = JsonConvert.DeserializeObject(liveRampData, typeof(JArray)) as JArray;
             bidRequest.User ??= new User();
-            bidRequest.User.Ext ??= new UserExt();
-            bidRequest.User.Ext.Eids = eidsObject;
+            bidRequest.User.Ext ??= new JObject();
+            bidRequest.User.Ext.Add("eids", eidsObject);
             return bidRequest;
         }
     }

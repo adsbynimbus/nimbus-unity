@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
@@ -19,24 +21,26 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		[DllImport("__Internal")]
 		private static extern string _fetchMetaBiddingToken();
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.FacebookBuyerId = data;
-			if (bidRequest.Imp.Length > 0) {
-				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
-				if (_testMode) {
-					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("facebook_buyeruid", data);
+			if (bidRequest.Imp.Length > 0)
+			{
+				var impExt = new ImpExt();
+				impExt.FacebookAppId = _appID;
+				if (_testMode)
+				{
+					impExt.MetaTestAdType = "IMG_16_9_LINK";
 				}
+				bidRequestDelta.impressionExtension = impExt;
 			}
-
-			return bidRequest;
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchMetaBiddingToken();
 			Debug.unityLogger.Log("METABIDDINGTOKEN", biddingToken);
@@ -50,6 +54,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 
 		public void InitializeNativeSDK() {
 			_initializeMeta(_appID);
+		}
+		
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
 		}
 
 	}

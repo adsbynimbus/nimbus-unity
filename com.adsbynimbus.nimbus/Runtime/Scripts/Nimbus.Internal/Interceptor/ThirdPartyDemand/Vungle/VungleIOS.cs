@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
@@ -26,24 +28,28 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			_initializeVungle(_appID);
 		}
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.VungleBuyerId = data;
-
-			return bidRequest;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("vungle_buyeruid", data);
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var buyerId = _fetchVungleBuyerId();
 			Debug.unityLogger.Log("VUNGLEBUYER", buyerId);
 			return buyerId;
 		}
-
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
+		}
 	}
 #endif
 }
