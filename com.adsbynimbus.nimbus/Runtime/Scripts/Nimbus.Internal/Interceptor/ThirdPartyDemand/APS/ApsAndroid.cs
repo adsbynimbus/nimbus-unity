@@ -98,20 +98,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			// ReSharper disable InvertIf
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
 				if (bidRequest.Imp[0].Ext != null) {
-					var apsObject = JsonConvert.DeserializeObject<ApsResponse[]>(data);
-					// ThirdPartyProviderImpExt has already been initialized by another IProvider
-					if (bidRequest.Imp[0].Ext is ThirdPartyProviderImpExt apsData) {
-						apsData.Aps = apsObject;
-						bidRequestDelta.impressionExtension = apsData;
-						return bidRequestDelta;
-					}
-					
-					var ext = new ThirdPartyProviderImpExt {
-						Position = bidRequest.Imp[0].Ext.Position,
-						Skadn =  bidRequest.Imp[0].Ext.Skadn,
-						Aps =  apsObject,
-					};
-					bidRequestDelta.impressionExtension = ext;
+					bidRequestDelta.impressionExtension = new ImpExt {
+						Aps =  JsonConvert.DeserializeObject<ApsResponse[]>(data)
+					};;
 				}
 			}
 			return bidRequestDelta;
@@ -122,9 +111,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			_aps.CallStatic("setApsRequestTimeout", timeout);
 		}
 		
-		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
-			return await Task<BidRequestDelta>.Run(async () =>
+			return Task<BidRequestDelta>.Run(() =>
 			{
 				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
 			});

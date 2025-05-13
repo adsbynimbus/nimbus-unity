@@ -47,9 +47,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			vungle.CallStatic("initialize", _appID);
 		}
 		
-		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
-			return await Task<BidRequestDelta>.Run(async () =>
+			return Task<BidRequestDelta>.Run(() =>
 			{
 				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
 			});

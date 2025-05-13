@@ -41,11 +41,10 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			AndroidJNI.AttachCurrentThread();
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			var buyerId = meta.GetStatic<string>("bidderToken");
-			Debug.unityLogger.Log("METABIDDINGTOKEN", buyerId);
 			return buyerId;
 		}
 		
-		private MetaAndroid(AndroidJavaObject applicationContext, bool testMode, string appID) {
+		public MetaAndroid(AndroidJavaObject applicationContext, bool testMode, string appID) {
 			_applicationContext = applicationContext;
 			_testMode = testMode;
 			_appID = appID;
@@ -56,9 +55,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			meta.CallStatic("initialize", _applicationContext, _appID);
 		}
 		
-		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
-			return await Task<BidRequestDelta>.Run(async () =>
+			return Task<BidRequestDelta>.Run(() =>
 			{
 				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
 			});

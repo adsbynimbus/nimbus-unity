@@ -2,12 +2,7 @@ using Newtonsoft.Json;
 using OpenRTB.Request;
 
 namespace Nimbus.Internal.Interceptor {
-	public class ThirdPartyProviderImpExt : ImpExt {
-		[JsonProperty("aps", DefaultValueHandling = DefaultValueHandling.Ignore)]
-		public ApsResponse[] Aps;
-	}
-
-
+	
 	public class ApsResponse {
 		[JsonProperty("amzn_b", DefaultValueHandling = DefaultValueHandling.Ignore)]
 		public object AmznB;

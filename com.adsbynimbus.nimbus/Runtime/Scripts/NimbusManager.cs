@@ -513,7 +513,7 @@ namespace Nimbus.Runtime.Scripts {
 			}
 			catch (Exception e)
 			{
-				Debug.unityLogger.Log($"NIMBUS INTERCEPTORS ERRROR: {e.Message} /n {e.StackTrace}");
+				Debug.unityLogger.Log($"NIMBUS INTERCEPTOR ERROR: {e.Message}  {e.StackTrace}");
 			}
 
 			return bidRequest;
