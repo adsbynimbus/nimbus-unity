@@ -23,7 +23,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			return bidRequest;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0)
 		{
 			var unityAds = new AndroidJavaClass(UnityAdsPackage);
 			var token = unityAds.CallStatic<string>("getToken");

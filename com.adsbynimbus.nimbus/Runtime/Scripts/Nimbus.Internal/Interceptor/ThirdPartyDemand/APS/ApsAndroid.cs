@@ -32,8 +32,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			_aps = new AndroidJavaClass(AndroidApsPackage);
 			_aps.CallStatic("initialize", _currentActivity, _appID);
 			foreach (var slot in _slotData) {
-				var (w, h) = AdTypeToDim(slot.AdUnitType);
-				if (slot.AdUnitType == AdUnitType.Rewarded) {
+				var (w, h) = AdTypeToDim(slot.APSAdUnitType);
+				if (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo || 
+				    slot.APSAdUnitType == APSAdUnitType.RewardedVideo) {
 					_aps.CallStatic<bool>("addApsSlot", slot.SlotId, w, h, true);
 					continue;
 				}
@@ -46,15 +47,19 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			adRegistration.CallStatic("enableTesting", true);
 		}
 
-		private static Tuple<int, int> AdTypeToDim(AdUnitType type) {
+		private static Tuple<int, int> AdTypeToDim(APSAdUnitType type) {
 			switch (type) {
-				case AdUnitType.Undefined:
-					return new Tuple<int, int>(0, 0);
-				case AdUnitType.Banner:
+				case APSAdUnitType.Display320X50:
 					return new Tuple<int, int>(320, 50);
-				case AdUnitType.Interstitial:
+				case APSAdUnitType.Display300X250:
+					return new Tuple<int, int>(300, 250);
+				case APSAdUnitType.Display728X90:
+					return new Tuple<int, int>(728, 90);
+				case APSAdUnitType.InterstitialDisplay:
 					return new Tuple<int, int>(320, 480);
-				case AdUnitType.Rewarded:
+				case APSAdUnitType.InterstitialVideo:
+					return new Tuple<int, int>(320, 480);
+				case APSAdUnitType.RewardedVideo:
 					return new Tuple<int, int>(Screen.width, Screen.height);
 				default:
 					return new Tuple<int, int>(0, 0);
@@ -62,23 +67,57 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		}
 
 		
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen, int width=0, int height=0) {
 			var found = false;
-			// ReSharper disable once ForCanBeConvertedToForeach
-			// ReSharper disable once LoopCanBeConvertedToQuery
-			for (var i = 0; i < _slotData.Length; i++) {
-				if (_slotData[i].AdUnitType != type) continue;
-				found = true;
-				break;
+			var interstitialVideo = false;
+			foreach (ApsSlotData slot in _slotData){
+				if (type == AdUnitType.Banner)
+				{
+					if (width == 320 && height == 50 && slot.APSAdUnitType == APSAdUnitType.Display320X50)
+					{
+						found = true;
+						break;
+					}
+					if (width == 300 && height == 250 && slot.APSAdUnitType == APSAdUnitType.Display300X250)
+					{
+						found = true;
+						break;
+					}
+					if (width == 728 && height == 90 && slot.APSAdUnitType == APSAdUnitType.Display728X90)
+					{
+						found = true;
+						break;
+					}
+				}
+				if (type == AdUnitType.Interstitial)
+				{
+					if (slot.APSAdUnitType == APSAdUnitType.InterstitialDisplay ||
+					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
+					{
+						found = true;
+						interstitialVideo = (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo);
+						break;
+					}
+				}
+				if (type == AdUnitType.Rewarded)
+				{
+					if (slot.APSAdUnitType == APSAdUnitType.RewardedVideo)
+					{
+						found = true;
+						break;
+					}
+				}
 			}
 			
 			if (!found) {
+				Debug.unityLogger.LogError("Nimbus", 
+					"APS NOT FOUND");
 				return null;
 			}
-			
-			
-			var (w, h) = AdTypeToDim(type);
-			if (type == AdUnitType.Rewarded) {
+
+			var w = width;
+			var h = height;
+			if (interstitialVideo || type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;

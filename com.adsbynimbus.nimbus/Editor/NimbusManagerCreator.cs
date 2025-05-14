@@ -634,9 +634,9 @@ namespace Nimbus.Editor {
 					SlotId = slotId?.stringValue
 				};
 
-				var adUnitType = item.FindPropertyRelative("AdUnitType");
+				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
 				if (adUnitType != null) {
-					apsData.AdUnitType = (AdUnitType)adUnitType.enumValueIndex;
+					apsData.APSAdUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
 				}
 
 				apsSlotData.Add(apsData);
@@ -657,7 +657,7 @@ namespace Nimbus.Editor {
 				return false;
 			}
 
-			var seenAdTypes = new Dictionary<AdUnitType, bool>();
+			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
 			foreach (var apsSlot in slotData) {
 				if (apsSlot.SlotId.IsNullOrEmpty()) {
 					Debug.unityLogger.LogError("Nimbus", 
@@ -665,18 +665,12 @@ namespace Nimbus.Editor {
 					return false;
 				}
 
-				if (apsSlot.AdUnitType == AdUnitType.Undefined) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
-					return false;
-				}
-
-				if (!seenAdTypes.ContainsKey(apsSlot.AdUnitType)) {
-					seenAdTypes.Add(apsSlot.AdUnitType, true);
+				if (!seenAdTypes.ContainsKey(apsSlot.APSAdUnitType)) {
+					seenAdTypes.Add(apsSlot.APSAdUnitType, true);
 				}
 				else {
 					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdUnitType} for {platform}, object NimbusAdsManager not created");
+						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.APSAdUnitType} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}
 			}
