@@ -15,10 +15,14 @@ namespace Nimbus.ScriptableObjects {
 		// APS data
 		[HideInInspector] public string androidAppID;
 		[HideInInspector] public ApsSlotData[] androidApsSlotData;
+		[HideInInspector] public int androidApsTimeoutInMilliseconds = 1000;
+		
+		public const int ApsDefaultTimeout = 1000;
 		
 		[HideInInspector] public string iosAppID;
 		[HideInInspector] public ApsSlotData[] iosApsSlotData;
-		
+		[HideInInspector] public int iosApsTimeoutInMilliseconds = 1000;
+
 		// Vungle Data
 		[HideInInspector] public string androidVungleAppID;
 		[HideInInspector] public string iosVungleAppID;
@@ -129,14 +133,16 @@ namespace Nimbus.ScriptableObjects {
 		
 
 
-		public Tuple<string, ApsSlotData[]> GetApsData() {
+		public Tuple<string, ApsSlotData[], int> GetApsData() {
 			var appID = androidAppID;
 			var slots = androidApsSlotData;
+			var timeoutInMilliseconds = androidApsTimeoutInMilliseconds;
 			#if UNITY_IOS
 				appID = iosAppID;
 				slots =  iosApsSlotData;
+				timeoutInMilliseconds = iosApsTimeoutInMilliseconds;
 			#endif
-			return new Tuple<string, ApsSlotData[]>(appID, slots);
+			return new Tuple<string, ApsSlotData[], int>(appID, slots, timeoutInMilliseconds);
 		}
 
 		public string GetVungleData()

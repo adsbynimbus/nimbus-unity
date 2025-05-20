@@ -109,8 +109,8 @@ namespace Nimbus.Internal {
 			
 			#if NIMBUS_ENABLE_APS
 				Debug.unityLogger.Log("Initializing iOS APS SDK");
-				var (apsAppID, slots) = configuration.GetApsData();
-				var aps = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode);
+				var (apsAppID, slots, timeout) = configuration.GetApsData();
+				var aps = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode, timeout);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif
