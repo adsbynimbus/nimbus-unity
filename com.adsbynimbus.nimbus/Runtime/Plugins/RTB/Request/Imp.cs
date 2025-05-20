@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using Nimbus.Internal.Interceptor;
 
 namespace OpenRTB.Request {
     public class Imp {
