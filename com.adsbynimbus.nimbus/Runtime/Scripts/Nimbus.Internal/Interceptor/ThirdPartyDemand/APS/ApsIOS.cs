@@ -92,7 +92,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			return _fetchAPSParams(w, h, isFullScreen);
 		}
 
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;

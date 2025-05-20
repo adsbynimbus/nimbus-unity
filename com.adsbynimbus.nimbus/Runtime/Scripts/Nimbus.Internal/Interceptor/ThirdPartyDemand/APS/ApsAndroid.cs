@@ -89,7 +89,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			return response;
 		}
 		
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;

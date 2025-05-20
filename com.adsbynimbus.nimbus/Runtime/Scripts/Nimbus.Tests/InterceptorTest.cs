@@ -20,7 +20,7 @@ namespace Nimbus.Tests {
 					new BidRequest {
 						Imp = new[] {
 							new Imp {
-								Ext = new ThirdPartyProviderImpExt {
+								Ext = new ImpExt() {
 									Position = "test",
 									Aps = new ApsResponse[] {
 										new ApsResponse {
@@ -56,7 +56,7 @@ namespace Nimbus.Tests {
 					new BidRequest {
 						Imp = new[] {
 							new Imp {
-								Ext = new ThirdPartyProviderImpExt {
+								Ext = new ImpExt() {
 									Position = "test",
 									Aps = new ApsResponse[] {
 										new ApsResponse {
@@ -92,27 +92,27 @@ namespace Nimbus.Tests {
 			foreach (var tt in table) {
 				var (expectedBidResponse, interceptor) = tt;
 				// extensions are only added if the imp data has been initialized already
-				var got = new BidRequest {
-					Imp = new[] {
-						new Imp {
-							Ext = new ThirdPartyProviderImpExt {
-								Position = "test",
-							}
-						}
-					}
-				};
+				var got = new BidRequestDelta();
 				var data =
 					"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
-				got = interceptor.ModifyRequest(got, data);
+				if (interceptor.GetType() == typeof(ApsIOS))
+				{
+					got = ((ApsIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+				}
+				if (interceptor.GetType() == typeof(ApsAndroid))
+				{
+					got = ((ApsAndroid) interceptor).ModifyRequest(expectedBidResponse, data);
+				}
+				got.impressionExtension.Position = "test";
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
-				var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
+				var gotBody = JsonConvert.SerializeObject(got.impressionExtension);
 				Assert.AreEqual(wantBody, gotBody);
 			}
 		#endif
 		}
 		[Test]
 		public void TestSkaAdNetworkInterceptor() {
-			/*var table = new List<Tuple<BidRequest, IInterceptor>> {
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
 				new Tuple<BidRequest, IInterceptor>(
 					new BidRequest {
 						Imp = new[] {
@@ -138,26 +138,22 @@ namespace Nimbus.Tests {
 			foreach (var tt in table) {
 				var (expectedBidResponse, interceptor) = tt;
 				// extensions are only added if the imp data has been initialized already
-				var got = new BidRequest {
-					Imp = new[] {
-						new Imp {
-							Ext = new ThirdPartyProviderImpExt {
-								Position = "test",
-							}
-						}
-					}
-				};
-				got = interceptor.ModifyRequest(got, "");
+				var got = new BidRequestDelta();
+				if (interceptor.GetType() == typeof(SkAdNetworkIOS))
+				{
+					got = ((SkAdNetworkIOS) interceptor).ModifyRequest(expectedBidResponse, "");
+				}
+				got.impressionExtension.Position = "test";
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
-				var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
+				var gotBody = JsonConvert.SerializeObject(got.impressionExtension);
 				Assert.AreEqual(wantBody, gotBody);
-			}*/
+			}
 		}
 
 
 		[Test]
 		public void TestMultipleInterceptor() {
-			/*var interceptors = new IInterceptor[] {
+			var interceptors = new IInterceptor[] {
 				new SkAdNetworkIOS(MockData.PlistDataRaw()),
 				new ApsAndroid("foo_app_id",
 					new[] {
@@ -177,27 +173,43 @@ namespace Nimbus.Tests {
 			};
 
 
-			var got = new BidRequest {
+			var bidRequest = new BidRequest {
 				Imp = new[] {
 					new Imp {
-						Ext = new ThirdPartyProviderImpExt {
+						Ext = new ImpExt() {
 							Position = "test",
 						}
 					}
 				}
 			};
-
+			var bidRequestDeltas = new BidRequestDelta[interceptors.Length];
+			var i = 0;
 			foreach (var interceptor in interceptors) {
 				var data = "";
 				if (interceptor is ApsAndroid) {
 					data =
 						"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
 				}
-
-				got = interceptor.ModifyRequest(got, data);
+				var got = new BidRequestDelta();
+				if (interceptor.GetType() == typeof(ApsIOS))
+				{
+					got = ((ApsIOS) interceptor).ModifyRequest(bidRequest, data);
+				}
+				if (interceptor.GetType() == typeof(ApsAndroid))
+				{
+					got = ((ApsAndroid) interceptor).ModifyRequest(bidRequest, data);
+				}
+				if (interceptor.GetType() == typeof(SkAdNetworkIOS))
+				{
+					got = ((SkAdNetworkIOS) interceptor).ModifyRequest(bidRequest, "");
+				}
+				bidRequestDeltas[i] = got;
+				i++;
 			}
+			
+			var gotBidRequest = BidRequestDeltaManager.ApplyDeltas(bidRequestDeltas, bidRequest);
 
-			var wantBody = JsonConvert.SerializeObject(new ThirdPartyProviderImpExt {
+			var wantBody = JsonConvert.SerializeObject(new ImpExt() {
 				Position = "test",
 				Skadn = new Skadn {
 					SkadnetIds = new[] {
@@ -219,8 +231,8 @@ namespace Nimbus.Tests {
 					},
 				}
 			});
-			var gotBody = JsonConvert.SerializeObject(got.Imp[0].Ext);
-			Assert.AreEqual(wantBody, gotBody);*/
+			var gotBody = JsonConvert.SerializeObject(gotBidRequest.Imp[0].Ext);
+			Assert.AreEqual(wantBody, gotBody);
 		}
 	}
 
