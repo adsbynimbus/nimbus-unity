@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
@@ -17,7 +18,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			_appID = appID;
 		}
 		
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -36,7 +37,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			return bidRequestDelta;
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			AndroidJNI.AttachCurrentThread();
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
@@ -59,7 +60,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("META ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

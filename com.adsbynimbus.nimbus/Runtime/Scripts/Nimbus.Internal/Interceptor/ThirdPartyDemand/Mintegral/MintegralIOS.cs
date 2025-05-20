@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -6,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
+using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
@@ -25,7 +27,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		[DllImport("__Internal")]
 		private static extern string _getMintegralRequestModifiers();
 
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
 		{
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
@@ -42,7 +44,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return bidRequestDelta;
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
@@ -71,7 +73,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

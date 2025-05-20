@@ -15,7 +15,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -24,7 +24,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			return bidRequestDelta;
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			AndroidJNI.AttachCurrentThread();
 			var unityAds = new AndroidJavaClass(UnityAdsPackage);
@@ -52,7 +52,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("Unity Ads ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

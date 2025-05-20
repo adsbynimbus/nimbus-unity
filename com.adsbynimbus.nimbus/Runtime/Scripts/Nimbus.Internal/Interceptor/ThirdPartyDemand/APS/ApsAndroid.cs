@@ -63,7 +63,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		}
 
 		
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
 			var found = false;
 			// ReSharper disable once ForCanBeConvertedToForeach
 			// ReSharper disable once LoopCanBeConvertedToQuery
@@ -115,7 +115,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("APS ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

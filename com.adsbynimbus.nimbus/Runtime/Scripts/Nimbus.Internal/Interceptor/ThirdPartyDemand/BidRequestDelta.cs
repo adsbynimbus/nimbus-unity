@@ -19,25 +19,27 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
     {
         public static BidRequest ApplyDeltas(BidRequestDelta[] deltas, BidRequest bidRequest)
         {
-            
             foreach (var delta in deltas)
             {
-                if (delta.simpleUserExt.Value != null)
+                if (delta != null)
                 {
-                    bidRequest.User ??= new User();
-                    bidRequest.User.Ext ??= new JObject();
-                    bidRequest.User.Ext.Add(delta.simpleUserExt.Key, delta.simpleUserExt.Value);
-                }
-                if (delta.complexUserExt.Value != null)
-                {
-                    bidRequest.User ??= new User();
-                    bidRequest.User.Ext ??= new JObject();
-                    bidRequest.User.Ext.Add(delta.complexUserExt.Key, delta.complexUserExt.Value);
-                }
-                if (delta.impressionExtension != null && !bidRequest.Imp.IsNullOrEmpty())
-                {
-                    bidRequest.Imp[0].Ext ??= new ImpExt();
-                    bidRequest.Imp[0].Ext = Merge(bidRequest.Imp[0].Ext, delta.impressionExtension);
+                    if (delta.simpleUserExt.Value != null)
+                    {
+                        bidRequest.User ??= new User();
+                        bidRequest.User.Ext ??= new JObject();
+                        bidRequest.User.Ext.Add(delta.simpleUserExt.Key, delta.simpleUserExt.Value);
+                    }
+                    if (delta.complexUserExt.Value != null)
+                    {
+                        bidRequest.User ??= new User();
+                        bidRequest.User.Ext ??= new JObject();
+                        bidRequest.User.Ext.Add(delta.complexUserExt.Key, delta.complexUserExt.Value);
+                    }
+                    if (delta.impressionExtension != null && !bidRequest.Imp.IsNullOrEmpty())
+                    {
+                        bidRequest.Imp[0].Ext ??= new ImpExt();
+                        bidRequest.Imp[0].Ext = Merge(bidRequest.Imp[0].Ext, delta.impressionExtension);
+                    }
                 }
             }
             return bidRequest;
