@@ -52,8 +52,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			using var adRegistration = new AndroidJavaClass("com.amazon.device.ads.AdRegistration");
 			adRegistration.CallStatic("enableTesting", true);
 		}
-		
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, BidRequest bidRequest, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, BidRequest bidRequest, bool isFullScreen) {
 			var found = false;
 			var interstitialVideo = false;
 			var width = 0;
@@ -151,9 +150,16 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type,bidRequest, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, bidRequest, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("APS ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}
-	
 }

@@ -35,7 +35,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          //do nothing
       }
 
-      private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+      internal string GetAdUnitId(AdUnitType type, bool isFullScreen)
       {
          foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
          {
@@ -50,7 +50,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          return "";
       }
 
-      private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
+      internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
       {
          var bidRequestDelta = new BidRequestDelta();
          if (data.IsNullOrEmpty())
@@ -96,7 +96,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
       {
          return Task<BidRequestDelta>.Run(() =>
          {
-            return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+            try
+            {
+               return ModifyRequest(bidRequest, GetAdUnitId(type, isFullScreen));
+            }
+            catch (Exception e)
+            {
+               Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
+               return null;
+            }
          });
       }
    }

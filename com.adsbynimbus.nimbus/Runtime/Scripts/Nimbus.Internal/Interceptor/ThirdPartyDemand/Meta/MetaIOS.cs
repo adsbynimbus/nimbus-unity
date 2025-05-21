@@ -21,7 +21,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		[DllImport("__Internal")]
 		private static extern string _fetchMetaBiddingToken();
 
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -40,7 +40,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			return bidRequestDelta;
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchMetaBiddingToken();
 			Debug.unityLogger.Log("METABIDDINGTOKEN", biddingToken);
@@ -60,7 +60,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("META ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 

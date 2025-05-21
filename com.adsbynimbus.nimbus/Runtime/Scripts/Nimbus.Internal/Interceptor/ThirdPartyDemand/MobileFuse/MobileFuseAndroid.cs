@@ -14,7 +14,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 		private readonly string _gameID;
 		private readonly bool _testMode;
 		
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -24,7 +24,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			return bidRequestDelta;
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var token = "";
 			try
@@ -48,7 +48,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("MobileFuse ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

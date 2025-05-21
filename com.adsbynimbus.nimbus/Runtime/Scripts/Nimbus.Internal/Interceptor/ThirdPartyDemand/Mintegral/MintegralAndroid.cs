@@ -51,7 +51,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 
 		}
 		
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
 				if (adUnit.AdUnitType == type)
@@ -65,7 +65,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return "";
 		}
 		
-		private BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -95,7 +95,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

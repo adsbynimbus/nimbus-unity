@@ -56,7 +56,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			}
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, BidRequest bidRequest, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, BidRequest bidRequest, bool isFullScreen) {
 			var found = false;
 			var interstitialVideo = false;
 			var width = 0;
@@ -142,7 +142,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, bidRequest, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, bidRequest, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("APS ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}
