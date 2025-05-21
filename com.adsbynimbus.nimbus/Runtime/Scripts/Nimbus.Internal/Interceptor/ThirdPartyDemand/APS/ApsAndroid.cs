@@ -142,10 +142,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		}
 
 		private void SetApsTimeout(int timeoutInMilliseconds) {
-			if (timeoutInMilliseconds != 1000)
-			{
-				_aps.CallStatic("setApsRequestTimeout", timeoutInMilliseconds);
-			}
+			_aps.CallStatic("setApsRequestTimeout", timeoutInMilliseconds);
 		}
 		
 		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
