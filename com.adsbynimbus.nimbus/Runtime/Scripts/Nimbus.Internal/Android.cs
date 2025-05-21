@@ -65,8 +65,8 @@ namespace Nimbus.Internal {
 			}
 
 			#if NIMBUS_ENABLE_APS
-				var (apsAppID, slots) = configuration.GetApsData();
-				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode);
+				var (apsAppID, slots, timeout) = configuration.GetApsData();
+				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, timeout);
 				aps.InitializeNativeSDK();
 				_interceptors.Add(aps);
 			#endif

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
@@ -35,15 +34,15 @@ namespace Nimbus.Tests {
 						new[] {
 							new ApsSlotData {
 								SlotId = "rewarded_video_slot",
-								AdUnitType = AdUnitType.Rewarded,
+								APSAdUnitType = APSAdUnitType.RewardedVideo,
 							},
 							new ApsSlotData {
 								SlotId = "interstitial_slot",
-								AdUnitType = AdUnitType.Interstitial,
+								APSAdUnitType = APSAdUnitType.InterstitialDisplay,
 							},
 							new ApsSlotData {
 								SlotId = "banner_slot",
-								AdUnitType = AdUnitType.Banner,
+								APSAdUnitType = APSAdUnitType.Display300X250,
 							}
 						})
 				),
@@ -64,15 +63,15 @@ namespace Nimbus.Tests {
 						new[] {
 							new ApsSlotData {
 								SlotId = "rewarded_video_slot",
-								AdUnitType = AdUnitType.Rewarded,
+								APSAdUnitType = APSAdUnitType.RewardedVideo,
 							},
 							new ApsSlotData {
 								SlotId = "interstitial_slot",
-								AdUnitType = AdUnitType.Interstitial,
+								APSAdUnitType = APSAdUnitType.InterstitialDisplay,
 							},
 							new ApsSlotData {
 								SlotId = "banner_slot",
-								AdUnitType = AdUnitType.Banner,
+								APSAdUnitType = APSAdUnitType.Display300X250,
 							}
 						})
 				),
@@ -148,15 +147,15 @@ namespace Nimbus.Tests {
 					new[] {
 						new ApsSlotData {
 							SlotId = "rewarded_video_slot",
-							AdUnitType = AdUnitType.Rewarded,
+							APSAdUnitType = APSAdUnitType.RewardedVideo,
 						},
 						new ApsSlotData {
 							SlotId = "interstitial_slot",
-							AdUnitType = AdUnitType.Interstitial,
+							APSAdUnitType = APSAdUnitType.InterstitialDisplay,
 						},
 						new ApsSlotData {
 							SlotId = "banner_slot",
-							AdUnitType = AdUnitType.Banner,
+							APSAdUnitType = APSAdUnitType.Display300X250,
 						}
 					})
 			};
@@ -209,7 +208,7 @@ namespace Nimbus.Tests {
 					},
 					Version = "2.0"
 				},
-				Aps = new JArray(){
+				Aps = new JArray{
 					JObject.Parse(ParseData)
 				}
 			});

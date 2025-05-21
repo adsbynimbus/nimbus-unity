@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -19,10 +20,12 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _androidAppId;
 		private ReorderableList _androidApsSlotIdList = null;
 		private SerializedProperty _androidApsSlots = null;
+		private SerializedProperty _androidApsTimeoutInMilliseconds;
 		
 		private SerializedProperty _iosAppId;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
+		private SerializedProperty _iosApsTimeoutInMilliseconds;
 		
 		// Vungle
 		private SerializedProperty _androidVungleAppId;
@@ -59,6 +62,9 @@ namespace Nimbus.ScriptableObjects {
 
 		private SerializedProperty _iosUnityAdsGameId;
 
+		// Needed so error messages aren't spammed
+		private bool _errorLogged;
+		
 		private void OnEnable() {
 			_publisherKey = serializedObject.FindProperty("publisherKey");
 			_apiKey = serializedObject.FindProperty("apiKey");
@@ -69,6 +75,9 @@ namespace Nimbus.ScriptableObjects {
 			// Android APS UI
 			_androidAppId = serializedObject.FindProperty("androidAppID");
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
+			_androidApsTimeoutInMilliseconds = serializedObject.FindProperty("androidApsTimeoutInMilliseconds");
+			_androidApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue 
+			                                            == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue;
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
 				true,
@@ -84,6 +93,9 @@ namespace Nimbus.ScriptableObjects {
 			// IOS APS UI
 			_iosAppId = serializedObject.FindProperty("iosAppID");
 			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
+			_iosApsTimeoutInMilliseconds = serializedObject.FindProperty("iosApsTimeoutInMilliseconds");
+			_iosApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue 
+			                                        == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue;
 			_iosApsSlotIdList = new ReorderableList(
 				serializedObject, _iosApsSlots,
 				true,
@@ -361,15 +373,19 @@ namespace Nimbus.ScriptableObjects {
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
 				#if NIMBUS_ENABLE_APS_ANDROID
+					ValidateApsSlots("Android", _androidApsSlots);
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAppId));
+					_androidApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", value: _androidApsTimeoutInMilliseconds.intValue);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
 			
 				#if NIMBUS_ENABLE_APS_IOS
+					ValidateApsSlots("iOS", _androidApsSlots);
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_iosAppId));
+					EditorGUILayout.PropertyField(_iosAppId);
+					_iosApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", value: _iosApsTimeoutInMilliseconds.intValue);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
 				#endif	
@@ -497,6 +513,41 @@ namespace Nimbus.ScriptableObjects {
 			#endif
 			
 			serializedObject.ApplyModifiedProperties();
+		}
+		private void ValidateApsSlots(string platform, SerializedProperty slotData) {
+			var apsSlotData = new List<ApsSlotData>();
+			for (var i = 0; i < slotData.arraySize; i++) {
+				var item = slotData.GetArrayElementAtIndex(i);
+				var slotId = item.FindPropertyRelative("SlotId");
+
+				var apsData = new ApsSlotData {
+					SlotId = slotId?.stringValue
+				};
+
+				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
+				if (adUnitType != null) {
+					apsData.APSAdUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
+				}
+
+				apsSlotData.Add(apsData);
+			}
+			var platformSlots = apsSlotData.ToArray();
+			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
+			foreach (var apsSlot in platformSlots) {
+				if (!seenAdTypes.ContainsKey(apsSlot.APSAdUnitType)) {
+					seenAdTypes.Add(apsSlot.APSAdUnitType, true);
+				}
+				else {
+					if (!_errorLogged)
+					{
+						Debug.unityLogger.LogError("Nimbus", 
+							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.APSAdUnitType} for {platform}, object NimbusAdsManager not created");
+						_errorLogged = true;
+					}
+					return;
+				}
+			}
+			_errorLogged = false;
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
 
-		private const double TimeoutInSeconds = 0.6f;
+		private float _timeoutInSeconds = 1.0f;
 
 		[DllImport("__Internal")]
 		private static extern void _initializeAPSRequestHelper(string appKey, double timeoutInSeconds, bool enableTestMode);
@@ -32,18 +32,20 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			_slotData = slotData;
 		}
 
-		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode) {
+		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode, int timeoutInMilliseconds) {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
+			_timeoutInSeconds = Math.Clamp(timeoutInMilliseconds, 300, 2000)/1000.0f;
 		}
 
 		public void InitializeNativeSDK() {
-			_initializeAPSRequestHelper(_appID, TimeoutInSeconds, _enableTestMode);
+			_initializeAPSRequestHelper(_appID, _timeoutInSeconds, _enableTestMode);
 
 			foreach (var slot in _slotData) {
-				var (w, h) = AdTypeToDim(slot.AdUnitType);
-				if (slot.AdUnitType == AdUnitType.Rewarded) {
+				var (w, h) = APSHelper.AdTypeToDim(slot.APSAdUnitType);
+				if (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo ||
+				    slot.APSAdUnitType == APSAdUnitType.RewardedVideo) {
 					_addAPSSlot(slot.SlotId, w, h, true);
 					continue;
 				}
@@ -52,44 +54,69 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			}
 		}
 
-		private static Tuple<int, int> AdTypeToDim(AdUnitType type) {
-			switch (type) {
-				case AdUnitType.Undefined:
-					return new Tuple<int, int>(0, 0);
-				case AdUnitType.Banner:
-					return new Tuple<int, int>(320, 50);
-				case AdUnitType.Interstitial:
-					return new Tuple<int, int>(320, 480);
-				case AdUnitType.Rewarded:
-					return new Tuple<int, int>(Screen.width, Screen.height);
-				default:
-					return new Tuple<int, int>(0, 0);
-			}
-		}
-
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, BidRequest bidRequest, bool isFullScreen) {
 			var found = false;
-			// ReSharper disable once ForCanBeConvertedToForeach
-			// ReSharper disable once LoopCanBeConvertedToQuery
-			for (var i = 0; i < _slotData.Length; i++) {
-				if (_slotData[i].AdUnitType != type) continue;
-				found = true;
-				break;
+			var interstitialVideo = false;
+			var width = 0;
+			var height = 0;
+			if (!bidRequest.Imp.IsNullOrEmpty())
+			{
+				if (bidRequest.Imp[0].Banner != null)
+				{
+					width = bidRequest.Imp[0].Banner.W ?? 0;
+					height = bidRequest.Imp[0].Banner.H ?? 0;
+				}
+			}
+			foreach (ApsSlotData slot in _slotData){
+				if (type == AdUnitType.Banner)
+				{
+					if (width == 320 && height == 50 && slot.APSAdUnitType == APSAdUnitType.Display320X50)
+					{
+						found = true;
+						break;
+					}
+					if (width == 300 && height == 250 && slot.APSAdUnitType == APSAdUnitType.Display300X250)
+					{
+						found = true;
+						break;
+					}
+					if (width == 728 && height == 90 && slot.APSAdUnitType == APSAdUnitType.Display728X90)
+					{
+						found = true;
+						break;
+					}
+				}
+				if (type == AdUnitType.Interstitial)
+				{
+					if (slot.APSAdUnitType == APSAdUnitType.InterstitialDisplay ||
+					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
+					{
+						found = true;
+						interstitialVideo = (slot.APSAdUnitType == APSAdUnitType.InterstitialVideo);
+						break;
+					}
+				}
+				if (type == AdUnitType.Rewarded)
+				{
+					if (slot.APSAdUnitType == APSAdUnitType.RewardedVideo)
+					{
+						found = true;
+						break;
+					}
+				}
 			}
 
 			if (!found) {
 				return null;
 			}
 
-
-			var (w, h) = AdTypeToDim(type);
-			// ReSharper disable once InvertIf
-			if (type == AdUnitType.Rewarded) {
+			var w = width;
+			var h = height;
+			if (interstitialVideo || type == AdUnitType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;
 			}
-
 			return _fetchAPSParams(w, h, isFullScreen);
 		}
 
@@ -115,7 +142,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, bidRequest, isFullScreen));
 				}
 				catch (Exception e)
 				{

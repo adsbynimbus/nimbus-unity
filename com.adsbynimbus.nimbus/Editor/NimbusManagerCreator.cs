@@ -29,10 +29,12 @@ namespace Nimbus.Editor {
 		private SerializedProperty _androidAppId;
 		private ReorderableList _androidApsSlotIdList = null;
 		private SerializedProperty _androidApsSlots = null;
+		private SerializedProperty _androidApsTimeoutInMilliseconds;
 
 		private SerializedProperty _iosAppId;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
+		private SerializedProperty _iosApsTimeoutInMilliseconds;
 		
 		// Vungle
 		private SerializedProperty _androidVungleAppId;
@@ -80,6 +82,9 @@ namespace Nimbus.Editor {
 			// APS
 			// Android APS UI
 			_androidAppId = serializedObject.FindProperty("androidAppID");
+			_androidApsTimeoutInMilliseconds = serializedObject.FindProperty("androidApsTimeoutInMilliseconds");
+			_androidApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue 
+			                                            == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue;
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
@@ -95,6 +100,9 @@ namespace Nimbus.Editor {
 
 			// IOS APS UI
 			_iosAppId = serializedObject.FindProperty("iosAppID");
+			_iosApsTimeoutInMilliseconds = serializedObject.FindProperty("iosApsTimeoutInMilliseconds");
+			_iosApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue 
+			                                        == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue;
 			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
 			_iosApsSlotIdList = new ReorderableList(
 				serializedObject, _iosApsSlots,
@@ -354,12 +362,14 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_APS_ANDROID
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAppId));
+					_androidApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", value: _androidApsTimeoutInMilliseconds.intValue);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
 				#if NIMBUS_ENABLE_APS_IOS
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosAppId));
+					_iosApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", _iosApsTimeoutInMilliseconds.intValue);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
 				#endif
@@ -634,9 +644,9 @@ namespace Nimbus.Editor {
 					SlotId = slotId?.stringValue
 				};
 
-				var adUnitType = item.FindPropertyRelative("AdUnitType");
+				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
 				if (adUnitType != null) {
-					apsData.AdUnitType = (AdUnitType)adUnitType.enumValueIndex;
+					apsData.APSAdUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
 				}
 
 				apsSlotData.Add(apsData);
@@ -657,7 +667,7 @@ namespace Nimbus.Editor {
 				return false;
 			}
 
-			var seenAdTypes = new Dictionary<AdUnitType, bool>();
+			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
 			foreach (var apsSlot in slotData) {
 				if (apsSlot.SlotId.IsNullOrEmpty()) {
 					Debug.unityLogger.LogError("Nimbus", 
@@ -665,18 +675,12 @@ namespace Nimbus.Editor {
 					return false;
 				}
 
-				if (apsSlot.AdUnitType == AdUnitType.Undefined) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
-					return false;
-				}
-
-				if (!seenAdTypes.ContainsKey(apsSlot.AdUnitType)) {
-					seenAdTypes.Add(apsSlot.AdUnitType, true);
+				if (!seenAdTypes.ContainsKey(apsSlot.APSAdUnitType)) {
+					seenAdTypes.Add(apsSlot.APSAdUnitType, true);
 				}
 				else {
 					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdUnitType} for {platform}, object NimbusAdsManager not created");
+						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.APSAdUnitType} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}
 			}
