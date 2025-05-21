@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
@@ -12,6 +13,8 @@ using OpenRTB.Request;
 
 namespace Nimbus.Tests {
 	public class InterceptorTest {
+		const string ParseData = "{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}";
+
 		[Test]
 		public void TestApsInterceptor() {
 			#if UNITY_IOS && NIMBUS_ENABLE_APS
@@ -22,15 +25,8 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
-									Aps = new ApsResponse[] {
-										new ApsResponse {
-											AmznB = "foobar-bid",
-											AmznH = "aax-us-east.amazon-adsystem.com",
-											Amznp = "cnabk0",
-											Amznrdr = "default",
-											Amznslots = "foobar",
-											Dc = "iad"
-										},
+									Aps = new JObject[] {
+										JObject.Parse(ParseData),
 									}
 								}
 							}
@@ -58,15 +54,8 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
-									Aps = new ApsResponse[] {
-										new ApsResponse {
-											AmznB = "foobar-bid",
-											AmznH = "aax-us-east.amazon-adsystem.com",
-											Amznp = "cnabk0",
-											Amznrdr = "default",
-											Amznslots = "foobar",
-											Dc = "iad"
-										},
+									Aps = new JObject[] {
+										JObject.Parse(ParseData),
 									}
 								}
 							}
@@ -221,14 +210,7 @@ namespace Nimbus.Tests {
 					Version = "2.0"
 				},
 				Aps = new[] {
-					new ApsResponse {
-						AmznB = "foobar-bid",
-						AmznH = "aax-us-east.amazon-adsystem.com",
-						Amznp = "cnabk0",
-						Amznrdr = "default",
-						Amznslots = "foobar",
-						Dc = "iad"
-					},
+					JObject.Parse(ParseData)
 				}
 			});
 			var gotBody = JsonConvert.SerializeObject(gotBidRequest.Imp[0].Ext);
