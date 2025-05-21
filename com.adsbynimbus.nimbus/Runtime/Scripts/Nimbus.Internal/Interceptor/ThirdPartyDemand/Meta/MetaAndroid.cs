@@ -1,4 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -15,29 +18,30 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			_appID = appID;
 		}
 		
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.FacebookBuyerId = data;
-			if (bidRequest.Imp.Length > 0) {
-				bidRequest.Imp[0].Ext.FacebookAppId = _appID;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("facebook_buyeruid", data);
+			if (bidRequest.Imp.Length > 0)
+			{
+				var impExt = new ImpExt();
+				impExt.FacebookAppId = _appID;
 				if (_testMode)
 				{
-					bidRequest.Imp[0].Ext.MetaTestAdType = "IMG_16_9_LINK";
+					impExt.MetaTestAdType = "IMG_16_9_LINK";
 				}
+				bidRequestDelta.impressionExtension = impExt;
 			}
-
-			return bidRequest;
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
+			AndroidJNI.AttachCurrentThread();
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			var buyerId = meta.GetStatic<string>("bidderToken");
-			Debug.unityLogger.Log("METABIDDINGTOKEN", buyerId);
 			return buyerId;
 		}
 		
@@ -50,6 +54,22 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		public void InitializeNativeSDK() {
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
 			meta.CallStatic("initialize", _applicationContext, _appID);
+		}
+		
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("META ERROR", e.Message);
+					return null;
+				}
+			});
 		}
 	}
 }

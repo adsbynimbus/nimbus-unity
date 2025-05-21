@@ -7,6 +7,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
     {
         public static string GetStringFromJavaFuture(String className, String methodName, object[] methodParams, long timeout)
         {
+            AndroidJNI.AttachCurrentThread();
             var timeUnit = new AndroidJavaClass("java.util.concurrent.TimeUnit");
             var timeUnitMillis = timeUnit.CallStatic<AndroidJavaObject>("valueOf", "MILLISECONDS");
             var unityHelper = new AndroidJavaClass(className);

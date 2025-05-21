@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 
@@ -34,22 +36,32 @@ namespace Nimbus.Internal.Interceptor {
 			return "";
 		}
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		public BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (_skAdNetwork == null || _skAdNetwork.SkadnetIds.Length == 0) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
 
-			if (bidRequest.Imp.IsNullOrEmpty()) return bidRequest;
+			if (bidRequest.Imp.IsNullOrEmpty()) return bidRequestDelta;
 
 			if (bidRequest.Imp[0].Ext == null) {
-				bidRequest.Imp[0].Ext = new ImpExt {
+				bidRequestDelta.impressionExtension = new ImpExt {
 					Skadn = _skAdNetwork
 				};
-				return bidRequest;
+				return bidRequestDelta;
 			}
-
-			bidRequest.Imp[0].Ext.Skadn = _skAdNetwork;
-			return bidRequest;
+			var impExt = new ImpExt();
+			impExt.Skadn = _skAdNetwork;
+			bidRequestDelta.impressionExtension = impExt;
+			return bidRequestDelta;
+		}
+		
+		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return await Task<BidRequestDelta>.Run(async () =>
+			{
+				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+			});
 		}
 	}
 	

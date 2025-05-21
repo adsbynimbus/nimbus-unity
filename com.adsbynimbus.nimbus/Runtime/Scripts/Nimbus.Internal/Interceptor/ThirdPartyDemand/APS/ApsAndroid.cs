@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -62,7 +64,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		}
 
 		
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
 			var found = false;
 			// ReSharper disable once ForCanBeConvertedToForeach
 			// ReSharper disable once LoopCanBeConvertedToQuery
@@ -83,41 +85,47 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 				h = 0;
 				isFullScreen = true;
 			}
-		
+			AndroidJNI.AttachCurrentThread();
 			var response = _aps.CallStatic<string>("fetchApsParams", w, h, isFullScreen);
 			return response;
 		}
 		
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
 			
 			// ReSharper disable InvertIf
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
 				if (bidRequest.Imp[0].Ext != null) {
-					var apsObject = JsonConvert.DeserializeObject<ApsResponse[]>(data);
-					// ThirdPartyProviderImpExt has already been initialized by another IProvider
-					if (bidRequest.Imp[0].Ext is ThirdPartyProviderImpExt apsData) {
-						apsData.Aps = apsObject;
-						bidRequest.Imp[0].Ext = apsData;
-						return bidRequest;
-					}
-					
-					var ext = new ThirdPartyProviderImpExt {
-						Position = bidRequest.Imp[0].Ext.Position,
-						Skadn =  bidRequest.Imp[0].Ext.Skadn,
-						Aps =  apsObject,
-					};
-					bidRequest.Imp[0].Ext = ext;
+					bidRequestDelta.impressionExtension = new ImpExt {
+						Aps =  JsonConvert.DeserializeObject<JArray>(data)
+					};;
 				}
 			}
-			return bidRequest;
+			return bidRequestDelta;
 		}
 
 		internal void SetApsTimeout(int timeInSeconds) {
 			var timeout = (long)TimeSpan.FromSeconds(timeInSeconds).TotalMilliseconds;
 			_aps.CallStatic("setApsRequestTimeout", timeout);
+		}
+		
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("APS ERROR", e.Message);
+					return null;
+				}
+			});
 		}
 	}
 	

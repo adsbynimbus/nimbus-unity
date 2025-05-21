@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -48,7 +51,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 
 		}
 		
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
 				if (adUnit.AdUnitType == type)
@@ -62,29 +65,46 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return "";
 		}
 		
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
 			try
 			{
+				AndroidJNI.AttachCurrentThread();
 				var mintegralBidManager = new AndroidJavaClass("com.mbridge.msdk.mbbid.out.BidManager");
 				var buyerId = mintegralBidManager.CallStatic<string>("getBuyerUid", _applicationContext);
 				var mintegralMbConfiguration = new AndroidJavaClass("com.mbridge.msdk.out.MBConfiguration");
 				var sdkVersion = mintegralMbConfiguration.GetStatic<string>("SDK_VERSION");
-				bidRequest.User ??= new User();
-				bidRequest.User.Ext ??= new UserExt();
-				var mintegralObj = new MintegralObj();
-				mintegralObj.MintegralBuyerId = buyerId;
-				mintegralObj.MintegralSdkVersion = sdkVersion;
-				bidRequest.User.Ext.MintegralSdkObj = mintegralObj;
+				var mintegralObj = new JObject();
+				mintegralObj.Add("buyeruid", buyerId);
+				mintegralObj.Add("sdkv",sdkVersion);
+				bidRequestDelta.complexUserExt = 
+					new KeyValuePair<string, JObject> ("mintegral_sdk", mintegralObj);
 			}
 			catch (AndroidJavaException e)
 			{
 				Debug.unityLogger.Log("Mintegral ERROR", e.Message);
 			}
 
-			return bidRequest;
+			return bidRequestDelta;
+		}
+		
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
+					return null;
+				}
+			});
 		}
 	}
 	

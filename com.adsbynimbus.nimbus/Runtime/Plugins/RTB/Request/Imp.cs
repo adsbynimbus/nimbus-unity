@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OpenRTB.Request {
     public class Imp {
@@ -21,16 +22,20 @@ namespace OpenRTB.Request {
     }
 
     public class ImpExt {
+        
+        [JsonProperty("aps", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public JArray Aps {get; set;}
+        
         [JsonProperty("position", Required = Required.Always)]
-        public string Position;
+        public string Position { get; set; }
 
         [JsonProperty("skadn", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public Skadn Skadn;
+        public Skadn Skadn { get; set; }
 
         [JsonProperty("facebook_app_id", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string FacebookAppId;
+        public string FacebookAppId { get; set; }
 
         [JsonProperty("facebook_test_ad_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string MetaTestAdType;
+        public string MetaTestAdType { get; set; }
     }
 }

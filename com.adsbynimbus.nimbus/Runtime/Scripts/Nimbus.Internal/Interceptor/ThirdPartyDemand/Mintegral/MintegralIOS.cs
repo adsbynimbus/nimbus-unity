@@ -1,9 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
+using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
@@ -23,34 +27,24 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		[DllImport("__Internal")]
 		private static extern string _getMintegralRequestModifiers();
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data)
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
 		{
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
-			}
-			var width = 0;
-			var height = 0;
-			if (!bidRequest.Imp.IsNullOrEmpty())
-			{
-				if (bidRequest.Imp[0].Banner != null)
-				{
-					width = bidRequest.Imp[0].Banner.W ?? 0;
-					height = bidRequest.Imp[0].Banner.H ?? 0;
-				}
+				return bidRequestDelta;
 			}
 
 			var mintegralObjectStr = _getMintegralRequestModifiers();
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			var mintegralObject = JsonConvert.DeserializeObject(mintegralObjectStr, typeof(MintegralObj)) as MintegralObj;
+			var mintegralObject = JsonConvert.DeserializeObject(mintegralObjectStr, typeof(JObject)) as JObject;
 			if (mintegralObject != null)
 			{
-				bidRequest.User.Ext.MintegralSdkObj = mintegralObject;
+				bidRequestDelta.complexUserExt = 
+					new KeyValuePair<string, JObject> ("mintegral_sdk", mintegralObject);			
 			}
-			return bidRequest;
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
@@ -75,7 +69,21 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		public void InitializeNativeSDK() {
 			_initializeMintegral(_appID, _appKey);
 		}
-
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
+					return null;
+				}
+			});
+		}
 	}
 #endif
 }

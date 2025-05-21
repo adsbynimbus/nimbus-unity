@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
@@ -18,17 +20,16 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		[DllImport("__Internal")]
 		private static extern string _fetchUnityAdsToken();
 
-		public BidRequest ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
-				return bidRequest;
+				return bidRequestDelta;
 			}
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new UserExt();
-			bidRequest.User.Ext.UnityBuyerId = data;
-			return bidRequest;
+			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("unity_buyeruid", data);
+			return bidRequestDelta;
 		}
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchUnityAdsToken();
 			Debug.unityLogger.Log("Unity Token", biddingToken);
@@ -42,7 +43,21 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		public void InitializeNativeSDK() {
 			_initializeUnityAds(_gameID);
 		}
-
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		{
+			return Task<BidRequestDelta>.Run(() =>
+			{
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("Unity Ads ERROR", e.Message);
+					return null;
+				}
+			});
+		}
 	}
 #endif
 }
