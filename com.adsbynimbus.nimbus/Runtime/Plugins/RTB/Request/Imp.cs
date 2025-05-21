@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OpenRTB.Request {
     public class Imp {
@@ -23,7 +24,7 @@ namespace OpenRTB.Request {
     public class ImpExt {
         
         [JsonProperty("aps", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public ApsResponse[] Aps {get; set;}
+        public JObject[] Aps {get; set;}
         
         [JsonProperty("position", Required = Required.Always)]
         public string Position { get; set; }
@@ -36,22 +37,5 @@ namespace OpenRTB.Request {
 
         [JsonProperty("facebook_test_ad_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string MetaTestAdType { get; set; }
-    }
-    
-    public class ApsResponse {
-        [JsonProperty("amzn_b", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object AmznB;
-        [JsonProperty("amzn_vid", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object AmznVid;
-        [JsonProperty("amzn_h", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object AmznH;
-        [JsonProperty("amznp", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object Amznp;
-        [JsonProperty("amznrdr", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object Amznrdr;
-        [JsonProperty("amznslots", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object Amznslots;
-        [JsonProperty("dc", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public object Dc;
     }
 }

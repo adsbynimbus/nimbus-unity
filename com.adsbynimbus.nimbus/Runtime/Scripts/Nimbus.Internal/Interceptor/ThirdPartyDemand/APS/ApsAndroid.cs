@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -99,7 +100,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
 				if (bidRequest.Imp[0].Ext != null) {
 					bidRequestDelta.impressionExtension = new ImpExt {
-						Aps =  JsonConvert.DeserializeObject<ApsResponse[]>(data)
+						Aps =  JsonConvert.DeserializeObject<JObject[]>(data)
 					};;
 				}
 			}
