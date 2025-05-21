@@ -36,7 +36,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
-			if (timeoutInMilliseconds > 0)
+			if (timeoutInMilliseconds < 300)
+			{
+				_timeoutInSeconds = 0.3f;
+			}
+			else if (timeoutInMilliseconds > 2000)
+			{
+				_timeoutInSeconds = 2.0f;
+			}
+			else
 			{
 				_timeoutInSeconds = timeoutInMilliseconds/1000.0f;
 			}
