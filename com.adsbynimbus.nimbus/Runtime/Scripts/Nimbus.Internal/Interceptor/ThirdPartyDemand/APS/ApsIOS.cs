@@ -36,18 +36,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
-			if (timeoutInMilliseconds < 300)
-			{
-				_timeoutInSeconds = 0.3f;
-			}
-			else if (timeoutInMilliseconds > 2000)
-			{
-				_timeoutInSeconds = 2.0f;
-			}
-			else
-			{
-				_timeoutInSeconds = timeoutInMilliseconds/1000.0f;
-			}
+			_timeoutInSeconds = Math.Clamp(timeoutInMilliseconds, 300, 2000)/1000.0f;
 		}
 
 		public void InitializeNativeSDK() {
