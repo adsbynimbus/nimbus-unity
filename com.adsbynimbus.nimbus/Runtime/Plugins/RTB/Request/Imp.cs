@@ -24,7 +24,7 @@ namespace OpenRTB.Request {
     public class ImpExt {
         
         [JsonProperty("aps", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public JObject[] Aps {get; set;}
+        public JArray Aps {get; set;}
         
         [JsonProperty("position", Required = Required.Always)]
         public string Position { get; set; }

@@ -133,7 +133,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
 				if (bidRequest.Imp[0].Ext != null) {
 					bidRequestDelta.impressionExtension = new ImpExt {
-						Aps =  JsonConvert.DeserializeObject<JObject[]>(data)
+						Aps =  JsonConvert.DeserializeObject<JArray>(data)
 					};;
 				}
 			}

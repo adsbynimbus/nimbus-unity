@@ -144,7 +144,7 @@ import LRAtsSDK
         @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {
             var token: String = ""
             do {
-                let request: GADSignalRequest = switch adUnitType {
+                let request: SignalRequest = switch adUnitType {
                     case 0, 1: try NimbusAdType.banner.adMobSignalRequest(
                          adUnitId: adUnitId,
                          bannerSize: CGSize(width: width, height: height)

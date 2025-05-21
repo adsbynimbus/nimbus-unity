@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
@@ -25,7 +24,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
-									Aps = new JObject[] {
+									Aps = new JArray{
 										JObject.Parse(ParseData),
 									}
 								}
@@ -54,7 +53,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
-									Aps = new JObject[] {
+									Aps = new JArray() {
 										JObject.Parse(ParseData),
 									}
 								}
@@ -209,7 +208,7 @@ namespace Nimbus.Tests {
 					},
 					Version = "2.0"
 				},
-				Aps = new[] {
+				Aps = new JArray{
 					JObject.Parse(ParseData)
 				}
 			});
