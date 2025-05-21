@@ -25,7 +25,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
-									Aps = new JObject[] {
+									Aps = new JArray{
 										JObject.Parse(ParseData),
 									}
 								}
@@ -54,7 +54,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
-									Aps = new JObject[] {
+									Aps = new JArray() {
 										JObject.Parse(ParseData),
 									}
 								}
@@ -209,7 +209,7 @@ namespace Nimbus.Tests {
 					},
 					Version = "2.0"
 				},
-				Aps = new[] {
+				Aps = new JArray(){
 					JObject.Parse(ParseData)
 				}
 			});
