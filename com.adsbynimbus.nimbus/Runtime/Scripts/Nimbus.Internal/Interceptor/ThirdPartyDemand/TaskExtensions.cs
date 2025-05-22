@@ -8,7 +8,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
     {
         public static async Task<TResult> TimeoutWithResult<TResult>(this Task<TResult> task, int timeoutMs)
         {
-            var completed = Task.WhenAny(task, Task.Delay(timeoutMs)).Result;
+            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
 
             if (task.IsFaulted)
                 return default(TResult);
