@@ -1,13 +1,14 @@
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
 {
     public static class TaskExtensions
     {
         public static async Task<TResult> TimeoutWithResult<TResult>(this Task<TResult> task, int timeoutMs)
-        {                       
-            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
+        {
+            var completed = Task.WhenAny(task, Task.Delay(timeoutMs)).Result;
 
             if (task.IsFaulted)
                 return default(TResult);

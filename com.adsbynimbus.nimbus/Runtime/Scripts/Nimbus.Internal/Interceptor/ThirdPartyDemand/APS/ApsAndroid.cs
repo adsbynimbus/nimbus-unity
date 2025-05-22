@@ -115,8 +115,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 				h = 0;
 				isFullScreen = true;
 			}
-			SetApsTimeout(_timeoutInMilliseconds);
 			AndroidJNI.AttachCurrentThread();
+			SetApsTimeout(_timeoutInMilliseconds);
 			var response = _aps.CallStatic<string>("fetchApsParams", w, h, isFullScreen);
 			return response;
 		}
@@ -138,7 +138,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			return bidRequestDelta;
 		}
 
-		private void SetApsTimeout(int timeoutInMilliseconds) {
+		private void SetApsTimeout(long timeoutInMilliseconds) {
 			_aps.CallStatic("setApsRequestTimeout", timeoutInMilliseconds);
 		}
 		

@@ -26,6 +26,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		}
 		
 		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+			AndroidJNI.AttachCurrentThread();
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;

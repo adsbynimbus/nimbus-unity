@@ -179,10 +179,12 @@ namespace Nimbus.Tests {
 						"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
 				}
 				var got = new BidRequestDelta();
-				if (interceptor.GetType() == typeof(ApsIOS))
-				{
-					got = ((ApsIOS) interceptor).ModifyRequest(bidRequest, data);
-				}
+				#if UNITY_IOS
+					if (interceptor.GetType() == typeof(ApsIOS))
+					{
+						got = ((ApsIOS) interceptor).ModifyRequest(bidRequest, data);
+					}
+				#endif
 				if (interceptor.GetType() == typeof(ApsAndroid))
 				{
 					got = ((ApsAndroid) interceptor).ModifyRequest(bidRequest, data);
