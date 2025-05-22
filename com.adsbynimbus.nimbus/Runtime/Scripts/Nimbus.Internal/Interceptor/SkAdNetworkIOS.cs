@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using Newtonsoft.Json;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
+using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 
@@ -56,11 +58,19 @@ namespace Nimbus.Internal.Interceptor {
 			return bidRequestDelta;
 		}
 		
-		public async Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
-			return await Task<BidRequestDelta>.Run(async () =>
+			return Task<BidRequestDelta>.Run(() =>
 			{
-				return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				try
+				{
+					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.Log("META ERROR", e.Message);
+					return null;
+				}
 			});
 		}
 	}

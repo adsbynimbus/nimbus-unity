@@ -496,7 +496,7 @@ namespace Nimbus.Runtime.Scripts {
 			bidRequest.Regs = _regulations;
 		}
 
-		private BidRequest ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+		private async Task<BidRequest> ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			if (_nimbusPlatformAPI.Interceptors() == null) {
 				return bidRequest;
 			}
@@ -508,7 +508,7 @@ namespace Nimbus.Runtime.Scripts {
 			}
 			try
 			{
-				var results = Task.WhenAll(interceptorTasks).Result;
+				var results = await Task.WhenAll(interceptorTasks);
 				bidRequest = BidRequestDeltaManager.ApplyDeltas(results, bidRequest);
 			}
 			catch (Exception e)
@@ -522,13 +522,13 @@ namespace Nimbus.Runtime.Scripts {
 #if  UNITY_IOS
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			return await Task.Run(async () => {
-				bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
+				bidRequest = await ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
 				return await  _nimbusClient.MakeRequestAsync(bidRequest);
 			});
 		}
 #else
 		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
-			bidRequest = ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
+			bidRequest = await ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
 			return await  _nimbusClient.MakeRequestAsync(bidRequest);
 		}
 #endif
