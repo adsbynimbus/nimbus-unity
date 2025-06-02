@@ -28,7 +28,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			_initializeVungle(_appID);
 		}
 
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta ModifyRequest(string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -37,10 +37,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK()
 		{
 			var buyerId = _fetchVungleBuyerId();
-			Debug.unityLogger.Log("VUNGLEBUYER", buyerId);
 			return buyerId;
 		}
 		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
@@ -49,7 +48,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return ModifyRequest(GetProviderRtbDataFromNativeSDK());
 				}
 				catch (Exception e)
 				{

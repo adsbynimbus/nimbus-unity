@@ -8,6 +8,9 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 #endif
@@ -346,6 +349,189 @@ namespace Nimbus.Tests {
 		}
 		
 		[Test]
+		public void TestMobileFuseInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_MOBILEFUSE
+			const string mobileFuseUserData = "{\"mfx_buyerdata\": {\"v\": \"2\", \"mf_adapter\":\"nimbus\", " +
+			                                 "\"sdk_version\": \"mobilefuse_sdk_version\"}}";
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(mobileFuseUserData),
+						}
+					}, new MobileFuseAndroid()
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test"
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(mobileFuseUserData),
+						}
+					}, new MobileFuseIOS()
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var data = "{\"v\": \"2\", \"mf_adapter\":\"nimbus\", " +
+									"\"sdk_version\": \"mobilefuse_sdk_version\"}";
+				if (interceptor.GetType() == typeof(MobileFuseIOS))
+				{
+					gotDelta = ((MobileFuseIOS) interceptor).ModifyRequest(data);
+				}
+				if (interceptor.GetType() == typeof(MobileFuseAndroid))
+				{
+					gotDelta = ((MobileFuseAndroid) interceptor).ModifyRequest(data);
+				}
+				var want = expectedBidResponse.User.Ext["mfx_buyerdata"]["sdk_version"];
+				var got = gotDelta.complexUserExt.Value["sdk_version"];
+				Assert.AreEqual(want, got);
+				want = expectedBidResponse.User.Ext["mfx_buyerdata"]["mf_adapter"];
+				got = gotDelta.complexUserExt.Value["mf_adapter"];
+				Assert.AreEqual(want, got);
+			}
+			#endif
+		}
+		
+		[Test]
+		public void TestUnityAdsInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_UNITY_ADS
+			const string unityUserData = "{\"unity_buyeruid\":\"unity_buyer_uid\"}";
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(unityUserData),
+						}
+					}, new UnityAdsAndroid(null, true, "12345")
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(unityUserData),
+						}
+					}, new UnityAdsIOS("12345")
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var data = "unity_buyer_uid";
+				if (interceptor.GetType() == typeof(UnityAdsIOS))
+				{
+					gotDelta = ((UnityAdsIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+				}
+				if (interceptor.GetType() == typeof(UnityAdsAndroid))
+				{
+					gotDelta = ((UnityAdsAndroid) interceptor).ModifyRequest(expectedBidResponse, data);
+				}
+				var want = expectedBidResponse.User.Ext["unity_buyeruid"].ToString();
+				var got = gotDelta.simpleUserExt.Value;
+				Assert.AreEqual(want, got);
+			}
+		#endif
+		}
+		
+		[Test]
+		public void TestVungleInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_VUNGLE
+			const string vungleUserData = "{\"vungle_buyeruid\":\"vungle_buyer_uid\"}";
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(vungleUserData),
+						}
+					}, new VungleAndroid(null, "vungle_app_id")
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(vungleUserData),
+						}
+					}, new VungleIOS("vungle_app_id")
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var data = "vungle_buyer_uid";
+				if (interceptor.GetType() == typeof(VungleIOS))
+				{
+					gotDelta = ((VungleIOS) interceptor).ModifyRequest(data);
+				}
+				if (interceptor.GetType() == typeof(VungleAndroid))
+				{
+					gotDelta = ((VungleAndroid) interceptor).ModifyRequest(data);
+				}
+				var want = expectedBidResponse.User.Ext["vungle_buyeruid"].ToString();
+				var got = gotDelta.simpleUserExt.Value;
+				Assert.AreEqual(want, got);
+			}
+			#endif
+		}
+
+		
+		[Test]
 		public void TestSkaAdNetworkInterceptor() {
 			var table = new List<Tuple<BidRequest, IInterceptor>> {
 				new Tuple<BidRequest, IInterceptor>(
@@ -384,8 +570,7 @@ namespace Nimbus.Tests {
 				Assert.AreEqual(wantBody, gotBody);
 			}
 		}
-
-
+		
 
 		[Test]
 		public void TestMultipleInterceptor() {

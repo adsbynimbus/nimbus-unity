@@ -29,7 +29,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchUnityAdsToken();
 			Debug.unityLogger.Log("Unity Token", biddingToken);
