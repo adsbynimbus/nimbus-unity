@@ -13,8 +13,6 @@ using UnityEngine;
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
 	internal class AdMobIOS : IInterceptor, IProvider {
-		private readonly string _appID;
-		private readonly bool _testMode;
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		private AdUnitType _type;
 		private string _adUnitId;
@@ -25,11 +23,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		[DllImport("__Internal")]
 		private static extern string _getAdMobRequestModifiers(int adUnitType, string adUnitId, int width, int height);
 
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
+		private String GetProviderRtbDataFromNativeSDK(BidRequest bidRequest, AdUnitType type)
 		{
-			var bidRequestDelta = new BidRequestDelta();
-			if (data.IsNullOrEmpty()) {
-				return bidRequestDelta;
+			var adUnitId = GetAdUnitId(type);
+			if (adUnitId.IsNullOrEmpty())
+			{
+				return "";
 			}
 			var width = 0;
 			var height = 0;
@@ -41,31 +40,32 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 					height = bidRequest.Imp[0].Banner.H ?? 0;
 				}
 			}
-
-			var adMobSignals = _getAdMobRequestModifiers((int) _type, data, width, height);
-			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", adMobSignals);
 			
-			return bidRequestDelta;
+			return _getAdMobRequestModifiers((int) _type, adUnitId, width, height);
+		}
+		
+		internal BidRequestDelta ModifyRequest(string data)
+		{
+			return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
+			{
+				simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
+			};
 		}
 
-		internal string GetAdUnitId(AdUnitType type, bool isFullScreen)
+		private string GetAdUnitId(AdUnitType type)
 		{
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
 				if (adUnit.AdUnitType == type)
 				{
-					_adUnitId = adUnit.AdUnitId;
-					_type = type;
 					return adUnit.AdUnitId;
 				}
 			}
 			return "";
 		}
 
-		public AdMobIOS(string appID, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
-			_appID = appID;
+		public AdMobIOS(ThirdPartyAdUnit[] adUnitIds) {
 			_adUnitIds = adUnitIds;
-			_testMode = enableTestMode;
 		}
 
 		public void InitializeNativeSDK() {
@@ -78,7 +78,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			{
 				try
 	            {
-	               return ModifyRequest(bidRequest, GetAdUnitId(type, isFullScreen));
+	               return ModifyRequest(GetProviderRtbDataFromNativeSDK(bidRequest, type));
 	            }
 	            catch (Exception e)
 	            {

@@ -131,7 +131,7 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_ADMOB
 				Debug.unityLogger.Log("Initializing iOS AdMob SDK");
 				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobIOS(adMobAppID, adMobAdUnitIds, configuration.enableSDKInTestMode);
+				var admob = new AdMobIOS(adMobAdUnitIds);
 				admob.InitializeNativeSDK();
 				_interceptors.Add(admob);
 			#endif

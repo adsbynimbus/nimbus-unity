@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 #endif
@@ -12,8 +14,94 @@ using OpenRTB.Request;
 
 namespace Nimbus.Tests {
 	public class InterceptorTest {
-		const string ParseData = "{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}";
+		const string ApsParseData = "{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}";
 
+		[Test]
+		public void TestAdMobInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
+			const string admobData = "{\"admob_gde_signals\":\"admob_signal\"}";
+				var table = new List<Tuple<BidRequest, IInterceptor>> {
+					new (
+						new BidRequest {
+							Imp = new[] {
+								new Imp {
+									Ext = new ImpExt() {
+										Position = "test",
+									}
+								}
+							},
+							User = new User
+							{
+								Ext = JObject.Parse(admobData),
+							}
+						}, new AdMobAndroid(
+							new[] {
+								new ThirdPartyAdUnit {
+									AdUnitId = "rewarded_video_slot",
+									AdUnitType = AdUnitType.Rewarded,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "interstitial_slot",
+									AdUnitType = AdUnitType.Interstitial,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "banner_slot",
+									AdUnitType = AdUnitType.Banner
+								}
+							})
+					),
+
+					new (
+						new BidRequest {
+							Imp = new[] {
+								new Imp {
+									Ext = new ImpExt() {
+										Position = "test"
+									}
+								}
+							},
+							User = new User
+							{
+								Ext = JObject.Parse(admobData),
+							}
+						}, new AdMobIOS(
+							new[] {
+								new ThirdPartyAdUnit {
+									AdUnitId = "rewarded_video_slot",
+									AdUnitType = AdUnitType.Rewarded,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "interstitial_slot",
+									AdUnitType =  AdUnitType.Interstitial,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "banner_slot",
+									AdUnitType = AdUnitType.Banner,
+								}
+							})
+					),
+				};
+				
+				foreach (var tt in table) {
+					var (expectedBidResponse, interceptor) = tt;
+					// extensions are only added if the imp data has been initialized already
+					var got = new BidRequestDelta();
+					var data = "admob_signal";
+					if (interceptor.GetType() == typeof(AdMobIOS))
+					{
+						got = ((AdMobIOS) interceptor).ModifyRequest(data);
+					}
+					if (interceptor.GetType() == typeof(AdMobAndroid))
+					{
+						got = ((AdMobAndroid) interceptor).ModifyRequest(data);
+					}
+					var wantBody = expectedBidResponse.User.Ext["admob_gde_signals"].ToString();
+					var gotBody = got.simpleUserExt.Value;
+					Assert.AreEqual(wantBody, gotBody);
+				}
+			#endif
+		}
 		[Test]
 		public void TestApsInterceptor() {
 			#if UNITY_IOS && NIMBUS_ENABLE_APS
@@ -25,7 +113,7 @@ namespace Nimbus.Tests {
 								Ext = new ImpExt() {
 									Position = "test",
 									Aps = new JArray{
-										JObject.Parse(ParseData),
+										JObject.Parse(ApsParseData),
 									}
 								}
 							}
@@ -54,7 +142,7 @@ namespace Nimbus.Tests {
 								Ext = new ImpExt() {
 									Position = "test",
 									Aps = new JArray() {
-										JObject.Parse(ParseData),
+										JObject.Parse(ApsParseData),
 									}
 								}
 							}
@@ -98,6 +186,93 @@ namespace Nimbus.Tests {
 			}
 		#endif
 		}
+		
+		[Test]
+		public void TestMetaInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_META
+			const string admobData = "{\"admob_gde_signals\":\"admob_signal\"}";
+				var table = new List<Tuple<BidRequest, IInterceptor>> {
+					new (
+						new BidRequest {
+							Imp = new[] {
+								new Imp {
+									Ext = new ImpExt() {
+										Position = "test",
+									}
+								}
+							},
+							User = new User
+							{
+								Ext = JObject.Parse(admobData),
+							}
+						}, new AdMobAndroid(
+							new[] {
+								new ThirdPartyAdUnit {
+									AdUnitId = "rewarded_video_slot",
+									AdUnitType = AdUnitType.Rewarded,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "interstitial_slot",
+									AdUnitType = AdUnitType.Interstitial,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "banner_slot",
+									AdUnitType = AdUnitType.Banner
+								}
+							})
+					),
+
+					new (
+						new BidRequest {
+							Imp = new[] {
+								new Imp {
+									Ext = new ImpExt() {
+										Position = "test"
+									}
+								}
+							},
+							User = new User
+							{
+								Ext = JObject.Parse(admobData),
+							}
+						}, new AdMobIOS(
+							new[] {
+								new ThirdPartyAdUnit {
+									AdUnitId = "rewarded_video_slot",
+									AdUnitType = AdUnitType.Rewarded,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "interstitial_slot",
+									AdUnitType =  AdUnitType.Interstitial,
+								},
+								new ThirdPartyAdUnit {
+									AdUnitId = "banner_slot",
+									AdUnitType = AdUnitType.Banner,
+								}
+							})
+					),
+				};
+				
+				foreach (var tt in table) {
+					var (expectedBidResponse, interceptor) = tt;
+					// extensions are only added if the imp data has been initialized already
+					var got = new BidRequestDelta();
+					var data = "admob_signal";
+					if (interceptor.GetType() == typeof(AdMobIOS))
+					{
+						got = ((AdMobIOS) interceptor).ModifyRequest(data);
+					}
+					if (interceptor.GetType() == typeof(AdMobAndroid))
+					{
+						got = ((AdMobAndroid) interceptor).ModifyRequest(data);
+					}
+					var wantBody = expectedBidResponse.User.Ext["admob_gde_signals"].ToString();
+					var gotBody = got.simpleUserExt.Value;
+					Assert.AreEqual(wantBody, gotBody);
+				}
+			#endif
+		}
 		[Test]
 		public void TestSkaAdNetworkInterceptor() {
 			var table = new List<Tuple<BidRequest, IInterceptor>> {
@@ -137,6 +312,7 @@ namespace Nimbus.Tests {
 				Assert.AreEqual(wantBody, gotBody);
 			}
 		}
+
 
 
 		[Test]
@@ -211,7 +387,7 @@ namespace Nimbus.Tests {
 					Version = "2.0"
 				},
 				Aps = new JArray{
-					JObject.Parse(ParseData)
+					JObject.Parse(ApsParseData)
 				}
 			});
 			var gotBody = JsonConvert.SerializeObject(gotBidRequest.Imp[0].Ext);

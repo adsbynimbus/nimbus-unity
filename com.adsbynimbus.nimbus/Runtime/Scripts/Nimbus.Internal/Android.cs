@@ -86,7 +86,7 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
 				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobAndroid(_currentActivity, adMobAppID, adMobAdUnitIds, configuration.enableSDKInTestMode);
+				var admob = new AdMobAndroid(adMobAdUnitIds);
 				_interceptors.Add(admob);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
