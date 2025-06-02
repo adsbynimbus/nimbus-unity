@@ -13,10 +13,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		private readonly string _appID;
 		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
-
-		public MetaAndroid(string appID) {
-			_appID = appID;
-		}
 		
 		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();

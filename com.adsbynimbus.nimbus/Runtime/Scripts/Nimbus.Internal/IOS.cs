@@ -139,7 +139,7 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
 				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
 				mintegralAdUnits = mintegralAdUnitIds;
-				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, mintegralAdUnitIds, configuration.enableSDKInTestMode);
+				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, mintegralAdUnitIds);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif

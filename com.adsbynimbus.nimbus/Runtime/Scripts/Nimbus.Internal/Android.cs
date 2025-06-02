@@ -92,7 +92,7 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_MINTEGRAL
 				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
 				mintegralAdUnits = mintegralAdUnitIds;
-				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, mintegralAdUnitIds, configuration.enableSDKInTestMode);
+				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, mintegralAdUnitIds);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif

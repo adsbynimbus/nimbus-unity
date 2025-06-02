@@ -6,6 +6,8 @@ using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
 #endif
@@ -191,7 +193,7 @@ namespace Nimbus.Tests {
 		public void TestMetaInterceptor()
 		{
 			#if UNITY_IOS && NIMBUS_ENABLE_META
-			const string admobData = "{\"admob_gde_signals\":\"admob_signal\"}";
+			const string metaUserData = "{\"facebook_buyeruid\":\"meta_buyer_uid\"}";
 				var table = new List<Tuple<BidRequest, IInterceptor>> {
 					new (
 						new BidRequest {
@@ -199,28 +201,16 @@ namespace Nimbus.Tests {
 								new Imp {
 									Ext = new ImpExt() {
 										Position = "test",
+										FacebookAppId = "meta_app_id",
+										MetaTestAdType = "meta_test_ad_type",
 									}
 								}
 							},
 							User = new User
 							{
-								Ext = JObject.Parse(admobData),
+								Ext = JObject.Parse(metaUserData),
 							}
-						}, new AdMobAndroid(
-							new[] {
-								new ThirdPartyAdUnit {
-									AdUnitId = "rewarded_video_slot",
-									AdUnitType = AdUnitType.Rewarded,
-								},
-								new ThirdPartyAdUnit {
-									AdUnitId = "interstitial_slot",
-									AdUnitType = AdUnitType.Interstitial,
-								},
-								new ThirdPartyAdUnit {
-									AdUnitId = "banner_slot",
-									AdUnitType = AdUnitType.Banner
-								}
-							})
+						}, new MetaAndroid(null,true, "meta_app_id")
 					),
 
 					new (
@@ -228,51 +218,133 @@ namespace Nimbus.Tests {
 							Imp = new[] {
 								new Imp {
 									Ext = new ImpExt() {
-										Position = "test"
+										Position = "test",
+										FacebookAppId = "meta_app_id",
+										MetaTestAdType = "meta_test_ad_type",
 									}
 								}
 							},
 							User = new User
 							{
-								Ext = JObject.Parse(admobData),
+								Ext = JObject.Parse(metaUserData),
 							}
-						}, new AdMobIOS(
-							new[] {
-								new ThirdPartyAdUnit {
-									AdUnitId = "rewarded_video_slot",
-									AdUnitType = AdUnitType.Rewarded,
-								},
-								new ThirdPartyAdUnit {
-									AdUnitId = "interstitial_slot",
-									AdUnitType =  AdUnitType.Interstitial,
-								},
-								new ThirdPartyAdUnit {
-									AdUnitId = "banner_slot",
-									AdUnitType = AdUnitType.Banner,
-								}
-							})
+						}, new MetaIOS("meta_app_id", true)
 					),
 				};
 				
 				foreach (var tt in table) {
 					var (expectedBidResponse, interceptor) = tt;
 					// extensions are only added if the imp data has been initialized already
-					var got = new BidRequestDelta();
-					var data = "admob_signal";
-					if (interceptor.GetType() == typeof(AdMobIOS))
+					var gotDelta = new BidRequestDelta();
+					var data = "meta_buyer_uid";
+					if (interceptor.GetType() == typeof(MetaIOS))
 					{
-						got = ((AdMobIOS) interceptor).ModifyRequest(data);
+						gotDelta = ((MetaIOS) interceptor).ModifyRequest(expectedBidResponse, data);
 					}
-					if (interceptor.GetType() == typeof(AdMobAndroid))
+					if (interceptor.GetType() == typeof(MetaAndroid))
 					{
-						got = ((AdMobAndroid) interceptor).ModifyRequest(data);
+						gotDelta = ((MetaAndroid) interceptor).ModifyRequest(expectedBidResponse, data);
 					}
-					var wantBody = expectedBidResponse.User.Ext["admob_gde_signals"].ToString();
-					var gotBody = got.simpleUserExt.Value;
-					Assert.AreEqual(wantBody, gotBody);
+					var want = expectedBidResponse.User.Ext["facebook_buyeruid"].ToString();
+					var got = gotDelta.simpleUserExt.Value;
+					Assert.AreEqual(want, got);
+					want = expectedBidResponse.Imp[0].Ext.FacebookAppId;
+					got = gotDelta.impressionExtension.FacebookAppId;
+					Assert.AreEqual(want, got);
 				}
 			#endif
 		}
+		
+		[Test]
+		public void TestMintegralInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_MINTEGRAL
+			const string mintegralUserData = "{\"mintegral_sdk\": {\"buyeruid\": \"mintegral_buyer_uid\", " +
+			                                 "\"sdkv\": \"mintegral_sdk_version\"}}";
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(mintegralUserData),
+						}
+					}, new MintegralAndroid(null, "mintegral_app_id", "mintegral_app_key", new[] {
+						new ThirdPartyAdUnit {
+							AdUnitId = "rewarded_video_slot",
+							AdUnitType = AdUnitType.Rewarded,
+						},
+						new ThirdPartyAdUnit {
+							AdUnitId = "interstitial_slot",
+							AdUnitType =  AdUnitType.Interstitial,
+						},
+						new ThirdPartyAdUnit {
+							AdUnitId = "banner_slot",
+							AdUnitType = AdUnitType.Banner,
+						}
+					})
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test"
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(mintegralUserData),
+						}
+					}, new MintegralIOS("mintegral_app_id", "mintegral_app_key", new[] {
+						new ThirdPartyAdUnit {
+							AdUnitId = "rewarded_video_slot",
+							AdUnitType = AdUnitType.Rewarded,
+						},
+						new ThirdPartyAdUnit {
+							AdUnitId = "interstitial_slot",
+							AdUnitType =  AdUnitType.Interstitial,
+						},
+						new ThirdPartyAdUnit {
+							AdUnitId = "banner_slot",
+							AdUnitType = AdUnitType.Banner,
+						}
+					})
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var data = "{\"buyeruid\": \"mintegral_buyer_uid\", " +
+				           "\"sdkv\": \"mintegral_sdk_version\"}";
+				if (interceptor.GetType() == typeof(MintegralIOS))
+				{
+					gotDelta = ((MintegralIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+				}
+				if (interceptor.GetType() == typeof(MintegralAndroid))
+				{
+					gotDelta = ((MintegralAndroid) interceptor).ModifyRequest(JObject.Parse(data));
+				}
+				var want = expectedBidResponse.User.Ext["mintegral_sdk"]["buyeruid"];
+				var got = gotDelta.complexUserExt.Value["buyeruid"];
+				Assert.AreEqual(want, got);
+				want = expectedBidResponse.User.Ext["mintegral_sdk"]["sdkv"];
+				got = gotDelta.complexUserExt.Value["sdkv"];
+				Assert.AreEqual(want, got);
+			}
+			#endif
+		}
+		
 		[Test]
 		public void TestSkaAdNetworkInterceptor() {
 			var table = new List<Tuple<BidRequest, IInterceptor>> {
