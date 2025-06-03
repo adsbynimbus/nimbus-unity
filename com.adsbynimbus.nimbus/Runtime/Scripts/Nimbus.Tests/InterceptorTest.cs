@@ -529,7 +529,6 @@ namespace Nimbus.Tests {
 			}
 			#endif
 		}
-
 		
 		[Test]
 		public void TestSkaAdNetworkInterceptor() {
@@ -571,11 +570,11 @@ namespace Nimbus.Tests {
 			}
 		}
 		
-
 		[Test]
-		public void TestMultipleInterceptor() {
+		public void TestMultipleImpExtInterceptors() {
 			var interceptors = new IInterceptor[] {
 				new SkAdNetworkIOS(MockData.PlistDataRaw()),
+				
 				new ApsAndroid("foo_app_id",
 					new[] {
 						new ApsSlotData {
@@ -591,8 +590,8 @@ namespace Nimbus.Tests {
 							APSAdUnitType = APSAdUnitType.Display300X250,
 						}
 					})
+				, new MetaAndroid(null, true, "meta_app_id")
 			};
-
 
 			var bidRequest = new BidRequest {
 				Imp = new[] {
@@ -605,12 +604,10 @@ namespace Nimbus.Tests {
 			};
 			var bidRequestDeltas = new BidRequestDelta[interceptors.Length];
 			var i = 0;
-			foreach (var interceptor in interceptors) {
-				var data = "";
-				if (interceptor is ApsAndroid) {
-					data =
-						"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
-				}
+			foreach (var interceptor in interceptors)
+			{
+				var data =
+					"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
 				var got = new BidRequestDelta();
 				#if UNITY_IOS
 					if (interceptor.GetType() == typeof(ApsIOS))
@@ -621,6 +618,11 @@ namespace Nimbus.Tests {
 				if (interceptor.GetType() == typeof(ApsAndroid))
 				{
 					got = ((ApsAndroid) interceptor).ModifyRequest(bidRequest, data);
+				}
+				if (interceptor.GetType() == typeof(MetaAndroid))
+				{
+					data = "meta_buyer_uid";
+					got = ((MetaAndroid) interceptor).ModifyRequest(bidRequest, data);
 				}
 				if (interceptor.GetType() == typeof(SkAdNetworkIOS))
 				{
@@ -643,12 +645,84 @@ namespace Nimbus.Tests {
 					},
 					Version = "2.0"
 				},
+				FacebookAppId = "meta_app_id",
 				Aps = new JArray{
 					JObject.Parse(ApsParseData)
-				}
+				},
+				MetaTestAdType = "IMG_16_9_LINK"
 			});
 			var gotBody = JsonConvert.SerializeObject(gotBidRequest.Imp[0].Ext);
 			Assert.AreEqual(wantBody, gotBody);
+		}
+
+		[Test]
+		public void TestMultipleUserExtInterceptors()
+		{
+			var interceptors = new IInterceptor[] { 
+				new MetaAndroid(null, true, "meta_app_id")
+				, new VungleAndroid(null, "vungle_app_id")
+				, new MintegralAndroid(null, "mintegral_app_id", "mintegral_app_key", new []
+						{
+							new ThirdPartyAdUnit {
+								AdUnitId = "rewarded_video_slot",
+								AdUnitType = AdUnitType.Rewarded,
+							},
+							new ThirdPartyAdUnit {
+								AdUnitId = "interstitial_slot",
+								AdUnitType =  AdUnitType.Interstitial,
+							},
+							new ThirdPartyAdUnit {
+								AdUnitId = "banner_slot",
+								AdUnitType = AdUnitType.Banner,
+							}
+						})
+				, new MobileFuseAndroid()
+			};
+			var bidRequest = new BidRequest {
+				Imp = new[] {
+					new Imp {
+						Ext = new ImpExt() {
+							Position = "test",
+						}
+					}
+				}
+			};
+			var bidRequestDeltas = new BidRequestDelta[interceptors.Length];
+			var i = 0;
+			foreach (var interceptor in interceptors)
+			{
+				var data = "";
+				var got = new BidRequestDelta();
+				if (interceptor.GetType() == typeof(MetaAndroid))
+				{
+					data = "meta_buyer_uid";
+					got = ((MetaAndroid) interceptor).ModifyRequest(bidRequest, data);
+				}
+				if (interceptor.GetType() == typeof(VungleAndroid))
+				{
+					data = "vungle_buyer_uid";
+					got = ((VungleAndroid) interceptor).ModifyRequest(data);
+				}
+				if (interceptor.GetType() == typeof(MintegralAndroid))
+				{
+					data = "{\"buyeruid\": \"mintegral_buyer_uid\", " +
+					           "\"sdkv\": \"mintegral_sdk_version\"}";
+					got = ((MintegralAndroid) interceptor).ModifyRequest(JObject.Parse(data));
+				}
+				if (interceptor.GetType() == typeof(MobileFuseAndroid))
+				{
+					data = "{\"v\": \"2\", \"mf_adapter\":\"nimbus\", " +
+					       "\"sdk_version\": \"mobilefuse_sdk_version\"}";
+					got = ((MobileFuseAndroid) interceptor).ModifyRequest(data);
+				}
+				bidRequestDeltas[i] = got;
+				i++;
+			}
+			var gotBidRequest = BidRequestDeltaManager.ApplyDeltas(bidRequestDeltas, bidRequest);
+			Assert.AreEqual("meta_buyer_uid", gotBidRequest.User.Ext["facebook_buyeruid"].ToString());
+			Assert.AreEqual("vungle_buyer_uid", gotBidRequest.User.Ext["vungle_buyeruid"].ToString());
+			Assert.AreEqual("mintegral_sdk_version", gotBidRequest.User.Ext["mintegral_sdk"]["sdkv"].ToString());
+			Assert.AreEqual("mobilefuse_sdk_version", gotBidRequest.User.Ext["mfx_buyerdata"]["sdk_version"].ToString());
 		}
 	}
 
