@@ -4,11 +4,11 @@ on:
     branches:
       - main
     paths:
-      - 'com.adsbynimbus.nimbus/Runtime/Plugins/**'
+      - 'com.adsbynimbus.nimbus/Runtime/**'
       - '.github/workflows/rtbworkflow*'
   pull_request:
     paths:
-      - 'com.adsbynimbus.nimbus/Runtime/Plugins/**'
+      - 'com.adsbynimbus.nimbus/Runtime/**'
       - '.github/workflows/rtbworkflow*'
 
 jobs:
