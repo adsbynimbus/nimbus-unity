@@ -31,8 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: nuget restore
-        working-directory: com.adsbynimbus.nimbus/Runtime
+        working-directory: com.adsbynimbus.nimbus/Runtime/Plugins
 
       - name: Run Test
         run: dotnet test --no-restore
-        working-directory: com.adsbynimbus.nimbus/Runtime
+        working-directory: com.adsbynimbus.nimbus/Runtime/Plugins
