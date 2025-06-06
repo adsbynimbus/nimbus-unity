@@ -73,7 +73,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return null;
 		}
 		
-		internal BidRequestDelta ModifyRequest(JObject data) {
+		internal BidRequestDelta GetBidRequestDelta(JObject data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data == null) {
 				return bidRequestDelta;
@@ -83,13 +83,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return bidRequestDelta;
 		}
 		
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(GetProviderRtbDataFromNativeSDK(type));
+					return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK(type));
 				}
 				catch (Exception e)
 				{

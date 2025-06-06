@@ -95,11 +95,11 @@ namespace Nimbus.Tests {
 					var data = "admob_signal";
 					if (interceptor.GetType() == typeof(AdMobIOS))
 					{
-						got = ((AdMobIOS) interceptor).ModifyRequest(data);
+						got = ((AdMobIOS) interceptor).GetBidRequestDelta(data);
 					}
 					if (interceptor.GetType() == typeof(AdMobAndroid))
 					{
-						got = ((AdMobAndroid) interceptor).ModifyRequest(data);
+						got = ((AdMobAndroid) interceptor).GetBidRequestDelta(data);
 					}
 					var wantBody = expectedBidResponse.User.Ext["admob_gde_signals"].ToString();
 					var gotBody = got.simpleUserExt.Value;
@@ -178,11 +178,11 @@ namespace Nimbus.Tests {
 					"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
 				if (interceptor.GetType() == typeof(ApsIOS))
 				{
-					got = ((ApsIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+					got = ((ApsIOS) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
 				if (interceptor.GetType() == typeof(ApsAndroid))
 				{
-					got = ((ApsAndroid) interceptor).ModifyRequest(expectedBidResponse, data);
+					got = ((ApsAndroid) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
 				got.impressionExtension.Position = "test";
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
@@ -242,11 +242,11 @@ namespace Nimbus.Tests {
 					var data = "meta_buyer_uid";
 					if (interceptor.GetType() == typeof(MetaIOS))
 					{
-						gotDelta = ((MetaIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+						gotDelta = ((MetaIOS) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 					}
 					if (interceptor.GetType() == typeof(MetaAndroid))
 					{
-						gotDelta = ((MetaAndroid) interceptor).ModifyRequest(expectedBidResponse, data);
+						gotDelta = ((MetaAndroid) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 					}
 					var want = expectedBidResponse.User.Ext["facebook_buyeruid"].ToString();
 					var got = gotDelta.simpleUserExt.Value;
@@ -332,11 +332,11 @@ namespace Nimbus.Tests {
 				           "\"sdkv\": \"mintegral_sdk_version\"}";
 				if (interceptor.GetType() == typeof(MintegralIOS))
 				{
-					gotDelta = ((MintegralIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+					gotDelta = ((MintegralIOS) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
 				if (interceptor.GetType() == typeof(MintegralAndroid))
 				{
-					gotDelta = ((MintegralAndroid) interceptor).ModifyRequest(JObject.Parse(data));
+					gotDelta = ((MintegralAndroid) interceptor).GetBidRequestDelta(JObject.Parse(data));
 				}
 				var want = expectedBidResponse.User.Ext["mintegral_sdk"]["buyeruid"];
 				var got = gotDelta.complexUserExt.Value["buyeruid"];
@@ -396,11 +396,11 @@ namespace Nimbus.Tests {
 									"\"sdk_version\": \"mobilefuse_sdk_version\"}";
 				if (interceptor.GetType() == typeof(MobileFuseIOS))
 				{
-					gotDelta = ((MobileFuseIOS) interceptor).ModifyRequest(data);
+					gotDelta = ((MobileFuseIOS) interceptor).GetBidRequestDelta(data);
 				}
 				if (interceptor.GetType() == typeof(MobileFuseAndroid))
 				{
-					gotDelta = ((MobileFuseAndroid) interceptor).ModifyRequest(data);
+					gotDelta = ((MobileFuseAndroid) interceptor).GetBidRequestDelta(data);
 				}
 				var want = expectedBidResponse.User.Ext["mfx_buyerdata"]["sdk_version"];
 				var got = gotDelta.complexUserExt.Value["sdk_version"];
@@ -458,11 +458,11 @@ namespace Nimbus.Tests {
 				var data = "unity_buyer_uid";
 				if (interceptor.GetType() == typeof(UnityAdsIOS))
 				{
-					gotDelta = ((UnityAdsIOS) interceptor).ModifyRequest(expectedBidResponse, data);
+					gotDelta = ((UnityAdsIOS) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
 				if (interceptor.GetType() == typeof(UnityAdsAndroid))
 				{
-					gotDelta = ((UnityAdsAndroid) interceptor).ModifyRequest(expectedBidResponse, data);
+					gotDelta = ((UnityAdsAndroid) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
 				var want = expectedBidResponse.User.Ext["unity_buyeruid"].ToString();
 				var got = gotDelta.simpleUserExt.Value;
@@ -517,11 +517,11 @@ namespace Nimbus.Tests {
 				var data = "vungle_buyer_uid";
 				if (interceptor.GetType() == typeof(VungleIOS))
 				{
-					gotDelta = ((VungleIOS) interceptor).ModifyRequest(data);
+					gotDelta = ((VungleIOS) interceptor).GetBidRequestDelta(data);
 				}
 				if (interceptor.GetType() == typeof(VungleAndroid))
 				{
-					gotDelta = ((VungleAndroid) interceptor).ModifyRequest(data);
+					gotDelta = ((VungleAndroid) interceptor).GetBidRequestDelta(data);
 				}
 				var want = expectedBidResponse.User.Ext["vungle_buyeruid"].ToString();
 				var got = gotDelta.simpleUserExt.Value;
@@ -561,7 +561,7 @@ namespace Nimbus.Tests {
 				var got = new BidRequestDelta();
 				if (interceptor.GetType() == typeof(SkAdNetworkIOS))
 				{
-					got = ((SkAdNetworkIOS) interceptor).ModifyRequest(expectedBidResponse, "");
+					got = ((SkAdNetworkIOS) interceptor).GetBidRequestDelta(expectedBidResponse, "");
 				}
 				got.impressionExtension.Position = "test";
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
@@ -612,21 +612,21 @@ namespace Nimbus.Tests {
 				#if UNITY_IOS
 					if (interceptor.GetType() == typeof(ApsIOS))
 					{
-						got = ((ApsIOS) interceptor).ModifyRequest(bidRequest, data);
+						got = ((ApsIOS) interceptor).GetBidRequestDelta(bidRequest, data);
 					}
 				#endif
 				if (interceptor.GetType() == typeof(ApsAndroid))
 				{
-					got = ((ApsAndroid) interceptor).ModifyRequest(bidRequest, data);
+					got = ((ApsAndroid) interceptor).GetBidRequestDelta(bidRequest, data);
 				}
 				if (interceptor.GetType() == typeof(MetaAndroid))
 				{
 					data = "meta_buyer_uid";
-					got = ((MetaAndroid) interceptor).ModifyRequest(bidRequest, data);
+					got = ((MetaAndroid) interceptor).GetBidRequestDelta(bidRequest, data);
 				}
 				if (interceptor.GetType() == typeof(SkAdNetworkIOS))
 				{
-					got = ((SkAdNetworkIOS) interceptor).ModifyRequest(bidRequest, "");
+					got = ((SkAdNetworkIOS) interceptor).GetBidRequestDelta(bidRequest, "");
 				}
 				bidRequestDeltas[i] = got;
 				i++;
@@ -696,24 +696,24 @@ namespace Nimbus.Tests {
 				if (interceptor.GetType() == typeof(MetaAndroid))
 				{
 					data = "meta_buyer_uid";
-					got = ((MetaAndroid) interceptor).ModifyRequest(bidRequest, data);
+					got = ((MetaAndroid) interceptor).GetBidRequestDelta(bidRequest, data);
 				}
 				if (interceptor.GetType() == typeof(VungleAndroid))
 				{
 					data = "vungle_buyer_uid";
-					got = ((VungleAndroid) interceptor).ModifyRequest(data);
+					got = ((VungleAndroid) interceptor).GetBidRequestDelta(data);
 				}
 				if (interceptor.GetType() == typeof(MintegralAndroid))
 				{
 					data = "{\"buyeruid\": \"mintegral_buyer_uid\", " +
 					           "\"sdkv\": \"mintegral_sdk_version\"}";
-					got = ((MintegralAndroid) interceptor).ModifyRequest(JObject.Parse(data));
+					got = ((MintegralAndroid) interceptor).GetBidRequestDelta(JObject.Parse(data));
 				}
 				if (interceptor.GetType() == typeof(MobileFuseAndroid))
 				{
 					data = "{\"v\": \"2\", \"mf_adapter\":\"nimbus\", " +
 					       "\"sdk_version\": \"mobilefuse_sdk_version\"}";
-					got = ((MobileFuseAndroid) interceptor).ModifyRequest(data);
+					got = ((MobileFuseAndroid) interceptor).GetBidRequestDelta(data);
 				}
 				bidRequestDeltas[i] = got;
 				i++;

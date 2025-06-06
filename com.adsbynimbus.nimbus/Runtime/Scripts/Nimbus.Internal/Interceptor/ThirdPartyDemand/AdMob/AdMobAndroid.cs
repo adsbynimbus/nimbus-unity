@@ -77,7 +77,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          return "";
       }
       
-      internal BidRequestDelta ModifyRequest(string data)
+      internal BidRequestDelta GetBidRequestDelta(string data)
       {
          return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
          {
@@ -85,13 +85,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          };
       }
       
-      public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+      public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
       {
          return Task<BidRequestDelta>.Run(() =>
          {
             try
             {
-               return ModifyRequest(GetProviderRtbDataFromNativeSDK(bidRequest, type));
+               return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK(bidRequest, type));
             }
             catch (Exception e)
             {

@@ -21,7 +21,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			_appID = appID;
 		}
 		
-		internal BidRequestDelta ModifyRequest(string data) {
+		internal BidRequestDelta GetBidRequestDelta(string data) {
 			AndroidJNI.AttachCurrentThread();
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
@@ -44,13 +44,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			vungle.CallStatic("initialize", _appID);
 		}
 		
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(GetProviderRtbDataFromNativeSDK());
+					return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK());
 				}
 				catch (Exception e)
 				{

@@ -23,7 +23,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		[DllImport("__Internal")]
 		private static extern string _getMintegralRequestModifiers();
 
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
+		internal BidRequestDelta GetBidRequestDelta(BidRequest bidRequest, string data)
 		{
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
@@ -62,13 +62,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		public void InitializeNativeSDK() {
 			_initializeMintegral(_appID, _appKey);
 		}
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type));
+					return GetBidRequestDelta(bidRequest, GetProviderRtbDataFromNativeSDK(type));
 				}
 				catch (Exception e)
 				{

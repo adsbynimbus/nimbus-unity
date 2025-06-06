@@ -14,7 +14,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 		private readonly string _gameID;
 		private readonly bool _testMode;
 		
-		internal BidRequestDelta ModifyRequest(string data) {
+		internal BidRequestDelta GetBidRequestDelta(string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -44,13 +44,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			// No initialization needed
 		}
 		
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(GetProviderRtbDataFromNativeSDK());
+					return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK());
 				}
 				catch (Exception e)
 				{
