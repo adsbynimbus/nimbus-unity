@@ -4,6 +4,6 @@ using OpenRTB.Request;
 
 namespace Nimbus.Internal.Interceptor {
 	public interface IInterceptor {
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest);
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest);
 	}
 }

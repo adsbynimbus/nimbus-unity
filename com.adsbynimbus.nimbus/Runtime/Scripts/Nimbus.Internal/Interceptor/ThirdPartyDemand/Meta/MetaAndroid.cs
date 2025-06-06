@@ -13,12 +13,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 		private readonly string _appID;
 		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
-
-		public MetaAndroid(string appID) {
-			_appID = appID;
-		}
 		
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta GetBidRequestDelta(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
@@ -56,13 +52,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			meta.CallStatic("initialize", _applicationContext, _appID);
 		}
 		
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return GetBidRequestDelta(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
 				}
 				catch (Exception e)
 				{

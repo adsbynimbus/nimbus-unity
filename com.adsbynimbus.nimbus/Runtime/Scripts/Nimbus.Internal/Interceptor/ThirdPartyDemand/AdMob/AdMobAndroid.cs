@@ -12,36 +12,28 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
    {
       private const string NimbusAdMobPackage = "com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal";
 
-      private readonly string _appID;
-      private readonly bool _enableTestMode;
       private readonly bool _testMode;
       private readonly ThirdPartyAdUnit[] _adUnitIds;
       private AdUnitType _adUnitType;
-      private string _adUnitId;
-      private readonly AndroidJavaObject _applicationContext;
 
 
-      public AdMobAndroid(AndroidJavaObject applicationContext, string appID, ThirdPartyAdUnit[] adUnitIds,
-         bool enableTestMode)
+      public AdMobAndroid(ThirdPartyAdUnit[] adUnitIds)
       {
-         _applicationContext = applicationContext;
-         _appID = appID;
          _adUnitIds = adUnitIds;
-         _enableTestMode = enableTestMode;
       }
+      
 
       public void InitializeNativeSDK()
       {
          //do nothing
       }
 
-      internal string GetAdUnitId(AdUnitType type, bool isFullScreen)
+      private string GetAdUnitId(AdUnitType type)
       {
          foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
          {
             if (adUnit.AdUnitType == type)
             {
-               _adUnitId = adUnit.AdUnitId;
                _adUnitType = type;
                return adUnit.AdUnitId;
             }
@@ -50,19 +42,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          return "";
       }
 
-      internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
+      internal String GetProviderRtbDataFromNativeSDK(BidRequest bidRequest, AdUnitType type)
       {
-         var bidRequestDelta = new BidRequestDelta();
-         if (data.IsNullOrEmpty())
-         {
-            return bidRequestDelta;
-         }
-
-         // data is the adUnitId
          try
          {
             var adMobSignal = "";
-            var args = new object[] { data };
+            var args = new object[] { GetAdUnitId(type) };
             switch (_adUnitType)
             {
                case AdUnitType.Banner:
@@ -82,23 +67,31 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
                      "fetchAdMobRewardedSignal", args, 500L);
                   break;
             }
-            bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", adMobSignal);
+            return adMobSignal;
          }
          catch (Exception e)
          {
             Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
          }
 
-         return bidRequestDelta;
+         return "";
       }
       
-      public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+      internal BidRequestDelta GetBidRequestDelta(string data)
+      {
+         return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
+         {
+            simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
+         };
+      }
+      
+      public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
       {
          return Task<BidRequestDelta>.Run(() =>
          {
             try
             {
-               return ModifyRequest(bidRequest, GetAdUnitId(type, isFullScreen));
+               return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK(bidRequest, type));
             }
             catch (Exception e)
             {
