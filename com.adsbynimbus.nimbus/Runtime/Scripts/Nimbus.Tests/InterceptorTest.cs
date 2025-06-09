@@ -179,7 +179,7 @@ namespace Nimbus.Tests {
 						"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
 				}
 				var got = new BidRequestDelta();
-				#if UNITY_IOS
+				#if UNITY_IOS && NIMBUS_ENABLE_APS
 					if (interceptor.GetType() == typeof(ApsIOS))
 					{
 						got = ((ApsIOS) interceptor).ModifyRequest(bidRequest, data);

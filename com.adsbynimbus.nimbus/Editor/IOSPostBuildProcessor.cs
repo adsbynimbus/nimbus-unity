@@ -103,7 +103,7 @@ post_install do |installer|
     'UnityAds',
 	'NimbusLiveRampKit',
 	'LRAtsSDK',
-	'MolocoSDKiOS'
+	'MolocoSDK',
 	'NimbusMolocoKit'
   ]
 

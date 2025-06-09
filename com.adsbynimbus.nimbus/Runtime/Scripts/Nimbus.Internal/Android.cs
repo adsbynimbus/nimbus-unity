@@ -8,6 +8,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -40,6 +41,8 @@ namespace Nimbus.Internal {
 		private string _sessionId;
 		
 		private ThirdPartyAdUnit[] mintegralAdUnits;
+		
+		private ThirdPartyAdUnit[] molocolAdUnits;
 		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
@@ -106,6 +109,14 @@ namespace Nimbus.Internal {
 				var mobileFuse = new MobileFuseAndroid();
 				// No Initialization Needed
 				_interceptors.Add(mobileFuse);
+			#endif
+			#if NIMBUS_ENABLE_MOLOCO
+				Debug.unityLogger.Log("Initializing Android Moloco SDK");
+				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
+				molocolAdUnits = molocoAdUnitIds;
+				var moloco = new MolocoAndroid(applicationContext, molocoAppKey, molocoAdUnitIds, configuration.enableSDKInTestMode);
+				moloco.InitializeNativeSDK();
+				_interceptors.Add(moloco);
 			#endif
 		}
 

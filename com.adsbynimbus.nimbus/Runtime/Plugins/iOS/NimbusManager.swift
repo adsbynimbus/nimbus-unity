@@ -3,7 +3,7 @@
 //  NimbusManager.swift
 //
 //  Created by Bruno Bruggemann on 5/7/21.
-//  Copyright © 2021 AdsByNimbus. All rights reserved.
+//  Copyright © 2025 AdsByNimbus. All rights reserved.
 //
 
 import Foundation
@@ -220,7 +220,7 @@ import MolocoSDK
     
     #if NIMBUS_ENABLE_MOLOCO
         @objc public class func initializeMoloco(appKey: String) {
-            MolocoSDK.Moloco.shared.initialize(initParams: .init(appKey: molocoAppKey)) { done, error in
+            MolocoSDK.Moloco.shared.initialize(initParams: .init(appKey: appKey)) { done, error in
                 if let error {
                     Nimbus.shared.logger.log("Moloco initialization failed: \(error)", level: .error)
                 } else {
@@ -231,13 +231,10 @@ import MolocoSDK
         }
         
         @objc public class func fetchMolocoToken() -> String {
-            do {
-                let group = DispatchGroup()
-                group.wait(for: {token = try await MolocoRequestBridge().bidToken})
-                return token
-            } catch (let e) {
-                Nimbus.shared.logger.log("Unable to fetch Moloco token: \(e)", level: .error)
-            }
+            var token = ""
+            let group = DispatchGroup()
+            group.wait(for: {token = try await MolocoRequestBridge().bidToken})
+            return token
         }
     #endif
     
@@ -437,6 +434,8 @@ extension NimbusManager: AdControllerDelegate {
         case .destroyed:
             eventName = "DESTROYED"
             removeReferenceFromManagerDictionary()
+        case .endCardImpression:
+            eventName = "END_CARD_IMPRESSION"
         @unknown default:
             print("Ad Event not sent: \(event)")
             return

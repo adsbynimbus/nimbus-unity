@@ -33,7 +33,7 @@ extern "C" {
                     double closeButtonDelay, 
                     const char* mintegralAdUnitId,
                     const char* mintegralAdUnitPlacementId,
-                    const char* molocoAdUnitId,) {
+                    const char* molocoAdUnitId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
             mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)

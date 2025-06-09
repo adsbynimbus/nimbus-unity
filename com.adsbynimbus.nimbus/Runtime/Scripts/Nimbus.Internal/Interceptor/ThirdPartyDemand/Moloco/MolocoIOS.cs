@@ -10,7 +10,7 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
 	#if UNITY_IOS && NIMBUS_ENABLE_MOLOCO
 	internal class MolocoIOS : IInterceptor, IProvider {
 		private readonly string _appKey;
