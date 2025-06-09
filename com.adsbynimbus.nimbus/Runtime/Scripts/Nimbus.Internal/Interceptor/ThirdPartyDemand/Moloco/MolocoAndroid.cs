@@ -12,56 +12,34 @@ using UnityEngine;
 
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 	internal class MolocoAndroid : IInterceptor, IProvider {
-		private const string NimbusMolocoPackage = "com.adsbynimbus.request.MolocoDemandProvider";
+		private const string NimbusMolocoPackage = "com.moloco.sdk.publisher.Moloco";
 
 		private readonly string _appKey;
 		private readonly bool _enableTestMode;
 		private readonly bool _testMode;
-		private readonly ThirdPartyAdUnit[] _adUnitIds;
-		private AdUnitType _adUnitType;
-		private string _adUnitId;
-		private string _adUnitPlacementId;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public MolocoAndroid(AndroidJavaObject applicationContext, string appKey, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
+		public MolocoAndroid(AndroidJavaObject applicationContext, string appKey, bool enableTestMode) {
 			_applicationContext = applicationContext;
 			_appKey = appKey;
-			_adUnitIds = adUnitIds;
 			_enableTestMode = enableTestMode;
 		}
 		
 		public void InitializeNativeSDK() {
 			try
 			{
-				var mintegralDemandClass = new AndroidJavaClass(NimbusMolocoPackage);
-				mintegralDemandClass.CallStatic("initialize", _appKey);
+				var molocoMediationInfoObj = new AndroidJavaObject("com.moloco.sdk.publisher.MediationInfo", "none");
+				var molocoInitObj = new AndroidJavaObject("com.moloco.sdk.publisher.MolocoInitParams", _applicationContext, _appKey, molocoMediationInfoObj);
+				var molocoClass = new AndroidJavaClass(NimbusMolocoPackage);
+				molocoClass.CallStatic("initialize", molocoInitObj);
 			}
 			catch (AndroidJavaException e)
 			{
-				Debug.unityLogger.Log("Mintegral Initialization ERROR", e.Message);
+				Debug.unityLogger.Log("Moloco Initialization ERROR", e.Message);
 			}
-
 		}
 		
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
-			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
-			{
-				if (adUnit.AdUnitType == type)
-				{
-					_adUnitId = adUnit.AdUnitId;
-					_adUnitPlacementId = adUnit.AdUnitPlacementId;
-					_adUnitType = type;
-					return adUnit.AdUnitId;
-				}
-			}
-			return "";
-		}
-		
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
-			var bidRequestDelta = new BidRequestDelta();
-			if (data.IsNullOrEmpty()) {
-				return bidRequestDelta;
-			}
+		internal string GetMolocoToken() {
 			try
 			{
 				AndroidJNI.AttachCurrentThread();
@@ -69,15 +47,24 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 				var buyerId = molocoBidManager.CallStatic<string>("getBuyerUid", _applicationContext);
 				if (buyerId != null)
 				{
-					bidRequestDelta.simpleUserExt = 
-						new KeyValuePair<string, string> ("moloco_buyeruid", buyerId);			
+					return buyerId;			
 				}
 			}
 			catch (AndroidJavaException e)
 			{
-				Debug.unityLogger.Log("Mintegral ERROR", e.Message);
+				Debug.unityLogger.Log("Moloco Token ERROR", e.Message);
 			}
 
+			return "";
+		}
+		
+		internal BidRequestDelta GetBidRequestDelta(string data) {
+			var bidRequestDelta = new BidRequestDelta();
+			if (data.IsNullOrEmpty()) {
+				return bidRequestDelta;
+			}
+			bidRequestDelta.simpleUserExt = 
+				new KeyValuePair<string, string> ("moloco_buyeruid", data);	
 			return bidRequestDelta;
 		}
 		
@@ -87,7 +74,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return GetBidRequestDelta(GetMolocoToken());
 				}
 				catch (Exception e)
 				{

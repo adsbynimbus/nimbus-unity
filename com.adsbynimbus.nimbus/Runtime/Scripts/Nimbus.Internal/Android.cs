@@ -114,7 +114,7 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing Android Moloco SDK");
 				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
 				molocolAdUnits = molocoAdUnitIds;
-				var moloco = new MolocoAndroid(applicationContext, molocoAppKey, molocoAdUnitIds, configuration.enableSDKInTestMode);
+				var moloco = new MolocoAndroid(applicationContext, molocoAppKey, configuration.enableSDKInTestMode);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
 			#endif
@@ -134,6 +134,7 @@ namespace Nimbus.Internal {
 			}
 			var mintegralAdUnitId = "";
 			var mintegralAdUnitPlacementId = "";
+			var molocoAdUnitId = "";
 			#if NIMBUS_ENABLE_MINTEGRAL
 				try
 				{
@@ -147,8 +148,20 @@ namespace Nimbus.Internal {
 					Debug.unityLogger.LogException(e);
 				}
 			#endif
+			#if NIMBUS_ENABLE_MOLOCO
+				try
+				{
+					var molocoAdUnit =
+						molocolAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+					molocoAdUnitId = molocoAdUnit.AdUnitId;
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.LogException(e);
+				}
+			#endif
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
-				listener, mintegralAdUnitId, mintegralAdUnitPlacementId);
+				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId);
 		}
 		
 		internal override string GetSessionID() {

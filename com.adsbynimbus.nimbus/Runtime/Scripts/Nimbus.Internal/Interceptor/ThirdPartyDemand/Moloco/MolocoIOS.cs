@@ -16,9 +16,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
 		private readonly string _appKey;
 		private readonly bool _testMode;
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
-		private AdUnitType _type;
-		private string _adUnitId = "";
-		private string _adUnitPlacementId = "";
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeMoloco(string appKey);
@@ -32,34 +29,25 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
 			_testMode = enableTestMode;
 		}
 
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data)
+		internal BidRequestDelta GetBidRequestDelta(string data)
 		{
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
-			}
-
-			var molocoToken = _fetchMolocoToken();
-			if (molocoToken != null)
-			{
-				bidRequestDelta.simpleUserExt = 
-					new KeyValuePair<string, string> ("moloco_buyeruid", molocoToken);			
-			}
+			} 
+			bidRequestDelta.simpleUserExt = 
+					new KeyValuePair<string, string> ("moloco_buyeruid", data);			
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetMolocoToken()
 		{
-			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
+			var molocoToken = _fetchMolocoToken();
+			if (molocoToken != null)
 			{
-				if (adUnit.AdUnitType == type)
-				{
-					_adUnitId = adUnit.AdUnitId;
-					_adUnitPlacementId = adUnit.AdUnitPlacementId;
-					_type = type;
-					return adUnit.AdUnitId;
-				}
+				return molocoToken;
 			}
+
 			return "";
 		}
 
@@ -72,7 +60,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return GetBidRequestDelta(GetMolocoToken());
 				}
 				catch (Exception e)
 				{
