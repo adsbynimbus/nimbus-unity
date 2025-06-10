@@ -504,7 +504,7 @@ namespace Nimbus.Runtime.Scripts {
 			var interceptorTasks = new List<Task<BidRequestDelta>>();
 			foreach (var interceptor in _nimbusPlatformAPI.Interceptors())
 			{
-				interceptorTasks.Add(interceptor.ModifyRequestAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(2000));
+				interceptorTasks.Add(interceptor.GetBidRequestDeltaAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(2000));
 			}
 			try
 			{

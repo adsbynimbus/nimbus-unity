@@ -38,7 +38,7 @@ namespace Nimbus.Internal.Interceptor {
 			return "";
 		}
 
-		public BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		public BidRequestDelta GetBidRequestDelta(BidRequest bidRequest, string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (_skAdNetwork == null || _skAdNetwork.SkadnetIds.Length == 0) {
 				return bidRequestDelta;
@@ -58,13 +58,13 @@ namespace Nimbus.Internal.Interceptor {
 			return bidRequestDelta;
 		}
 		
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return GetBidRequestDelta(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
 				}
 				catch (Exception e)
 				{
