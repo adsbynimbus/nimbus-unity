@@ -42,7 +42,7 @@ namespace Nimbus.Internal {
 		
 		private ThirdPartyAdUnit[] mintegralAdUnits;
 		
-		private ThirdPartyAdUnit[] molocolAdUnits;
+		private ThirdPartyAdUnit[] molocoAdUnits;
 		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
@@ -113,7 +113,7 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_MOLOCO
 				Debug.unityLogger.Log("Initializing Android Moloco SDK");
 				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
-				molocolAdUnits = molocoAdUnitIds;
+				molocoAdUnits = molocoAdUnitIds;
 				var moloco = new MolocoAndroid(applicationContext, molocoAppKey, configuration.enableSDKInTestMode);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
@@ -152,7 +152,7 @@ namespace Nimbus.Internal {
 				try
 				{
 					var molocoAdUnit =
-						molocolAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
 					molocoAdUnitId = molocoAdUnit.AdUnitId;
 				}
 				catch (Exception e)

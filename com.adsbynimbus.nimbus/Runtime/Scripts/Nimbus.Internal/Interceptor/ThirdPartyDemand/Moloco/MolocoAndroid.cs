@@ -12,7 +12,6 @@ using UnityEngine;
 
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 	internal class MolocoAndroid : IInterceptor, IProvider {
-		private const string NimbusMolocoPackage = "com.moloco.sdk.publisher.Moloco";
 
 		private readonly string _appKey;
 		private readonly bool _enableTestMode;
@@ -29,8 +28,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 			try
 			{
 				var molocoMediationInfoObj = new AndroidJavaObject("com.moloco.sdk.publisher.MediationInfo", "none");
-				var molocoInitObj = new AndroidJavaObject("com.moloco.sdk.publisher.MolocoInitParams", _applicationContext, _appKey, molocoMediationInfoObj);
-				var molocoClass = new AndroidJavaClass(NimbusMolocoPackage);
+				var molocoInitObj = new AndroidJavaObject("com.moloco.sdk.publisher.init.MolocoInitParams", _applicationContext, _appKey, molocoMediationInfoObj);
+				var molocoClass = new AndroidJavaClass("com.moloco.sdk.publisher.Moloco");
 				molocoClass.CallStatic("initialize", molocoInitObj);
 			}
 			catch (AndroidJavaException e)
@@ -43,8 +42,10 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 			try
 			{
 				AndroidJNI.AttachCurrentThread();
-				var molocoBidManager = new AndroidJavaClass("com.mbridge.msdk.mbbid.out.BidManager");
-				var buyerId = molocoBidManager.CallStatic<string>("getBuyerUid", _applicationContext);
+				var args = new object[] {};
+				var buyerId = BridgeHelpers.GetStringFromJavaFuture(
+					"com.adsbynimbus.request.internal.NimbusRequestsMolocoInternal",
+					"token", args, 1000L);
 				if (buyerId != null)
 				{
 					return buyerId;			
@@ -60,11 +61,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 		
 		internal BidRequestDelta GetBidRequestDelta(string data) {
 			var bidRequestDelta = new BidRequestDelta();
-			if (data.IsNullOrEmpty()) {
+			var jsonObject = JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject;
+			if (jsonObject == null || data.IsNullOrEmpty() || !jsonObject.ContainsKey("first")) {
 				return bidRequestDelta;
 			}
 			bidRequestDelta.simpleUserExt = 
-				new KeyValuePair<string, string> ("moloco_buyeruid", data);	
+				new KeyValuePair<string, string> ("moloco_buyeruid", jsonObject["first"].ToString());	
 			return bidRequestDelta;
 		}
 		
@@ -78,7 +80,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 				}
 				catch (Exception e)
 				{
-					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
+					Debug.unityLogger.Log("Moloco ERROR", e.Message);
 					return null;
 				}
 			});
