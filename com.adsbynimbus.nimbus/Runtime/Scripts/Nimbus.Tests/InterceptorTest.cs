@@ -572,6 +572,7 @@ namespace Nimbus.Tests {
 		
 		[Test]
 		public void TestMultipleImpExtInterceptors() {
+			#if UNITY_IOS && NIMBUS_ENABLE_META && NIMBUS_ENABLE_APS
 			var interceptors = new IInterceptor[] {
 				new SkAdNetworkIOS(MockData.PlistDataRaw()),
 				
