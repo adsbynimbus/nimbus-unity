@@ -8,7 +8,19 @@ env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
 jobs:
-          
+  requestManualActivationFile:
+    name: Request manual activation file 🔑
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: game-ci/unity-request-activation-file@v4
+        id: getManualLicenseFile
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Manual Activation File
+          path: ${{ steps.getManualLicenseFile.outputs.filePath }}        
   testRunnerInAllModes:
     name: Test in ${{ matrix.testMode }} ✨
     runs-on: ubuntu-latest
