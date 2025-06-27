@@ -6,6 +6,7 @@ jobs:
   test:
     name: Test my project 🧪
     runs-on: ubuntu-latest
+    
     steps:
       # Checkout
       - name: Checkout repository
@@ -22,7 +23,7 @@ jobs:
             Library-
 
       - name: Apply csc.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> Assets/csc.rsp
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
 
       # Test
       - name: Run tests
