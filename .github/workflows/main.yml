@@ -21,6 +21,9 @@ jobs:
           restore-keys: |
             Library-
 
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> Assets/csc.rsp
+
       # Test
       - name: Run tests
         uses: game-ci/unity-test-runner@v4
