@@ -38,7 +38,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   buildPlatforms:
-    name: Build for ${{ matrix.targetPlatform }}✨
+    name: Build for ${{ matrix.targetPlatform }} Unity Version ${{ matrix.targetPlatform }}✨
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
