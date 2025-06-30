@@ -38,7 +38,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   buildPlatforms:
-    name: Build for ${{ matrix.targetPlatform }} Unity Version ${{ matrix.unityVersion }}✨
+    name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -51,6 +51,9 @@ jobs:
         unityVersion:
           - 6000.0.26f1
           - auto
+        #excluding Android auto because building to APK breaks because of older Unity Versions
+        exclude:
+          - Android: auto
     steps:
       # Checkout
       - name: Checkout repository
