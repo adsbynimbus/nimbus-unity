@@ -53,7 +53,9 @@ jobs:
           - auto
         #excluding Android auto because building to APK breaks because of older Unity Versions
         exclude:
-          - Android: auto
+          - targetPlatform: Android
+            unityVersion: auto
+            
     steps:
       # Checkout
       - name: Checkout repository
