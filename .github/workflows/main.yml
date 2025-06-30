@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   test:
-    name: Test my project 🧪
+    name: Run Unit Tests 🧪
     runs-on: ubuntu-latest
     
     steps:
@@ -48,6 +48,9 @@ jobs:
         targetPlatform:
           - Android # Build an Android player.
           - iOS # Build an iOS player.
+        unityVersion:
+          - 6000.0.26f1
+          - auto
     steps:
       # Checkout
       - name: Checkout repository
@@ -75,6 +78,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          unityVersion: ${{ matrix.unityVersion }}
           projectPath: ${{ matrix.projectPath }}
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
