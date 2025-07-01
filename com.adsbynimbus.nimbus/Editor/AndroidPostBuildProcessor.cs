@@ -34,6 +34,10 @@ namespace Nimbus.Editor {
 			dependencies {
 			    constraints {
 			        implementation(""androidx.collection:collection:1.4.5"")
+					implementation(""androidx.collection:collection-ktx:1.4.5"")
+					if (androidComponents.pluginVersion.major < 8) {
+						implementation(""androidx.fragment:fragment:1.7.1"")
+					}
 			    }
 			}
 			// Force Play Services Ads Indentifier to 18.1.0 if using Java 8
