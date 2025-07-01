@@ -69,6 +69,8 @@ jobs:
       # Apply Pre Processor Symbols (Compiler options)      
       - name: Apply csc.rsp (pre-processor symbols)
         run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+      - name: Ensure plugin directory exist
+        run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
       # Build
       - name: Build project
         uses: game-ci/unity-builder@v4
