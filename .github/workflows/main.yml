@@ -5,7 +5,8 @@ on: [pull_request]
 jobs:
   test:
     name: Run Unit Tests 🧪
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       # Checkout
       - name: Checkout repository
