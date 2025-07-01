@@ -18,9 +18,11 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: sample-app/Library
-          key: Library-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          key: Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
           restore-keys: |
-            Library-      
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-test-
+            Library-
       # Apply Pre Processor Symbols (Compiler options) 
       - name: Apply csc.rsp (pre-processor symbols)
         run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
@@ -58,8 +60,11 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: sample-app/Library
-          key: Library-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          key: Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
           restore-keys: |
+            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
+            Library-${{ matrix.targetPlatform }}-
             Library-
       # Apply Pre Processor Symbols (Compiler options)      
       - name: Apply csc.rsp (pre-processor symbols)
