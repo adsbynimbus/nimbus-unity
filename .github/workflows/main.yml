@@ -20,7 +20,6 @@ jobs:
           path: sample-app/Library
           key: Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
           restore-keys: |
-            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
             Library-test-
             Library-
       # Apply Pre Processor Symbols (Compiler options) 
@@ -39,6 +38,7 @@ jobs:
 
   buildPlatforms:
     name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
+    needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -62,9 +62,9 @@ jobs:
           path: sample-app/Library
           key: Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
           restore-keys: |
-            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
             Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
             Library-${{ matrix.targetPlatform }}-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
             Library-
       # Apply Pre Processor Symbols (Compiler options)      
       - name: Apply csc.rsp (pre-processor symbols)
