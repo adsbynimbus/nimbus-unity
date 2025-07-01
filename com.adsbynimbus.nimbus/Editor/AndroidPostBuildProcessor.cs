@@ -1,7 +1,7 @@
 #if UNITY_EDITOR && UNITY_ANDROID
 using System.IO;
+using System.Linq;
 using System.Text;
-using Nimbus.Internal.Utility;
 using UnityEditor.Android;
 
 namespace Nimbus.Editor {
@@ -162,13 +162,11 @@ namespace Nimbus.Editor {
 				apsBuildWriter.Close();
 			#endif
 		}
-		private static void WriteGradleProps(string gradleFile) {
-			var propWriter = File.AppendText(gradleFile);
-			propWriter.WriteLine(@"
-				android.useAndroidX=true
-				");
-			propWriter.Flush();
-			propWriter.Close();
+		private static void WriteGradleProps(string gradleFile)
+		{
+			var gradleProps = File.ReadAllLines(gradleFile).ToList()
+				.Where(s => !s.Equals("android.enableJetifier=true"));
+			File.WriteAllLines(gradleFile, gradleProps);
 		}
 
 		private static void RunEdm4uCheck(string path)
