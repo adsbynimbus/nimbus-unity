@@ -62,8 +62,8 @@ jobs:
       # Cache
       - uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          path: sample-app/Library
+          key: Library-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
           restore-keys: |
             Library-
       
