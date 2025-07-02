@@ -23,8 +23,8 @@ jobs:
             Library-test-
             Library-
       # Apply Pre Processor Symbols (Compiler options) 
-      - name: Apply csc.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+      - name: Apply nimbus.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/nimbus.rsp
       # Test
       - name: Run tests
         uses: game-ci/unity-test-runner@v4
@@ -68,7 +68,7 @@ jobs:
             Library-
       # Apply Pre Processor Symbols (Compiler options)      
       - name: Apply nimbus.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/nimbus.rsp
       - name: Ensure plugin directory exist
         run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
       # Build

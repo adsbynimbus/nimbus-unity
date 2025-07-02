@@ -615,6 +615,7 @@ namespace Nimbus.Tests {
 				var (expectedBidResponse, interceptor) = tt;
 				// extensions are only added if the imp data has been initialized already
 				var gotDelta = new BidRequestDelta();
+				var androidData = "{\"first\":\"moloco_buyer_uid\"}";
 				var data = "moloco_buyer_uid";
 				if (interceptor.GetType() == typeof(MolocoIOS))
 				{
@@ -622,7 +623,7 @@ namespace Nimbus.Tests {
 				}
 				if (interceptor.GetType() == typeof(MolocoAndroid))
 				{
-					gotDelta = ((MolocoAndroid) interceptor).GetBidRequestDelta(data);
+					gotDelta = ((MolocoAndroid) interceptor).GetBidRequestDelta(androidData);
 				}
 				var want = expectedBidResponse.User.Ext["moloco_buyeruid"].ToString();
 				var got = gotDelta.simpleUserExt.Value;
