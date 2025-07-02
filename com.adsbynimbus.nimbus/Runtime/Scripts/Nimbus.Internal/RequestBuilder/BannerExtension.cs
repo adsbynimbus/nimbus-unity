@@ -8,7 +8,7 @@ namespace Nimbus.Internal.RequestBuilder {
 		private static readonly Api[] DefaultApis = { Api.Mraid1, Api.Mraid2, Api.Mraid3, Api.Omid };
 
 		public static Banner Interstitial(this Banner banner) {
-			var size = Input.deviceOrientation == DeviceOrientation.Portrait
+			var size = Screen.orientation == ScreenOrientation.Portrait
 				? IabSupportedAdSizes.FullScreenPortrait
 				: IabSupportedAdSizes.FullScreenLandscape;
 			var (width, height) = size.ToWidthAndHeight();
@@ -24,7 +24,7 @@ namespace Nimbus.Internal.RequestBuilder {
 			// if the publisher intends for one of the full screen ad sizes, flip ensure the correct orientation is used
 			// warning" this may break if the inverse placements aren't set up in the database
 			if (size == IabSupportedAdSizes.FullScreenLandscape || size == IabSupportedAdSizes.FullScreenPortrait)
-				size = Input.deviceOrientation == DeviceOrientation.Portrait
+				size = Screen.orientation == ScreenOrientation.Portrait
 					? IabSupportedAdSizes.FullScreenPortrait
 					: IabSupportedAdSizes.FullScreenLandscape;
 

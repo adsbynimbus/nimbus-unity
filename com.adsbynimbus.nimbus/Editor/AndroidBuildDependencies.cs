@@ -54,5 +54,10 @@ namespace Nimbus.Editor {
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-liveramp:{SdkVersion}"")";
 		}
+		
+		public static string MolocoBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-moloco:{SdkVersion}"")";
+		}
 	}
 }

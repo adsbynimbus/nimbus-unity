@@ -8,6 +8,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -40,6 +41,8 @@ namespace Nimbus.Internal {
 		private string _sessionId;
 		
 		private ThirdPartyAdUnit[] mintegralAdUnits;
+		
+		private ThirdPartyAdUnit[] molocoAdUnits;
 		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
@@ -107,6 +110,14 @@ namespace Nimbus.Internal {
 				// No Initialization Needed
 				_interceptors.Add(mobileFuse);
 			#endif
+			#if NIMBUS_ENABLE_MOLOCO
+				Debug.unityLogger.Log("Initializing Android Moloco SDK");
+				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
+				molocoAdUnits = molocoAdUnitIds;
+				var moloco = new MolocoAndroid(applicationContext, molocoAppKey, configuration.enableSDKInTestMode);
+				moloco.InitializeNativeSDK();
+				_interceptors.Add(moloco);
+			#endif
 		}
 
 
@@ -123,6 +134,7 @@ namespace Nimbus.Internal {
 			}
 			var mintegralAdUnitId = "";
 			var mintegralAdUnitPlacementId = "";
+			var molocoAdUnitId = "";
 			#if NIMBUS_ENABLE_MINTEGRAL
 				try
 				{
@@ -136,8 +148,20 @@ namespace Nimbus.Internal {
 					Debug.unityLogger.LogException(e);
 				}
 			#endif
+			#if NIMBUS_ENABLE_MOLOCO
+				try
+				{
+					var molocoAdUnit =
+						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+					molocoAdUnitId = molocoAdUnit.AdUnitId;
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.LogException(e);
+				}
+			#endif
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
-				listener, mintegralAdUnitId, mintegralAdUnitPlacementId);
+				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId);
 		}
 		
 		internal override string GetSessionID() {

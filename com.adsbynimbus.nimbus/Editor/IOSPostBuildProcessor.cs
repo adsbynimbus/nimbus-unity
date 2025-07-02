@@ -57,6 +57,10 @@ namespace Nimbus.Editor {
 				Dependencies.Add("'NimbusMobileFuseKit'");
 			#endif
 			
+			#if NIMBUS_ENABLE_MOLOCO
+				Dependencies.Add("'NimbusMolocoKit'");
+			#endif
+			
 			var path = buildPath + "/Podfile";
 			if (!File.Exists(path)) {
 				CreatePodfile(buildPath);
@@ -98,7 +102,9 @@ post_install do |installer|
     'MTGSDKReward',
     'UnityAds',
 	'NimbusLiveRampKit',
-	'LRAtsSDK'
+	'LRAtsSDK',
+	'MolocoSDK',
+	'NimbusMolocoKit'
   ]
 
   main_project = installer.aggregate_targets.first.user_project
@@ -231,7 +237,11 @@ end";
 				flags.Add("NIMBUS_ENABLE_MOBILEFUSE");
 			#endif
 			
-			#if NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE
+			#if NIMBUS_ENABLE_MOLOCO
+				flags.Add("NIMBUS_ENABLE_MOLOCO");
+			#endif
+			
+			#if NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_MOLOCO
 				flags.Add("NIMBUS_ENABLE_SDK_DEMAND");
 			#endif
 			

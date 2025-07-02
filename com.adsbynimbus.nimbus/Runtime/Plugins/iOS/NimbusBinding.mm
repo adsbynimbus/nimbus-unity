@@ -32,10 +32,12 @@ extern "C" {
                     bool isRewarded,
                     double closeButtonDelay, 
                     const char* mintegralAdUnitId,
-                    const char* mintegralAdUnitPlacementId) {
+                    const char* mintegralAdUnitPlacementId,
+                    const char* molocoAdUnitId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
-            mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)];
+            mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)
+            molocoAdUnitId:GetStringParam(molocoAdUnitId)];
     }
 
     void _destroyAd(int adUnitInstanceId) {
@@ -164,6 +166,7 @@ extern "C" {
         return strdup([[NimbusManager fetchUnityAdsToken] UTF8String]);
     }
 #endif
+
 #if NIMBUS_ENABLE_MOBILEFUSE
     void _initializeMobileFuse() {
         [NimbusManager initializeMobileFuse];
@@ -171,6 +174,16 @@ extern "C" {
     
     const char* _fetchMobileFuseToken() {
         return strdup([[NimbusManager fetchMobileFuseToken] UTF8String]);
+    }
+#endif
+
+#if NIMBUS_ENABLE_MOLOCO
+    void _initializeMoloco(const char* appKey) {
+        [NimbusManager initializeMolocoWithAppKey: GetStringParam(appKey)];
+    }
+    
+    const char* _fetchMolocoToken() {
+        return strdup([[NimbusManager fetchMolocoToken] UTF8String]);
     }
 #endif
 

@@ -70,6 +70,15 @@ namespace Nimbus.Editor {
 		private SerializedProperty _androidUnityAdsGameId;
 		private SerializedProperty _iosUnityAdsGameId;
 		
+		// Moloco
+		private SerializedProperty _androidMolocoAppKey;
+		private ReorderableList _androidMolocoAdUnitDataList = null;
+		private SerializedProperty _androidMolocoAdUnitData = null;
+		
+		private SerializedProperty _iosMolocoAppKey;
+		private ReorderableList _iosMolocoAdUnitDataList = null;
+		private SerializedProperty _iosMolocoAdUnitData = null;
+		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -183,7 +192,7 @@ namespace Nimbus.Editor {
 			_iosMintegralAppKey = serializedObject.FindProperty("iosMintegralAppKey");
 			_iosMintegralAdUnitData = serializedObject.FindProperty("iosMintegralAdUnitData");
 			_iosMintegralAdUnitDataList = new ReorderableList(
-				serializedObject, _iosAdMobAdUnitData,
+				serializedObject, _iosMintegralAdUnitData,
 				true,
 				false,
 				true,
@@ -200,6 +209,37 @@ namespace Nimbus.Editor {
 			
 			// IOS Unity Ads UI
 			_iosUnityAdsGameId = serializedObject.FindProperty("iosUnityAdsGameID");
+			
+			//Moloco
+			// Android Moloco UI
+			_androidMolocoAppKey = serializedObject.FindProperty("androidMolocoAppKey");
+			_androidMolocoAdUnitData = serializedObject.FindProperty("androidMolocoAdUnitData");
+			_androidMolocoAdUnitDataList = new ReorderableList(
+				serializedObject, _androidMolocoAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_androidMolocoAdUnitData.isExpanded = true;
+			_androidMolocoAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_androidMolocoAdUnitDataList.headerHeight = 0f;
+			_androidMolocoAdUnitDataList.drawElementCallback += OnDrawElementMolocoAndroidAdUnitData;
+			
+			// IOS Moloco UI
+			_iosMolocoAppKey = serializedObject.FindProperty("iosMolocoAppKey");
+			_iosMolocoAdUnitData = serializedObject.FindProperty("iosMolocoAdUnitData");
+			_iosMolocoAdUnitDataList = new ReorderableList(
+				serializedObject, _iosMolocoAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_iosMolocoAdUnitData.isExpanded = true;
+			_iosMolocoAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_iosMolocoAdUnitDataList.headerHeight = 0f;
+			_iosMolocoAdUnitDataList.drawElementCallback += OnDrawElementMolocoIOSAdUnitData;
 		}
 
 
@@ -210,6 +250,8 @@ namespace Nimbus.Editor {
 			_iosAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobIOSAdUnitData;
 			_androidMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralAndroidAdUnitData;
 			_iosMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralIOSAdUnitData;
+			_androidMolocoAdUnitDataList.drawElementCallback -= OnDrawElementMolocoAndroidAdUnitData;
+			_iosMolocoAdUnitDataList.drawElementCallback -= OnDrawElementMolocoIOSAdUnitData;
 		}
 
 		private void OnDrawElementApsAndroidSlotData(Rect rect, int index, bool isActive, bool isFocused) {
@@ -323,6 +365,44 @@ namespace Nimbus.Editor {
 				fieldRect.y += fieldRect.height;
 			}
 		}
+		
+		private void OnDrawElementMolocoAndroidAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _androidMolocoAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
+		
+		private void OnDrawElementMolocoIOSAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _iosMolocoAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
 
 		private void OnGUI() {
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
@@ -336,7 +416,7 @@ namespace Nimbus.Editor {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -495,6 +575,28 @@ namespace Nimbus.Editor {
 				#endif
 			#endif
 			
+			#if NIMBUS_ENABLE_MOLOCO_ANDROID || NIMBUS_ENABLE_MOLOCO_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Moloco Configuration", headerStyle);
+				#if NIMBUS_ENABLE_MOLOCO_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidMolocoAppKey));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_androidMolocoAdUnitData, "Moloco Android Ad Unit Id Data");
+				#endif
+					#if NIMBUS_ENABLE_MOLOCO_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosMolocoAppKey));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_iosMolocoAdUnitData, "Moloco iOS Ad Unit Id Data");
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Moloco data", MessageType.Warning);
+				#endif
+			#endif
+			
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create")) {
 				_asset.publisherKey = _publisherKey;
@@ -521,6 +623,13 @@ namespace Nimbus.Editor {
 				#endif
 				#if NIMBUS_ENABLE_MINTEGRAL_IOS
 					HandleMintegralAdUnitData(_iosMintegralAdUnitData, out _asset.iosMintegralAdUnitData);
+				#endif
+				
+				#if NIMBUS_ENABLE_MOLOCO_ANDROID
+					HandleMolocoAdUnitData(_androidMolocoAdUnitData, out _asset.androidMolocoAdUnitData);
+				#endif
+				#if NIMBUS_ENABLE_MOLOCO_IOS
+					HandleMolocoAdUnitData(_iosMolocoAdUnitData, out _asset.iosMolocoAdUnitData);
 				#endif
 				
 				_asset.Sanitize();
@@ -614,6 +723,19 @@ namespace Nimbus.Editor {
 						return;
 					}
 					_asset.iosUnityAdsGameID = _iosUnityAdsGameId.stringValue;
+				#endif
+				
+				#if NIMBUS_ENABLE_MOLOCO_ANDROID
+					if (!ValidateMolocoData("Android", _androidMolocoAppKey, _asset.androidMolocoAdUnitData)) {
+						return;
+					}
+					_asset.androidMintegralAppKey = _androidMolocoAppKey.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_MOLOCO_IOS
+					if (!ValidateMolocoData("iOS", _iosMolocoAppKey, _asset.iosMolocoAdUnitData)) {
+						return;
+					}
+					_asset.iosMolocoAppKey = _iosMolocoAppKey.stringValue;
 				#endif
 
 				AssetDatabase.CreateAsset(_asset,
@@ -839,6 +961,68 @@ namespace Nimbus.Editor {
 				Debug.unityLogger.LogError("Nimbus", 
 					$"Unity Ads SDK has been included, the {platform} Unity Ads Game ID cannot be empty, object NimbusAdsManager not created");
 				return false;
+			}
+			return true;
+		}
+		
+		private void HandleMolocoAdUnitData(SerializedProperty adUnitData, out ThirdPartyAdUnit[] adUnits)
+		{
+			var adUnitList = new List<ThirdPartyAdUnit>();
+			for (var i = 0; i < adUnitData.arraySize; i++) {
+				var item = adUnitData.GetArrayElementAtIndex(i);
+				var adUnitId = item.FindPropertyRelative("AdUnitId");
+				var adUnitPlacementId = item.FindPropertyRelative("AdUnitPlacementId");
+
+				var molocoData  = new ThirdPartyAdUnit() {
+					AdUnitId = adUnitId?.stringValue,
+					AdUnitPlacementId = adUnitPlacementId?.stringValue
+				};
+
+				var adUnitType = item.FindPropertyRelative("AdUnitType");
+				if (adUnitType != null) {
+					molocoData.AdUnitType = (AdUnitType)adUnitType.enumValueIndex;
+				}
+
+				adUnitList.Add(molocoData);
+			}
+			adUnits = adUnitList.ToArray();
+		}
+		
+		private bool ValidateMolocoData(string platform, SerializedProperty appKey, ThirdPartyAdUnit[] adUnitData) {
+			if (appKey.stringValue.IsNullOrEmpty()) {
+				Debug.unityLogger.LogError("Nimbus", 
+					$"Moloco SDK has been included, the {platform} Moloco App Key cannot be empty, object NimbusAdsManager not created");
+				return false;
+			}
+			
+			if (adUnitData == null || adUnitData.Length == 0) {
+				Debug.unityLogger.LogError("Nimbus", 
+					$"Moloco SDK has been included, Moloco Ad Unit ids for {platform} need to be entered, object NimbusAdsManager not created");
+				return false;
+			}
+
+			var seenAdTypes = new Dictionary<AdUnitType, bool>();
+			foreach (var adUnit in adUnitData) {
+				if (adUnit.AdUnitId.IsNullOrEmpty()) {
+					Debug.unityLogger.LogError("Nimbus", 
+						$"Moloco SDK has been included, the Ad Unit id for {platform} cannot be empty, object NimbusAdsManager not created");
+					return false;
+				}
+
+				if (adUnit.AdUnitType == AdUnitType.Undefined) {
+					Debug.unityLogger.LogError("Nimbus", 
+						$"Moloco SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
+					return false;
+				}
+
+				if (!seenAdTypes.ContainsKey(adUnit.AdUnitType)) {
+					seenAdTypes.Add(adUnit.AdUnitType, true);
+				}
+				else {
+					Debug.unityLogger.LogError("Nimbus", 
+						$"Moloco SDK has been included, Moloco cannot contain duplicate ad type {adUnit.AdUnitType} for {platform}, object NimbusAdsManager not created");
+					return false;
+				}
 			}
 			return true;
 		}

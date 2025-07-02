@@ -3,7 +3,7 @@
 //  NimbusManager.swift
 //
 //  Created by Bruno Bruggemann on 5/7/21.
-//  Copyright © 2021 AdsByNimbus. All rights reserved.
+//  Copyright © 2025 AdsByNimbus. All rights reserved.
 //
 
 import Foundation
@@ -40,6 +40,9 @@ import NimbusSDK
 #if NIMBUS_ENABLE_LIVERAMP
 import NimbusLiveRampKit
 import LRAtsSDK
+#endif
+#if NIMBUS_ENABLE_MOLOCO
+import MolocoSDK
 #endif
 
 
@@ -215,6 +218,26 @@ import LRAtsSDK
         }
     #endif
     
+    #if NIMBUS_ENABLE_MOLOCO
+        @objc public class func initializeMoloco(appKey: String) {
+            MolocoSDK.Moloco.shared.initialize(initParams: .init(appKey: appKey)) { done, error in
+                if let error {
+                    Nimbus.shared.logger.log("Moloco initialization failed: \(error)", level: .error)
+                } else {
+                    Nimbus.shared.logger.log("Moloco initialization was successful", level: .debug)
+                }
+            }
+            Nimbus.shared.renderers[.moloco] = NimbusMolocoAdRenderer()
+        }
+        
+        @objc public class func fetchMolocoToken() -> String {
+            var token = ""
+            let group = DispatchGroup()
+            group.wait(for: {token = try await MolocoRequestBridge().bidToken})
+            return token
+        }
+    #endif
+    
     @objc public class func getPrivacyStrings() -> String {
         var privacyStrings: [String:String] = [:]
         let gdprAppliesKey = "IABTCF_gdprApplies"
@@ -310,7 +333,7 @@ import LRAtsSDK
     // MARK: - Public Functions
     
     @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
-            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String) {
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -327,12 +350,22 @@ import LRAtsSDK
             Nimbus.shared.logger.log("Unable to get NimbusAd from bid response data", level: .error)
             return
         }
+        
         #if NIMBUS_ENABLE_MINTEGRAL
-            let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
-            if let renderInfo = interceptor.renderInfo(for: nimbusAd) {
-                nimbusAd.renderInfo = AnyRenderInfo(renderInfo)
+            if (nimbusAd.network == ThirdPartyDemandNetwork.mintegral.rawValue) {
+                let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
+                if let renderInfo = interceptor.renderInfo(for: nimbusAd) {
+                    nimbusAd.renderInfo = AnyRenderInfo(renderInfo)
+                }
             }
         #endif
+        
+        #if NIMBUS_ENABLE_MOLOCO
+            if nimbusAd.network == ThirdPartyDemandNetwork.moloco.rawValue {
+                nimbusAd.renderInfo = AnyRenderInfo(NimbusMolocoRenderInfo(adUnitId: molocoAdUnitId))
+            }
+        #endif
+        
         guard let viewController = unityViewController() else { return }
         
         if isBlocking {
@@ -401,6 +434,8 @@ extension NimbusManager: AdControllerDelegate {
         case .destroyed:
             eventName = "DESTROYED"
             removeReferenceFromManagerDictionary()
+        case .endCardImpression:
+            eventName = "END_CARD_IMPRESSION"
         @unknown default:
             print("Ad Event not sent: \(event)")
             return
