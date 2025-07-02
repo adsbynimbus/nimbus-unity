@@ -1,7 +1,7 @@
 #if UNITY_EDITOR && UNITY_ANDROID
 using System.IO;
+using System.Linq;
 using System.Text;
-using Nimbus.Internal.Utility;
 using UnityEditor.Android;
 
 namespace Nimbus.Editor {
@@ -34,6 +34,10 @@ namespace Nimbus.Editor {
 			dependencies {
 			    constraints {
 			        implementation(""androidx.collection:collection:1.4.5"")
+					implementation(""androidx.collection:collection-ktx:1.4.5"")
+					if (androidComponents.pluginVersion.major < 8) {
+						implementation(""androidx.fragment:fragment:1.7.1"")
+					}
 			    }
 			}
 			// Force Play Services Ads Indentifier to 18.1.0 if using Java 8
@@ -162,13 +166,11 @@ namespace Nimbus.Editor {
 				apsBuildWriter.Close();
 			#endif
 		}
-		private static void WriteGradleProps(string gradleFile) {
-			var propWriter = File.AppendText(gradleFile);
-			propWriter.WriteLine(@"
-				android.useAndroidX=true
-				");
-			propWriter.Flush();
-			propWriter.Close();
+		private static void WriteGradleProps(string gradleFile)
+		{
+			var gradleProps = File.ReadAllLines(gradleFile).ToList()
+				.Where(s => !s.Equals("android.enableJetifier=true"));
+			File.WriteAllLines(gradleFile, gradleProps);
 		}
 
 		private static void RunEdm4uCheck(string path)

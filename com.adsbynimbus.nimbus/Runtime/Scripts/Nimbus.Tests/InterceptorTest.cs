@@ -572,6 +572,7 @@ namespace Nimbus.Tests {
 		
 		[Test]
 		public void TestMultipleImpExtInterceptors() {
+			#if UNITY_ANDROID && NIMBUS_ENABLE_META && NIMBUS_ENABLE_APS
 			var interceptors = new IInterceptor[] {
 				new SkAdNetworkIOS(MockData.PlistDataRaw()),
 				
@@ -653,11 +654,13 @@ namespace Nimbus.Tests {
 			});
 			var gotBody = JsonConvert.SerializeObject(gotBidRequest.Imp[0].Ext);
 			Assert.AreEqual(wantBody, gotBody);
+			#endif
 		}
 
 		[Test]
 		public void TestMultipleUserExtInterceptors()
 		{
+			#if UNITY_ANDROID && NIMBUS_ENABLE_META && NIMBUS_ENABLE_VUNGLE && NIMBUS_ENABLE_MINTEGRAL && NIMBUS_ENABLE_MOBILEFUSE
 			var interceptors = new IInterceptor[] { 
 				new MetaAndroid(null, true, "meta_app_id")
 				, new VungleAndroid(null, "vungle_app_id")
@@ -723,7 +726,8 @@ namespace Nimbus.Tests {
 			Assert.AreEqual("vungle_buyer_uid", gotBidRequest.User.Ext["vungle_buyeruid"].ToString());
 			Assert.AreEqual("mintegral_sdk_version", gotBidRequest.User.Ext["mintegral_sdk"]["sdkv"].ToString());
 			Assert.AreEqual("mobilefuse_sdk_version", gotBidRequest.User.Ext["mfx_buyerdata"]["sdk_version"].ToString());
-		}
+		#endif
+}
 	}
 
 

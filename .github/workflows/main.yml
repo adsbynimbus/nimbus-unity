@@ -1,0 +1,86 @@
+name: GameCI 🎮
+
+on: [pull_request]
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run Unit Tests 🧪
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: sample-app/Library
+          key: Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-test-
+            Library-
+      # Apply Pre Processor Symbols (Compiler options) 
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: sample-app
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  buildPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - sample-app
+        targetPlatform:
+          - Android # Build an Android player.
+          - iOS # Build an iOS player.
+        unityVersion:
+          - 6000.0.26f1
+          - auto          
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: sample-app/Library
+          key: Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
+            Library-${{ matrix.targetPlatform }}-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
+      # Apply Pre Processor Symbols (Compiler options)      
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+      - name: Ensure plugin directory exist
+        run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: ${{ matrix.projectPath }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
+          
