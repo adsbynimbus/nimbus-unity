@@ -11,7 +11,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -163,7 +163,7 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS Moloco SDK");
 				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
 				molocoAdUnits = molocoAdUnitIds;
-				var moloco = new MolocoIOS(molocoAppKey, molocoAdUnitIds, configuration.enableSDKInTestMode);
+				var moloco = new MolocoIOS(molocoAppKey, configuration.enableSDKInTestMode);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
 			#endif

@@ -10,12 +10,11 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
+namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 	#if UNITY_IOS && NIMBUS_ENABLE_MOLOCO
 	internal class MolocoIOS : IInterceptor, IProvider {
 		private readonly string _appKey;
 		private readonly bool _testMode;
-		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeMoloco(string appKey);
@@ -23,9 +22,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
 		[DllImport("__Internal")]
 		private static extern string _fetchMolocoToken();
 		
-		public MolocoIOS(string appKey, ThirdPartyAdUnit[] adUnitIds, bool enableTestMode) {
+		public MolocoIOS(string appKey, bool enableTestMode) {
 			_appKey = appKey;
-			_adUnitIds = adUnitIds;
 			_testMode = enableTestMode;
 		}
 
@@ -54,7 +52,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Molocol {
 		public void InitializeNativeSDK() {
 			_initializeMoloco(_appKey);
 		}
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

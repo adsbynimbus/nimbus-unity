@@ -62,6 +62,8 @@ public final class UnityHelper {
             if (mintegralAdUnitId != "") {
                 nimbusResponse.renderInfoOverride.put("adUnitId", mintegralAdUnitId);
                 nimbusResponse.renderInfoOverride.put("placement", mintegralAdUnitPlacementId);
+            }
+            if (molocoAdUnitId != "") {
                 nimbusResponse.renderInfoOverride.put("moloco_ad_unit_id", molocoAdUnitId);
             }
             nimbusResponse.renderInfoOverride.put("is_rewarded", String.valueOf(isRewarded));

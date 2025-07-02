@@ -67,7 +67,7 @@ jobs:
             Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
             Library-
       # Apply Pre Processor Symbols (Compiler options)      
-      - name: Apply csc.rsp (pre-processor symbols)
+      - name: Apply nimbus.rsp (pre-processor symbols)
         run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
       - name: Ensure plugin directory exist
         run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}

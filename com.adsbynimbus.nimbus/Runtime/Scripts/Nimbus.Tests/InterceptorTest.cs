@@ -9,6 +9,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
@@ -568,6 +569,66 @@ namespace Nimbus.Tests {
 				var gotBody = JsonConvert.SerializeObject(got.impressionExtension);
 				Assert.AreEqual(wantBody, gotBody);
 			}
+		}
+		
+		[Test]
+		public void TestMolocoInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_MOLOCO
+			const string molocoUserData = "{\"moloco_buyeruid\":\"moloco_buyer_uid\"}";
+
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(molocoUserData),
+						}
+					}, new MolocoAndroid(null, "moloco_app_key", true)
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test"
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(molocoUserData),
+						}
+					}, new MolocoIOS("moloco_app_key", true)
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var data = "moloco_buyer_uid";
+				if (interceptor.GetType() == typeof(MolocoIOS))
+				{
+					gotDelta = ((MolocoIOS) interceptor).GetBidRequestDelta(data);
+				}
+				if (interceptor.GetType() == typeof(MolocoAndroid))
+				{
+					gotDelta = ((MolocoAndroid) interceptor).GetBidRequestDelta(data);
+				}
+				var want = expectedBidResponse.User.Ext["moloco_buyeruid"].ToString();
+				var got = gotDelta.simpleUserExt.Value;
+				Assert.AreEqual(want, got);
+			}
+			#endif
 		}
 		
 		[Test]
