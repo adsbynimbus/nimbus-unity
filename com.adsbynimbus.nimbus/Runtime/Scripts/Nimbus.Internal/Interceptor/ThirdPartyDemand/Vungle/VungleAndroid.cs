@@ -15,17 +15,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		private const string VunglePackage = "com.vungle.ads.VungleAds";
 		private readonly string _appID;
 		private readonly AndroidJavaObject _applicationContext;
-
-		public VungleAndroid(string appID) {
-			_appID = appID;
-		}
 		
 		public VungleAndroid(AndroidJavaObject applicationContext, string appID) {
 			_applicationContext = applicationContext;
 			_appID = appID;
 		}
 		
-		internal BidRequestDelta ModifyRequest(BidRequest bidRequest, string data) {
+		internal BidRequestDelta GetBidRequestDelta(string data) {
 			AndroidJNI.AttachCurrentThread();
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
@@ -35,7 +31,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK()
 		{
 			AndroidJNI.AttachCurrentThread();
 			var vungle = new AndroidJavaClass(VunglePackage);
@@ -48,13 +44,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			vungle.CallStatic("initialize", _appID);
 		}
 		
-		public Task<BidRequestDelta> ModifyRequestAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
 				try
 				{
-					return ModifyRequest(bidRequest, GetProviderRtbDataFromNativeSDK(type, isFullScreen));
+					return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK());
 				}
 				catch (Exception e)
 				{
