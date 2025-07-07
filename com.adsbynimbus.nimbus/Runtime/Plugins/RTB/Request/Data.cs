@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OpenRTB.Request {
     public class Data {
@@ -9,6 +10,14 @@ namespace OpenRTB.Request {
         public string Name;
 
         [JsonProperty("segment", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public Segment[] Segment;
+        public JArray Segment;
+    }
+    
+    public enum Gender
+    {
+        None,
+        F, //female
+        M, //male
+        O //other
     }
 }

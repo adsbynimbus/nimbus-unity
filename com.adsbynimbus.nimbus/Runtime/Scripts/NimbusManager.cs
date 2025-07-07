@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
@@ -16,7 +17,9 @@ using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
+using Gender = OpenRTB.Request.Gender;
 
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
@@ -27,6 +30,7 @@ namespace Nimbus.Runtime.Scripts {
 		private NimbusClient _nimbusClient;
 		private NimbusAPI _nimbusPlatformAPI;
 		private Regs _regulations;
+		private Data _userData;
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
@@ -445,6 +449,35 @@ namespace Nimbus.Runtime.Scripts {
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
 		
+		/// <summary>
+		///     Sets the Age and Gender of the User
+		/// </summary>
+		/// <param name="age">
+		///		integer greater than 0 representing user's age
+		/// </param>
+		/// <param name="gender">
+		///		enum representing the user's gender (F, M, O)
+		/// </param>
+		public void SetUserData(int age = 0, Gender gender = Gender.None)
+		{
+			_userData ??= new Data();
+			_userData.Name = "nimbus";
+			var segments = new JArray();
+			if (age > 0)
+			{
+				var ageObj = new JObject();
+				ageObj["age"] = age.ToString();
+				segments.Add(ageObj);
+			}
+			if (gender != Gender.None)
+			{
+				var genderObj = new JObject();
+				genderObj["gender"] = gender.ToString();
+				segments.Add(genderObj);
+			}
+			_userData.Segment = segments;
+		}
+		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>
 		///     This method will initialize the LiveRamp Identity SDK
@@ -552,6 +585,11 @@ namespace Nimbus.Runtime.Scripts {
 				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
 			#endif
 			bidRequest = NimbusSessionHelpers.addSessionToRequest(bidRequest);
+			if (_userData != null)
+			{
+				bidRequest.User ??= new User();
+				bidRequest.User.Data = _userData;
+			}
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;
