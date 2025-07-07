@@ -49,6 +49,12 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public string androidUnityAdsGameID;
 		[HideInInspector] public string iosUnityAdsGameID;
 		
+		//Moloco Data
+		[HideInInspector] public string androidMolocoAppKey;
+		[HideInInspector] public ThirdPartyAdUnit[] androidMolocoAdUnitData;
+		[HideInInspector] public string iosMolocoAppKey;
+		[HideInInspector] public ThirdPartyAdUnit[] iosMolocoAdUnitData;
+		
 		private void OnValidate() {
 			Sanitize();
 		}
@@ -129,6 +135,22 @@ namespace Nimbus.ScriptableObjects {
 				androidUnityAdsGameID = androidUnityAdsGameID?.Trim();
 				iosUnityAdsGameID = iosUnityAdsGameID?.Trim();
 			#endif
+			
+			#if NIMBUS_ENABLE_MOLOCO
+			androidMolocoAppKey = androidMolocoAppKey?.Trim();
+			iosMolocoAppKey = iosMolocoAppKey?.Trim();
+			if (androidMolocoAdUnitData != null) {
+				for (var i = 0; i < androidMolocoAdUnitData.Length; i++) {
+					androidMolocoAdUnitData[i].AdUnitId = androidMolocoAdUnitData[i].AdUnitId?.Trim();
+				}
+			}
+					
+			if (iosMolocoAdUnitData != null) {
+				for (var i = 0; i < iosMolocoAdUnitData.Length; i++) {
+					iosMolocoAdUnitData[i].AdUnitId = iosMolocoAdUnitData[i].AdUnitId?.Trim();
+				}
+			}
+			#endif
 		}
 		
 
@@ -192,6 +214,16 @@ namespace Nimbus.ScriptableObjects {
 				appID = iosUnityAdsGameID;
 			#endif
 			return appID;
+		}
+		
+		public Tuple<string, ThirdPartyAdUnit[]> GetMolocoData() {
+			var appKey = androidMolocoAppKey;
+			var adUnitIds = androidMolocoAdUnitData;
+			#if UNITY_IOS
+				appKey = iosMolocoAppKey;
+				adUnitIds =  iosMolocoAdUnitData;
+			#endif
+			return new Tuple<string, ThirdPartyAdUnit[]>(appKey, adUnitIds);
 		}
 
 	}

@@ -9,6 +9,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 #if UNITY_IOS && NIMBUS_ENABLE_APS
@@ -571,6 +572,67 @@ namespace Nimbus.Tests {
 		}
 		
 		[Test]
+		public void TestMolocoInterceptor()
+		{
+			#if UNITY_IOS && NIMBUS_ENABLE_MOLOCO
+			const string molocoUserData = "{\"moloco_buyeruid\":\"moloco_test_uid\"}";
+
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(molocoUserData),
+						}
+					}, new MolocoAndroid(null, "moloco_app_key", true)
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test"
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(molocoUserData),
+						}
+					}, new MolocoIOS("moloco_app_key", true)
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var androidData = "{\"first\":\"moloco_test_uid\"}";
+				var data = "moloco_test_uid";
+				if (interceptor.GetType() == typeof(MolocoIOS))
+				{
+					gotDelta = ((MolocoIOS) interceptor).GetBidRequestDelta(data);
+				}
+				if (interceptor.GetType() == typeof(MolocoAndroid))
+				{
+					gotDelta = ((MolocoAndroid) interceptor).GetBidRequestDelta(androidData);
+				}
+				var want = expectedBidResponse.User.Ext["moloco_buyeruid"].ToString();
+				var got = gotDelta.simpleUserExt.Value;
+				Assert.AreEqual(want, got);
+			}
+			#endif
+		}
+		
+		[Test]
 		public void TestMultipleImpExtInterceptors() {
 			#if UNITY_ANDROID && NIMBUS_ENABLE_META && NIMBUS_ENABLE_APS
 			var interceptors = new IInterceptor[] {
@@ -610,7 +672,7 @@ namespace Nimbus.Tests {
 				var data =
 					"[{\"amzn_h\":\"aax-us-east.amazon-adsystem.com\",\"amznslots\":\"foobar\",\"amznrdr\":\"default\",\"amznp\":\"cnabk0\",\"amzn_b\":\"foobar-bid\",\"dc\":\"iad\"}]";
 				var got = new BidRequestDelta();
-				#if UNITY_IOS
+				#if UNITY_IOS && NIMBUS_ENABLE_APS
 					if (interceptor.GetType() == typeof(ApsIOS))
 					{
 						got = ((ApsIOS) interceptor).GetBidRequestDelta(bidRequest, data);
