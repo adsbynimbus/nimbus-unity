@@ -69,9 +69,12 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
             Library-
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
       # Apply Pre Processor Symbols (Compiler options)      
-      - name: Apply nimbus.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/nimbus.rsp
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
       - name: Ensure plugin directory exist
         run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
       # Build
