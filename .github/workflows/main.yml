@@ -22,9 +22,12 @@ jobs:
           restore-keys: |
             Library-test-
             Library-
-      # Apply Pre Processor Symbols (Compiler options) 
-      - name: Apply nimbus.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/nimbus.rsp
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
       # Test
       - name: Run tests
         uses: game-ci/unity-test-runner@v4
