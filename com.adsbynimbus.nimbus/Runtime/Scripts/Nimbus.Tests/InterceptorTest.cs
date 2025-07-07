@@ -575,7 +575,7 @@ namespace Nimbus.Tests {
 		public void TestMolocoInterceptor()
 		{
 			#if UNITY_IOS && NIMBUS_ENABLE_MOLOCO
-			const string molocoUserData = "{\"moloco_buyeruid\":\"moloco_buyer_uid\"}";
+			const string molocoUserData = "{\"moloco_buyeruid\":\"moloco_test_uid\"}";
 
 			var table = new List<Tuple<BidRequest, IInterceptor>> {
 				new (
@@ -615,8 +615,8 @@ namespace Nimbus.Tests {
 				var (expectedBidResponse, interceptor) = tt;
 				// extensions are only added if the imp data has been initialized already
 				var gotDelta = new BidRequestDelta();
-				var androidData = "{\"first\":\"moloco_buyer_uid\"}";
-				var data = "moloco_buyer_uid";
+				var androidData = "{\"first\":\"moloco_test_uid\"}";
+				var data = "moloco_test_uid";
 				if (interceptor.GetType() == typeof(MolocoIOS))
 				{
 					gotDelta = ((MolocoIOS) interceptor).GetBidRequestDelta(data);
