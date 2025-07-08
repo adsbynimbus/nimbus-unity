@@ -17,7 +17,6 @@ using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
 using Gender = OpenRTB.Request.Gender;
 
