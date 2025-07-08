@@ -11,6 +11,7 @@ using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
@@ -41,7 +42,7 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
-			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId);
+			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId, string molocoAdUnitId);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -89,6 +90,8 @@ namespace Nimbus.Internal {
 		private string _sessionId;
 		
 		private ThirdPartyAdUnit[] mintegralAdUnits;
+		
+		private ThirdPartyAdUnit[] molocoAdUnits;
 
 		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
@@ -144,7 +147,7 @@ namespace Nimbus.Internal {
 				_interceptors.Add(mintegral);
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
-				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
+				Debug.unityLogger.Log("Initializing iOS Unity Ads SDK");
 				var unityGameId = configuration.GetUnityAdsData();
 				var unityAds = new UnityAdsIOS(unityGameId);
 				unityAds.InitializeNativeSDK();
@@ -155,6 +158,14 @@ namespace Nimbus.Internal {
 				var mobileFuse = new MobileFuseIOS();
 				mobileFuse.InitializeNativeSDK();
 				_interceptors.Add(mobileFuse);
+			#endif
+			#if NIMBUS_ENABLE_MOLOCO
+				Debug.unityLogger.Log("Initializing iOS Moloco SDK");
+				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
+				molocoAdUnits = molocoAdUnitIds;
+				var moloco = new MolocoIOS(molocoAppKey, configuration.enableSDKInTestMode);
+				moloco.InitializeNativeSDK();
+				_interceptors.Add(moloco);
 			#endif
 		}
 
@@ -176,6 +187,7 @@ namespace Nimbus.Internal {
 			}
 			var mintegralAdUnitId = "";
 			var mintegralAdUnitPlacementId = "";
+			var molocoAdUnitId = "";
 			#if NIMBUS_ENABLE_MINTEGRAL
 				try
 				{
@@ -189,8 +201,20 @@ namespace Nimbus.Internal {
 					Debug.unityLogger.LogException(e);
 				}
 			#endif
+			#if NIMBUS_ENABLE_MOLOCO
+				try
+				{
+					var molocoAdUnit =
+						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+					molocoAdUnitId = molocoAdUnit.AdUnitId;
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.LogException(e);
+				}
+			#endif
 			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId);
+			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId);
 		}
 
 		internal override string GetSessionID() {
