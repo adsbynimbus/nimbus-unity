@@ -65,7 +65,6 @@
         <Compile Include="Request\Publisher.cs" />
         <Compile Include="Request\Regs.cs" />
         <Compile Include="Request\BidRequest.cs" />
-        <Compile Include="Request\Segment.cs" />
         <Compile Include="Request\Skadn.cs" />
         <Compile Include="Request\Source.cs" />
         <Compile Include="Request\User.cs" />
