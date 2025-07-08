@@ -461,20 +461,22 @@ namespace Nimbus.Runtime.Scripts {
 		{
 			_userData ??= new Data();
 			_userData.Name = "nimbus";
-			var segments = new JArray();
+			var segments = new List<Segment>();
 			if (age > 0)
 			{
-				var ageObj = new JObject();
-				ageObj["age"] = age.ToString();
+				var ageObj = new Segment();
+				ageObj.Name = "age";
+				ageObj.Value = age.ToString();
 				segments.Add(ageObj);
 			}
 			if (gender != Gender.None)
 			{
-				var genderObj = new JObject();
-				genderObj["gender"] = gender.ToString();
+				var genderObj = new Segment();
+				genderObj.Name = "gender";
+				genderObj.Value = gender.ToString();
 				segments.Add(genderObj);
 			}
-			_userData.Segment = segments;
+			_userData.Segment = segments.ToArray();
 		}
 		
 		#if NIMBUS_ENABLE_LIVERAMP

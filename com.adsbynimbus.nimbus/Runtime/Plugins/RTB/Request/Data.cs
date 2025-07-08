@@ -10,7 +10,7 @@ namespace OpenRTB.Request {
         public string Name;
 
         [JsonProperty("segment", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public JArray Segment;
+        public Segment[] Segment;
     }
     
     public enum Gender
