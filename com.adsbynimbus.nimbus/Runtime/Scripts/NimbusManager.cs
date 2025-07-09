@@ -449,34 +449,72 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		/// <summary>
-		///     Sets the Age and Gender of the User
+		///     Sets the Gender of the User
+		/// </summary>
+		/// <param name="gender">
+		///		enum representing the user's gender (F, M, O)
+		/// </param>
+		public void SetUserGender(Gender gender)
+		{
+			_userData ??= new Data();
+			_userData.Name = "nimbus";
+			var genderObj = new Segment();
+			genderObj.Name = "gender";
+			genderObj.Value = gender.ToString();
+			if (_userData.Segment == null)
+			{
+				_userData.Segment = new[] { genderObj };
+			}
+			else
+			{
+				var segments = new List<Segment>(_userData.Segment);
+				if (segments.Any(seg => seg.Name == "gender"))
+				{
+					var index = segments.FindIndex(seg => seg.Name == "gender");
+					segments[index].Value = gender.ToString();
+				}
+				else
+				{
+					segments.Add(genderObj);
+				}
+				_userData.Segment = segments.ToArray();
+			}
+		}
+		
+		/// <summary>
+		///     Sets the Age of the User
 		/// </summary>
 		/// <param name="age">
 		///		integer greater than 0 representing user's age
 		/// </param>
-		/// <param name="gender">
-		///		enum representing the user's gender (F, M, O)
-		/// </param>
-		public void SetUserData(int age = 0, Gender gender = Gender.None)
+		public void SetUserAge(int age)
 		{
-			_userData ??= new Data();
-			_userData.Name = "nimbus";
-			var segments = new List<Segment>();
 			if (age > 0)
 			{
+				_userData ??= new Data();
+				_userData.Name = "nimbus";
 				var ageObj = new Segment();
 				ageObj.Name = "age";
 				ageObj.Value = age.ToString();
-				segments.Add(ageObj);
+				if (_userData.Segment == null)
+				{
+					_userData.Segment = new[] { ageObj };
+				}
+				else
+				{
+					var segments = new List<Segment>(_userData.Segment);
+					if (segments.Any(seg => seg.Name == "age"))
+					{
+						var index = segments.FindIndex(seg => seg.Name == "age");
+						segments[index].Value = age.ToString();
+					}
+					else
+					{
+						segments.Add(ageObj);
+					}
+					_userData.Segment = segments.ToArray();
+				}
 			}
-			if (gender != Gender.None)
-			{
-				var genderObj = new Segment();
-				genderObj.Name = "gender";
-				genderObj.Value = gender.ToString();
-				segments.Add(genderObj);
-			}
-			_userData.Segment = segments.ToArray();
 		}
 		
 		#if NIMBUS_ENABLE_LIVERAMP
@@ -589,7 +627,9 @@ namespace Nimbus.Runtime.Scripts {
 			if (_userData != null)
 			{
 				bidRequest.User ??= new User();
-				bidRequest.User.Data = _userData;
+				bidRequest.User.Data = (bidRequest.User.Data == null
+					? new[] { _userData }
+					: new List<Data>(bidRequest.User.Data) { _userData }.ToArray());
 			}
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);

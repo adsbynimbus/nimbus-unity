@@ -15,7 +15,6 @@ namespace OpenRTB.Request {
     
     public enum Gender
     {
-        None,
         F, //female
         M, //male
         O //other
