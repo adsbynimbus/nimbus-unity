@@ -94,14 +94,11 @@ namespace Nimbus.Tests
         public void TestUserDataSerialization()
         {
             string jsonString = "{\"data\":[{\"name\":\"nimbus\",\"segment\":[{\"name\":\"age\",\"value\":\"32\"},{\"name\":\"gender\",\"value\":\"M\"}]}]}";
-            var serializedUser = JsonConvert.DeserializeObject(jsonString, typeof(User)) as User;
-            var serializedGender = serializedUser.Data.First().Segment.FirstOrDefault(seg => seg.Name == "gender").Value;
-            var serializedAge = serializedUser.Data.First().Segment.FirstOrDefault(seg => seg.Name == "age").Value;
             string objectName = "MyGameObject";
             GameObject gameObject = new GameObject(objectName);
             var manager = gameObject.AddComponent<NimbusManager>();
-            manager.SetUserGender(OpenRTB.Request.Gender.M);
             manager.SetUserAge(32);
+            manager.SetUserGender(OpenRTB.Request.Gender.M);
             BidRequest putBidRequest = new BidRequest
             {
                 Imp = new[]
@@ -116,10 +113,8 @@ namespace Nimbus.Tests
                 }
             };
             var gotBidRequest = manager.ApplyUserData(putBidRequest);
-            var gotGender = gotBidRequest.User.Data.First().Segment.FirstOrDefault(seg => seg.Name == "gender").Value;
-            var gotAge = gotBidRequest.User.Data.First().Segment.FirstOrDefault(seg => seg.Name == "age").Value;
-            Assert.AreEqual(serializedGender, gotGender);
-            Assert.AreEqual(serializedAge, gotAge);
+            var gotUserString = JsonConvert.SerializeObject(gotBidRequest.User);
+            Assert.AreEqual(jsonString, gotUserString);
         }
     }
 }
