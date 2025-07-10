@@ -5,8 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
@@ -29,7 +27,7 @@ namespace Nimbus.Runtime.Scripts {
 		private NimbusClient _nimbusClient;
 		private NimbusAPI _nimbusPlatformAPI;
 		private Regs _regulations;
-		private Data _userData;
+		private List<Segment> _userData = new ();
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
@@ -456,29 +454,17 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public void SetUserGender(Gender gender)
 		{
-			_userData ??= new Data();
-			_userData.Name = "nimbus";
-			var genderObj = new Segment();
-			genderObj.Name = "gender";
-			genderObj.Value = gender.ToString();
-			if (_userData.Segment == null)
+			var index = _userData.FindIndex(seg => seg.Name == "gender");
+			if (index >= 0) 
 			{
-				_userData.Segment = new[] { genderObj };
-			}
-			else
-			{
-				var segments = new List<Segment>(_userData.Segment);
-				if (segments.Any(seg => seg.Name == "gender"))
-				{
-					var index = segments.FindIndex(seg => seg.Name == "gender");
-					segments[index].Value = gender.ToString();
-				}
-				else
-				{
-					segments.Add(genderObj);
-				}
-				_userData.Segment = segments.ToArray();
-			}
+				_userData[index].Value = gender.ToString();
+			} 
+			else {
+				var genderObj = new Segment();
+				genderObj.Name = "gender";
+				genderObj.Value = gender.ToString();
+				_userData.Add(genderObj);
+			}	
 		}
 		
 		/// <summary>
@@ -487,34 +473,32 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="age">
 		///		integer greater than 0 representing user's age
 		/// </param>
-		public void SetUserAge(int age)
-		{
-			if (age > 0)
+		public void SetUserAge(int age) {
+			var index = _userData.FindIndex(seg => seg.Name == "age");
+			if (index >= 0) 
 			{
-				_userData ??= new Data();
-				_userData.Name = "nimbus";
+				_userData[index].Value = age.ToString();
+			} 
+			else {
 				var ageObj = new Segment();
 				ageObj.Name = "age";
 				ageObj.Value = age.ToString();
-				if (_userData.Segment == null)
-				{
-					_userData.Segment = new[] { ageObj };
-				}
-				else
-				{
-					var segments = new List<Segment>(_userData.Segment);
-					if (segments.Any(seg => seg.Name == "age"))
-					{
-						var index = segments.FindIndex(seg => seg.Name == "age");
-						segments[index].Value = age.ToString();
-					}
-					else
-					{
-						segments.Add(ageObj);
-					}
-					_userData.Segment = segments.ToArray();
-				}
+				_userData.Add(ageObj);
+			}				
+		}
+
+		internal BidRequest ApplyUserData(BidRequest bidRequest)
+		{
+			if (_userData.Count > 0)
+			{
+				bidRequest.User ??= new User();
+				var data = new Data();
+				data.Name = "nimbus";
+				data.Segment = _userData.ToArray();
+				bidRequest.User.Data = (bidRequest.User.Data == null ? 
+					new[] { data } : new List<Data>(bidRequest.User.Data) { data }.ToArray());
 			}
+			return bidRequest;
 		}
 		
 		#if NIMBUS_ENABLE_LIVERAMP
@@ -624,13 +608,7 @@ namespace Nimbus.Runtime.Scripts {
 				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
 			#endif
 			bidRequest = NimbusSessionHelpers.addSessionToRequest(bidRequest);
-			if (_userData != null)
-			{
-				bidRequest.User ??= new User();
-				bidRequest.User.Data = (bidRequest.User.Data == null
-					? new[] { _userData }
-					: new List<Data>(bidRequest.User.Data) { _userData }.ToArray());
-			}
+			bidRequest = ApplyUserData(bidRequest);
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;
