@@ -40,7 +40,6 @@
 **/*.idea
 *.idea
 
-
 # Gradle cache directory
 .gradle/
 
@@ -86,6 +85,12 @@ crashlytics-build.properties
 *.DotSettings
 **/*.DotSettings
 
+# Ignore meta files in package directory
+com.adsbynimbus.nimbus/**/*.meta
+
+# Ignore generated csproj and solution for Sample App
+sample-app/*.csproj
+sample-app/*.sln
 
 # should not be included for downloadable packages
 /com.adsbynimbus.nimbus/package-lock.json.meta
