@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
@@ -17,6 +16,7 @@ using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Gender = OpenRTB.Request.Gender;
 
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
@@ -27,6 +27,7 @@ namespace Nimbus.Runtime.Scripts {
 		private NimbusClient _nimbusClient;
 		private NimbusAPI _nimbusPlatformAPI;
 		private Regs _regulations;
+		private List<Segment> _userData = new ();
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
@@ -445,6 +446,61 @@ namespace Nimbus.Runtime.Scripts {
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
 		}
 		
+		/// <summary>
+		///     Sets the Gender of the User
+		/// </summary>
+		/// <param name="gender">
+		///		enum representing the user's gender (F, M, O)
+		/// </param>
+		public void SetUserGender(Gender gender)
+		{
+			var index = _userData.FindIndex(seg => seg.Name == "gender");
+			if (index >= 0) 
+			{
+				_userData[index].Value = gender.ToString();
+			} 
+			else {
+				var genderObj = new Segment();
+				genderObj.Name = "gender";
+				genderObj.Value = gender.ToString();
+				_userData.Add(genderObj);
+			}	
+		}
+		
+		/// <summary>
+		///     Sets the Age of the User
+		/// </summary>
+		/// <param name="age">
+		///		integer greater than 0 representing user's age
+		/// </param>
+		public void SetUserAge(int age) {
+			var index = _userData.FindIndex(seg => seg.Name == "age");
+			if (index >= 0) 
+			{
+				_userData[index].Value = age.ToString();
+			} 
+			else {
+				var ageObj = new Segment();
+				ageObj.Name = "age";
+				ageObj.Value = age.ToString();
+				_userData.Add(ageObj);
+			}				
+		}
+
+		internal BidRequest ApplyUserData(BidRequest bidRequest)
+		{
+			if (_userData.Count > 0)
+			{
+				bidRequest.User ??= new User();
+				var data = new Data();
+				data.Name = "nimbus";
+				data.Segment = _userData.ToArray();
+				bidRequest.User.Data = (bidRequest.User.Data == null ? 
+					new[] { data } : new List<Data>(bidRequest.User.Data) { data }.ToArray());
+			}
+			return bidRequest;
+		}
+		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>
 		///     This method will initialize the LiveRamp Identity SDK
@@ -552,6 +608,7 @@ namespace Nimbus.Runtime.Scripts {
 				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
 			#endif
 			bidRequest = NimbusSessionHelpers.addSessionToRequest(bidRequest);
+			bidRequest = ApplyUserData(bidRequest);
 			SetTestData(bidRequest);
 			SetRegulations(bidRequest);
 			return bidRequest;

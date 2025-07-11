@@ -13,7 +13,7 @@ namespace OpenRTB.Request {
         public string CustomData;
 
         [JsonProperty("data", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public Data Data;
+        public Data[] Data;
 
         [JsonProperty("ext", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public JObject Ext;
