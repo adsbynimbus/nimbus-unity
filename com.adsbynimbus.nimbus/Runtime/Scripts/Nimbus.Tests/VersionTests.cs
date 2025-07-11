@@ -48,7 +48,6 @@ namespace Nimbus.Tests
         {
             var xmlDoc= new XmlDocument(); 
             xmlDoc.Load("../com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml"); 
-            Console.WriteLine("HELLO");
             var nodes = xmlDoc.SelectNodes("dependencies/androidPackages/androidPackage");
             if (nodes != null)
             {
