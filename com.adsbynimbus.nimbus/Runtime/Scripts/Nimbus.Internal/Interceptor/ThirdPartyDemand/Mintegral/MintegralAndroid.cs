@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
@@ -78,7 +77,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			if (data == null) {
 				return bidRequestDelta;
 			}
-			bidRequestDelta.complexUserExt = 
+			bidRequestDelta.ComplexUserExt = 
 				new KeyValuePair<string, JObject> ("mintegral_sdk", data);
 			return bidRequestDelta;
 		}

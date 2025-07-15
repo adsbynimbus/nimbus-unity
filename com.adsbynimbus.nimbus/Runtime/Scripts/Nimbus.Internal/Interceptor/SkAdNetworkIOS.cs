@@ -47,14 +47,14 @@ namespace Nimbus.Internal.Interceptor {
 			if (bidRequest.Imp.IsNullOrEmpty()) return bidRequestDelta;
 
 			if (bidRequest.Imp[0].Ext == null) {
-				bidRequestDelta.impressionExtension = new ImpExt {
+				bidRequestDelta.ImpressionExtension = new ImpExt {
 					Skadn = _skAdNetwork
 				};
 				return bidRequestDelta;
 			}
 			var impExt = new ImpExt();
 			impExt.Skadn = _skAdNetwork;
-			bidRequestDelta.impressionExtension = impExt;
+			bidRequestDelta.ImpressionExtension = impExt;
 			return bidRequestDelta;
 		}
 		

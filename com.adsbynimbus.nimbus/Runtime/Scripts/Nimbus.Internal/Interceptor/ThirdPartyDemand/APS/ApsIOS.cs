@@ -129,7 +129,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			// ReSharper disable InvertIf
 			if (!bidRequest.Imp.IsNullOrEmpty()) {
 				if (bidRequest.Imp[0].Ext != null) {
-					bidRequestDelta.impressionExtension = new ImpExt {
+					bidRequestDelta.ImpressionExtension = new ImpExt {
 						Aps =  JsonConvert.DeserializeObject<JArray>(data)
 					};;
 				}

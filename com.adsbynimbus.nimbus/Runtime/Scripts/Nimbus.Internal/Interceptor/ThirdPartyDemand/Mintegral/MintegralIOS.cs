@@ -33,7 +33,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			var mintegralObject = JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject;
 			if (mintegralObject != null)
 			{
-				bidRequestDelta.complexUserExt = 
+				bidRequestDelta.ComplexUserExt = 
 					new KeyValuePair<string, JObject> ("mintegral_sdk", mintegralObject);			
 			}
 			return bidRequestDelta;

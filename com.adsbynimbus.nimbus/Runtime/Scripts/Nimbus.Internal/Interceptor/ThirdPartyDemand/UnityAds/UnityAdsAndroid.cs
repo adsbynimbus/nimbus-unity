@@ -12,7 +12,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		private const string NimbusUnityAdsPackage = "com.adsbynimbus.request.UnityDemandProvider";
 		private const string UnityAdsPackage = "com.unity3d.ads.UnityAds";
 		private readonly string _gameID;
-		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
 		
 		internal BidRequestDelta GetBidRequestDelta(BidRequest bidRequest, string data) {
@@ -20,7 +19,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
 			}
-			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("unity_buyeruid", data);
+			bidRequestDelta.SimpleUserExt = new KeyValuePair<string, string>("unity_buyeruid", data);
 			return bidRequestDelta;
 		}
 
@@ -37,9 +36,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			return token;
 		}
 		
-		public UnityAdsAndroid(AndroidJavaObject applicationContext, bool testMode, string gameID) {
+		public UnityAdsAndroid(AndroidJavaObject applicationContext, string gameID) {
 			_applicationContext = applicationContext;
-			_testMode = testMode;
 			_gameID = gameID;
 		}
 		

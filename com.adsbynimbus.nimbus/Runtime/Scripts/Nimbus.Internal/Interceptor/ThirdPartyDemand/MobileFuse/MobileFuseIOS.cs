@@ -25,7 +25,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
 			}
-			bidRequestDelta.complexUserExt = 
+			bidRequestDelta.ComplexUserExt = 
 				new KeyValuePair<string,JObject>("mfx_buyerdata", JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject);
 			return bidRequestDelta;
 		}

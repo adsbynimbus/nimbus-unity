@@ -90,8 +90,8 @@ namespace Nimbus.Internal.Network {
 						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Unknown Network Error Occurred");
 						break;
 				}
-				#endif
 				return "";
+				#endif
 			});
 		}
 	}

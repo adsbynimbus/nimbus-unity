@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using JetBrains.Annotations;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Internal.Utility;

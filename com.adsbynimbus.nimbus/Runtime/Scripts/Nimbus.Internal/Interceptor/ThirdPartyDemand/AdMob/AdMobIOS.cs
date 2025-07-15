@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
-using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
 
@@ -48,7 +46,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		{
 			return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
 			{
-				simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
+				SimpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
 			};
 		}
 
