@@ -14,14 +14,11 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 	internal class MolocoAndroid : IInterceptor, IProvider {
 
 		private readonly string _appKey;
-		private readonly bool _enableTestMode;
-		private readonly bool _testMode;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public MolocoAndroid(AndroidJavaObject applicationContext, string appKey, bool enableTestMode) {
+		public MolocoAndroid(AndroidJavaObject applicationContext, string appKey) {
 			_applicationContext = applicationContext;
 			_appKey = appKey;
-			_enableTestMode = enableTestMode;
 		}
 		
 		public void InitializeNativeSDK() {
@@ -65,7 +62,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 			if (jsonObject == null || data.IsNullOrEmpty() || !jsonObject.ContainsKey("first")) {
 				return bidRequestDelta;
 			}
-			bidRequestDelta.simpleUserExt = 
+			bidRequestDelta.SimpleUserExt = 
 				new KeyValuePair<string, string> ("moloco_buyeruid", jsonObject["first"].ToString());	
 			return bidRequestDelta;
 		}

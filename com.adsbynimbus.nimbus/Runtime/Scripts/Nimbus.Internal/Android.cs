@@ -101,7 +101,7 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
 				var unityAdsGameId = configuration.GetUnityAdsData();
-				var unityAds = new UnityAdsAndroid(applicationContext, configuration.enableSDKInTestMode, unityAdsGameId);
+				var unityAds = new UnityAdsAndroid(applicationContext, unityAdsGameId);
 				unityAds.InitializeNativeSDK();
 				_interceptors.Add(unityAds);
 			#endif
@@ -114,7 +114,7 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing Android Moloco SDK");
 				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
 				molocoAdUnits = molocoAdUnitIds;
-				var moloco = new MolocoAndroid(applicationContext, molocoAppKey, configuration.enableSDKInTestMode);
+				var moloco = new MolocoAndroid(applicationContext, molocoAppKey);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
 			#endif

@@ -11,15 +11,13 @@ using UnityEngine;
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 	internal class MobileFuseAndroid : IInterceptor, IProvider {
-		private readonly string _gameID;
-		private readonly bool _testMode;
 		
 		internal BidRequestDelta GetBidRequestDelta(string data) {
 			var bidRequestDelta = new BidRequestDelta();
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
 			}
-			bidRequestDelta.complexUserExt = 
+			bidRequestDelta.ComplexUserExt = 
 				new KeyValuePair<string,JObject>("mfx_buyerdata", JsonConvert.DeserializeObject(data, typeof(JObject)) as JObject);
 			return bidRequestDelta;
 		}

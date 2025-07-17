@@ -81,7 +81,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
       {
          return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
          {
-            simpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
+            SimpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
          };
       }
       

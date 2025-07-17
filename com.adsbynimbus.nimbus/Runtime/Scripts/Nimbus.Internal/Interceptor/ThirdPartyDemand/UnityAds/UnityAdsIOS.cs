@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -25,7 +24,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
 			}
-			bidRequestDelta.simpleUserExt = new KeyValuePair<string, string>("unity_buyeruid", data);
+			bidRequestDelta.SimpleUserExt = new KeyValuePair<string, string>("unity_buyeruid", data);
 			return bidRequestDelta;
 		}
 

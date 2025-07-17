@@ -1,14 +1,9 @@
 using System.Linq;
-using System.Threading;
 using Newtonsoft.Json;
-using Nimbus.Internal;
-using Nimbus.Internal.Network;
 using Nimbus.Runtime.Scripts;
-using Nimbus.ScriptableObjects;
 using NUnit.Framework;
 using OpenRTB.Request;
 using UnityEngine;
-using Gender = UnityEngine.Analytics.Gender;
 
 namespace Nimbus.Tests
 {

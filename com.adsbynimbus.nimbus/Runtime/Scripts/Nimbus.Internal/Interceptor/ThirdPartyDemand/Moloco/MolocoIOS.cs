@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
@@ -14,7 +12,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 	#if UNITY_IOS && NIMBUS_ENABLE_MOLOCO
 	internal class MolocoIOS : IInterceptor, IProvider {
 		private readonly string _appKey;
-		private readonly bool _testMode;
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeMoloco(string appKey);
@@ -22,9 +19,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 		[DllImport("__Internal")]
 		private static extern string _fetchMolocoToken();
 		
-		public MolocoIOS(string appKey, bool enableTestMode) {
+		public MolocoIOS(string appKey) {
 			_appKey = appKey;
-			_testMode = enableTestMode;
 		}
 
 		internal BidRequestDelta GetBidRequestDelta(string data)
@@ -33,7 +29,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 			if (data.IsNullOrEmpty()) {
 				return bidRequestDelta;
 			} 
-			bidRequestDelta.simpleUserExt = 
+			bidRequestDelta.SimpleUserExt = 
 					new KeyValuePair<string, string> ("moloco_buyeruid", data);			
 			return bidRequestDelta;
 		}

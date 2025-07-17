@@ -163,7 +163,7 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS Moloco SDK");
 				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
 				molocoAdUnits = molocoAdUnitIds;
-				var moloco = new MolocoIOS(molocoAppKey, configuration.enableSDKInTestMode);
+				var moloco = new MolocoIOS(molocoAppKey);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
 			#endif

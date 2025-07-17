@@ -103,7 +103,7 @@ namespace Nimbus.Tests {
 						got = ((AdMobAndroid) interceptor).GetBidRequestDelta(data);
 					}
 					var wantBody = expectedBidResponse.User.Ext["admob_gde_signals"].ToString();
-					var gotBody = got.simpleUserExt.Value;
+					var gotBody = got.SimpleUserExt.Value;
 					Assert.AreEqual(wantBody, gotBody);
 				}
 			#endif
@@ -185,9 +185,9 @@ namespace Nimbus.Tests {
 				{
 					got = ((ApsAndroid) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
-				got.impressionExtension.Position = "test";
+				got.ImpressionExtension.Position = "test";
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
-				var gotBody = JsonConvert.SerializeObject(got.impressionExtension);
+				var gotBody = JsonConvert.SerializeObject(got.ImpressionExtension);
 				Assert.AreEqual(wantBody, gotBody);
 			}
 		#endif
@@ -250,10 +250,10 @@ namespace Nimbus.Tests {
 						gotDelta = ((MetaAndroid) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 					}
 					var want = expectedBidResponse.User.Ext["facebook_buyeruid"].ToString();
-					var got = gotDelta.simpleUserExt.Value;
+					var got = gotDelta.SimpleUserExt.Value;
 					Assert.AreEqual(want, got);
 					want = expectedBidResponse.Imp[0].Ext.FacebookAppId;
-					got = gotDelta.impressionExtension.FacebookAppId;
+					got = gotDelta.ImpressionExtension.FacebookAppId;
 					Assert.AreEqual(want, got);
 				}
 			#endif
@@ -340,10 +340,10 @@ namespace Nimbus.Tests {
 					gotDelta = ((MintegralAndroid) interceptor).GetBidRequestDelta(JObject.Parse(data));
 				}
 				var want = expectedBidResponse.User.Ext["mintegral_sdk"]["buyeruid"];
-				var got = gotDelta.complexUserExt.Value["buyeruid"];
+				var got = gotDelta.ComplexUserExt.Value["buyeruid"];
 				Assert.AreEqual(want, got);
 				want = expectedBidResponse.User.Ext["mintegral_sdk"]["sdkv"];
-				got = gotDelta.complexUserExt.Value["sdkv"];
+				got = gotDelta.ComplexUserExt.Value["sdkv"];
 				Assert.AreEqual(want, got);
 			}
 			#endif
@@ -404,10 +404,10 @@ namespace Nimbus.Tests {
 					gotDelta = ((MobileFuseAndroid) interceptor).GetBidRequestDelta(data);
 				}
 				var want = expectedBidResponse.User.Ext["mfx_buyerdata"]["sdk_version"];
-				var got = gotDelta.complexUserExt.Value["sdk_version"];
+				var got = gotDelta.ComplexUserExt.Value["sdk_version"];
 				Assert.AreEqual(want, got);
 				want = expectedBidResponse.User.Ext["mfx_buyerdata"]["mf_adapter"];
-				got = gotDelta.complexUserExt.Value["mf_adapter"];
+				got = gotDelta.ComplexUserExt.Value["mf_adapter"];
 				Assert.AreEqual(want, got);
 			}
 			#endif
@@ -432,7 +432,7 @@ namespace Nimbus.Tests {
 						{
 							Ext = JObject.Parse(unityUserData),
 						}
-					}, new UnityAdsAndroid(null, true, "12345")
+					}, new UnityAdsAndroid(null, "12345")
 				),
 
 				new (
@@ -466,7 +466,7 @@ namespace Nimbus.Tests {
 					gotDelta = ((UnityAdsAndroid) interceptor).GetBidRequestDelta(expectedBidResponse, data);
 				}
 				var want = expectedBidResponse.User.Ext["unity_buyeruid"].ToString();
-				var got = gotDelta.simpleUserExt.Value;
+				var got = gotDelta.SimpleUserExt.Value;
 				Assert.AreEqual(want, got);
 			}
 		#endif
@@ -525,7 +525,7 @@ namespace Nimbus.Tests {
 					gotDelta = ((VungleAndroid) interceptor).GetBidRequestDelta(data);
 				}
 				var want = expectedBidResponse.User.Ext["vungle_buyeruid"].ToString();
-				var got = gotDelta.simpleUserExt.Value;
+				var got = gotDelta.SimpleUserExt.Value;
 				Assert.AreEqual(want, got);
 			}
 			#endif
@@ -564,9 +564,9 @@ namespace Nimbus.Tests {
 				{
 					got = ((SkAdNetworkIOS) interceptor).GetBidRequestDelta(expectedBidResponse, "");
 				}
-				got.impressionExtension.Position = "test";
+				got.ImpressionExtension.Position = "test";
 				var wantBody = JsonConvert.SerializeObject(expectedBidResponse.Imp[0].Ext);
-				var gotBody = JsonConvert.SerializeObject(got.impressionExtension);
+				var gotBody = JsonConvert.SerializeObject(got.ImpressionExtension);
 				Assert.AreEqual(wantBody, gotBody);
 			}
 		}
@@ -591,7 +591,7 @@ namespace Nimbus.Tests {
 						{
 							Ext = JObject.Parse(molocoUserData),
 						}
-					}, new MolocoAndroid(null, "moloco_app_key", true)
+					}, new MolocoAndroid(null, "moloco_app_key")
 				),
 
 				new (
@@ -607,7 +607,7 @@ namespace Nimbus.Tests {
 						{
 							Ext = JObject.Parse(molocoUserData),
 						}
-					}, new MolocoIOS("moloco_app_key", true)
+					}, new MolocoIOS("moloco_app_key")
 				),
 			};
 				
@@ -626,7 +626,7 @@ namespace Nimbus.Tests {
 					gotDelta = ((MolocoAndroid) interceptor).GetBidRequestDelta(androidData);
 				}
 				var want = expectedBidResponse.User.Ext["moloco_buyeruid"].ToString();
-				var got = gotDelta.simpleUserExt.Value;
+				var got = gotDelta.SimpleUserExt.Value;
 				Assert.AreEqual(want, got);
 			}
 			#endif
