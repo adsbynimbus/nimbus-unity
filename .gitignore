@@ -85,9 +85,6 @@ crashlytics-build.properties
 *.DotSettings
 **/*.DotSettings
 
-# Ignore meta files in package directory
-com.adsbynimbus.nimbus/**/*.meta
-
 # Ignore generated csproj and solution for Sample App
 sample-app/*.csproj
 sample-app/*.sln
