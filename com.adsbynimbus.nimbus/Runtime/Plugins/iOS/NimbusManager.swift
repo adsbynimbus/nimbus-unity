@@ -44,6 +44,9 @@ import LRAtsSDK
 #if NIMBUS_ENABLE_MOLOCO
 import MolocoSDK
 #endif
+#if NIMBUS_ENABLE_INMOBI
+import InMobiSDK
+#endif
 
 
 @objc public class NimbusManager: NSObject {
@@ -238,6 +241,26 @@ import MolocoSDK
         }
     #endif
     
+    #if NIMBUS_ENABLE_INMOBI
+        @objc public class func initializeInMobi(accountId: String) {
+            IMSdk.initWithAccountID(accountId) { (error) in
+                if let error {
+                    Nimbus.shared.logger.log("InMobi initialization failed: \(error)", level: .error)
+                } else {
+                    Nimbus.shared.logger.log("InMobi initialization was successful", level: .debug)
+                }
+            }
+            Nimbus.shared.renderers[.inmobi] = NimbusInMobiAdRenderer()
+        }
+        
+        @objc public class func fetchInMobiToken() -> String {
+            var token = ""
+            let group = DispatchGroup()
+            group.wait(for: {token = try await InMobiRequestBridge().bidToken})
+            return token
+        }
+    #endif
+    
     @objc public class func getPrivacyStrings() -> String {
         var privacyStrings: [String:String] = [:]
         let gdprAppliesKey = "IABTCF_gdprApplies"
@@ -333,7 +356,7 @@ import MolocoSDK
     // MARK: - Public Functions
     
     @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
-            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String) {
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -364,6 +387,12 @@ import MolocoSDK
             if nimbusAd.network == ThirdPartyDemandNetwork.moloco.rawValue {
                 nimbusAd.renderInfo = AnyRenderInfo(NimbusMolocoRenderInfo(adUnitId: molocoAdUnitId))
             }
+        #endif
+        
+        #if NIMBUS_ENABLE_INMOBI
+            //if nimbusAd.network == ThirdPartyDemandNetwork.inmobi.rawValue {
+                //nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: inMobiPlacementId))
+            //}
         #endif
         
         guard let viewController = unityViewController() else { return }

@@ -59,5 +59,11 @@ namespace Nimbus.Editor {
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-moloco:{SdkVersion}"")";
 		}
+		
+		public static string InMobiBuildDependency()
+		{
+			return "";
+			//return $@"implementation (""com.adsbynimbus.android:extension-inmobi:{SdkVersion}"")";
+		}
 	}
 }

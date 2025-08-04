@@ -55,7 +55,7 @@ public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
     static final ExecutorService executor = Executors.newSingleThreadExecutor();
     public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener,
-            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId) {
+            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
@@ -65,6 +65,9 @@ public final class UnityHelper {
             }
             if (molocoAdUnitId != "") {
                 nimbusResponse.renderInfoOverride.put("moloco_ad_unit_id", molocoAdUnitId);
+            }
+            if (inMobiPlacementId != "") {
+                nimbusResponse.renderInfoOverride.put("inmobi_ad_unit_id", inMobiPlacementId);
             }
             nimbusResponse.renderInfoOverride.put("is_rewarded", String.valueOf(isRewarded));
             if (isBlocking) {
