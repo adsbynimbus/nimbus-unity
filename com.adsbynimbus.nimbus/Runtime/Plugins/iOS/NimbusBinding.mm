@@ -190,7 +190,7 @@ extern "C" {
 
 #if NIMBUS_ENABLE_INMOBI
     void _initializeInMobi(const char* accountId) {
-        [NimbusManager initializeInMobiWithAppKey: GetStringParam(accountId)];
+        [NimbusManager initializeInMobiWithAccountId: GetStringParam(accountId)];
     }
     
     const char* _fetchInMobiToken() {

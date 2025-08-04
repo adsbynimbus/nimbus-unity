@@ -62,7 +62,7 @@ namespace Nimbus.Editor {
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
-				//Dependencies.Add("'NimbusInMobiKit'");
+				Dependencies.Add("'NimbusInMobiKit'");
 			#endif
 			
 			var path = buildPath + "/Podfile";

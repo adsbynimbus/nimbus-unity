@@ -177,7 +177,7 @@ namespace Nimbus.Internal {
 				{
 					var inMobiAdUnit =
 						inMobiAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					inMobiPlacementId = inMobiAdUnit.AdUnitId;
+					inMobiPlacementId = inMobiAdUnit.AdUnitPlacementId;
 				}
 				catch (Exception e)
 				{

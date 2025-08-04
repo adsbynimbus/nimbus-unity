@@ -390,9 +390,9 @@ import InMobiSDK
         #endif
         
         #if NIMBUS_ENABLE_INMOBI
-            //if nimbusAd.network == ThirdPartyDemandNetwork.inmobi.rawValue {
-                //nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: inMobiPlacementId))
-            //}
+            if nimbusAd.network == ThirdPartyDemandNetwork.inmobi.rawValue {
+                nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: Int64(inMobiPlacementId) ?? 0))
+            }
         #endif
         
         guard let viewController = unityViewController() else { return }
