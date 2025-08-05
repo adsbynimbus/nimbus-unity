@@ -24,8 +24,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 		public void InitializeNativeSDK() {
 			try
 			{
-				var inMobiClass = new AndroidJavaClass("com.inmobi.sdk.InMobiSDK");
-				inMobiClass.CallStatic("init", _accountId);
+				var inMobiClass = new AndroidJavaClass("com.inmobi.monetization.InMobiSDK");
+				inMobiClass.CallStatic("init", _applicationContext, _accountId, null, null);
 			}
 			catch (AndroidJavaException e)
 			{
