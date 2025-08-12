@@ -253,12 +253,16 @@ import InMobiSDK
             Nimbus.shared.renderers[.inmobi] = NimbusInMobiAdRenderer()
         }
         
-        @objc public class func fetchInMobiToken() -> String {
+        @objc public class func fetchInMobiToken(coppa: Bool) -> String {
             var token = ""
             let group = DispatchGroup()
-            group.wait(for: {token = try await InMobiRequestBridge().bidToken})
+            group.wait(for: {
+                await InMobiRequestBridge().set(coppa: coppa)
+                token = try await InMobiRequestBridge().bidToken}
+            )
             return token
         }
+        
     #endif
     
     @objc public class func getPrivacyStrings() -> String {

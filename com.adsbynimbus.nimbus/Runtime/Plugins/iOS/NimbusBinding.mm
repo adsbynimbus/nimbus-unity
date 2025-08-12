@@ -193,8 +193,8 @@ extern "C" {
         [NimbusManager initializeInMobiWithAccountId: GetStringParam(accountId)];
     }
     
-    const char* _fetchInMobiToken() {
-        return strdup([[NimbusManager fetchInMobiToken] UTF8String]);
+    const char* _fetchInMobiToken(bool coppa) {
+        return strdup([[NimbusManager fetchInMobiTokenWithCoppa:coppa] UTF8String]);
     }
 #endif
 

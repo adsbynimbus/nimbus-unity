@@ -67,7 +67,7 @@ public final class UnityHelper {
                 nimbusResponse.renderInfoOverride.put("moloco_ad_unit_id", molocoAdUnitId);
             }
             if (inMobiPlacementId != "") {
-                nimbusResponse.renderInfoOverride.put("inmobi_ad_unit_id", inMobiPlacementId);
+                nimbusResponse.renderInfoOverride.put("inmobi_placement_id", inMobiPlacementId);
             }
             nimbusResponse.renderInfoOverride.put("is_rewarded", String.valueOf(isRewarded));
             if (isBlocking) {

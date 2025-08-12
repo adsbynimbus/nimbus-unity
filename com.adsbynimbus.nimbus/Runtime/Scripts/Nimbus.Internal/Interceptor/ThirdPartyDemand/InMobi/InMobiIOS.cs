@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
+using Nimbus.Runtime.Scripts;
 using OpenRTB.Request;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 		private static extern void _initializeInMobi(string accountId);
 
 		[DllImport("__Internal")]
-		private static extern string _fetchInMobiToken();
+		private static extern string _fetchInMobiToken(bool coppa);
 		
 		public InMobiIOS(string accountId) {
 			_accountId = accountId;
@@ -36,7 +37,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 
 		internal string GetInMobiToken()
 		{
-			var inMobiToken = _fetchInMobiToken();
+			var coppa = false;
+			if (NimbusManager.Instance != null)
+			{
+				coppa = NimbusManager.Instance.GetCoppa();
+			}
+			var inMobiToken = _fetchInMobiToken(coppa);
 			if (inMobiToken != null)
 			{
 				return inMobiToken;
