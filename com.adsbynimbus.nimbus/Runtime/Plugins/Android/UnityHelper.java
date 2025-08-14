@@ -1,5 +1,6 @@
 package com.adsbynimbus.unity;
 
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static android.view.ViewGroup.LayoutParams.*;
 
 import static com.adsbynimbus.internal.Logger.log;
@@ -11,7 +12,9 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,8 +181,8 @@ public final class UnityHelper {
                     @Override
                     public void onViewAdded(View child) {
                         super.onViewAdded(child);
-                        if (response.width() != 0) child.getLayoutParams().width = WRAP_CONTENT;
-                        if (response.height() != 0) child.getLayoutParams().height = WRAP_CONTENT;
+                        if (response.width() != 0) child.getLayoutParams().width = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, response.width(), getResources().getDisplayMetrics());
+                        if (response.height() != 0) child.getLayoutParams().height = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, response.height(), getResources().getDisplayMetrics());
                         ((LayoutParams) child.getLayoutParams()).gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                     }
                 };
