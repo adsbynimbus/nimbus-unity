@@ -7,6 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
 using Nimbus.Internal.LiveRamp;
 using Nimbus.Internal.Network;
 using Nimbus.Internal.RequestBuilder;
@@ -624,6 +631,285 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		#endregion
+		
+		/// <summary>
+		///		This method is ONLY for the Sample App
+		///     RequestBannerAdAndLoad communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners and attempts the render the returned ad immediately.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestThirdPartyBannerAdAndLoad(ThirdPartyDemand thirdParty, string nimbusReportingPosition, float bannerFloor = 0f) {
+			var adUnit = RequestThirdPartyBannerAd(thirdParty, nimbusReportingPosition, bannerFloor);
+			ShowLoadedAd(adUnit);
+			return adUnit;
+		}
+
+		
+		/// <summary>
+		///		This method is ONLY for the Sample App
+		///     RequestHybridFullScreenAndLoad pre constructs a Nimbus hybrid auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Note, though RTB Banner and Video objects are
+		///		being sent, creative types if of either type will only be returned if matching placements have been
+		///		set up operationally by the Demand partner and Nimbus team. Attempts the render the returned ad immediately.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
+		/// </param>
+		public NimbusAdUnit RequestThirdPartyFullScreenAndLoad(ThirdPartyDemand thirdParty, string nimbusReportingPosition, float bannerFloor = 0f,
+			float videoFloor = 0f) {
+			var adUnit = RequestThirdPartyHybridFullScreenAd(thirdParty, nimbusReportingPosition, bannerFloor, videoFloor);
+			ShowLoadedAd(adUnit);
+			return adUnit;
+		}
+
+		
+		/// <summary>
+		///		This method is ONLY for the Sample App
+		///     RequestRewardVideoAd pre constructs a Nimbus Video auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
+		///		type, but rather a rendering behavior.  Attempts the render the returned ad immediately.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestThirdPartyRewardedVideoAdAndLoad(ThirdPartyDemand thirdParty, string nimbusReportingPosition, float videoFloor = 0f) {
+			var adUnit = RequestThirdPartyRewardVideoAd(thirdParty, nimbusReportingPosition, videoFloor);
+			ShowLoadedAd(adUnit);
+			return adUnit;
+		}
+		
+				
+		
+		/// <summary>
+		///		This method is ONLY for the Sample App
+		///     RequestHybridFullScreenAd pre constructs a Nimbus hybrid auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Note, though RTB Banner and Video objects are
+		///		being sent, creative types if of either type will only be returned if matching placements have been
+		///		set up operationally by the Demand partner and Nimbus team. 
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
+		/// </param>
+		public NimbusAdUnit RequestThirdPartyHybridFullScreenAd(ThirdPartyDemand thirdParty, string nimbusReportingPosition, float bannerFloor = 0f,
+			float videoFloor = 0f) {
+			
+			const AdUnitType adUnitType = AdUnitType.Interstitial;
+			var bidRequest = NimbusRtbBidRequestHelper.ForHybridInterstitialAd(nimbusReportingPosition);
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
+				SetBannerFloor(bannerFloor).
+				SetVideoFloor(videoFloor);
+			
+			return RequestForThirdPartyNimbusAdUnit(thirdParty, bidRequest, adUnitType);
+		}
+
+		
+		/// <summary>
+		///		This method is ONLY for the Sample App
+		///     RequestBannerAd pre constructs a Nimbus Banner auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestThirdPartyBannerAd(ThirdPartyDemand thirdParty, string nimbusReportingPosition, float bannerFloor = 0f) {
+			const AdUnitType adUnitType = AdUnitType.Banner;
+			
+			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition);
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
+				SetBannerFloor(bannerFloor);
+			
+			return RequestForThirdPartyNimbusAdUnit(thirdParty, bidRequest, adUnitType);
+		}
+
+		/// <summary>
+		///		This method is ONLY for the Sample App
+		///     RequestRewardVideoAd pre constructs a Nimbus Video auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
+		///		type, but rather a rendering behavior.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestThirdPartyRewardVideoAd(ThirdPartyDemand thirdParty, string nimbusReportingPosition, float videoFloor = 0f) {
+			const AdUnitType adUnitType = AdUnitType.Rewarded;
+			
+			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
+				AttemptToShowVideoEndCard().
+				SetVideoFloor(videoFloor).
+				SetRewardedVideoFlag();
+
+			return RequestForThirdPartyNimbusAdUnit(thirdParty, bidRequest, adUnitType);
+		}
+		
+#if  UNITY_IOS
+		// This method is ONLY for the Sample App
+		private async Task<string> MakeRequestAsyncWithSpecificInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			return await Task.Run(async () => {
+				bidRequest = await ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
+				return await  _nimbusClient.MakeRequestAsync(bidRequest);
+			});
+		}
+#else
+		// This method is ONLY for the Sample App
+		private async Task<string> MakeRequestAsyncWithSpecificInterceptor(ThirdPartyDemand thirdParty, BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			bidRequest = await ApplySpecificInterceptors(thirdParty, bidRequest, adUnitType, isFullScreen);
+			return await  _nimbusClient.MakeRequestAsync(bidRequest);
+		}
+#endif
+		
+		// This method is ONLY for the Sample App
+		private NimbusAdUnit RequestForThirdPartyNimbusAdUnit(ThirdPartyDemand thirdParty, BidRequest bidRequest, AdUnitType adUnitType) {
+			Task<string> responseJson;
+			responseJson = MakeRequestAsyncWithSpecificInterceptor(thirdParty, bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
+			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
+			adUnit.LoadJsonResponseAsync(responseJson);
+			return adUnit;
+		}
+		
+		// This method is ONLY for the Sample App
+		private async Task<BidRequest> ApplySpecificInterceptors(ThirdPartyDemand thirdParty, BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
+			if (_nimbusPlatformAPI.Interceptors() == null) {
+				return bidRequest;
+			}
+
+			var interceptorTasks = new List<Task<BidRequestDelta>>();
+			var checkType = typeof(AdMobAndroid);
+
+			#if UNITY_IOS
+			switch (thirdParty)
+			{
+				case ThirdPartyDemand.AdMob:
+					checkType = typeof(AdMobIOS);
+					break;
+				case ThirdPartyDemand.APS:
+					checkType = typeof(ApsIOS);
+					break;
+				case ThirdPartyDemand.InMobi:
+					//checkType = typeof(InMobiIOS);
+					break;
+				case ThirdPartyDemand.Meta:
+					checkType = typeof(MetaIOS);
+					break;
+				case ThirdPartyDemand.Mintegral:
+					checkType = typeof(MintegralIOS);
+					break;
+				case ThirdPartyDemand.MobileFuse:
+					checkType = typeof(MobileFuseIOS);
+					break;
+				case ThirdPartyDemand.Moloco:
+					checkType = typeof(MolocoIOS);
+					break;
+				case ThirdPartyDemand.UnityAds:
+					checkType = typeof(UnityAdsIOS);
+					break;
+				case ThirdPartyDemand.Vungle:
+					checkType = typeof(VungleIOS);
+					break;
+			}
+			#elif UNITY_ANDROID
+			switch (thirdParty)
+			{
+				case ThirdPartyDemand.AdMob:
+					checkType = typeof(AdMobAndroid);
+					break;
+				case ThirdPartyDemand.APS:
+					checkType = typeof(ApsAndroid);
+					break;
+				case ThirdPartyDemand.InMobi:
+					//checkType = typeof(InMobiAndroid);
+					break;
+				case ThirdPartyDemand.Meta:
+					checkType = typeof(MetaAndroid);
+					break;
+				case ThirdPartyDemand.Mintegral:
+					checkType = typeof(MintegralAndroid);
+					break;
+				case ThirdPartyDemand.MobileFuse:
+					checkType = typeof(MobileFuseAndroid);
+					break;
+				case ThirdPartyDemand.Moloco:
+					checkType = typeof(MolocoAndroid);
+					break;
+				case ThirdPartyDemand.UnityAds:
+					checkType = typeof(UnityAdsAndroid);
+					break;
+				case ThirdPartyDemand.Vungle:
+					checkType = typeof(VungleAndroid);
+					break;
+			}
+			#endif
+			foreach (var interceptor in _nimbusPlatformAPI.Interceptors())
+			{
+				if (interceptor.GetType() == checkType)
+				{
+					interceptorTasks.Add(interceptor.GetBidRequestDeltaAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(2000));
+					break;
+				}
+			}
+			try
+			{
+				var results = await Task.WhenAll(interceptorTasks);
+				bidRequest = BidRequestDeltaManager.ApplyDeltas(results, bidRequest);
+			}
+			catch (Exception e)
+			{
+				Debug.unityLogger.Log($"NIMBUS INTERCEPTOR ERROR: {e.Message}  {e.StackTrace}");
+			}
+
+			return bidRequest;
+		}
+		
+		public enum ThirdPartyDemand
+		{
+			AdMob,
+			APS,
+			InMobi,
+			Meta,
+			Mintegral,
+			MobileFuse,
+			Moloco,
+			UnityAds,
+			Vungle
+		}
+		
 	}
 
 }
