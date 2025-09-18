@@ -171,8 +171,11 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f) {
-			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor);
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
+			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -389,10 +392,10 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f) {
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adUnitSize = IabSupportedAdSizes.Banner320X50) {
 			const AdUnitType adUnitType = AdUnitType.Banner;
 			
-			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition);
+			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition, adUnitSize);
 			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
 				SetBannerFloor(bannerFloor);
 			
