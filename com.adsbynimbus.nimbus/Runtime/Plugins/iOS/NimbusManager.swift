@@ -426,7 +426,7 @@ import InMobiSDK
                     contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
                     contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
                     contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.bottomAnchor)
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
                 ])
                             
             adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)
