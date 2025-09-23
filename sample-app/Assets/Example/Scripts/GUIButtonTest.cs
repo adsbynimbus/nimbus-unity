@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Nimbus.Internal;
+using Nimbus.Internal.RequestBuilder;
 using Nimbus.Runtime.Scripts;
 using TMPro;
 using UnityEngine;
@@ -13,10 +14,13 @@ namespace Example.Scripts {
 	/// </summary>
 	public class GUIButtonTest : MonoBehaviour, IAdEventsExtended {
 		[SerializeField] private TextMeshProUGUI _loadedBannerButtonText;
+		[SerializeField] private TextMeshProUGUI _loadedLeaderboardButtonText;
 		[SerializeField] private TextMeshProUGUI _errorText;
 		[SerializeField] private List<AdController> _interactableButtons;
 
 		private NimbusAdUnit _loadAndShowBannerAdUnit;
+		private NimbusAdUnit _loadAndShowLeaderboardAdUnit;
+		private bool _shouldDestroyLeaderboard;
 		private bool _shouldDestroyBanner;
 
 		private void Awake() {
@@ -71,6 +75,20 @@ namespace Example.Scripts {
 			_loadAndShowBannerAdUnit = null;
 			_shouldDestroyBanner = false;
 			_loadedBannerButtonText.text = "Load And Show Banner";
+		}
+		
+		public void LoadAndShowLeaderboard() {
+			if (!_shouldDestroyLeaderboard) {
+				_shouldDestroyLeaderboard = true;
+				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
+				_loadAndShowLeaderboardAdUnit = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
+				return;
+			}
+
+			_loadAndShowLeaderboardAdUnit?.Destroy();
+			_loadAndShowLeaderboardAdUnit = null;
+			_shouldDestroyLeaderboard = false;
+			_loadedLeaderboardButtonText.text = "Load And Show Leaderboard";
 		}
 
 		public void LoadAndShowInterstitial() {

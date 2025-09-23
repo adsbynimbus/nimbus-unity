@@ -171,8 +171,8 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		/// <param name="bannerFloor">
-		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// <param name="adSize">
+		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
 		/// </param>
 		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
 			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize);

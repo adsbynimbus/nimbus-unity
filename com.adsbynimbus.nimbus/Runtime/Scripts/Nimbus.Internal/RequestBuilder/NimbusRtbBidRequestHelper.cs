@@ -33,7 +33,7 @@ namespace Nimbus.Internal.RequestBuilder {
 		public static BidRequest ForBannerAd(string reportingPosition, IabSupportedAdSizes adUnitSize = IabSupportedAdSizes.Banner320X50) {
 			var impression = new[] {
 				new Imp {
-					Banner = new Banner().SetupDefaults((adUnitSize == IabSupportedAdSizes.Letterbox) ? adUnitSize : IabSupportedAdSizes.Banner320X50, Position.Footer, 0f),
+					Banner = new Banner().SetupDefaults((adUnitSize == IabSupportedAdSizes.LeaderBoard) ? adUnitSize : IabSupportedAdSizes.Banner320X50, Position.Footer, 0f),
 					Instl = 0,
 					Secure = 1,
 					Ext = new ImpExt {
