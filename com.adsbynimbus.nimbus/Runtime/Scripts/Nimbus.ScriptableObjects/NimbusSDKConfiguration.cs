@@ -11,6 +11,7 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public string apiKey;
 		[HideInInspector] public bool enableSDKInTestMode;
 		[HideInInspector] public bool enableUnityLogs;
+		[HideInInspector] public bool enableManualInitialization;
 
 		// APS data
 		[HideInInspector] public string androidAppID;

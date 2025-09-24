@@ -46,15 +46,10 @@ namespace Nimbus.Runtime.Scripts {
 #endif
 					();
 				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
-				NimbusEvents = new AdEvents();
-				_nimbusPlatformAPI.InitializeSDK(_configuration);
-				var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
-				if (privacyRegs != null)
+				if (!_configuration.enableManualInitialization)
 				{
-					_regulations = privacyRegs;
+					InitializeNimbusSDK();
 				}
-				_ctx = new CancellationTokenSource();
-				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				Instance = this;
 				DontDestroyOnLoad(gameObject);
 			}
@@ -136,6 +131,22 @@ namespace Nimbus.Runtime.Scripts {
 					Instance.NimbusEvents.OnVideoAdResume -= iAdEventVideoExt.OnVideoAdResume;
 				}
 			}
+		}
+
+		/// <summary>
+		///    Method to manually initialize the Nimbus SDK instead of initialization happening on Awake()
+		/// </summary>
+		public void InitializeNimbusSDK()
+		{
+			NimbusEvents = new AdEvents();
+			_nimbusPlatformAPI.InitializeSDK(_configuration);
+			var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
+			if (privacyRegs != null)
+			{
+				_regulations = privacyRegs;
+			}
+			_ctx = new CancellationTokenSource();
+			_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 		}
 		
 		

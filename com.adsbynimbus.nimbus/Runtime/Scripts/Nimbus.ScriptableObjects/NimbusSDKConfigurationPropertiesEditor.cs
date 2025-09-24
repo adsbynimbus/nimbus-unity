@@ -15,6 +15,7 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _apiKey;
 		private SerializedProperty _enableSDKInTestMode;
 		private SerializedProperty _enableUnityLogs;
+		private SerializedProperty _enableManualInitialization;
 		
 		// APS
 		private SerializedProperty _androidAppId;
@@ -79,6 +80,7 @@ namespace Nimbus.ScriptableObjects {
 			_apiKey = serializedObject.FindProperty("apiKey");
 			_enableSDKInTestMode = serializedObject.FindProperty("enableSDKInTestMode");
 			_enableUnityLogs = serializedObject.FindProperty("enableUnityLogs");
+			_enableManualInitialization = serializedObject.FindProperty("enableManualInitialization");
 			
 			// APS
 			// Android APS UI
@@ -425,6 +427,10 @@ namespace Nimbus.ScriptableObjects {
 
 			EditorGUILayout.LabelField("Enable Unity Logs", headerStyle);
 			EditorGUILayout.PropertyField((_enableUnityLogs));
+			GUILayout.Space(10);
+			
+			EditorGUILayout.LabelField("Enable Manual Initialization", headerStyle);
+			EditorGUILayout.PropertyField(_enableManualInitialization);
 			GUILayout.Space(10);
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);

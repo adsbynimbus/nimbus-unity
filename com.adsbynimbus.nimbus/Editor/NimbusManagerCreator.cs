@@ -22,6 +22,7 @@ namespace Nimbus.Editor {
 		private string _publisherKey;
 		private bool _enableUnityLogs = true;
 		private bool _enableSDKInTestMode;
+		private bool _enableManualInitialization = false;
 		private NimbusSDKConfiguration _asset = null;
 
 		// APS
@@ -409,6 +410,7 @@ namespace Nimbus.Editor {
 			_apiKey = EditorGUILayout.TextField("ApiKey", _apiKey);
 			_enableUnityLogs = EditorGUILayout.Toggle("Enable Unity Logger", _enableUnityLogs);
 			_enableSDKInTestMode = EditorGUILayout.Toggle("Enable SDK In Test Mode", _enableSDKInTestMode);
+			_enableManualInitialization = EditorGUILayout.Toggle("Enable Manual Initialization", _enableManualInitialization);
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			EditorGUIUtility.labelWidth = 200.0f; 
@@ -602,6 +604,7 @@ namespace Nimbus.Editor {
 				_asset.apiKey = _apiKey;
 				_asset.enableUnityLogs = _enableUnityLogs;
 				_asset.enableSDKInTestMode = _enableSDKInTestMode;
+				_asset.enableManualInitialization = _enableManualInitialization;
 
 				#if NIMBUS_ENABLE_APS_ANDROID
 					HandleApsSlots(_androidApsSlots, out _asset.androidApsSlotData);
