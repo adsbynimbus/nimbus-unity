@@ -36,16 +36,19 @@ namespace Nimbus.Runtime.Scripts {
 			if (_configuration == null) throw new Exception("The configuration object cannot be null");
 
 			if (Instance == null) {
-				_nimbusPlatformAPI = _nimbusPlatformAPI ?? new
-#if UNITY_EDITOR
-					Editor
-#elif UNITY_ANDROID
-                Android
-#else
-                IOS
-#endif
-					();
 				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
+				_nimbusPlatformAPI = _nimbusPlatformAPI ?? new
+				#if UNITY_EDITOR
+					Editor
+				#elif UNITY_ANDROID
+					Android
+				#else
+					IOS
+				#endif
+					();
+				NimbusEvents = new AdEvents();
+				_ctx = new CancellationTokenSource();
+				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				if (!_configuration.enableManualInitialization)
 				{
 					InitializeNimbusSDK();
@@ -138,15 +141,16 @@ namespace Nimbus.Runtime.Scripts {
 		/// </summary>
 		public void InitializeNimbusSDK()
 		{
-			NimbusEvents = new AdEvents();
-			_nimbusPlatformAPI.InitializeSDK(_configuration);
-			var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
-			if (privacyRegs != null)
+			if (!_configuration.sdkInitialized)
 			{
-				_regulations = privacyRegs;
+				_configuration.sdkInitialized = true;
+				_nimbusPlatformAPI.InitializeSDK(_configuration);
+				var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
+				if (privacyRegs != null)
+				{
+					_regulations = privacyRegs;
+				}
 			}
-			_ctx = new CancellationTokenSource();
-			_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 		}
 		
 		
@@ -609,12 +613,13 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		private BidRequest SetUniversalRtbData(BidRequest bidRequest, string position) {
-			bidRequest.
-				SetSessionId(_nimbusPlatformAPI.GetSessionID()).
-				SetDevice(_nimbusPlatformAPI.GetDevice()).
-				SetTest(_configuration.enableSDKInTestMode).
-				SetReportingPosition(position).
-				SetOMInformation(_nimbusClient.platformSdkv);
+			if (!_configuration.sdkInitialized)
+			{
+				throw new Exception("Nimbus SDK not initialized");
+			}
+			bidRequest.SetSessionId(_nimbusPlatformAPI.GetSessionID()).SetDevice(_nimbusPlatformAPI.GetDevice())
+				.SetTest(_configuration.enableSDKInTestMode).SetReportingPosition(position)
+				.SetOMInformation(_nimbusClient.platformSdkv);
 			#if NIMBUS_ENABLE_LIVERAMP
 				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
 			#endif
