@@ -1,3 +1,4 @@
+using System;
 using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
@@ -30,10 +31,14 @@ namespace Nimbus.Internal.RequestBuilder {
 			};
 		}
 
-		public static BidRequest ForBannerAd(string reportingPosition) {
+		public static BidRequest ForBannerAd(string reportingPosition, IabSupportedAdSizes adUnitSize = IabSupportedAdSizes.Banner320X50) {
+			if (adUnitSize != IabSupportedAdSizes.Banner320X50 && adUnitSize != IabSupportedAdSizes.LeaderBoard)
+			{
+				throw new Exception("Unsupported Ad Size was used. For banner ads, the Nimbus Unity SDK only supports Banner320X50 and LeaderBoard sizes");
+			}
 			var impression = new[] {
 				new Imp {
-					Banner = new Banner().SetupDefaults(IabSupportedAdSizes.Banner320X50, Position.Footer, 0f),
+					Banner = new Banner().SetupDefaults(adUnitSize, Position.Footer, 0f),
 					Instl = 0,
 					Secure = 1,
 					Ext = new ImpExt {
