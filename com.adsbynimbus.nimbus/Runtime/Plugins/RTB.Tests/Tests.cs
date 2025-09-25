@@ -99,7 +99,8 @@ namespace OpenRTB.Tests {
                             Instl = 1,
                             Secure = 1,
                             Ext = new ImpExt {
-                                Position = "App Open"
+                                Position = "App Open",
+						        AdUnitType = ImpExtAdUnitType.Inline
                             }
                         }
                     }
@@ -176,7 +177,8 @@ namespace OpenRTB.Tests {
                                 Instl = 1,
                                 Secure = 1,
                                 Ext = new ImpExt {
-                                    Position = "App Open"
+                                    Position = "App Open",
+                                    AdUnitType = ImpExtAdUnitType.Inline
                                 }
                             }
                         }
@@ -280,7 +282,8 @@ namespace OpenRTB.Tests {
                         Instl = 1,
                         Secure = 1,
                         Ext = new ImpExt {
-                            Position = "App Open"
+                            Position = "App Open",
+                            AdUnitType = ImpExtAdUnitType.Inline
                         }
                     }
                 }
@@ -373,7 +376,8 @@ namespace OpenRTB.Tests {
                         Instl = 1,
                         Secure = 1,
                         Ext = new ImpExt {
-                            Position = "App Open"
+                            Position = "App Open",
+                            AdUnitType = ImpExtAdUnitType.Inline
                         }
                     }
                 }
