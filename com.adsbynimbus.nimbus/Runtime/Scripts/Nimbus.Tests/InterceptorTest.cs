@@ -34,6 +34,7 @@ namespace Nimbus.Tests {
 								new Imp {
 									Ext = new ImpExt() {
 										Position = "test",
+										AdUnitType = ImpExtAdUnitType.Inline
 									}
 								}
 							},
@@ -63,7 +64,8 @@ namespace Nimbus.Tests {
 							Imp = new[] {
 								new Imp {
 									Ext = new ImpExt() {
-										Position = "test"
+										Position = "test",
+										AdUnitType = ImpExtAdUnitType.Inline
 									}
 								}
 							},
@@ -118,6 +120,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 									Aps = new JArray{
 										JObject.Parse(ApsParseData),
 									}
@@ -147,6 +150,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 									Aps = new JArray() {
 										JObject.Parse(ApsParseData),
 									}
@@ -205,6 +209,7 @@ namespace Nimbus.Tests {
 								new Imp {
 									Ext = new ImpExt() {
 										Position = "test",
+										AdUnitType = ImpExtAdUnitType.Inline,
 										FacebookAppId = "meta_app_id",
 										MetaTestAdType = "meta_test_ad_type",
 									}
@@ -225,6 +230,7 @@ namespace Nimbus.Tests {
 										Position = "test",
 										FacebookAppId = "meta_app_id",
 										MetaTestAdType = "meta_test_ad_type",
+
 									}
 								}
 							},
@@ -272,6 +278,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline
 								}
 							}
 						},
@@ -300,7 +307,8 @@ namespace Nimbus.Tests {
 						Imp = new[] {
 							new Imp {
 								Ext = new ImpExt() {
-									Position = "test"
+									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 								}
 							}
 						},
@@ -362,6 +370,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 								}
 							}
 						},
@@ -377,7 +386,8 @@ namespace Nimbus.Tests {
 						Imp = new[] {
 							new Imp {
 								Ext = new ImpExt() {
-									Position = "test"
+									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 								}
 							}
 						},
@@ -425,6 +435,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline
 								}
 							}
 						},
@@ -441,6 +452,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline
 								}
 							}
 						},
@@ -484,6 +496,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 								}
 							}
 						},
@@ -500,6 +513,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline
 								}
 							}
 						},
@@ -540,6 +554,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 									Skadn = new Skadn {
 										SkadnetIds = new[] {
 											"id1.skadnetwork",
@@ -584,6 +599,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt() {
 									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 								}
 							}
 						},
@@ -599,7 +615,8 @@ namespace Nimbus.Tests {
 						Imp = new[] {
 							new Imp {
 								Ext = new ImpExt() {
-									Position = "test"
+									Position = "test",
+									AdUnitType = ImpExtAdUnitType.Inline,
 								}
 							}
 						},
@@ -661,6 +678,7 @@ namespace Nimbus.Tests {
 					new Imp {
 						Ext = new ImpExt() {
 							Position = "test",
+							AdUnitType = ImpExtAdUnitType.Inline
 						}
 					}
 				}
@@ -699,6 +717,7 @@ namespace Nimbus.Tests {
 
 			var wantBody = JsonConvert.SerializeObject(new ImpExt() {
 				Position = "test",
+				AdUnitType = ImpExtAdUnitType.Inline,
 				Skadn = new Skadn {
 					SkadnetIds = new[] {
 						"id1.skadnetwork",
