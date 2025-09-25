@@ -26,6 +26,8 @@ namespace Nimbus.Editor {
 		private bool _iosMobileFuseIsEnabled;
 		private bool _androidMolocoIsEnabled;
 		private bool _iosMolocoIsEnabled;
+		private bool _androidInMobiIsEnabled;
+		private bool _iosInMobiIsEnabled;
 		private const string LiveRampMacro = "NIMBUS_ENABLE_LIVERAMP";
 		private const string ApsMacro = "NIMBUS_ENABLE_APS";
 		private const string VungleMacro = "NIMBUS_ENABLE_VUNGLE";
@@ -35,6 +37,7 @@ namespace Nimbus.Editor {
 		private const string UnityAdsMacro = "NIMBUS_ENABLE_UNITY_ADS";
 		private const string MobileFuseMacro = "NIMBUS_ENABLE_MOBILEFUSE";
 		private const string MolocoMacro = "NIMBUS_ENABLE_MOLOCO";
+		private const string InMobiMacro = "NIMBUS_ENABLE_INMOBI";
 		// Android-specific Macros (for Unity Editor Configurations only)
 		private const string LiveRampAndroidMacro = "NIMBUS_ENABLE_LIVERAMP_ANDROID";
 		private const string ApsAndroidMacro = "NIMBUS_ENABLE_APS_ANDROID";
@@ -45,6 +48,7 @@ namespace Nimbus.Editor {
 		private const string UnityAdsAndroidMacro = "NIMBUS_ENABLE_UNITY_ADS_ANDROID";
 		private const string MobileFuseAndroidMacro = "NIMBUS_ENABLE_MOBILEFUSE_ANDROID";
 		private const string MolocoAndroidMacro = "NIMBUS_ENABLE_MOLOCO_ANDROID";
+		private const string InMobiAndroidMacro = "NIMBUS_ENABLE_INMOBI_ANDROID";
 		// iOS-specific Macros (for Unity Editor Configurations only)
 		private const string LiveRampIOSMacro = "NIMBUS_ENABLE_LIVERAMP_IOS";
 		private const string ApsIOSMacro = "NIMBUS_ENABLE_APS_IOS";
@@ -55,6 +59,7 @@ namespace Nimbus.Editor {
 		private const string UnityAdsIOSMacro = "NIMBUS_ENABLE_UNITY_ADS_IOS";
 		private const string MobileFuseIOSMacro = "NIMBUS_ENABLE_MOBILEFUSE_IOS";
 		private const string MolocoIOSMacro = "NIMBUS_ENABLE_MOLOCO_IOS";
+		private const string InMobiIOSMacro = "NIMBUS_ENABLE_INMOBI_IOS";
 
 		private const string Enabled = "Enabled";
 		private const string Disabled = "Disabled";
@@ -68,6 +73,7 @@ namespace Nimbus.Editor {
 		private const string UnityAdsPartnerStr = "Unity Ads";
 		private const string MobileFusePartnerStr = "MobileFuse";
 		private const string MolocoPartnerStr = "Moloco";
+		private const string InMobiPartnerStr = "InMobi";
 		
 		Vector2 scrollPos;
 
@@ -536,6 +542,53 @@ namespace Nimbus.Editor {
 			}
 			// END OF MOLOCO
 			
+			// START OF INMOBI
+			EditorGUILayout.LabelField($"{InMobiPartnerStr} Build Macro Settings:", headerStyle);
+			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+			GUILayout.Space(10);
+
+			var inMobiAndroidStatus = _androidInMobiIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Android is: {inMobiAndroidStatus}", headerStyle);
+			GUILayout.Space(2);
+			var androidInMobiButtonText = _androidInMobiIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", InMobiPartnerStr, "Android")
+				: string.Format(ButtonMessageTemplate, "Enable", InMobiPartnerStr, "Android");
+			if (GUILayout.Button(androidInMobiButtonText)) {
+				if (_androidInMobiIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.Android, InMobiMacro);
+					RemoveBuildMacroForBothPlatforms(InMobiAndroidMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.Android, InMobiMacro);
+					SetBuildMacroForBothPlatforms(InMobiAndroidMacro);
+					EditorUtil.LogWithHelpBox($"Don't forget to add your Android {InMobiPartnerStr} Account Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
+					FocusOnGameManager(InMobiPartnerStr);
+				}
+			}
+
+			GUILayout.Space(5);
+
+			var inMobiIosStatus = _iosInMobiIsEnabled ? Enabled : Disabled;
+			EditorGUILayout.LabelField($"Macro is set for Ios is: {inMobiIosStatus}", headerStyle);
+			GUILayout.Space(2);
+			var inMobiIosButtonText = _iosInMobiIsEnabled
+				? string.Format(ButtonMessageTemplate, "Remove", InMobiPartnerStr, "iOS")
+				: string.Format(ButtonMessageTemplate, "Enable", InMobiPartnerStr, "iOS");
+			if (GUILayout.Button(inMobiIosButtonText)) {
+				if (_iosInMobiIsEnabled) {
+					RemoveBuildMacroForGroup(BuildTargetGroup.iOS, InMobiMacro);
+					RemoveBuildMacroForBothPlatforms(InMobiIOSMacro);
+				}
+				else {
+					SetBuildMacroForGroup(BuildTargetGroup.iOS,InMobiMacro);
+					SetBuildMacroForBothPlatforms(InMobiIOSMacro);
+					EditorUtil.LogWithHelpBox(
+						$"Don't forget to add your iOS {InMobiPartnerStr} App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
+					FocusOnGameManager(InMobiPartnerStr);
+				}
+			}
+			// END OF INMOBI
+			
 			EditorGUILayout.EndScrollView();
 			EditorGUILayout.EndVertical();
 		}
@@ -563,6 +616,8 @@ namespace Nimbus.Editor {
 			_iosMobileFuseIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MobileFuseIOSMacro);
 			_androidMolocoIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, MolocoAndroidMacro);
 			_iosMolocoIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, MolocoIOSMacro);
+			_androidInMobiIsEnabled = IsBuildMacroSet(BuildTargetGroup.Android, InMobiAndroidMacro);
+			_iosInMobiIsEnabled = IsBuildMacroSet(BuildTargetGroup.iOS, InMobiIOSMacro);
 		}
 
 
