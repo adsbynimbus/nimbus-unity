@@ -395,7 +395,11 @@ import InMobiSDK
         
         #if NIMBUS_ENABLE_INMOBI
             if nimbusAd.network == ThirdPartyDemandNetwork.inmobi.rawValue {
-                nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: Int64(inMobiPlacementId) ?? 0))
+                do {
+                    nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: Int64(inMobiPlacementId) ?? 0))
+                } catch {
+                    Nimbus.shared.logger.log("\(error.localizedDescription) : InMobi Placement ID should be an integer", level: .error)
+                }
             }
         #endif
         

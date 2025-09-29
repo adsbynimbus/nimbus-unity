@@ -110,7 +110,7 @@ post_install do |installer|
 	'MolocoSDK',
 	'NimbusMolocoKit',
 	'InMobiSDK',
-	'NimbusInMobiKit',
+	'NimbusInMobiKit'
   ]
 
   main_project = installer.aggregate_targets.first.user_project
