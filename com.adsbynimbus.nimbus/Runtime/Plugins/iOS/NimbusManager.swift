@@ -44,6 +44,9 @@ import LRAtsSDK
 #if NIMBUS_ENABLE_MOLOCO
 import MolocoSDK
 #endif
+#if NIMBUS_ENABLE_INMOBI
+import InMobiSDK
+#endif
 
 
 @objc public class NimbusManager: NSObject {
@@ -238,6 +241,30 @@ import MolocoSDK
         }
     #endif
     
+    #if NIMBUS_ENABLE_INMOBI
+        @objc public class func initializeInMobi(accountId: String) {
+            IMSdk.initWithAccountID(accountId) { (error) in
+                if let error {
+                    Nimbus.shared.logger.log("InMobi initialization failed: \(error)", level: .error)
+                } else {
+                    Nimbus.shared.logger.log("InMobi initialization was successful", level: .debug)
+                }
+            }
+            Nimbus.shared.renderers[.inmobi] = NimbusInMobiAdRenderer()
+        }
+        
+        @objc public class func fetchInMobiToken(coppa: Bool) -> String {
+            var token = ""
+            let group = DispatchGroup()
+            group.wait(for: {
+                await InMobiRequestBridge().set(coppa: coppa)
+                token = try await InMobiRequestBridge().bidToken}
+            )
+            return token
+        }
+        
+    #endif
+    
     @objc public class func getPrivacyStrings() -> String {
         var privacyStrings: [String:String] = [:]
         let gdprAppliesKey = "IABTCF_gdprApplies"
@@ -333,7 +360,7 @@ import MolocoSDK
     // MARK: - Public Functions
     
     @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
-            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String) {
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -366,6 +393,16 @@ import MolocoSDK
             }
         #endif
         
+        #if NIMBUS_ENABLE_INMOBI
+            if nimbusAd.network == ThirdPartyDemandNetwork.inmobi.rawValue {
+                do {
+                    nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: Int64(inMobiPlacementId) ?? 0))
+                } catch {
+                    Nimbus.shared.logger.log("\(error.localizedDescription) : InMobi Placement ID should be an integer", level: .error)
+                }
+            }
+        #endif
+        
         guard let viewController = unityViewController() else { return }
         
         if isBlocking {
@@ -393,7 +430,7 @@ import MolocoSDK
                     contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
                     contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
                     contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
                 ])
                             
             adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)

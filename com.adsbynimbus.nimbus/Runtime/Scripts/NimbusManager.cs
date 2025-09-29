@@ -457,6 +457,20 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		/// <summary>
+		///     If this inventory is subject to COPPA restrictions use this function to get the passed in RTB COPPA information for all Nimbus requests
+		/// </summary>
+		/// <return>
+		///		Returns if COPPA as enabled or not
+		/// </return>
+		public Boolean GetCoppa() {
+			if (_regulations == null)
+			{
+				return false;
+			}
+			return _regulations.Coppa == 1;
+		}
+		
+		/// <summary>
 		///     Sets the Gender of the User
 		/// </summary>
 		/// <param name="gender">

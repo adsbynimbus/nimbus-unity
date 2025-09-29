@@ -6,6 +6,7 @@ using Nimbus.Internal;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
@@ -647,6 +648,66 @@ namespace Nimbus.Tests {
 				Assert.AreEqual(want, got);
 			}
 			#endif
+		}
+		
+		[Test]
+		public void TestInMobiInterceptor()
+		{
+		#if UNITY_IOS && NIMBUS_ENABLE_INMOBI
+			const string inMobiUserData = "{\"inmobi_buyeruid\":\"inmobi_test_uid_12345678\"}";
+
+			var table = new List<Tuple<BidRequest, IInterceptor>> {
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test",
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(inMobiUserData),
+						}
+					}, new InMobiAndroid(null, "inmobi_account_id")
+				),
+
+				new (
+					new BidRequest {
+						Imp = new[] {
+							new Imp {
+								Ext = new ImpExt() {
+									Position = "test"
+								}
+							}
+						},
+						User = new User
+						{
+							Ext = JObject.Parse(inMobiUserData),
+						}
+					}, new InMobiIOS("inmobi_account_id")
+				),
+			};
+				
+			foreach (var tt in table) {
+				var (expectedBidResponse, interceptor) = tt;
+				// extensions are only added if the imp data has been initialized already
+				var gotDelta = new BidRequestDelta();
+				var data = "inmobi_test_uid_12345678";
+				if (interceptor.GetType() == typeof(InMobiIOS))
+				{
+					gotDelta = ((InMobiIOS) interceptor).GetBidRequestDelta(data);
+				}
+				if (interceptor.GetType() == typeof(InMobiAndroid))
+				{
+					gotDelta = ((InMobiAndroid) interceptor).GetBidRequestDelta(data);
+				}
+				var want = expectedBidResponse.User.Ext["inmobi_buyeruid"].ToString();
+				var got = gotDelta.SimpleUserExt.Value;
+				Assert.AreEqual(want, got);
+			}
+		#endif
 		}
 		
 		[Test]

@@ -6,6 +6,7 @@ using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.APS;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
@@ -42,7 +43,7 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
-			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId, string molocoAdUnitId);
+			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId, string molocoAdUnitId, string inMobiPlacementId);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -93,6 +94,7 @@ namespace Nimbus.Internal {
 		
 		private ThirdPartyAdUnit[] molocoAdUnits;
 
+		private ThirdPartyAdUnit[] inMobiAdUnits;
 		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
@@ -167,6 +169,15 @@ namespace Nimbus.Internal {
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
 			#endif
+			
+			#if NIMBUS_ENABLE_INMOBI
+				Debug.unityLogger.Log("Initializing iOS InMobi SDK");
+				var (inMobiAccountId, inMobiAdUnitIds) = configuration.GetInMobiData();
+				inMobiAdUnits = inMobiAdUnitIds;
+				var inMobi = new InMobiIOS(inMobiAccountId);
+				inMobi.InitializeNativeSDK();
+				_interceptors.Add(inMobi);
+			#endif
 		}
 
 		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
@@ -188,6 +199,7 @@ namespace Nimbus.Internal {
 			var mintegralAdUnitId = "";
 			var mintegralAdUnitPlacementId = "";
 			var molocoAdUnitId = "";
+			var inMobiAdUnitId = "";
 			#if NIMBUS_ENABLE_MINTEGRAL
 				try
 				{
@@ -213,8 +225,21 @@ namespace Nimbus.Internal {
 					Debug.unityLogger.LogException(e);
 				}
 			#endif
+			#if NIMBUS_ENABLE_INMOBI
+				try
+				{
+					var inMobiAdUnit =
+						inMobiAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
+					inMobiAdUnitId = inMobiAdUnit.AdUnitPlacementId;
+				}
+				catch (Exception e)
+				{
+					Debug.unityLogger.LogException(e);
+				}
+			#endif
+			
 			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId);
+			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiAdUnitId);
 		}
 
 		internal override string GetSessionID() {
