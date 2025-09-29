@@ -70,6 +70,15 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _iosMolocoAppKey;
 		private ReorderableList _iosMolocoAdUnitDataList = null;
 		private SerializedProperty _iosMolocoAdUnitData = null;
+		
+		// InMobi
+		private SerializedProperty _androidInMobiAccountId;
+		private ReorderableList _androidInMobiAdUnitDataList = null;
+		private SerializedProperty _androidInMobiAdUnitData = null;
+		
+		private SerializedProperty _iosInMobiAccountId;
+		private ReorderableList _iosInMobiAdUnitDataList = null;
+		private SerializedProperty _iosInMobiAdUnitData = null;
 
 		// Needed so error messages aren't spammed
 		private bool _errorLogged;
@@ -232,6 +241,37 @@ namespace Nimbus.ScriptableObjects {
 			_iosMolocoAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosMolocoAdUnitDataList.headerHeight = 0f;
 			_iosMolocoAdUnitDataList.drawElementCallback += OnDrawElementMolocoIOSAdUnitData;
+			
+			//InMobi
+			// Android InMobi UI
+			_androidInMobiAccountId = serializedObject.FindProperty("androidInMobiAccountId");
+			_androidInMobiAdUnitData = serializedObject.FindProperty("androidInMobiAdUnitData");
+			_androidInMobiAdUnitDataList = new ReorderableList(
+				serializedObject, _androidInMobiAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_androidInMobiAdUnitData.isExpanded = true;
+			_androidInMobiAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_androidInMobiAdUnitDataList.headerHeight = 0f;
+			_androidInMobiAdUnitDataList.drawElementCallback += OnDrawElementInMobiAndroidAdUnitData;
+			
+			// IOS InMobi UI
+			_iosInMobiAccountId = serializedObject.FindProperty("iosInMobiAccountId");
+			_iosInMobiAdUnitData = serializedObject.FindProperty("iosInMobiAdUnitData");
+			_iosInMobiAdUnitDataList = new ReorderableList(
+				serializedObject, _iosInMobiAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_iosInMobiAdUnitData.isExpanded = true;
+			_iosInMobiAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_iosInMobiAdUnitDataList.headerHeight = 0f;
+			_iosInMobiAdUnitDataList.drawElementCallback += OnDrawElementInMobiIOSAdUnitData;
 		}
 
 		private void OnDisable() {
@@ -243,6 +283,8 @@ namespace Nimbus.ScriptableObjects {
 			_iosMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralIOSAdUnitData;
 			_androidMolocoAdUnitDataList.drawElementCallback -= OnDrawElementMolocoAndroidAdUnitData;
 			_iosMolocoAdUnitDataList.drawElementCallback -= OnDrawElementMolocoIOSAdUnitData;
+			_androidInMobiAdUnitDataList.drawElementCallback -= OnDrawElementInMobiAndroidAdUnitData;
+			_iosInMobiAdUnitDataList.drawElementCallback -= OnDrawElementInMobiIOSAdUnitData;
 			var config = target as NimbusSDKConfiguration;
 			if (config == null) return;
 			config.Sanitize();
@@ -401,6 +443,44 @@ namespace Nimbus.ScriptableObjects {
 				fieldRect.y += fieldRect.height;
 			}
 		}
+		
+		private void OnDrawElementInMobiAndroidAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _androidInMobiAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
+		
+		private void OnDrawElementInMobiIOSAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _iosInMobiAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
 
 		public override void OnInspectorGUI() {
 			serializedObject.Update();
@@ -429,7 +509,7 @@ namespace Nimbus.ScriptableObjects {
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -610,6 +690,27 @@ namespace Nimbus.ScriptableObjects {
 				#endif
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Moloco data", MessageType.Warning);
+				#endif
+			#endif
+			
+			#if NIMBUS_ENABLE_INMOBI_ANDROID || NIMBUS_ENABLE_INMOBI_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("InMobi Configuration", headerStyle);
+				#if NIMBUS_ENABLE_INMOBI_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidInMobiAccountId));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_androidInMobiAdUnitData, "InMobi Android Ad Unit Id Data");
+				#endif
+				#if NIMBUS_ENABLE_INMOBI_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosInMobiAccountId));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_iosInMobiAdUnitData, "InMobi iOS Ad Unit Id Data");
+				#endif
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter InMobi data", MessageType.Warning);
 				#endif
 			#endif
 			

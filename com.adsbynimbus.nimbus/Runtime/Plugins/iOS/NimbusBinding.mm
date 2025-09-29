@@ -33,11 +33,12 @@ extern "C" {
                     double closeButtonDelay, 
                     const char* mintegralAdUnitId,
                     const char* mintegralAdUnitPlacementId,
-                    const char* molocoAdUnitId) {
+                    const char* molocoAdUnitId,
+                    const char* inMobiPlacementId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
             mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)
-            molocoAdUnitId:GetStringParam(molocoAdUnitId)];
+            molocoAdUnitId:GetStringParam(molocoAdUnitId) inMobiPlacementId:GetStringParam(inMobiPlacementId)];
     }
 
     void _destroyAd(int adUnitInstanceId) {
@@ -184,6 +185,16 @@ extern "C" {
     
     const char* _fetchMolocoToken() {
         return strdup([[NimbusManager fetchMolocoToken] UTF8String]);
+    }
+#endif
+
+#if NIMBUS_ENABLE_INMOBI
+    void _initializeInMobi(const char* accountId) {
+        [NimbusManager initializeInMobiWithAccountId: GetStringParam(accountId)];
+    }
+    
+    const char* _fetchInMobiToken(bool coppa) {
+        return strdup([[NimbusManager fetchInMobiTokenWithCoppa:coppa] UTF8String]);
     }
 #endif
 

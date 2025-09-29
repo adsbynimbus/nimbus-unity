@@ -5,6 +5,6 @@ namespace Nimbus
     {
         public const string UnitySdkVersion = "1.14.0";
         public const string IosSdkVersion = "2.31.0";
-        public const string AndroidSdkVersion = "2.33.2";
+        public const string AndroidSdkVersion = "2.34.0";
     }
 }
