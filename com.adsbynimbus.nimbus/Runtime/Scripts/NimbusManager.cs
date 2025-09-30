@@ -186,8 +186,12 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f) {
-			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor);
+		/// <param name="adSize">
+		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
+		/// </param>
+		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, 
+				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
+			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -256,13 +260,16 @@ namespace Nimbus.Runtime.Scripts {
 		///		Defines the rate at which Banner ads are refreshed with a new ad.
 		///		Defaults to the IAB recommended 30 seconds. Nimbus does not allow anything lower than 20 seconds
 		/// </param>
+		/// <param name="adSize">
+		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
+		/// </param>
 		public async void RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
 			string nimbusReportingPosition, float bannerFloor = 0f,
-			int refreshIntervalInSeconds = 30) {
+			int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
 
 			NimbusAdUnit nextAdUnit = null; 
 			var delay = (refreshIntervalInSeconds <= 20 ? 30: refreshIntervalInSeconds) * 1000;
-			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor);
+			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor, adSize);
 			while (!source.IsCancellationRequested) {
 				try {
 					await Task.Delay(delay, source.Token);
@@ -404,10 +411,13 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="bannerFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f) {
+		/// <param name="adSize">
+		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and LeaderBoard)
+		/// </param>
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
 			const AdUnitType adUnitType = AdUnitType.Banner;
 			
-			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition);
+			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition, adSize);
 			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
 				SetBannerFloor(bannerFloor);
 			
@@ -459,6 +469,20 @@ namespace Nimbus.Runtime.Scripts {
 		public void SetCoppa(bool isCoppa) {
 			_regulations.Coppa = isCoppa ? 1 : 0;
 			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
+		}
+		
+		/// <summary>
+		///     If this inventory is subject to COPPA restrictions use this function to get the passed in RTB COPPA information for all Nimbus requests
+		/// </summary>
+		/// <return>
+		///		Returns if COPPA as enabled or not
+		/// </return>
+		public Boolean GetCoppa() {
+			if (_regulations == null)
+			{
+				return false;
+			}
+			return _regulations.Coppa == 1;
 		}
 		
 		/// <summary>

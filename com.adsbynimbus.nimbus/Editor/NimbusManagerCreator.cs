@@ -79,6 +79,15 @@ namespace Nimbus.Editor {
 		private ReorderableList _iosMolocoAdUnitDataList = null;
 		private SerializedProperty _iosMolocoAdUnitData = null;
 		
+		//InMobi
+		private SerializedProperty _androidInMobiAccountId;
+		private ReorderableList _androidInMobiAdUnitDataList = null;
+		private SerializedProperty _androidInMobiAdUnitData = null;
+		
+		private SerializedProperty _iosInMobiAccountId;
+		private ReorderableList _iosInMobiAdUnitDataList = null;
+		private SerializedProperty _iosInMobiAdUnitData = null;
+		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -240,6 +249,37 @@ namespace Nimbus.Editor {
 			_iosMolocoAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_iosMolocoAdUnitDataList.headerHeight = 0f;
 			_iosMolocoAdUnitDataList.drawElementCallback += OnDrawElementMolocoIOSAdUnitData;
+			
+			//InMobi
+			// Android InMobi UI
+			_androidInMobiAccountId = serializedObject.FindProperty("androidInMobiAccountId");
+			_androidInMobiAdUnitData = serializedObject.FindProperty("androidInMobiAdUnitData");
+			_androidInMobiAdUnitDataList = new ReorderableList(
+				serializedObject, _androidInMobiAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_androidInMobiAdUnitData.isExpanded = true;
+			_androidInMobiAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_androidInMobiAdUnitDataList.headerHeight = 0f;
+			_androidInMobiAdUnitDataList.drawElementCallback += OnDrawElementInMobiAndroidAdUnitData;
+			
+			// IOS InMobi UI
+			_iosInMobiAccountId = serializedObject.FindProperty("iosInMobiAccountId");
+			_iosInMobiAdUnitData = serializedObject.FindProperty("iosInMobiAdUnitData");
+			_iosInMobiAdUnitDataList = new ReorderableList(
+				serializedObject, _iosInMobiAdUnitData,
+				true,
+				false,
+				true,
+				true
+			);
+			_iosInMobiAdUnitData.isExpanded = true;
+			_iosInMobiAdUnitDataList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
+			_iosInMobiAdUnitDataList.headerHeight = 0f;
+			_iosInMobiAdUnitDataList.drawElementCallback += OnDrawElementInMobiIOSAdUnitData;
 		}
 
 
@@ -252,6 +292,8 @@ namespace Nimbus.Editor {
 			_iosMintegralAdUnitDataList.drawElementCallback -= OnDrawElementMintegralIOSAdUnitData;
 			_androidMolocoAdUnitDataList.drawElementCallback -= OnDrawElementMolocoAndroidAdUnitData;
 			_iosMolocoAdUnitDataList.drawElementCallback -= OnDrawElementMolocoIOSAdUnitData;
+			_androidInMobiAdUnitDataList.drawElementCallback -= OnDrawElementInMobiAndroidAdUnitData;
+			_iosInMobiAdUnitDataList.drawElementCallback -= OnDrawElementInMobiIOSAdUnitData;
 		}
 
 		private void OnDrawElementApsAndroidSlotData(Rect rect, int index, bool isActive, bool isFocused) {
@@ -403,6 +445,44 @@ namespace Nimbus.Editor {
 				fieldRect.y += fieldRect.height;
 			}
 		}
+		
+		private void OnDrawElementInMobiAndroidAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _androidInMobiAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
+		
+		private void OnDrawElementInMobiIOSAdUnitData(Rect rect, int index, bool isActive, bool isFocused) {
+			var fieldRect = rect;
+			fieldRect.height = EditorGUIUtility.singleLineHeight;
+			var item = _iosInMobiAdUnitData.GetArrayElementAtIndex(index);
+			item.isExpanded = true;
+			var itr = item.Copy();
+
+			itr.Next(true);
+			fieldRect.y += 1.5f * fieldRect.height;
+			EditorGUI.PropertyField(fieldRect, itr, false);
+
+			var children = item.CountInProperty() - 1;
+			for (var i = 0; i < children; i++) {
+				EditorGUI.PropertyField(fieldRect, itr, false);
+				itr.Next(false);
+				fieldRect.y += fieldRect.height;
+			}
+		}
 
 		private void OnGUI() {
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
@@ -417,7 +497,7 @@ namespace Nimbus.Editor {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -598,6 +678,28 @@ namespace Nimbus.Editor {
 				#endif
 			#endif
 			
+			#if NIMBUS_ENABLE_INMOBI_ANDROID || NIMBUS_ENABLE_INMOBI_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("InMobi Configuration", headerStyle);
+				#if NIMBUS_ENABLE_INMOBI_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_androidInMobiAccountId));
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					EditorDrawUtility.DrawArray(_androidInMobiAdUnitData, "InMobi Android Ad Unit Id Data");
+				#endif
+					#if NIMBUS_ENABLE_INMOBI_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField((_iosInMobiAccountId));
+					GUILayout.Space(10);
+					EditorDrawUtility.DrawArray(_iosInMobiAdUnitData, "InMobi iOS Ad Unit Id Data");
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter InMobi data", MessageType.Warning);
+				#endif
+			#endif
+			
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create")) {
 				_asset.publisherKey = _publisherKey;
@@ -632,6 +734,13 @@ namespace Nimbus.Editor {
 				#endif
 				#if NIMBUS_ENABLE_MOLOCO_IOS
 					HandleMolocoAdUnitData(_iosMolocoAdUnitData, out _asset.iosMolocoAdUnitData);
+				#endif
+				
+				#if NIMBUS_ENABLE_INMOBI_ANDROID
+					HandleInMobiAdUnitData(_androidInMobiAdUnitData, out _asset.androidInMobiAdUnitData);
+				#endif
+				#if NIMBUS_ENABLE_INMOBI_IOS
+					HandleInMobiAdUnitData(_iosInMobiAdUnitData, out _asset.iosInMobiAdUnitData);
 				#endif
 				
 				_asset.Sanitize();
@@ -731,13 +840,26 @@ namespace Nimbus.Editor {
 					if (!ValidateMolocoData("Android", _androidMolocoAppKey, _asset.androidMolocoAdUnitData)) {
 						return;
 					}
-					_asset.androidMintegralAppKey = _androidMolocoAppKey.stringValue;
+					_asset.androidMolocoAppKey = _androidMolocoAppKey.stringValue;
 				#endif
 				#if NIMBUS_ENABLE_MOLOCO_IOS
 					if (!ValidateMolocoData("iOS", _iosMolocoAppKey, _asset.iosMolocoAdUnitData)) {
 						return;
 					}
 					_asset.iosMolocoAppKey = _iosMolocoAppKey.stringValue;
+				#endif
+				
+				#if NIMBUS_ENABLE_INMOBI_ANDROID
+					if (!ValidateInMobiData("Android", _androidInMobiAccountId, _asset.androidInMobiAdUnitData)) {
+						return;
+					}
+					_asset.androidInMobiAccountId = _androidInMobiAccountId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_INMOBI_IOS
+					if (!ValidateInMobiData("iOS", _iosInMobiAccountId, _asset.iosInMobiAdUnitData)) {
+						return;
+					}
+					_asset.iosInMobiAccountId = _iosInMobiAccountId.stringValue;
 				#endif
 
 				AssetDatabase.CreateAsset(_asset,
@@ -1023,6 +1145,67 @@ namespace Nimbus.Editor {
 				else {
 					Debug.unityLogger.LogError("Nimbus", 
 						$"Moloco SDK has been included, Moloco cannot contain duplicate ad type {adUnit.AdUnitType} for {platform}, object NimbusAdsManager not created");
+					return false;
+				}
+			}
+			return true;
+		}
+		private void HandleInMobiAdUnitData(SerializedProperty adUnitData, out ThirdPartyAdUnit[] adUnits)
+		{
+			var adUnitList = new List<ThirdPartyAdUnit>();
+			for (var i = 0; i < adUnitData.arraySize; i++) {
+				var item = adUnitData.GetArrayElementAtIndex(i);
+				var adUnitId = item.FindPropertyRelative("AdUnitId");
+				var adUnitPlacementId = item.FindPropertyRelative("AdUnitPlacementId");
+
+				var inMobiData  = new ThirdPartyAdUnit() {
+					AdUnitId = adUnitId?.stringValue,
+					AdUnitPlacementId = adUnitPlacementId?.stringValue
+				};
+
+				var adUnitType = item.FindPropertyRelative("AdUnitType");
+				if (adUnitType != null) {
+					inMobiData.AdUnitType = (AdUnitType)adUnitType.enumValueIndex;
+				}
+
+				adUnitList.Add(inMobiData);
+			}
+			adUnits = adUnitList.ToArray();
+		}
+		
+		private bool ValidateInMobiData(string platform, SerializedProperty accountId, ThirdPartyAdUnit[] adUnitData) {
+			if (accountId.stringValue.IsNullOrEmpty()) {
+				Debug.unityLogger.LogError("Nimbus", 
+					$"InMobi SDK has been included, the {platform} InMobi Account Id cannot be empty, object NimbusAdsManager not created");
+				return false;
+			}
+			
+			if (adUnitData == null || adUnitData.Length == 0) {
+				Debug.unityLogger.LogError("Nimbus", 
+					$"InMobi SDK has been included, InMobi Ad Unit ids for {platform} need to be entered, object NimbusAdsManager not created");
+				return false;
+			}
+
+			var seenAdTypes = new Dictionary<AdUnitType, bool>();
+			foreach (var adUnit in adUnitData) {
+				if (adUnit.AdUnitId.IsNullOrEmpty()) {
+					Debug.unityLogger.LogError("Nimbus", 
+						$"InMobi SDK has been included, the Ad Unit id for {platform} cannot be empty, object NimbusAdsManager not created");
+					return false;
+				}
+
+				if (adUnit.AdUnitType == AdUnitType.Undefined) {
+					Debug.unityLogger.LogError("Nimbus", 
+						$"InMobi SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
+					return false;
+				}
+
+				if (!seenAdTypes.ContainsKey(adUnit.AdUnitType)) {
+					seenAdTypes.Add(adUnit.AdUnitType, true);
+				}
+				else {
+					Debug.unityLogger.LogError("Nimbus", 
+						$"InMobi SDK has been included, InMobi cannot contain duplicate ad type {adUnit.AdUnitType} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}
 			}
