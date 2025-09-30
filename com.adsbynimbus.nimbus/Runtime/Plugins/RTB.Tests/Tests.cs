@@ -178,7 +178,7 @@ namespace OpenRTB.Tests {
                                 Secure = 1,
                                 Ext = new ImpExt {
                                     Position = "App Open",
-                                    AdUnitType = ImpExtAdUnitType.Inline
+                                    AdUnitType = ImpExtAdUnitType.Interstitial
                                 }
                             }
                         }
@@ -283,7 +283,7 @@ namespace OpenRTB.Tests {
                         Secure = 1,
                         Ext = new ImpExt {
                             Position = "App Open",
-                            AdUnitType = ImpExtAdUnitType.Inline
+                            AdUnitType = ImpExtAdUnitType.Interstitial
                         }
                     }
                 }
