@@ -37,9 +37,9 @@ namespace OpenRTB.Request {
 
         [JsonProperty("facebook_test_ad_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string MetaTestAdType { get; set; }
-        
-        [JsonProperty("adunit", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public ImpExtAdUnitType AdUnitType { get; set; }
+
+        [JsonProperty("adunit", Required = Required.Always)]
+        public ImpExtAdUnitType AdUnitType { get; set; } = ImpExtAdUnitType.Unknown;
     }
 
     public enum ImpExtAdUnitType
