@@ -16,6 +16,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
     {
         public static BidRequest ApplyDeltas(BidRequestDelta[] deltas, BidRequest bidRequest)
         {
+            var adUnitType = bidRequest.Imp[0].Ext.AdUnitType;
             foreach (var delta in deltas)
             {
                 if (delta != null)
@@ -39,12 +40,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
                     }
                 }
             }
+            // This has to be reset here because it is an enum and so it is non-nullable so it gets replaced during
+            // Merge() when it shouldn't
+            bidRequest.Imp[0].Ext.AdUnitType = adUnitType;
             return bidRequest;
         }
         
         private static T Merge<T>(T target, T source)
         {
-            var properties = target.GetType().GetProperties();
+            var properties = source.GetType().GetProperties();
 
             foreach (var prop in properties)
             {
