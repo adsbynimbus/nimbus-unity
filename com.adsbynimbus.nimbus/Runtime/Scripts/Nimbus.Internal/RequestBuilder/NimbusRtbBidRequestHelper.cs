@@ -18,7 +18,8 @@ namespace Nimbus.Internal.RequestBuilder {
 					Instl = 1,
 					Secure = 1,
 					Ext = new ImpExt {
-						Position = reportingPosition
+						Position = reportingPosition,
+						AdUnitType = ImpExtAdUnitType.Interstitial
 					}
 				}
 			};
@@ -42,7 +43,8 @@ namespace Nimbus.Internal.RequestBuilder {
 					Instl = 0,
 					Secure = 1,
 					Ext = new ImpExt {
-						Position = reportingPosition
+						Position = reportingPosition,
+						AdUnitType = ImpExtAdUnitType.Inline
 					}
 				}
 			};
@@ -62,7 +64,8 @@ namespace Nimbus.Internal.RequestBuilder {
 					Instl = 1,
 					Secure = 1,
 					Ext = new ImpExt {
-						Position = position
+						Position = position,
+						AdUnitType = ImpExtAdUnitType.Rewarded
 					}
 				}
 			};
