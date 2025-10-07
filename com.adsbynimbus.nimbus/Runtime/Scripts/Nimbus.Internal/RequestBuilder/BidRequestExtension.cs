@@ -11,12 +11,12 @@ namespace Nimbus.Internal.RequestBuilder {
 
 			if (bidRequest.Imp[0].Ext == null) {
 				bidRequest.Imp[0].Ext = new ImpExt {
-					Position = reportingPosition
+					Position = reportingPosition.Trim()
 				};
 				return bidRequest;
 			}
 
-			bidRequest.Imp[0].Ext.Position = reportingPosition;
+			bidRequest.Imp[0].Ext.Position = reportingPosition.Trim();
 			return bidRequest;
 		}
 
