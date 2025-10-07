@@ -555,7 +555,7 @@ namespace Nimbus.Tests {
 							new Imp {
 								Ext = new ImpExt {
 									Position = "test",
-									AdUnitType = ImpExtAdUnitType.Inline,
+									AdUnitType = ImpExtAdUnitType.Unknown,
 									Skadn = new Skadn {
 										SkadnetIds = new[] {
 											"id1.skadnetwork",
