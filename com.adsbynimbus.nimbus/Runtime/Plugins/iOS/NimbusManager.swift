@@ -121,6 +121,7 @@ import InMobiSDK
     #if NIMBUS_ENABLE_VUNGLE
         @objc public class func initializeVungle(appKey: String) {
             let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
+            VungleAds.setIntegrationName("vunglehbs", version: "29")
             NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
             Nimbus.shared.renderers[.vungle] = NimbusVungleAdRenderer()
         }
