@@ -38,8 +38,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		}
 		
 		public void InitializeNativeSDK() {
-			var vungle = new AndroidJavaClass(NimbusVunglePackage);
-			vungle.CallStatic("initialize", _appID);
+			var nimbusVungle = new AndroidJavaClass(NimbusVunglePackage);
+			nimbusVungle.CallStatic("initialize", _appID);
+			var vungle = new AndroidJavaClass(VunglePackage);
+			var vungleWrapperFramework = new AndroidJavaClass("com.vungle.ads.VungleWrapperFramework");
+			var hbs = vungleWrapperFramework.GetStatic<AndroidJavaObject>("vunglehbs");
+			vungle.CallStatic("setIntegrationName", hbs, "29");
+			
 		}
 		
 		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
