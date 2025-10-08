@@ -285,7 +285,7 @@ namespace Nimbus.Internal {
 		}
 
 		internal override string GetVersion() {
-			return _getVersion();
+			return VersionConstants.IosSdkVersion;
 		}
 
 		private static string GetPlistJson() {

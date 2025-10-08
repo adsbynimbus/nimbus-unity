@@ -228,8 +228,9 @@ namespace Nimbus.Internal {
 			_nimbus.SetStatic("COPPA", flag);
 		}
 
-		internal override string GetVersion() {
-			return _nimbus.GetStatic<string>("version");
+		internal override string GetVersion()
+		{
+			return VersionConstants.AndroidSdkVersion;
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {
