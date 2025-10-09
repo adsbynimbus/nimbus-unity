@@ -8,10 +8,7 @@ namespace OpenRTB.Request {
 
         [JsonProperty("delivery", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public DeliveryMethods[] Delivery;
-
-        [JsonProperty("ext", NullValueHandling = NullValueHandling.Ignore)]
-        public VideoExt Ext;
-
+        
         [JsonProperty("h", Required = Required.Always)]
         public int? H;
 
@@ -59,9 +56,5 @@ namespace OpenRTB.Request {
 
         [JsonProperty("companiontype", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public CompanionTypes[] CompanionType;
-    }
-
-    public class VideoExt {
-        [JsonProperty("is_rewarded")] public int IsRewarded;
     }
 }
