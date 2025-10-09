@@ -128,14 +128,6 @@ namespace Nimbus.Internal.RequestBuilder {
 			};
 			return bidRequest;
 		}
-		
-		public static BidRequest SetRewardedVideoFlag(this BidRequest bidRequest, bool rewarded = true) {
-			if (!bidRequest.Imp.IsNullOrEmpty() && bidRequest.Imp[0].Video != null)
-				bidRequest.Imp[0].Video.Ext ??= new VideoExt {
-					IsRewarded = rewarded ? 1: 0
-				};
-			return bidRequest;
-		}
 
 		public static BidRequest SetOMInformation(this BidRequest bidRequest, string sdkVersion) {
 			var source = new Source();

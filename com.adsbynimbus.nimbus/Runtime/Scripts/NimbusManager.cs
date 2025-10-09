@@ -441,11 +441,8 @@ namespace Nimbus.Runtime.Scripts {
 			const AdUnitType adUnitType = AdUnitType.Rewarded;
 			
 			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
-			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
-				AttemptToShowVideoEndCard().
-				SetVideoFloor(videoFloor).
-				SetRewardedVideoFlag();
-
+			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).AttemptToShowVideoEndCard()
+				.SetVideoFloor(videoFloor);
 			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
 	
