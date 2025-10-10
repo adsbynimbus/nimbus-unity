@@ -58,7 +58,7 @@ public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
     static final ExecutorService executor = Executors.newSingleThreadExecutor();
     public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener,
-            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId) {
+            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId, boolean respectSafeArea) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
