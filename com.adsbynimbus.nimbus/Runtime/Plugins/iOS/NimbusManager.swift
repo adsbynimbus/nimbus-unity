@@ -429,9 +429,9 @@ import InMobiSDK
             
             NSLayoutConstraint.activate([
                 contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.layoutMarginsGuide.leadingAnchor : viewController.view.leadingAnchor),
-                contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.layoutMarginsGuide.trailingAnchor : viewController.view.trailingAnchor),
-                contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.layoutMarginsGuide.bottomAnchor : viewController.view.bottomAnchor)
+                contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
+                contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
+                contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
             ])
                             
             adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)
