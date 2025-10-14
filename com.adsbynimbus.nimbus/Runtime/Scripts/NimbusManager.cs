@@ -189,9 +189,12 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adSize">
 		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
 		/// </param>
+		/// <param name="respectSafeArea">
+		///		Allows the publisher to choose whether the banner ads respect the safe area or not.
+		/// </param>
 		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, 
-				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
-			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize);
+				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50, bool respectSafeArea = false) {
+			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -263,13 +266,17 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adSize">
 		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
 		/// </param>
+		/// <param name="respectSafeArea">
+		///		Allows the publisher to choose whether the banner ads respect the safe area or not.
+		/// </param>
 		public async void RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
 			string nimbusReportingPosition, float bannerFloor = 0f,
-			int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
+			int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
+			bool respectSafeArea = false) {
 
 			NimbusAdUnit nextAdUnit = null; 
 			var delay = (refreshIntervalInSeconds <= 20 ? 30: refreshIntervalInSeconds) * 1000;
-			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor, adSize);
+			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea);
 			while (!source.IsCancellationRequested) {
 				try {
 					await Task.Delay(delay, source.Token);
@@ -281,7 +288,7 @@ namespace Nimbus.Runtime.Scripts {
 					
 					// make sure to reset to avoid any leaks
 					nextAdUnit?.Destroy();
-					nextAdUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor);
+					nextAdUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea);
 					
 					// while the ad was not fully returned and we did not receive an error from Nimbus
 					// we give the response some time to load into the ad unit object
@@ -316,6 +323,9 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adUnit">
 		///     A reference to a ad unit returned from RequestAd, RequestHybridFullScreenAd, RequestBannerAd, or
 		///     RequestRewardVideoAd
+		/// </param>
+		/// <param name="respectSafeArea">
+		///		Allows the publisher to choose whether the banner ads respect the safe area or not.
 		/// </param>
 		public void ShowLoadedAd(NimbusAdUnit adUnit) {
 			if (adUnit == null) {
@@ -414,14 +424,18 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adSize">
 		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and LeaderBoard)
 		/// </param>
-		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50) {
+		/// <param name="respectSafeArea">
+		///		Allows the publisher to choose whether the banner ads respect the safe area or not.
+		/// </param>
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
+			bool respectSafeArea = false) {
 			const AdUnitType adUnitType = AdUnitType.Banner;
 			
 			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition, adSize);
 			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
 				SetBannerFloor(bannerFloor);
 			
-			return RequestForNimbusAdUnit(bidRequest, adUnitType);
+			return RequestForNimbusAdUnit(bidRequest, adUnitType, respectSafeArea);
 		}
 
 		/// <summary>
@@ -625,10 +639,11 @@ namespace Nimbus.Runtime.Scripts {
 		}
 #endif
 		
-		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType) {
+		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType, bool respectSafeArea = false) {
 			Task<string> responseJson;
 			responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
 			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
+			adUnit.RespectSafeArea = respectSafeArea;
 			adUnit.LoadJsonResponseAsync(responseJson);
 			return adUnit;
 		}

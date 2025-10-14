@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Insets;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
@@ -19,6 +20,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.adsbynimbus.Nimbus;
 import com.adsbynimbus.NimbusAdManager;
@@ -58,7 +62,7 @@ public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
     static final ExecutorService executor = Executors.newSingleThreadExecutor();
     public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener,
-            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId) {
+            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId, boolean respectSafeArea) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
@@ -90,7 +94,7 @@ public final class UnityHelper {
                     }
                 });
             } else {
-                activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener));
+                activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener, respectSafeArea));
             }
         }
     }
@@ -158,6 +162,7 @@ public final class UnityHelper {
         protected Activity activity;
         protected FrameLayout adFrame;
         protected NimbusAdManager.Listener loadListener;
+        protected boolean respectSafeArea;
 
         public BannerHandler(Activity activity, NimbusRequest request, NimbusAdManager.Listener listener) {
             this.activity = activity;
@@ -167,11 +172,12 @@ public final class UnityHelper {
         }
 
         public BannerHandler(Activity activity, NimbusRequest request, NimbusResponse response,
-            NimbusAdManager.Listener listener) {
+            NimbusAdManager.Listener listener, boolean respectSafeArea) {
             this.activity = activity;
             this.request = request;
             this.loadListener = listener;
             this.response = response;
+            this.respectSafeArea = respectSafeArea;
         }
 
         @Override
@@ -181,6 +187,24 @@ public final class UnityHelper {
                     @Override
                     public void onViewAdded(View child) {
                         super.onViewAdded(child);
+                        if (respectSafeArea) {
+                            ViewCompat.setOnApplyWindowInsetsListener(child, (v, windowInsets) -> {
+                                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).toPlatformInsets();
+                                // Apply the insets as a margin to the view. This solution sets only the
+                                // bottom, left, and right dimensions, but you can apply whichever insets are
+                                // appropriate to your layout. You can also update the view padding if that's
+                                // more appropriate.
+                                MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
+                                mlp.leftMargin = insets.left;
+                                mlp.bottomMargin = insets.bottom;
+                                mlp.rightMargin = insets.right;
+                                v.setLayoutParams(mlp);
+
+                                // Return CONSUMED if you don't want the window insets to keep passing
+                                // down to descendant views.
+                                return WindowInsetsCompat.CONSUMED;
+                            });
+                        }
                         if (response.width() != 0) child.getLayoutParams().width = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, response.width(), getResources().getDisplayMetrics());
                         if (response.height() != 0) child.getLayoutParams().height = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, response.height(), getResources().getDisplayMetrics());
                         ((LayoutParams) child.getLayoutParams()).gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;

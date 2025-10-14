@@ -11,6 +11,7 @@ namespace Nimbus.Internal {
 	public sealed class NimbusAdUnit {
 		public readonly AdUnitType AdType;
 		public BidResponse BidResponse;
+		public bool RespectSafeArea;
 		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED;
 		public ErrResponse ErrResponse;
 		public readonly int InstanceID;
@@ -22,7 +23,9 @@ namespace Nimbus.Internal {
 		internal bool AdWasRendered;
 		internal string RawBidResponse;
 		
-		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents) {
+		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, bool respectSafeArea = false)
+		{
+			RespectSafeArea = respectSafeArea;
 			AdType = adType;
 			InstanceID = GetHashCode();
 			_adEvents = adEvents;

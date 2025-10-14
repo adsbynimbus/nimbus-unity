@@ -185,7 +185,7 @@ namespace Nimbus.Internal {
 				}
 			#endif
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
-				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiPlacementId);
+				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiPlacementId, nimbusAdUnit.RespectSafeArea);
 		}
 		
 		internal override string GetSessionID() {

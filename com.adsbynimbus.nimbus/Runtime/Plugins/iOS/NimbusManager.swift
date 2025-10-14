@@ -361,7 +361,7 @@ import InMobiSDK
     // MARK: - Public Functions
     
     @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
-            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String) {
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String, respectSafeArea: Bool) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -424,15 +424,15 @@ import InMobiSDK
             }
         } else {
             let contentView = UIView()
-                contentView.translatesAutoresizingMaskIntoConstraints = false
-                viewController.view.addSubview(contentView)
-                
-                NSLayoutConstraint.activate([
-                    contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-                ])
+            contentView.translatesAutoresizingMaskIntoConstraints = false
+            viewController.view.addSubview(contentView)
+            
+            NSLayoutConstraint.activate([
+                contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
+                contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
+                contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+            ])
                             
             adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)
         }
