@@ -13,6 +13,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		private const string VunglePackage = "com.vungle.ads.VungleAds";
 		private readonly string _appID;
 		private readonly AndroidJavaObject _applicationContext;
+		public static TaskCompletionSource<string> BiddingTokenTask = new ();
 		
 		public VungleAndroid(AndroidJavaObject applicationContext, string appID) {
 			_applicationContext = applicationContext;
@@ -28,13 +29,30 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			bidRequestDelta.SimpleUserExt = new KeyValuePair<string, string>("vungle_buyeruid", data);
 			return bidRequestDelta;
 		}
+		
+		private class BidTokenCallback : AndroidJavaProxy
+		{
+			public BidTokenCallback() : base("com.vungle.ads.BidTokenCallback") { }
 
-		internal string GetProviderRtbDataFromNativeSDK()
+			void onBidTokenCollected(string bidToken)
+			{
+				BiddingTokenTask.SetResult(bidToken); 
+			}
+
+			void onBidTokenError(string errorMessage)
+			{
+				Debug.unityLogger.Log("Vungle BidToken ERROR", errorMessage);
+			}
+		}
+
+		internal async Task<string> GetProviderRtbDataFromNativeSDK()
 		{
 			AndroidJNI.AttachCurrentThread();
+			BidTokenCallback callback = new BidTokenCallback();
 			var vungle = new AndroidJavaClass(VunglePackage);
-			var buyerId = vungle.CallStatic<string>("getBiddingToken", _applicationContext);
-			return buyerId;
+			vungle.CallStatic("getBiddingToken", _applicationContext, callback);
+			var biddingToken = await BiddingTokenTask.Task;
+			return biddingToken;
 		}
 		
 		public void InitializeNativeSDK() {
@@ -44,23 +62,24 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 			var vungleWrapperFramework = new AndroidJavaClass("com.vungle.ads.VungleWrapperFramework");
 			var hbs = vungleWrapperFramework.GetStatic<AndroidJavaObject>("vunglehbs");
 			vungle.CallStatic("setIntegrationName", hbs, "29");
-			
 		}
 		
 		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
 		{
-			return Task<BidRequestDelta>.Run(() =>
-			{
-				try
+			return Task<BidRequestDelta>.Run(
+				async () =>
 				{
-					return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK());
+					try
+					{
+						return GetBidRequestDelta(await GetProviderRtbDataFromNativeSDK());
+					}
+					catch (Exception e)
+					{
+						Debug.unityLogger.Log("Vungle ERROR", e.Message);
+						return null;
+					}
 				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.Log("Vungle ERROR", e.Message);
-					return null;
-				}
-			});
+			);
 		}
 	}
 }
