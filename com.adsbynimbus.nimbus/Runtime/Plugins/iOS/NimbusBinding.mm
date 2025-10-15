@@ -35,11 +35,12 @@ extern "C" {
                     const char* mintegralAdUnitPlacementId,
                     const char* molocoAdUnitId,
                     const char* inMobiPlacementId,
-                    bool respectSafeArea) {
+                    bool respectSafeArea,
+                    int position) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
             mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)
-            molocoAdUnitId:GetStringParam(molocoAdUnitId) inMobiPlacementId:GetStringParam(inMobiPlacementId) respectSafeArea:respectSafeArea];
+            molocoAdUnitId:GetStringParam(molocoAdUnitId) inMobiPlacementId:GetStringParam(inMobiPlacementId) respectSafeArea:respectSafeArea position: position];
     }
 
     void _destroyAd(int adUnitInstanceId) {

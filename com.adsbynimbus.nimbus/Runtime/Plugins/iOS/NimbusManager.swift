@@ -361,7 +361,7 @@ import InMobiSDK
     // MARK: - Public Functions
     
     @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
-            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String, respectSafeArea: Bool) {
+            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String, respectSafeArea: Bool, position: Int) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -426,13 +426,63 @@ import InMobiSDK
             let contentView = UIView()
             contentView.translatesAutoresizingMaskIntoConstraints = false
             viewController.view.addSubview(contentView)
-            
-            NSLayoutConstraint.activate([
-                contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
-                contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
-                contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
-            ])
+            var constraints: [NSLayoutConstraint] = []
+            switch (position) {
+                // Center Top
+                case 1:
+                    constraints = [
+                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                        contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
+                        contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
+                        contentView.topAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.topAnchor : viewController.view.topAnchor)
+                    ]
+                    break
+                // Center
+                case 2:
+                    constraints = [
+                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                        contentView.centerYAnchor.constraint(equalTo: viewController.view.centerYAnchor)
+                    ]
+                    break
+                // Bottom Left
+                case 3:
+                    constraints = [
+                        contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
+                        contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+                    ]
+                    break
+                // Bottom Right
+                case 4:
+                    constraints = [
+                        contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
+                        contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+                    ]
+                    break
+                // Top Left
+                case 5:
+                    constraints = [
+                        contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
+                        contentView.topAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.topAnchor : viewController.view.topAnchor)
+                    ]
+                    break
+                // Top Right
+                case 6:
+                    constraints = [
+                        contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
+                        contentView.topAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.topAnchor : viewController.view.topAnchor)
+                    ]
+                    break
+                // Center Bottom (Case 0)
+                default:
+                    constraints = [
+                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                        contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
+                        contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
+                        contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+                    ]
+                    break
+            }
+            NSLayoutConstraint.activate(constraints)
                             
             adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)
         }

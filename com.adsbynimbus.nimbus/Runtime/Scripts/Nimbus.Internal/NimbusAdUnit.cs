@@ -12,6 +12,7 @@ namespace Nimbus.Internal {
 		public readonly AdUnitType AdType;
 		public BidResponse BidResponse;
 		public bool RespectSafeArea;
+		public NimbusAdUnitPosition AdPosition;
 		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED;
 		public ErrResponse ErrResponse;
 		public readonly int InstanceID;
@@ -23,12 +24,14 @@ namespace Nimbus.Internal {
 		internal bool AdWasRendered;
 		internal string RawBidResponse;
 		
-		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, bool respectSafeArea = false)
+		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, bool respectSafeArea = false, 
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER)
 		{
-			RespectSafeArea = respectSafeArea;
 			AdType = adType;
 			InstanceID = GetHashCode();
 			_adEvents = adEvents;
+			RespectSafeArea = respectSafeArea;
+			AdPosition = adPosition;
 		}
 
 		# region IOS specific
@@ -155,5 +158,15 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _androidHelper;
 
 		#endregion
+	}
+	public enum NimbusAdUnitPosition
+	{
+		BOTTOM_CENTER = 0,
+		TOP_CENTER = 1,
+		CENTER = 2,
+		BOTTOM_LEFT = 3,
+		BOTTOM_RIGHT = 4,
+		TOP_LEFT = 5,
+		TOP_RIGHT = 6,
 	}
 }
