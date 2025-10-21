@@ -440,9 +440,9 @@ import InMobiSDK
             case 1:
                 return [
                     contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
-                    contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
-                    contentView.topAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.topAnchor : viewController.view.topAnchor)
+                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea))
                 ]
             // Center
             case 2:
@@ -453,34 +453,34 @@ import InMobiSDK
             // Bottom Left
             case 3:
                 return [
-                    contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
                 ]
             // Bottom Right
             case 4:
                 return [
-                    contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
                 ]
             // Top Left
             case 5:
                 return [
-                    contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
-                    contentView.topAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.topAnchor : viewController.view.topAnchor)
+                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea))
                 ]
             // Top Right
             case 6:
                 return [
-                    contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
-                    contentView.topAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.topAnchor : viewController.view.topAnchor)
+                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea))
                 ]
             // Center Bottom (Case 0)
             default:
                 return [
                     contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.leadingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.leadingAnchor : viewController.view.leadingAnchor),
-                    contentView.trailingAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.trailingAnchor : viewController.view.trailingAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: respectSafeArea ? viewController.view.safeAreaLayoutGuide.bottomAnchor : viewController.view.bottomAnchor)
+                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
                 ]
         }
     }
@@ -492,6 +492,21 @@ import InMobiSDK
     
     private func removeReferenceFromManagerDictionary() {
         NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
+    }
+}
+
+extension UIView {
+    func leadingAnchor(_ respectSafeArea: Bool) -> NSLayoutXAxisAnchor {
+        respectSafeArea ? safeAreaLayoutGuide.leadingAnchor : leadingAnchor
+    }
+    func trailingAnchor(_ respectSafeArea: Bool) -> NSLayoutXAxisAnchor {
+        respectSafeArea ? safeAreaLayoutGuide.trailingAnchor : trailingAnchor
+    }
+    func bottomAnchor(_ respectSafeArea: Bool) -> NSLayoutYAxisAnchor {
+        respectSafeArea ? safeAreaLayoutGuide.bottomAnchor : bottomAnchor
+    }
+    func topAnchor(_ respectSafeArea: Bool) -> NSLayoutYAxisAnchor {
+        respectSafeArea ? safeAreaLayoutGuide.topAnchor : topAnchor
     }
 }
 
