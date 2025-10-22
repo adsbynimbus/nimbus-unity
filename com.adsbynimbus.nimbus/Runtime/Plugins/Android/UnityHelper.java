@@ -62,7 +62,8 @@ public final class UnityHelper {
     static final NimbusAdManager manager = new NimbusAdManager();
     static final ExecutorService executor = Executors.newSingleThreadExecutor();
     public static void render(Object obj, String jsonResponse, boolean isBlocking, boolean isRewarded, int closeButtonDelay, Object listener,
-            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId, boolean respectSafeArea) {
+            String mintegralAdUnitId, String mintegralAdUnitPlacementId, String molocoAdUnitId, String inMobiPlacementId, boolean respectSafeArea,
+                              int adPosition) {
         if (obj instanceof Activity) {
             final Activity activity = (Activity) obj;
             final NimbusResponse nimbusResponse = new NimbusResponse(BidResponse.fromJson(jsonResponse));
@@ -94,7 +95,7 @@ public final class UnityHelper {
                     }
                 });
             } else {
-                activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener, respectSafeArea));
+                activity.runOnUiThread(new BannerHandler(activity, null, nimbusResponse, (NimbusAdManager.Listener) listener, respectSafeArea, adPosition));
             }
         }
     }
@@ -164,6 +165,8 @@ public final class UnityHelper {
         protected NimbusAdManager.Listener loadListener;
         protected boolean respectSafeArea;
 
+        protected int adPosition;
+
         public BannerHandler(Activity activity, NimbusRequest request, NimbusAdManager.Listener listener) {
             this.activity = activity;
             this.request = request;
@@ -172,12 +175,13 @@ public final class UnityHelper {
         }
 
         public BannerHandler(Activity activity, NimbusRequest request, NimbusResponse response,
-            NimbusAdManager.Listener listener, boolean respectSafeArea) {
+            NimbusAdManager.Listener listener, boolean respectSafeArea, int adPosition) {
             this.activity = activity;
             this.request = request;
             this.loadListener = listener;
             this.response = response;
             this.respectSafeArea = respectSafeArea;
+            this.adPosition = adPosition;
         }
 
         @Override
@@ -205,9 +209,41 @@ public final class UnityHelper {
                                 return WindowInsetsCompat.CONSUMED;
                             });
                         }
+                        int gravity = 0;
+                        switch (adPosition) {
+                            // Bottom Center
+                            case 0:
+                                gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                                break;
+                            // Top Center
+                            case 1:
+                                gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+                                break;
+                            // Center
+                            case 2: 
+                                gravity = Gravity.CENTER;
+                                break;
+                            // Bottom Left
+                            case 3:
+                                gravity = Gravity.BOTTOM | Gravity.START;
+                                break;
+                            // Bottom Right
+                            case 4:
+                                gravity = Gravity.BOTTOM | Gravity.END;
+                                break;
+                            // Top Left
+                            case 5:
+                                gravity = Gravity.TOP | Gravity.START;
+                                break;
+                            // Top Right
+                            case 6:
+                                gravity = Gravity.TOP | Gravity.END;
+                                break;
+                                
+                        }
                         if (response.width() != 0) child.getLayoutParams().width = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, response.width(), getResources().getDisplayMetrics());
                         if (response.height() != 0) child.getLayoutParams().height = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, response.height(), getResources().getDisplayMetrics());
-                        ((LayoutParams) child.getLayoutParams()).gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                        ((LayoutParams) child.getLayoutParams()).gravity = gravity;
                     }
                 };
 
