@@ -67,30 +67,31 @@ namespace Nimbus.Internal.Network {
 				var serverResponse = await Client.PostAsync(_nimbusEndpoint, requestContent, _ctx.Token);
 				if (_ctx.Token.IsCancellationRequested) {
 					Client.CancelPendingRequests();
-					return "{\"message\": \"Application Closed\"}";
+					return "NIMBUS RESPONSE ERROR: Response cancelled, Application Closed";
 				}
 				var nimbusResponse = await serverResponse.Content.ReadAsStringAsync();
+				var errorMessage = "";
 				switch ((int)serverResponse.StatusCode)
 				{
 					case 200:
 						return nimbusResponse;
 					case 400:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 400: POST data was malformed");
+						errorMessage = "NIMBUS RESPONSE ERROR: Status Code 400: POST data was malformed";
 						break;
 					case 404:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 404: No bids returned");
+						errorMessage = "NIMBUS RESPONSE ERROR: Status Code 404: No bids returned";
 						break;
 					case 429:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 429: Rate Limited");
+						errorMessage = "NIMBUS RESPONSE ERROR: Status Code 429: Rate Limited";
 						break;
 					case 500:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 500: Server is Unavailable");
+						errorMessage = "NIMBUS RESPONSE ERROR: Status Code 500: Server is Unavailable";
 						break;
 					default:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Unknown Network Error Occurred");
+						errorMessage = "NIMBUS RESPONSE ERROR: Unknown Network Error Occurred";
 						break;
 				}
-				return "";
+				return errorMessage;
 				#endif
 			});
 		}

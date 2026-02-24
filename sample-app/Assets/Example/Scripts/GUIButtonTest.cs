@@ -108,8 +108,8 @@ namespace Example.Scripts {
 				case AdState.Loaded:
 					// check to see if there was an error retrieving the ad such as no bid, which in itself is not an error
 					// it simply means demand partners did not want to bid on this inventory
-					if (_interactableButtons[index].CurrentAd.ErrResponse.Message != null) {
-						var message = _interactableButtons[index].CurrentAd.ErrResponse.Message;
+					if (_interactableButtons[index].CurrentAd.ErrResponse != null) {
+						var message = _interactableButtons[index].CurrentAd.ErrResponse;
 						Debug.unityLogger.LogWarning("AdError", message);
 						StartCoroutine(SetErrorText(message, _interactableButtons[index]));
 						break;

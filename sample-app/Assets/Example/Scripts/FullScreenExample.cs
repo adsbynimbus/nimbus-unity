@@ -60,7 +60,7 @@ namespace Example.Scripts {
 			if (_ad?.InstanceID != ad.InstanceID) return;
 			Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +
-				$"Error Message Ad failed to load {ad.ErrResponse.Message}, " +
+				$"Error Message Ad failed to load {ad.ErrResponse}, " +
 				$"auction_id: {ad.BidResponse.AuctionId}");
 		}
 	}
