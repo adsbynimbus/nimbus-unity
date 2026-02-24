@@ -45,23 +45,23 @@ namespace Example.Scripts {
 		private void RewardUser(NimbusAdUnit ad, bool skipped) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
 			if (skipped) return;
-			Debug.unityLogger.Log(
+			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad was rendered for ad instance {ad.InstanceID}, " +
 				$"bid value: {ad.BidResponse.BidRaw}, " +
 				$"bid value in cents: {ad.BidResponse.BidInCents}, " +
 				$"network: {ad.BidResponse.Network}, " +
 				$"placement_id: {ad.BidResponse.PlacementId}, " +
-				$"auction_id: {ad.BidResponse.AuctionId}");
+				$"auction_id: {ad.BidResponse.AuctionId}");*/
 			// ensures that this coroutine starts on the Unity Main thread since this is called within an event callback
 			UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
 		}
 
 		private void LogError(NimbusAdUnit ad) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
-			Debug.unityLogger.Log(
+			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +
 				$"Error Message Ad failed to load {ad.ErrResponse.Message}, " +
-				$"auction_id: {ad.BidResponse.AuctionId}");
+				$"auction_id: {ad.BidResponse.AuctionId}");*/
 		}
 	}
 }

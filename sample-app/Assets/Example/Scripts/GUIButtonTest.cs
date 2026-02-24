@@ -30,37 +30,37 @@ namespace Example.Scripts {
 
 		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was loaded");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was loaded");
 		}
 
 		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was rendered");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was rendered");
 		}
 
 		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} fired it's impression pixel");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} fired it's impression pixel");
 		}
 
 		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} ad was destroyed");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} ad was destroyed");
 		}
 
 		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was clicked");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was clicked");
 		}
 
 		public void OnAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was completed");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was completed");
 		}
 
 		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered {nimbusAdUnit.ErrResponse.Message}");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered.");
 		}
 
 		public void LoadAndShowBanner() {
@@ -106,14 +106,6 @@ namespace Example.Scripts {
 					RequestForAd(index);
 					break;
 				case AdState.Loaded:
-					// check to see if there was an error retrieving the ad such as no bid, which in itself is not an error
-					// it simply means demand partners did not want to bid on this inventory
-					if (_interactableButtons[index].CurrentAd.ErrResponse.Message != null) {
-						var message = _interactableButtons[index].CurrentAd.ErrResponse.Message;
-						Debug.unityLogger.LogWarning("AdError", message);
-						StartCoroutine(SetErrorText(message, _interactableButtons[index]));
-						break;
-					}
 					var currentAd = _interactableButtons[index].CurrentAd;
 					NimbusManager.Instance.ShowLoadedAd(currentAd);
 					StartCoroutine(ResetState(_interactableButtons[index], currentAd));

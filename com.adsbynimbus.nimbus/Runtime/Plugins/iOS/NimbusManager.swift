@@ -7,10 +7,7 @@
 //
 
 import Foundation
-import NimbusRenderStaticKit
-import NimbusRenderVideoKit
 import NimbusKit
-import NimbusCoreKit
 import AppTrackingTransparency
 import AdSupport
 #if NIMBUS_ENABLE_APS
@@ -25,7 +22,6 @@ import FBAudienceNetwork
 #endif
 #if NIMBUS_ENABLE_ADMOB
 import GoogleMobileAds
-import NimbusRequestKit
 #endif
 #if NIMBUS_ENABLE_MINTEGRAL
 import MTGSDK
@@ -33,9 +29,6 @@ import MTGSDKBidding
 #endif
 #if NIMBUS_ENABLE_UNITY_ADS
 import UnityAds
-#endif
-#if NIMBUS_ENABLE_SDK_DEMAND
-import NimbusSDK
 #endif
 #if NIMBUS_ENABLE_LIVERAMP
 import NimbusLiveRampKit
@@ -79,15 +72,9 @@ import InMobiSDK
         enableUnityLogs: Bool,
         enableSDKInTestMode: Bool
     ) {
-        Nimbus.shared.initialize(publisher: publisher, apiKey: apiKey)
-        Nimbus.shared.logLevel = enableUnityLogs ? .debug : .off
-        let videoRenderer = NimbusVideoAdRenderer()
-        videoRenderer.showMuteButton = true
-        Nimbus.shared.renderers = [
-            .forAuctionType(.static): NimbusStaticAdRenderer(),
-            .forAuctionType(.video): videoRenderer,
-        ]
-        Nimbus.shared.testMode = enableSDKInTestMode
+        Nimbus.initialize(publisher: publisher, apiKey: apiKey)
+        Nimbus.configuration.logLevel = enableUnityLogs ? .debug : .off
+        Nimbus.configuration.testMode = enableSDKInTestMode
     }
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
@@ -171,7 +158,7 @@ import InMobiSDK
                 group.wait(for: {token = try await AdMobRequestBridge().generateSignal(request: request)})
                 return token
              } catch (let e){
-                 Nimbus.shared.logger.log("Unable to generate admob signal: \(e)", level: .error)
+                 Nimbus.Log("Unable to generate admob signal: \(e)", level: .error)
              }
            return ""
         }
@@ -217,7 +204,7 @@ import InMobiSDK
                 }
                 return jsonString
             } catch (let e) {
-                Nimbus.shared.logger.log("Unable to fetch MobileFuse token: \(e)", level: .error)
+                Nimbus.Log("Unable to fetch MobileFuse token: \(e)", level: .error)
             }
         }
     #endif
@@ -226,9 +213,9 @@ import InMobiSDK
         @objc public class func initializeMoloco(appKey: String) {
             MolocoSDK.Moloco.shared.initialize(initParams: .init(appKey: appKey)) { done, error in
                 if let error {
-                    Nimbus.shared.logger.log("Moloco initialization failed: \(error)", level: .error)
+                    Nimbus.Log("Moloco initialization failed: \(error)", level: .error)
                 } else {
-                    Nimbus.shared.logger.log("Moloco initialization was successful", level: .debug)
+                    Nimbus.Log("Moloco initialization was successful", level: .debug)
                 }
             }
             Nimbus.shared.renderers[.moloco] = NimbusMolocoAdRenderer()
@@ -246,9 +233,9 @@ import InMobiSDK
         @objc public class func initializeInMobi(accountId: String) {
             IMSdk.initWithAccountID(accountId) { (error) in
                 if let error {
-                    Nimbus.shared.logger.log("InMobi initialization failed: \(error)", level: .error)
+                    Nimbus.Log("InMobi initialization failed: \(error)", level: .error)
                 } else {
-                    Nimbus.shared.logger.log("InMobi initialization was successful", level: .debug)
+                    Nimbus.Log("InMobi initialization was successful", level: .debug)
                 }
             }
             Nimbus.shared.renderers[.inmobi] = NimbusInMobiAdRenderer()
@@ -360,8 +347,7 @@ import InMobiSDK
     
     // MARK: - Public Functions
     
-    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, 
-            mintegralAdUnitId: String, mintegralAdUnitPlacementId: String, molocoAdUnitId: String, inMobiPlacementId: String, respectSafeArea: Bool, position: Int) {
+    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, respectSafeArea: Bool, position: Int) {
         guard let data = bidResponse.data(using: .utf8) else {
             Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
             return
@@ -375,34 +361,9 @@ import InMobiSDK
         }
         
         guard var nimbusAd = try? JSONDecoder().decode(NimbusAd.self, from: decodedData) else {
-            Nimbus.shared.logger.log("Unable to get NimbusAd from bid response data", level: .error)
+            Nimbus.configuration.logger.log("Unable to get NimbusAd from bid response data", level: .error)
             return
         }
-        
-        #if NIMBUS_ENABLE_MINTEGRAL
-            if (nimbusAd.network == ThirdPartyDemandNetwork.mintegral.rawValue) {
-                let interceptor = NimbusMintegralRequestInterceptor(adUnitId: mintegralAdUnitId, placementId: mintegralAdUnitPlacementId)
-                if let renderInfo = interceptor.renderInfo(for: nimbusAd) {
-                    nimbusAd.renderInfo = AnyRenderInfo(renderInfo)
-                }
-            }
-        #endif
-        
-        #if NIMBUS_ENABLE_MOLOCO
-            if nimbusAd.network == ThirdPartyDemandNetwork.moloco.rawValue {
-                nimbusAd.renderInfo = AnyRenderInfo(NimbusMolocoRenderInfo(adUnitId: molocoAdUnitId))
-            }
-        #endif
-        
-        #if NIMBUS_ENABLE_INMOBI
-            if nimbusAd.network == ThirdPartyDemandNetwork.inmobi.rawValue {
-                do {
-                    nimbusAd.renderInfo = AnyRenderInfo(NimbusInMobiRenderInfo(placementId: Int64(inMobiPlacementId) ?? 0))
-                } catch {
-                    Nimbus.shared.logger.log("\(error.localizedDescription) : InMobi Placement ID should be an integer", level: .error)
-                }
-            }
-        #endif
         
         guard let viewController = unityViewController() else { return }
         
@@ -419,7 +380,7 @@ import InMobiSDK
                 adController?.volume = 100
                 adController?.start()
             } catch {
-                Nimbus.shared.logger.log(error.localizedDescription, level: .error)
+                Nimbus.configuration.logger.log(error.localizedDescription, level: .error)
                 return
             }
         } else {

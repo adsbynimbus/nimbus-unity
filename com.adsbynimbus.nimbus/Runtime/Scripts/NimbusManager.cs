@@ -299,7 +299,7 @@ namespace Nimbus.Runtime.Scripts {
 					
 					// while the ad was not fully returned and we did not receive an error from Nimbus
 					// we give the response some time to load into the ad unit object
-					while (!nextAdUnit.WasAnAdReturned() && nextAdUnit.ErrResponse.Message.IsNullOrEmpty()) {
+					while (!nextAdUnit.WasAnAdReturned()) {
 						await Task.Yield();
 					}
 					
@@ -347,18 +347,11 @@ namespace Nimbus.Runtime.Scripts {
 
 
 		private IEnumerator LoadAd(NimbusAdUnit adUnit) {
-			while (adUnit.ErrResponse.Message.IsNullOrEmpty()) {
-				if (adUnit.WasAnAdReturned()) {
-					_nimbusPlatformAPI.ShowAd(adUnit);
-					yield break;
-				}
-				yield return null;
+			if (adUnit.WasAnAdReturned()) {
+				_nimbusPlatformAPI.ShowAd(adUnit);
+				yield break;
 			}
-			
-			if (!adUnit.ErrResponse.Message.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError(adUnit?.InstanceID.ToString(),
-					$"error retrieving the ad message: {adUnit?.ErrResponse.Message}");
-			}
+			yield return null;
 		}
 		
 

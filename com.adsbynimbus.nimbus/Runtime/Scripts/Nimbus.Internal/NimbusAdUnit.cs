@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
-using OpenRTB.Response;
 using UnityEngine;
 
 namespace Nimbus.Internal {
@@ -10,13 +9,10 @@ namespace Nimbus.Internal {
 
 	public sealed class NimbusAdUnit {
 		public readonly AdUnitType AdType;
-		public BidResponse BidResponse;
 		public bool RespectSafeArea;
 		public NimbusAdUnitPosition AdPosition;
-		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED;
-		public ErrResponse ErrResponse;
+		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED; 
 		public readonly int InstanceID;
-		
 		private bool _adCompleted;
 		private bool _adWasReturned;
 		private readonly AdEvents _adEvents;
@@ -95,7 +91,7 @@ namespace Nimbus.Internal {
 				case AdEventTypes.COMPLETED:
 					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
-					if (AdType == AdUnitType.Interstitial && BidResponse.Type == "video") {
+					if (AdType == AdUnitType.Interstitial) {
 						Destroy();
 					}
 					break;
@@ -129,7 +125,6 @@ namespace Nimbus.Internal {
 						_adEvents.FireOnAdErrorEvent(this);
 						return;
 					}
-					BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
 					_adWasReturned = true;
 					RawBidResponse = response;
 					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
