@@ -94,7 +94,7 @@ namespace Example.Scripts {
 
 		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
-			Debug.unityLogger.Log($"RewardedVideoExample Err {nimbusAdUnit.ErrResponse}");
+			Debug.unityLogger.Log($"RewardedVideoExample Err {nimbusAdUnit.ErrResponse.Message}");
 		}
 
 		private IEnumerator MakeItRain() {

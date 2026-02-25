@@ -14,7 +14,7 @@ namespace Nimbus.Internal {
 		public bool RespectSafeArea;
 		public NimbusAdUnitPosition AdPosition;
 		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED;
-		public string ErrResponse;
+		public ErrResponse ErrResponse;
 		public readonly int InstanceID;
 		
 		private bool _adCompleted;
@@ -120,9 +120,9 @@ namespace Nimbus.Internal {
 		
 		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
 			await Task.Run(async () => {
-				var response = await jsonBody;
 				try
 				{
+					var response = await jsonBody;
 					if (response.IsNullOrEmpty())
 					{
 						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty");
@@ -136,11 +136,7 @@ namespace Nimbus.Internal {
 					_adEvents.FireOnAdLoadedEvent(this);
 				} catch (Exception e)
 				{
-					Debug.unityLogger.Log("Nimbus", $"RESPONSE JSON ERROR: {e.Message}");
-					if (response.Contains("NIMBUS RESPONSE ERROR"))
-					{
-						ErrResponse = response;
-					}
+					Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: {e.Message}");
 					_adEvents.FireOnAdErrorEvent(this);
 				}
 			});
