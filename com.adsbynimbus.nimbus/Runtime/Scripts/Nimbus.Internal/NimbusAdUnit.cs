@@ -120,12 +120,13 @@ namespace Nimbus.Internal {
 		
 		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
 			await Task.Run(async () => {
+				var response = await jsonBody;
 				try
 				{
-					var response = await jsonBody;
 					if (response.IsNullOrEmpty())
 					{
-						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty");
+						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty, " +
+						                                $"Application Closed or task cancelled.");
 						_adEvents.FireOnAdErrorEvent(this);
 						return;
 					}
@@ -136,7 +137,7 @@ namespace Nimbus.Internal {
 					_adEvents.FireOnAdLoadedEvent(this);
 				} catch (Exception e)
 				{
-					Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: {e.Message}");
+					ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
 					_adEvents.FireOnAdErrorEvent(this);
 				}
 			});
