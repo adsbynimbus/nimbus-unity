@@ -60,7 +60,7 @@ namespace Example.Scripts {
 
 		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered {nimbusAdUnit.ErrResponse}");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered {nimbusAdUnit.ErrResponse.Message}");
 		}
 
 		public void LoadAndShowBanner() {
