@@ -120,26 +120,37 @@ namespace Nimbus.Internal {
 		
 		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
 			await Task.Run(async () => {
-				var response = await jsonBody;
 				try
 				{
-					if (response.IsNullOrEmpty())
+					var response = await jsonBody;
+					try
 					{
-						Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty, " +
-						                                $"Application Closed or task cancelled.");
-						_adEvents.FireOnAdErrorEvent(this);
-						return;
+						if (response.IsNullOrEmpty())
+						{
+							Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty, " +
+							                                $"Application Closed or task cancelled.");
+							_adEvents.FireOnAdErrorEvent(this);
+							return;
+						}
+
+						BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
+						_adWasReturned = true;
+						RawBidResponse = response;
+						Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
+						_adEvents.FireOnAdLoadedEvent(this);
 					}
-					BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
-					_adWasReturned = true;
-					RawBidResponse = response;
-					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
-					_adEvents.FireOnAdLoadedEvent(this);
-				} catch (Exception e)
+					catch (Exception e)
+					{
+						ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
+						_adEvents.FireOnAdErrorEvent(this);
+					}
+				}
+				catch (Exception e)
 				{
-					ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
+					Debug.unityLogger.Log($"Bid Response Error: {e.Message}");
 					_adEvents.FireOnAdErrorEvent(this);
 				}
+
 			});
 		}
 
