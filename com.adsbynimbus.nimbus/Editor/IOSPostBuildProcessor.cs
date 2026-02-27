@@ -81,7 +81,6 @@ post_install do |installer|
     'NimbusKit',
     'OMSDK_Adsbynimbus',
     'DTBiOSSDK',
-    'GoogleInteractiveMediaAds',
     'GoogleMobileAds',
     'MobileFuseSDK',
     'MTGSDK',

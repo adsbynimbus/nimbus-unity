@@ -43,8 +43,7 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
-			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId, string molocoAdUnitId, 
-			string inMobiPlacementId, bool respectSafeArea, int position);
+			double closeButtonDelay, bool respectSafeArea, int position);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -238,9 +237,8 @@ namespace Nimbus.Internal {
 					Debug.unityLogger.LogException(e);
 				}
 			#endif
-			
 			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiAdUnitId, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
+			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 
 		internal override string GetSessionID() {

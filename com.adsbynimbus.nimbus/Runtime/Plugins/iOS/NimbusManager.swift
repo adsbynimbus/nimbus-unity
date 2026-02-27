@@ -46,13 +46,13 @@ import InMobiSDK
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
-    private static let session = Session()
     
     private let adUnitInstanceId: Int
     
-    private var nimbusAdManager: NimbusAdManager?
-    private var adController: AdController?
-
+    var bannerAd: InlineAd?
+    var interstitialAd: InterstitialAd?
+    var rewardedAd: RewardedAd?
+        
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
     #endif
@@ -73,7 +73,6 @@ import InMobiSDK
         enableSDKInTestMode: Bool
     ) {
         Nimbus.initialize(publisher: publisher, apiKey: apiKey)
-        Nimbus.configuration.logLevel = enableUnityLogs ? .debug : .off
         Nimbus.configuration.testMode = enableSDKInTestMode
     }
     
@@ -276,11 +275,11 @@ import InMobiSDK
     @objc public class func getSessionInfo() -> String {
         let group = DispatchGroup()
         var sessionKeys: [String:Int] = [:]
-        group.wait(for: {
+        /*group.wait(for: {
             await session.recordRequest()
             await sessionKeys["depth"] = session.requests()
             await sessionKeys["duration"] = session.duration();
-        })
+        })*/
         guard let data = try? JSONEncoder().encode(["session": sessionKeys]),
         let jsonString = String(data: data, encoding: .utf8) else {
             return ""
@@ -349,50 +348,101 @@ import InMobiSDK
     
     @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, respectSafeArea: Bool, position: Int) {
         guard let data = bidResponse.data(using: .utf8) else {
-            Nimbus.shared.logger.log("Unable to get data from bid response", level: .error)
+            Nimbus.Log.request.error("Unable to get data from bid response")
             return
         }
         
         guard
             let decodedData = Data(base64Encoded: data)
         else {
-            Nimbus.shared.logger.log("Unable to decode base64Encoded data", level: .error)
+            Nimbus.Log.request.error("Unable to decode base64Encoded data")
             return
         }
         
-        guard var nimbusAd = try? JSONDecoder().decode(NimbusAd.self, from: decodedData) else {
-            Nimbus.configuration.logger.log("Unable to get NimbusAd from bid response data", level: .error)
+        guard var nimbusAd = try? JSONDecoder().decode(NimbusResponse.self, from: decodedData) else {
+            Nimbus.Log.request.error("Unable to get NimbusAd from bid response data")
             return
         }
         
         guard let viewController = unityViewController() else { return }
         
         if isBlocking {
-            let companionAd: NimbusCompanionAd
-            if UIDevice.current.orientation.isLandscape {
-                companionAd = NimbusCompanionAd(width: 480, height: 320, renderMode: .endCard)
-            } else {
-                companionAd = NimbusCompanionAd(width: 320, height: 480, renderMode: .endCard)
-            }
-            
-            do {
-                adController = try Nimbus.loadBlocking(ad: nimbusAd, presentingViewController: viewController, delegate: self, isRewarded: isRewarded, companionAd: companionAd)
-                adController?.volume = 100
-                adController?.start()
-            } catch {
-                Nimbus.configuration.logger.log(error.localizedDescription, level: .error)
-                return
-            }
+            let group = DispatchGroup()
+            group.wait(for: {
+                do {
+                    if (isRewarded) {
+                        self.rewardedAd = try await Nimbus.rewardedAd(from: nimbusAd).onEvent { event in
+                            self.didReceiveNimbusEvent(event: event)
+                        }                .onError { error in
+                            print("Received error: \(error)")
+                        }.show()
+                    } else {
+                        self.interstitialAd = try await Nimbus.interstitialAd(from: nimbusAd).onEvent { event in
+                            self.didReceiveNimbusEvent(event: event)
+                        }                .onError { error in
+                            print("Received error: \(error)")
+                        }.show()
+                    }
+                } catch {
+                    Nimbus.Log.request.error(error.localizedDescription)
+                    return
+                }
+            })
         } else {
             let contentView = UIView()
             contentView.translatesAutoresizingMaskIntoConstraints = false
             viewController.view.addSubview(contentView)
             NSLayoutConstraint.activate(constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, position: position))
                             
-            adController = Nimbus.load(ad: nimbusAd, container: contentView, adPresentingViewController: viewController, delegate: self)
+            let group = DispatchGroup()
+            group.wait(for: {
+                do {
+                    self.bannerAd = try await Nimbus.inlineAd(from: nimbusAd).onEvent { event in
+                        self.didReceiveNimbusEvent(event: event)
+                    }                .onError { error in
+                        print("Received error: \(error)")
+                    }.show(in: contentView)
+                } catch {
+                    Nimbus.Log.request.error(error.localizedDescription)
+                    return
+                }
+            })
         }
         
         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
+    }
+    
+    public func didReceiveNimbusEvent(event: NimbusEvent) {
+        let eventName: String
+        switch event {
+        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
+            return // Unity doesn't handle these events
+        case .impression:
+            eventName = "IMPRESSION"
+        case .clicked:
+            eventName = "CLICKED"
+        case .paused:
+            eventName = "PAUSED"
+        case .resumed:
+            eventName = "RESUMED"
+        case .completed:
+            eventName = "COMPLETED"
+        case .destroyed:
+            eventName = "DESTROYED"
+        case .endCardImpression:
+            eventName = "END_CARD_IMPRESSION"
+        @unknown default:
+            print("Ad Event not sent: \(event)")
+            return
+        }
+        
+        UnityBinding.sendMessage(
+            methodName: "OnAdEvent",
+            params: [
+                "adUnitInstanceID": adUnitInstanceId,
+                "eventName": eventName
+            ]
+        )
     }
     
     private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, position: Int) -> [NSLayoutConstraint] {
@@ -447,7 +497,9 @@ import InMobiSDK
     }
     
     @objc public func destroyExistingAd() {
-        adController?.destroy()
+        bannerAd = nil;
+        interstitialAd = nil;
+        rewardedAd = nil;
         removeReferenceFromManagerDictionary()
     }
     
@@ -472,45 +524,9 @@ extension UIView {
 }
 
 // MARK: - AdControllerDelegate implementation
-
-extension NimbusManager: AdControllerDelegate {
-    
-    public func didReceiveNimbusEvent(controller: AdController, event: NimbusEvent) {
-        let eventName: String
-        switch event {
-        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
-            return // Unity doesn't handle these events
-        case .impression:
-            eventName = "IMPRESSION"
-        case .clicked:
-            eventName = "CLICKED"
-        case .paused:
-            eventName = "PAUSED"
-        case .resumed:
-            eventName = "RESUMED"
-        case .completed:
-            eventName = "COMPLETED"
-        case .destroyed:
-            eventName = "DESTROYED"
-            removeReferenceFromManagerDictionary()
-        case .endCardImpression:
-            eventName = "END_CARD_IMPRESSION"
-        @unknown default:
-            print("Ad Event not sent: \(event)")
-            return
-        }
-        
-        UnityBinding.sendMessage(
-            methodName: "OnAdEvent",
-            params: [
-                "adUnitInstanceID": adUnitInstanceId,
-                "eventName": eventName
-            ]
-        )
-    }
     
     /// Received an error for the ad
-    public func didReceiveNimbusError(controller: AdController, error: NimbusError) {
+    /*public func didReceiveNimbusError(controller: AdController, error: NimbusError) {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
@@ -519,16 +535,7 @@ extension NimbusManager: AdControllerDelegate {
             ]
         )
         destroyExistingAd()
-    }
-}
-
-extension NimbusManager: NimbusAdViewControllerDelegate {
-    public func viewWillAppear(animated: Bool) {}
-    public func viewDidAppear(animated: Bool) {}
-    public func viewWillDisappear(animated: Bool) {}
-    public func viewDidDisappear(animated: Bool) {}
-    public func didCloseAd(adView: NimbusAdView) { adController?.destroy() }
-}
+    }*/
 
 extension DispatchGroup {
     func wait(for task: @escaping () async throws -> Void) {

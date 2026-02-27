@@ -13,11 +13,11 @@ import AppTrackingTransparency
 @objc public class NimbusHelper: NSObject {
     
     @objc public class func getSessionId() -> String {
-        Nimbus.shared.sessionId
+        Nimbus.configuration.sessionId
     }
         
     @objc public class func getUserAgent() -> String {
-        Nimbus.shared.userAgentString
+        Nimbus.userAgent
     }
     
     @objc public class func getAdvertisingId() -> String {
@@ -25,7 +25,7 @@ import AppTrackingTransparency
     }
     
     @objc public class func getConnectionType() -> Int {
-        Nimbus.shared.connectionType.rawValue
+        2
     }
     
     @objc public class func getDeviceModel() -> String {
@@ -52,7 +52,7 @@ import AppTrackingTransparency
     }
 
     @objc public class func getVersion() -> String? {
-        Nimbus.shared.version
+        Nimbus.version
     }
 
     @objc public class func getAtts() -> Int {
@@ -64,7 +64,7 @@ import AppTrackingTransparency
     }
     
     @objc public class func setCoppa(flag: Bool) {
-        Nimbus.shared.coppa = flag;
+        Nimbus.configuration.coppa = flag;
     }
     
     @objc public class func isLimitAdTrackingEnabled() -> Bool {

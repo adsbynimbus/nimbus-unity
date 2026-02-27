@@ -10,6 +10,7 @@ namespace Nimbus.Internal {
 	public sealed class NimbusAdUnit {
 		public readonly AdUnitType AdType;
 		public bool RespectSafeArea;
+		public string ErrResponse;
 		public NimbusAdUnitPosition AdPosition;
 		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED; 
 		public readonly int InstanceID;

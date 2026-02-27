@@ -346,14 +346,19 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 
-		private IEnumerator LoadAd(NimbusAdUnit adUnit) {
-			if (adUnit.WasAnAdReturned()) {
-				_nimbusPlatformAPI.ShowAd(adUnit);
-				yield break;
+		private IEnumerator LoadAd(NimbusAdUnit adUnit)
+		{
+			while (adUnit.ErrResponse.IsNullOrEmpty())
+			{
+				if (adUnit.WasAnAdReturned())
+				{
+					_nimbusPlatformAPI.ShowAd(adUnit);
+					yield break;
+				}
+				yield return null;
 			}
-			yield return null;
 		}
-		
+
 
 		/// <summary>
 		///     RequestAd communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
