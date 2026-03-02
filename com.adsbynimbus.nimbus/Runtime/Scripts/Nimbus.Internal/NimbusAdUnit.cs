@@ -23,6 +23,8 @@ namespace Nimbus.Internal {
 
 		internal bool AdWasRendered;
 		internal string RawBidResponse;
+
+		internal Task<string> Request = Task.FromResult("");
 		
 		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, bool respectSafeArea = false, 
 			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER)
@@ -119,39 +121,25 @@ namespace Nimbus.Internal {
 
 		
 		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
-			await Task.Run(async () => {
+			Request = Task.Run(async () => {
+				var response = "";
 				try
 				{
-					var response = await jsonBody;
-					try
-					{
-						if (response.IsNullOrEmpty())
-						{
-							Debug.unityLogger.Log("Nimbus", $"RESPONSE ERROR: Response is Null or Empty, " +
-							                                $"Application Closed or task cancelled.");
-							_adEvents.FireOnAdErrorEvent(this);
-							return;
-						}
-
-						BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
-						_adWasReturned = true;
-						RawBidResponse = response;
-						Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
-						_adEvents.FireOnAdLoadedEvent(this);
-					}
-					catch (Exception e)
-					{
-						ErrResponse = JsonConvert.DeserializeObject<ErrResponse>(response);
-						_adEvents.FireOnAdErrorEvent(this);
-					}
+					response = await jsonBody;
+					BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
+					_adWasReturned = true;
+					RawBidResponse = response;
+					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
+					_adEvents.FireOnAdLoadedEvent(this);
 				}
 				catch (Exception e)
 				{
 					Debug.unityLogger.Log($"Bid Response Error: {e.Message}");
 					_adEvents.FireOnAdErrorEvent(this);
 				}
-
+				return response;
 			});
+			await Request;
 		}
 
 		internal void SetAndroidController(AndroidJavaObject controller) {
