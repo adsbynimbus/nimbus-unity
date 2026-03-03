@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;
+using OpenRTB.Response;
 using static System.String;
 using UnityEngine;
 
@@ -67,27 +68,27 @@ namespace Nimbus.Internal.Network {
 				var serverResponse = await Client.PostAsync(_nimbusEndpoint, requestContent, _ctx.Token);
 				if (_ctx.Token.IsCancellationRequested) {
 					Client.CancelPendingRequests();
-					return "{\"message\": \"Application Closed\"}";
+					return "";
 				}
 				var nimbusResponse = await serverResponse.Content.ReadAsStringAsync();
-				switch ((int)serverResponse.StatusCode)
+				switch ((int) serverResponse.StatusCode)
 				{
 					case 200:
 						return nimbusResponse;
 					case 400:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 400: POST data was malformed");
+						Debug.unityLogger.Log("Nimbus", "Status Code 400: POST data was malformed");
 						break;
 					case 404:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 404: No bids returned");
+						Debug.unityLogger.Log("Nimbus", "Status Code 404: No bids returned");
 						break;
 					case 429:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 429: Rate Limited");
+						Debug.unityLogger.Log("Nimbus", "Status Code 429: Rate Limited");
 						break;
 					case 500:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Status Code 500: Server is Unavailable");
+						Debug.unityLogger.Log("Nimbus", "Status Code 500: Server is Unavailable");
 						break;
 					default:
-						Debug.unityLogger.Log("Nimbus", "RESPONSE ERROR: Unknown Network Error Occurred");
+						Debug.unityLogger.Log("Nimbus", "Unknown Network Error Occurred");
 						break;
 				}
 				return "";
