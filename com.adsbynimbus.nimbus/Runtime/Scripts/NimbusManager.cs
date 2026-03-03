@@ -299,9 +299,7 @@ namespace Nimbus.Runtime.Scripts {
 					
 					// while the ad was not fully returned and we did not receive an error from Nimbus
 					// we give the response some time to load into the ad unit object
-					while (!nextAdUnit.WasAnAdReturned()) {
-						await Task.Yield();
-					}
+					await nextAdUnit.Request;
 					
 					// confirm that the ad was returned, it will be false if there was an error
 					if (!nextAdUnit.WasAnAdReturned()) {
@@ -646,12 +644,11 @@ namespace Nimbus.Runtime.Scripts {
 		
 		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType, bool respectSafeArea = false, 
 			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			Task<string> responseJson;
-			responseJson = MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType));
 			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
 			adUnit.AdPosition = adPosition;
 			adUnit.RespectSafeArea = respectSafeArea;
-			adUnit.LoadJsonResponseAsync(responseJson);
+			adUnit.LoadJsonResponseAsync(
+				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType)));
 			return adUnit;
 		}
 		
