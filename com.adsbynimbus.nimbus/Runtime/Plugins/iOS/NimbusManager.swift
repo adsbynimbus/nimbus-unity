@@ -281,10 +281,14 @@ import InMobiSDK
         privacyStrings["gppSectionId"] = UserDefaults.standard.string(forKey: gppSectionIdKey)
         privacyStrings["usPrivacyString"] = UserDefaults.standard.string(forKey: usPrivacyStringKey)
         privacyStrings["tcfPrivacyString"] = UserDefaults.standard.string(forKey: tcfPrivacyStringKey)
-        guard let data = try? JSONEncoder().encode(privacyStrings),
-        let jsonString = String(data: data, encoding: .utf8) else {
-               return ""
+        var jsonString = ""
+        do {
+            let data = try JSONSerialization.data(withJSONObject: privacyStrings)
+            jsonString = String(data: data, encoding: .utf8) ?? ""
+        } catch {
+            Nimbus.shared.logger.log("Privacy strings could not be serialized", level: .error)
         }
+
         return jsonString
     }
     
