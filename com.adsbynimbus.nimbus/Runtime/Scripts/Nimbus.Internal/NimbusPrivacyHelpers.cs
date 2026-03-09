@@ -44,8 +44,12 @@ namespace Nimbus.Internal
             }
             if (privacyObject.ContainsKey("gdprApplies"))
             {
-                regulations.Ext ??= new RegExt();
-                regulations.Ext.Gdpr = privacyObject["gdprApplies"].ToObject<Int16>();
+                var gdprApplies = privacyObject["gdprApplies"].ToObject<String>();
+                if (!gdprApplies.IsNullOrEmpty())
+                {
+                    regulations.Ext ??= new RegExt();
+                    regulations.Ext.Gdpr = Int16.Parse(privacyObject["gdprApplies"].ToObject<String>());
+                }
             }
             if (privacyObject.ContainsKey("usPrivacyString"))
             {

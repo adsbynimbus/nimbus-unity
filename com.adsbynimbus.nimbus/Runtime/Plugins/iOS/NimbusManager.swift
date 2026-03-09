@@ -267,7 +267,7 @@ import InMobiSDK
     #endif
     
     @objc public class func getPrivacyStrings() -> String {
-        var privacyStrings: [String:Any] = [:]
+        var privacyStrings: [String:String] = [:]
         let gdprAppliesKey = "IABTCF_gdprApplies"
         let gppConsentStringKey = "IABGPP_HDR_GppString"
         let gppSectionIdKey = "IABGPP_GppSID"
@@ -275,18 +275,15 @@ import InMobiSDK
         let tcfPrivacyStringKey = "IABTCF_TCString"
         
         if UserDefaults.standard.object(forKey: gdprAppliesKey) != nil {
-            privacyStrings["gdprApplies"] = UserDefaults.standard.integer(forKey: gdprAppliesKey)
+            privacyStrings["gdprApplies"] = String(UserDefaults.standard.integer(forKey: gdprAppliesKey))
         }
         privacyStrings["gppConsentString"] = UserDefaults.standard.string(forKey: gppConsentStringKey)
         privacyStrings["gppSectionId"] = UserDefaults.standard.string(forKey: gppSectionIdKey)
         privacyStrings["usPrivacyString"] = UserDefaults.standard.string(forKey: usPrivacyStringKey)
         privacyStrings["tcfPrivacyString"] = UserDefaults.standard.string(forKey: tcfPrivacyStringKey)
-        var jsonString = ""
-        do {
-            let data = try JSONSerialization.data(withJSONObject: privacyStrings)
-            jsonString = String(data: data, encoding: .utf8) ?? ""
-        } catch {
-            Nimbus.shared.logger.log("Privacy strings could not be serialized", level: .error)
+        guard let data = try? JSONEncoder().encode(privacyStrings),
+              let jsonString = String(data: data, encoding: .utf8) else {
+            return ""
         }
 
         return jsonString
