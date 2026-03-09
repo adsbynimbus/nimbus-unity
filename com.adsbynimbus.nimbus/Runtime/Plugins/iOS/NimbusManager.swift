@@ -272,6 +272,7 @@ import InMobiSDK
         let gppConsentStringKey = "IABGPP_HDR_GppString"
         let gppSectionIdKey = "IABGPP_GppSID"
         let usPrivacyStringKey = "IABUSPrivacy_String"
+        let tcfPrivacyStringKey = "IABTCF_TCString"
         
         if UserDefaults.standard.object(forKey: gdprAppliesKey) != nil {
             privacyStrings["gdprApplies"] = String(UserDefaults.standard.integer(forKey: gdprAppliesKey))
@@ -279,6 +280,7 @@ import InMobiSDK
         privacyStrings["gppConsentString"] = UserDefaults.standard.string(forKey: gppConsentStringKey)
         privacyStrings["gppSectionId"] = UserDefaults.standard.string(forKey: gppSectionIdKey)
         privacyStrings["usPrivacyString"] = UserDefaults.standard.string(forKey: usPrivacyStringKey)
+        privacyStrings["tcfPrivacyString"] = UserDefaults.standard.string(forKey: tcfPrivacyStringKey)
         guard let data = try? JSONEncoder().encode(privacyStrings),
         let jsonString = String(data: data, encoding: .utf8) else {
                return ""
