@@ -120,12 +120,13 @@ public final class UnityHelper {
          final String usPrivacyString = "IABUSPrivacy_String";
          final String gppString = "IABGPP_HDR_GppString";
          final String gppSidString = "IABGPP_GppSID";
+         final String tcfString = "IABTCF_TCString";
          if (obj instanceof Activity) {
              final Activity activity = (Activity) obj;
              SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
              JSONObject regExt = new JSONObject();
              try {
-                 regExt.put("gdprApplies", sharedPreferences.getString(gdprApplies, ""));
+                 regExt.put("gdprApplies", String.valueOf(sharedPreferences.getInt(gdprApplies, 0)));
              } catch (JSONException e) {
                  Log.e("Nimbus Privacy Error", "Unable to retrieve GDPR Enabled String");
              }
@@ -143,6 +144,11 @@ public final class UnityHelper {
                  regExt.put("gppSectionId", sharedPreferences.getString(gppSidString, ""));
              } catch (JSONException e) {
                  Log.e("Nimbus Privacy Error", "Unable to retrieve GPP Section ID");
+             }
+             try {
+                 regExt.put("tcfPrivacyString", sharedPreferences.getString(tcfString, ""));
+             } catch (JSONException e) {
+                 Log.e("Nimbus Privacy Error", "Unable to retrieve TCF Privacy String");
              }
              if (regExt.equals(new JSONObject())) {
                  return "";

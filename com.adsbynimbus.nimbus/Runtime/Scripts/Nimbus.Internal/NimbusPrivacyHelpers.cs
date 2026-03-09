@@ -10,14 +10,19 @@ namespace Nimbus.Internal
 {
     public class NimbusPrivacyHelpers
     {
+        
+        public static string TcfUserConsentString;
+        
         #if UNITY_IOS
             [DllImport("__Internal")]
             private static extern string _getPrivacyStrings();
         #endif
         
-        public static Regs getPrivacyRegulations()
+        public static Regs getPrivacyRegulations(Regs prevRegs)
         {
-            Regs regulations = new Regs();
+            TcfUserConsentString = "";
+            Regs regulations = prevRegs;
+            regulations ??= new Regs();
             var privacyStrings = "";
             #if UNITY_IOS
                 privacyStrings = _getPrivacyStrings();
@@ -68,6 +73,14 @@ namespace Nimbus.Internal
                 {
                     regulations.Ext ??= new RegExt();
                     regulations.Ext.GPPSIDs = privacyObject["gppSectionId"].ToObject<String>();
+                }
+            }
+
+            if (privacyObject.ContainsKey("tcfPrivacyString"))
+            {
+                if (!privacyObject["tcfPrivacyString"].ToObject<String>().IsNullOrEmpty())
+                {
+                    TcfUserConsentString = privacyObject["tcfPrivacyString"].ToObject<String>();
                 }
             }
             if (regulations.Ext == null)
