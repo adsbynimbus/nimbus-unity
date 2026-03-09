@@ -126,7 +126,7 @@ public final class UnityHelper {
              SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
              JSONObject regExt = new JSONObject();
              try {
-                 regExt.put("gdprApplies", sharedPreferences.getString(gdprApplies, ""));
+                 regExt.put("gdprApplies", sharedPreferences.getInt(gdprApplies, 0));
              } catch (JSONException e) {
                  Log.e("Nimbus Privacy Error", "Unable to retrieve GDPR Enabled String");
              }

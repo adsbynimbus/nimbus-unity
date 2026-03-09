@@ -18,9 +18,11 @@ namespace Nimbus.Internal
             private static extern string _getPrivacyStrings();
         #endif
         
-        public static Regs getPrivacyRegulations()
+        public static Regs getPrivacyRegulations(Regs prevRegs)
         {
-            Regs regulations = new Regs();
+            TcfUserConsentString = "";
+            Regs regulations = prevRegs;
+            regulations ??= new Regs();
             var privacyStrings = "";
             #if UNITY_IOS
                 privacyStrings = _getPrivacyStrings();
@@ -42,12 +44,8 @@ namespace Nimbus.Internal
             }
             if (privacyObject.ContainsKey("gdprApplies"))
             {
-                var gdprApplies = privacyObject["gdprApplies"].ToObject<String>();
-                if (!gdprApplies.IsNullOrEmpty())
-                {
-                    regulations.Ext ??= new RegExt();
-                    regulations.Ext.Gdpr = Int16.Parse(privacyObject["gdprApplies"].ToObject<String>());
-                }
+                regulations.Ext ??= new RegExt();
+                regulations.Ext.Gdpr = privacyObject["gdprApplies"].ToObject<Int16>();
             }
             if (privacyObject.ContainsKey("usPrivacyString"))
             {

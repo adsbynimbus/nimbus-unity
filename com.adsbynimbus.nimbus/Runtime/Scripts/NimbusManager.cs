@@ -146,11 +146,6 @@ namespace Nimbus.Runtime.Scripts {
 			{
 				_configuration.sdkInitialized = true;
 				_nimbusPlatformAPI.InitializeSDK(_configuration);
-				var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
-				if (privacyRegs != null)
-				{
-					_regulations = privacyRegs;
-				}
 			}
 		}
 		
@@ -604,7 +599,13 @@ namespace Nimbus.Runtime.Scripts {
 			if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
 		}
 
-		private void SetRegulations(BidRequest bidRequest) {
+		private void SetRegulations(BidRequest bidRequest)
+		{
+			var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations(_regulations);
+			if (privacyRegs != null)
+			{
+				_regulations = privacyRegs;
+			}
 			bidRequest.Regs = _regulations;
 			bidRequest.User ??= new User();
 			bidRequest.User.Ext ??= new JObject();
