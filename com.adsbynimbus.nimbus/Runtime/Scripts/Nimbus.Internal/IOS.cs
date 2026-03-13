@@ -200,45 +200,8 @@ namespace Nimbus.Internal {
 			var mintegralAdUnitPlacementId = "";
 			var molocoAdUnitId = "";
 			var inMobiAdUnitId = "";
-			#if NIMBUS_ENABLE_MINTEGRAL
-				try
-				{
-					var minteralAdUnit =
-						mintegralAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					mintegralAdUnitId = minteralAdUnit.AdUnitId;
-					mintegralAdUnitPlacementId = minteralAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_MOLOCO
-				try
-				{
-					var molocoAdUnit =
-						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					molocoAdUnitId = molocoAdUnit.AdUnitId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_INMOBI
-				try
-				{
-					var inMobiAdUnit =
-						inMobiAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					inMobiAdUnitId = inMobiAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
+			//var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
+			_renderAd(nimbusAdUnit.InstanceID, "", isBlocking, isRewarded, closeButtonDelay, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 
 		internal override string GetSessionID() {

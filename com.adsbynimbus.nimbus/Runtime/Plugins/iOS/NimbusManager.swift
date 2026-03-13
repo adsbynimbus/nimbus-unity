@@ -10,6 +10,7 @@ import Foundation
 import NimbusKit
 import AppTrackingTransparency
 import AdSupport
+import NimbusAdCache
 #if NIMBUS_ENABLE_APS
 import NimbusRequestAPSKit
 import DTBiOSSDK
@@ -84,208 +85,6 @@ import InMobiSDK
         }
         return manager
     }
-
-    #if NIMBUS_ENABLE_APS
-    @objc public class func initializeAPSRequestHelper(appKey: String, timeoutInSeconds: Double, enableTestMode: Bool) {
-        apsRequestHelper = NimbusAPSRequestHelper(appKey: appKey, timeoutInSeconds: timeoutInSeconds)
-        DTBAds.sharedInstance().testMode = enableTestMode
-    }
-
-    @objc public class func addAPSSlot(slotUUID: String, width: Int, height: Int, isVideo: Bool) {
-        apsRequestHelper?.addAPSSlot(slotUUID: slotUUID, width: width, height: height, isVideo: isVideo) 
-    }
-
-    @objc public class func fetchAPSParams(width: Int, height: Int, includeVideo: Bool) -> String {
-        let data = apsRequestHelper?.fetchAPSParams(width: width, height: height, includeVideo: includeVideo);
-        if let unwrapped = data {
-            return unwrapped;
-        }
-        return "";
-    }
-    #endif
-    
-    #if NIMBUS_ENABLE_VUNGLE
-        @objc public class func initializeVungle(appKey: String) {
-            let vungleRequestInterceptor = NimbusVungleRequestInterceptor(appId: appKey)
-            VungleAds.setIntegrationName("vunglehbs", version: "29")
-            NimbusRequestManager.requestInterceptors?.append(vungleRequestInterceptor)
-            Nimbus.shared.renderers[.vungle] = NimbusVungleAdRenderer()
-        }
-        
-        @objc public class func fetchVungleBuyerId() -> String {
-            return VungleAds.getBiddingToken()
-        }
-    #endif
-    
-    #if NIMBUS_ENABLE_META
-        @objc public class func initializeMeta(appKey: String) {
-            FBAdSettings.setMediationService("Ads By Nimbus")
-            Nimbus.shared.renderers[.facebook] = NimbusFANAdRenderer()
-            if #available(iOS 14.5, *), ATTrackingManager.trackingAuthorizationStatus == .authorized {
-                FBAdSettings.setAdvertiserTrackingEnabled(true)
-            }
-        }
-        @objc public class func fetchMetaBiddingToken() -> String {
-            return FBAdSettings.bidderToken
-        }    
-    #endif
-    
-    #if NIMBUS_ENABLE_ADMOB
-        @objc public class func initializeAdMob() {
-            Nimbus.shared.renderers[.admob] = NimbusAdMobAdRenderer()
-        }
-        @objc public class func getAdMobRequestModifiers(adUnitType: Int, adUnitId: String, width: Int, height: Int) -> String {
-            var token: String = ""
-            do {
-                let request: SignalRequest = switch adUnitType {
-                    case 0, 1: try NimbusAdType.banner.adMobSignalRequest(
-                         adUnitId: adUnitId,
-                         bannerSize: CGSize(width: width, height: height)
-                     )
-                    case 2: try NimbusAdType.interstitial.adMobSignalRequest(
-                            adUnitId: adUnitId
-                        )
-                    case 3: try NimbusAdType.rewarded.adMobSignalRequest(
-                            adUnitId: adUnitId
-                        )
-                    default: try NimbusAdType.banner.adMobSignalRequest(
-                            adUnitId: adUnitId,
-                            bannerSize: CGSize(width: width, height: height)
-                        )
-                }
-                let group = DispatchGroup()
-                group.wait(for: {token = try await AdMobRequestBridge().generateSignal(request: request)})
-                return token
-             } catch (let e){
-                 Nimbus.Log("Unable to generate admob signal: \(e)", level: .error)
-             }
-           return ""
-        }
-    #endif
-    
-    #if NIMBUS_ENABLE_MINTEGRAL
-        @objc public class func initializeMintegral(appId: String, appKey: String) {
-            MTGSDK.sharedInstance().setAppID(appId, apiKey: appKey)
-            Nimbus.shared.renderers[.mintegral] = NimbusMintegralAdRenderer()
-        }
-        @MainActor @objc public class func getMintegralRequestModifiers() -> String {
-            guard let data = try? JSONEncoder().encode(MintegralRequestBridge().tokenData),
-            let jsonString = String(data: data, encoding: .utf8) else {
-                   return ""
-            }
-            return jsonString
-        }
-    #endif
-    
-    #if NIMBUS_ENABLE_UNITY_ADS
-    @objc public class func initializeUnityAds(gameId: String) {
-            Nimbus.shared.renderers[.unity] = NimbusUnityAdRenderer()
-            let _ = NimbusUnityRequestInterceptor(gameId: gameId)
-        }
-        @objc public class func fetchUnityAdsToken() -> String {
-            return UnityAds.getToken() ?? ""
-        }
-    #endif
-    
-    #if NIMBUS_ENABLE_MOBILEFUSE
-        @objc public class func initializeMobileFuse() {
-            Nimbus.shared.renderers[.mobileFuse] = NimbusMobileFuseAdRenderer()
-            let _ = NimbusMobileFuseRequestInterceptor()
-        }
-        @objc public class func fetchMobileFuseToken() -> String {
-            var tokenData: [String : String] = ["":""]
-            do {
-                let group = DispatchGroup()
-                group.wait(for: {tokenData = try await MobileFuseRequestBridge().tokenData})
-                guard let data = try? JSONEncoder().encode(tokenData),
-                let jsonString = String(data: data, encoding: .utf8) else {
-                       return ""
-                }
-                return jsonString
-            } catch (let e) {
-                Nimbus.Log("Unable to fetch MobileFuse token: \(e)", level: .error)
-            }
-        }
-    #endif
-    
-    #if NIMBUS_ENABLE_MOLOCO
-        @objc public class func initializeMoloco(appKey: String) {
-            MolocoSDK.Moloco.shared.initialize(initParams: .init(appKey: appKey)) { done, error in
-                if let error {
-                    Nimbus.Log("Moloco initialization failed: \(error)", level: .error)
-                } else {
-                    Nimbus.Log("Moloco initialization was successful", level: .debug)
-                }
-            }
-            Nimbus.shared.renderers[.moloco] = NimbusMolocoAdRenderer()
-        }
-        
-        @objc public class func fetchMolocoToken() -> String {
-            var token = ""
-            let group = DispatchGroup()
-            group.wait(for: {token = try await MolocoRequestBridge().bidToken})
-            return token
-        }
-    #endif
-    
-    #if NIMBUS_ENABLE_INMOBI
-        @objc public class func initializeInMobi(accountId: String) {
-            IMSdk.initWithAccountID(accountId) { (error) in
-                if let error {
-                    Nimbus.Log("InMobi initialization failed: \(error)", level: .error)
-                } else {
-                    Nimbus.Log("InMobi initialization was successful", level: .debug)
-                }
-            }
-            Nimbus.shared.renderers[.inmobi] = NimbusInMobiAdRenderer()
-        }
-        
-        @objc public class func fetchInMobiToken(coppa: Bool) -> String {
-            var token = ""
-            let group = DispatchGroup()
-            group.wait(for: {
-                await InMobiRequestBridge().set(coppa: coppa)
-                token = try await InMobiRequestBridge().bidToken}
-            )
-            return token
-        }
-        
-    #endif
-    
-    @objc public class func getPrivacyStrings() -> String {
-        var privacyStrings: [String:String] = [:]
-        let gdprAppliesKey = "IABTCF_gdprApplies"
-        let gppConsentStringKey = "IABGPP_HDR_GppString"
-        let gppSectionIdKey = "IABGPP_GppSID"
-        let usPrivacyStringKey = "IABUSPrivacy_String"
-        
-        if UserDefaults.standard.object(forKey: gdprAppliesKey) != nil {
-            privacyStrings["gdprApplies"] = String(UserDefaults.standard.integer(forKey: gdprAppliesKey))
-        }
-        privacyStrings["gppConsentString"] = UserDefaults.standard.string(forKey: gppConsentStringKey)
-        privacyStrings["gppSectionId"] = UserDefaults.standard.string(forKey: gppSectionIdKey)
-        privacyStrings["usPrivacyString"] = UserDefaults.standard.string(forKey: usPrivacyStringKey)
-        guard let data = try? JSONEncoder().encode(privacyStrings),
-        let jsonString = String(data: data, encoding: .utf8) else {
-               return ""
-        }
-        return jsonString
-    }
-    
-    @objc public class func getSessionInfo() -> String {
-        let group = DispatchGroup()
-        var sessionKeys: [String:Int] = [:]
-        /*group.wait(for: {
-            await session.recordRequest()
-            await sessionKeys["depth"] = session.requests()
-            await sessionKeys["duration"] = session.duration();
-        })*/
-        guard let data = try? JSONEncoder().encode(["session": sessionKeys]),
-        let jsonString = String(data: data, encoding: .utf8) else {
-            return ""
-        }
-        return jsonString
-    }
     
     #if NIMBUS_ENABLE_LIVERAMP
         @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
@@ -297,40 +96,6 @@ import InMobiSDK
                 liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, email: email, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
                 liveRampEmail = email
             }
-        }
-        
-        @objc public class func getLiveRampData() -> String {
-            let identifierData: LRIdentifierData
-            var nimbusExtendedIds: [NimbusExtendedId] = []
-
-            if let liveRampEmail {
-                identifierData = LREmailIdentifier(liveRampEmail)
-            } else if let liveRampPhone {
-                identifierData = LRPhoneNumberIdentifier(liveRampPhone)
-            } else {
-                return ""
-            }
-            LRAts.shared.getEnvelope(identifierData) {envelope, error in
-                if let envelope {
-                    if let unwrappedEnvelope = envelope.envelope {
-                        nimbusExtendedIds.append(
-                            NimbusExtendedId(
-                                source: "liveramp.com",
-                                uids: [.init(id: unwrappedEnvelope, extensions: ["rtiPartner": NimbusCodable("idl")])]
-                            ))
-                    }
-                    
-                    if let pairIds = envelope.pairIds {
-                        let uids = pairIds.map { NimbusExtendedId.UID(id: $0, atype: 571187) }
-                        nimbusExtendedIds.append(NimbusExtendedId(source: "google.com", uids: uids))
-                    }
-                }
-            }
-            guard let data = try? JSONEncoder().encode(nimbusExtendedIds),
-            let jsonString = String(data: data, encoding: .utf8) else {
-                return ""
-            }
-            return jsonString
         }
     #endif
     
@@ -346,73 +111,100 @@ import InMobiSDK
     
     // MARK: - Public Functions
     
-    @objc public func renderAd(bidResponse: String, isBlocking: Bool, isRewarded: Bool, closeButtonDelay: TimeInterval, respectSafeArea: Bool, position: Int) {
-        guard let data = bidResponse.data(using: .utf8) else {
-            Nimbus.Log.request.error("Unable to get data from bid response")
-            return
-        }
-        
-        guard
-            let decodedData = Data(base64Encoded: data)
-        else {
-            Nimbus.Log.request.error("Unable to decode base64Encoded data")
-            return
-        }
-        
-        guard var nimbusAd = try? JSONDecoder().decode(NimbusResponse.self, from: decodedData) else {
-            Nimbus.Log.request.error("Unable to get NimbusAd from bid response data")
-            return
-        }
-        
-        guard let viewController = unityViewController() else { return }
-        
-        if isBlocking {
-            let group = DispatchGroup()
-            group.wait(for: {
-                do {
-                    if (isRewarded) {
-                        self.rewardedAd = try await Nimbus.rewardedAd(from: nimbusAd).onEvent { event in
-                            self.didReceiveNimbusEvent(event: event)
-                        }                .onError { error in
-                            print("Received error: \(error)")
-                        }.show()
-                    } else {
-                        self.interstitialAd = try await Nimbus.interstitialAd(from: nimbusAd).onEvent { event in
-                            self.didReceiveNimbusEvent(event: event)
-                        }                .onError { error in
-                            print("Received error: \(error)")
-                        }.show()
-                    }
-                } catch {
-                    Nimbus.Log.request.error(error.localizedDescription)
-                    return
+    @objc public func bannerAd(position: String, size: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool) -> String {                
+        let group = DispatchGroup()
+        group.wait(for: {
+            do {
+                let uniqueKey = UUID().uuidString
+                var bannerAd = try await Nimbus.bannerAd(position: position, size: .banner, refreshInterval: 30).onEvent { event in
+                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event, adId: uniqueKey)
+                }                .onError { error in
+                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error, adId: uniqueKey)
                 }
-            })
-        } else {
+                NimbusAdCache.shared.addAd(bannerAd, uniqueKey)
+                if (showAd) {
+                    let contentView = UIView()
+                    contentView.translatesAutoresizingMaskIntoConstraints = false
+                    viewController.view.addSubview(contentView)
+                    NSLayoutConstraint.activate(constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+                    bannerAd.show(in: contentView)
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
+                } else {
+                    bannerAd.load()
+                }
+                return uniqueKey
+            } catch {
+                Nimbus.Log.request.error(error.localizedDescription)
+                return ""
+            }
+        })
+    }
+    
+    @objc public func interstitialAd(position: String, showAd: Bool) -> String {
+        let group = DispatchGroup()
+        group.wait(for: {
+            do {
+                let uniqueKey = UUID().uuidString
+                var interstitialAd = try await Nimbus.interstitialAd(position:"unity_test").onEvent { event in
+                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event, adId: uniqueKey)
+                }                .onError { error in
+                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error, adId: uniqueKey)
+                }
+                NimbusAdCache.shared.addAd(interstitialAd, uniqueKey)
+                if (showAd) {
+                    interstitialAd.show()
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
+                } else {
+                    interstitialAd.load()
+                }
+                return uniqueKey
+            } catch {
+                Nimbus.Log.request.error(error.localizedDescription)
+                return ""
+            }
+        })
+    }
+    
+    @objc public func rewardedAd(position: String, showAd: Bool) -> String {
+        let group = DispatchGroup()
+        group.wait(for: {
+            do {
+                let uniqueKey = UUID().uuidString
+                var rewardedAd = try await Nimbus.RewardedAd(position:"unity_test").onEvent { event in
+                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event, adId: uniqueKey)
+                }                .onError { error in
+                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error, adId: uniqueKey)
+                }
+                NimbusAdCache.shared.addAd(rewardedAd, uniqueKey)
+                if (showAd) {
+                    rewardedAd.show()
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
+                } else {
+                    rewardedAd.load()
+                }
+                return uniqueKey
+            } catch {
+                Nimbus.Log.request.error(error.localizedDescription)
+                return ""
+            }
+        })
+    }
+    
+    @objc public func showAd(adId: String, respectSafeArea: Bool, bannerPosition: Int) {
+        let ad = NimbusAdCache.shared.getAd(forKey: adId)
+        if (ad.type == .inline) {
             let contentView = UIView()
             contentView.translatesAutoresizingMaskIntoConstraints = false
             viewController.view.addSubview(contentView)
-            NSLayoutConstraint.activate(constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, position: position))
-                            
-            let group = DispatchGroup()
-            group.wait(for: {
-                do {
-                    self.bannerAd = try await Nimbus.inlineAd(from: nimbusAd).onEvent { event in
-                        self.didReceiveNimbusEvent(event: event)
-                    }                .onError { error in
-                        print("Received error: \(error)")
-                    }.show(in: contentView)
-                } catch {
-                    Nimbus.Log.request.error(error.localizedDescription)
-                    return
-                }
-            })
+            NSLayoutConstraint.activate(constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+            ad.show(in: contentView)
+        } else {
+            ad.show()
         }
-        
         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
     }
     
-    public func didReceiveNimbusEvent(event: NimbusEvent) {
+    public static func didReceiveNimbusEvent(adUnitInstanceID: String, event: NimbusEvent, adId: String) {
         let eventName: String
         switch event {
         case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
@@ -429,6 +221,7 @@ import InMobiSDK
             eventName = "COMPLETED"
         case .destroyed:
             eventName = "DESTROYED"
+            NimbusAdCache.shared.removeAd(forKey: adId)
         case .endCardImpression:
             eventName = "END_CARD_IMPRESSION"
         @unknown default:
@@ -439,13 +232,26 @@ import InMobiSDK
         UnityBinding.sendMessage(
             methodName: "OnAdEvent",
             params: [
-                "adUnitInstanceID": adUnitInstanceId,
+                "adUnitId": adId,
+                "adUnitInstanceID": adUnitInstanceID, 
                 "eventName": eventName
             ]
         )
     }
     
-    private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, position: Int) -> [NSLayoutConstraint] {
+    public static func didReceiveNimbusError(adUnitInstanceID: String, error: NimbusError, adId: String) {
+        UnityBinding.sendMessage(
+            methodName: "OnError",
+            params: [
+                "adUnitId": adId,
+                "adUnitInstanceID": adUnitInstanceID, 
+                "errorMessage": error.localizedDescription
+            ]
+        )
+        NimbusAdCache.shared.removeAd(forKey: adId)
+    }
+    
+    private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
         switch (position) {
             // Center Top
             case 1:
@@ -523,20 +329,6 @@ extension UIView {
     }
 }
 
-// MARK: - AdControllerDelegate implementation
-    
-    /// Received an error for the ad
-    /*public func didReceiveNimbusError(controller: AdController, error: NimbusError) {
-        UnityBinding.sendMessage(
-            methodName: "OnError",
-            params: [
-                "adUnitInstanceID": adUnitInstanceId,
-                "errorMessage": error.localizedDescription
-            ]
-        )
-        destroyExistingAd()
-    }*/
-
 extension DispatchGroup {
     func wait(for task: @escaping () async throws -> Void) {
         enter()
@@ -549,16 +341,3 @@ extension DispatchGroup {
         _ = wait(timeout: .now() + 0.5)
     }
 }
-
-#if NIMBUS_ENABLE_LIVERAMP
-    extension LREnvelope {
-        // This helper decodes Pair IDs from LiveRamp envelope
-        var pairIds: [String]? {
-            guard let envelope25, let decodedPair = Data(base64Encoded: envelope25),
-                  let pairIds = try? JSONSerialization.jsonObject(with: decodedPair) as? [String]
-            else { return nil }
-            
-            return pairIds
-        }
-    }
-#endif

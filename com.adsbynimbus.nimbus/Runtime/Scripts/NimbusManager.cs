@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
-using Nimbus.Internal.Network;
-using Nimbus.Internal.RequestBuilder;
 using Nimbus.Internal.Session;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -24,7 +22,6 @@ namespace Nimbus.Runtime.Scripts {
 		[field: SerializeField] private NimbusSDKConfiguration _configuration;
 		
 		private bool _isTheApplicationBackgrounded;
-		private NimbusClient _nimbusClient;
 		private NimbusAPI _nimbusPlatformAPI;
 		private Regs _regulations;
 		private List<Segment> _userData = new ();
@@ -48,7 +45,6 @@ namespace Nimbus.Runtime.Scripts {
 					();
 				NimbusEvents = new AdEvents();
 				_ctx = new CancellationTokenSource();
-				_nimbusClient = new NimbusClient(_ctx, _configuration, _nimbusPlatformAPI.GetVersion());
 				if (!_configuration.enableManualInitialization)
 				{
 					InitializeNimbusSDK();
@@ -154,27 +150,6 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		
-		/// <summary>
-		///     RequestAdAndLoad communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
-		///		bid from one of the publishers integrated demand partners and attempts the render the returned ad immediately.
-		/// </summary>
-		/// <param name="nimbusReportingPosition">
-		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
-		///		to create custom reporting breakouts
-		/// </param>
-		/// <param name="bidRequest">
-		///     A manually constructed RTB data object. While it allows for more publisher flexibility to communicate to Nimbus
-		///		it does require more RTB knowledge. Please reference https://github.com/adsbynimbus/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
-		///		for more insight on how to construct an RTB request. You may also use the static helper class NimbusRtbBidRequestHelper
-		///		to auto fill some data.
-		/// </param>
-		public NimbusAdUnit RequestAdAndLoad(string nimbusReportingPosition, BidRequest bidRequest) {
-			var adUnit = RequestAd(nimbusReportingPosition, bidRequest);
-			ShowLoadedAd(adUnit);
-			return adUnit;
-		}
-		
-
 		/// <summary>
 		///     RequestBannerAdAndLoad communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
 		///		bid from one of the publishers integrated demand partners and attempts the render the returned ad immediately.
@@ -346,7 +321,7 @@ namespace Nimbus.Runtime.Scripts {
 
 		private IEnumerator LoadAd(NimbusAdUnit adUnit)
 		{
-			while (adUnit.ErrResponse.IsNullOrEmpty())
+			/*while (adUnit.ErrResponse.IsNullOrEmpty())
 			{
 				if (adUnit.WasAnAdReturned())
 				{
@@ -354,28 +329,9 @@ namespace Nimbus.Runtime.Scripts {
 					yield break;
 				}
 				yield return null;
-			}
-		}
-
-
-		/// <summary>
-		///     RequestAd communicates the RTB object data to Nimbus servers to invoke a server side auction to potentially return a
-		///		bid from one of the publishers integrated demand partners 
-		/// </summary>
-		/// <param name="nimbusReportingPosition">
-		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
-		///		to create custom reporting breakouts
-		/// </param>
-		/// <param name="bidRequest">
-		///     A manually constructed RTB data object. While it allows for more publisher flexibility to communicate to Nimbus
-		///		it does require more RTB knowledge. Please reference https://github.com/adsbynimbus/nimbus-openrtb/wiki/Nimbus-S2S-Documentation
-		///		for more insight on how to construct an RTB request. You may also use the static helper class NimbusRtbBidRequestHelper
-		///		to auto fill some data.
-		/// </param>
-		public NimbusAdUnit RequestAd(string nimbusReportingPosition, BidRequest bidRequest) {
-			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition);
-			var adUnitType = AdUnitHelper.BidRequestToAdType(bidRequest);
-			return RequestForNimbusAdUnit(bidRequest, adUnitType);
+			}*/
+			_nimbusPlatformAPI.ShowAd(adUnit);
+			yield break;
 		}
 		
 		
@@ -435,8 +391,6 @@ namespace Nimbus.Runtime.Scripts {
 			const AdUnitType adUnitType = AdUnitType.Banner;
 			
 			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition, adSize);
-			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
-				SetBannerFloor(bannerFloor);
 			
 			return RequestForNimbusAdUnit(bidRequest, adUnitType, respectSafeArea, adPosition);
 		}
@@ -462,6 +416,17 @@ namespace Nimbus.Runtime.Scripts {
 				.SetVideoFloor(videoFloor);
 			return RequestForNimbusAdUnit(bidRequest, adUnitType);
 		}
+		
+		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType, bool respectSafeArea = false, 
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
+			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
+			adUnit.AdPosition = adPosition;
+			adUnit.RespectSafeArea = respectSafeArea;
+			adUnit.LoadJsonResponseAsync(
+				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType)));
+			return adUnit;
+		}
+
 	
 		/// <summary>
 		///     If this inventory is subject to CCPA regulations use this function to pass in RTB CCPA information for all Nimbus requests
@@ -627,58 +592,6 @@ namespace Nimbus.Runtime.Scripts {
 
 			return bidRequest;
 		}
-
-#if  UNITY_IOS
-		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
-			return await Task.Run(async () => {
-				bidRequest = await ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
-				return await  _nimbusClient.MakeRequestAsync(bidRequest);
-			});
-		}
-#else
-		private async Task<string> MakeRequestAsyncWithInterceptor(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
-			bidRequest = await ApplyInterceptors(bidRequest, adUnitType, isFullScreen);
-			return await  _nimbusClient.MakeRequestAsync(bidRequest);
-		}
-#endif
-		
-		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType, bool respectSafeArea = false, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
-			adUnit.AdPosition = adPosition;
-			adUnit.RespectSafeArea = respectSafeArea;
-			adUnit.LoadJsonResponseAsync(
-				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType)));
-			return adUnit;
-		}
-		
-		private BidRequest SetUniversalRtbData(BidRequest bidRequest, string position) {
-			if (!_configuration.sdkInitialized)
-			{
-				throw new Exception("Nimbus SDK not initialized");
-			}
-			bidRequest.SetSessionId(_nimbusPlatformAPI.GetSessionID()).SetDevice(_nimbusPlatformAPI.GetDevice())
-				.SetTest(_configuration.enableSDKInTestMode).SetReportingPosition(position)
-				.SetOMInformation(_nimbusClient.platformSdkv);
-			#if NIMBUS_ENABLE_LIVERAMP
-				bidRequest = NimbusLiveRampHelpers.addLiveRampToRequest(bidRequest);
-			#endif
-			bidRequest = NimbusSessionHelpers.addSessionToRequest(bidRequest);
-			bidRequest = ApplyUserData(bidRequest);
-			SetTestData(bidRequest);
-			SetRegulations(bidRequest);
-			return bidRequest;
-		}
-		
-		private class GlobalRtbRegulation {
-			internal bool Coppa;
-			internal bool GdprApplies;
-			internal string GdprConsentString;
-			internal string GppConsentString;
-			internal string GppSectionId;
-			internal string UsPrivacyString;
-		}
-		
 		#endregion
 	}
 
