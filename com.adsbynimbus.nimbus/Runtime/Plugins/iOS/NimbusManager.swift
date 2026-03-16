@@ -10,7 +10,6 @@ import Foundation
 import NimbusKit
 import AppTrackingTransparency
 import AdSupport
-import NimbusAdCache
 #if NIMBUS_ENABLE_APS
 import NimbusRequestAPSKit
 import DTBiOSSDK
@@ -50,9 +49,7 @@ import InMobiSDK
     
     private let adUnitInstanceId: Int
     
-    var bannerAd: InlineAd?
-    var interstitialAd: InterstitialAd?
-    var rewardedAd: RewardedAd?
+    var ad: Ad?
         
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
@@ -111,17 +108,15 @@ import InMobiSDK
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, size: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool) -> String {                
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){                
         let group = DispatchGroup()
         group.wait(for: {
             do {
-                let uniqueKey = UUID().uuidString
-                var bannerAd = try await Nimbus.bannerAd(position: position, size: .banner, refreshInterval: 30).onEvent { event in
-                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event, adId: uniqueKey)
+                ad = try await Nimbus.bannerAd(position: position, size: Format(width, height), refreshInterval: 30).onEvent { event in
+                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event)
                 }                .onError { error in
-                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error, adId: uniqueKey)
+                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error)
                 }
-                NimbusAdCache.shared.addAd(bannerAd, uniqueKey)
                 if (showAd) {
                     let contentView = UIView()
                     contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -132,66 +127,55 @@ import InMobiSDK
                 } else {
                     bannerAd.load()
                 }
-                return uniqueKey
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
-                return ""
             }
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool) -> String {
+    @objc public func interstitialAd(position: String, showAd: Bool){
         let group = DispatchGroup()
         group.wait(for: {
             do {
-                let uniqueKey = UUID().uuidString
-                var interstitialAd = try await Nimbus.interstitialAd(position:"unity_test").onEvent { event in
-                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event, adId: uniqueKey)
+                ad = try await Nimbus.interstitialAd(position:"unity_test").onEvent { event in
+                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event)
                 }                .onError { error in
-                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error, adId: uniqueKey)
+                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error)
                 }
-                NimbusAdCache.shared.addAd(interstitialAd, uniqueKey)
                 if (showAd) {
                     interstitialAd.show()
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
                 } else {
                     interstitialAd.load()
                 }
-                return uniqueKey
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
-                return ""
             }
         })
     }
     
-    @objc public func rewardedAd(position: String, showAd: Bool) -> String {
+    @objc public func rewardedAd(position: String, showAd: Bool) {
         let group = DispatchGroup()
         group.wait(for: {
             do {
-                let uniqueKey = UUID().uuidString
-                var rewardedAd = try await Nimbus.RewardedAd(position:"unity_test").onEvent { event in
-                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event, adId: uniqueKey)
+                ad = try await Nimbus.RewardedAd(position:"unity_test").onEvent { event in
+                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event)
                 }                .onError { error in
-                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error, adId: uniqueKey)
+                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error)
                 }
-                NimbusAdCache.shared.addAd(rewardedAd, uniqueKey)
                 if (showAd) {
                     rewardedAd.show()
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
                 } else {
                     rewardedAd.load()
                 }
-                return uniqueKey
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
-                return ""
             }
         })
     }
     
-    @objc public func showAd(adId: String, respectSafeArea: Bool, bannerPosition: Int) {
-        let ad = NimbusAdCache.shared.getAd(forKey: adId)
+    @objc public func showAd(adUnitInstanceID: String, respectSafeArea: Bool, bannerPosition: Int) {
         if (ad.type == .inline) {
             let contentView = UIView()
             contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -204,7 +188,7 @@ import InMobiSDK
         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
     }
     
-    public static func didReceiveNimbusEvent(adUnitInstanceID: String, event: NimbusEvent, adId: String) {
+    public static func didReceiveNimbusEvent(adUnitInstanceID: String, event: NimbusEvent) {
         let eventName: String
         switch event {
         case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
@@ -221,7 +205,7 @@ import InMobiSDK
             eventName = "COMPLETED"
         case .destroyed:
             eventName = "DESTROYED"
-            NimbusAdCache.shared.removeAd(forKey: adId)
+            ad = nil
         case .endCardImpression:
             eventName = "END_CARD_IMPRESSION"
         @unknown default:
@@ -232,23 +216,21 @@ import InMobiSDK
         UnityBinding.sendMessage(
             methodName: "OnAdEvent",
             params: [
-                "adUnitId": adId,
                 "adUnitInstanceID": adUnitInstanceID, 
                 "eventName": eventName
             ]
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: String, error: NimbusError, adId: String) {
+    public static func didReceiveNimbusError(adUnitInstanceID: String, error: NimbusError) {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
-                "adUnitId": adId,
                 "adUnitInstanceID": adUnitInstanceID, 
                 "errorMessage": error.localizedDescription
             ]
         )
-        NimbusAdCache.shared.removeAd(forKey: adId)
+        ad = nil
     }
     
     private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
@@ -303,9 +285,7 @@ import InMobiSDK
     }
     
     @objc public func destroyExistingAd() {
-        bannerAd = nil;
-        interstitialAd = nil;
-        rewardedAd = nil;
+        ad = nil;
         removeReferenceFromManagerDictionary()
     }
     

@@ -9,9 +9,11 @@ namespace Nimbus.Internal {
 
 	public sealed class NimbusAdUnit {
 		public readonly AdUnitType AdType;
-		public string adUnitId;
 		public bool RespectSafeArea;
+		public IabSupportedAdSizes BannerSize;
 		public string ErrResponse;
+		public string NimbusReportingPosition;
+		public int BannerRefreshIntervalInSeconds;
 		public NimbusAdUnitPosition AdPosition;
 		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED; 
 		public readonly int InstanceID;
@@ -24,14 +26,17 @@ namespace Nimbus.Internal {
 
 		internal Task<string> Request = Task.FromResult("");
 		
-		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, bool respectSafeArea = false, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER)
+		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50, bool respectSafeArea = false, 
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30)
 		{
+			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;
 			InstanceID = GetHashCode();
 			_adEvents = adEvents;
+			BannerSize = adSize;
 			RespectSafeArea = respectSafeArea;
 			AdPosition = adPosition;
+			BannerRefreshIntervalInSeconds = bannerRefreshIntervalInSeconds;
 		}
 
 		# region IOS specific
@@ -198,6 +203,11 @@ namespace Nimbus.Internal {
 					return new Tuple<int, int>(0, 0);
 			}
 		}
+	}
+	public enum AdUnitType : byte {
+		Banner = 0,
+		Interstitial = 1,
+		Rewarded = 2
 	}
 
 }

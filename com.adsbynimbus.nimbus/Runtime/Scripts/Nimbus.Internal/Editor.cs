@@ -13,7 +13,7 @@ namespace Nimbus.Internal {
 			Debug.unityLogger.Log("Mock SDK initialized for editor");
 		}
 
-		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
+		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			Debug.unityLogger.Log("In Editor mode, ShowAd was called, however ads cannot be shown in the editor");
 		}
 

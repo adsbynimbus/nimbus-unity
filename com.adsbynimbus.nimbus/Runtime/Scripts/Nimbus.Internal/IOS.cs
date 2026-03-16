@@ -42,8 +42,17 @@ namespace Nimbus.Internal {
 			bool enableSDKInTestMode);
 
 		[DllImport("__Internal")]
-		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
-			double closeButtonDelay, bool respectSafeArea, int position);
+		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, int refreshInterval, 
+			bool respectSafeArea, int bannerPosition, bool showAd);
+		
+		[DllImport("__Internal")]
+		private static extern void _interstitialAd(int adUnitInstanceId, string position, bool showAd);
+		
+		[DllImport("__Internal")]
+		private static extern void _rewardedAd(int adUnitInstanceId, string position, bool showAd);
+		
+		[DllImport("__Internal")]
+		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -180,28 +189,29 @@ namespace Nimbus.Internal {
 			#endif
 		}
 
-		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
+		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
-
-			var isBlocking = false;
-			var isRewarded = false;
-			var closeButtonDelay = 0;
-			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
-				isBlocking = true;
-				closeButtonDelay = 5;
-				if (nimbusAdUnit.AdType == AdUnitType.Rewarded)
+			
+			switch (nimbusAdUnit.AdType)
+			{
+				case AdUnitType.Banner:
 				{
-					isRewarded = true;
-					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
+					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd);
+					break;
+				}
+				case AdUnitType.Interstitial:
+				{
+					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd);
+					break;
+				}
+				case AdUnitType.Rewarded:
+				{
+					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd);
+					break;
 				}
 			}
-			var mintegralAdUnitId = "";
-			var mintegralAdUnitPlacementId = "";
-			var molocoAdUnitId = "";
-			var inMobiAdUnitId = "";
-			//var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, "", isBlocking, isRewarded, closeButtonDelay, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 
 		internal override string GetSessionID() {

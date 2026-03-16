@@ -132,7 +132,7 @@ namespace Nimbus.Internal {
 		}
 
 
-		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
+		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			const string functionCall = "render";
 			var holdTime = 0;
 			var shouldBlock = false;

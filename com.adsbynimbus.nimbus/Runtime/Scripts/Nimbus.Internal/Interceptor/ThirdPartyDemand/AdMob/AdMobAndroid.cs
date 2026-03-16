@@ -51,7 +51,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
             switch (_adUnitType)
             {
                case AdUnitType.Banner:
-               case AdUnitType.Undefined:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
                      "fetchAdMobBannerSignal", args, 500L);

@@ -1,5 +1,5 @@
 using System;
-using Nimbus.Internal.RequestBuilder;
+using Nimbus.Internal;
 using NUnit.Framework;
 
 namespace Nimbus.Tests {

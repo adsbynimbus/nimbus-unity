@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Nimbus.Internal;
-using Nimbus.Internal.RequestBuilder;
 using Nimbus.Runtime.Scripts;
 using TMPro;
 using UnityEngine;

@@ -994,12 +994,6 @@ namespace Nimbus.Editor {
 					return false;
 				}
 
-				if (adUnit.AdUnitType == AdUnitType.Undefined) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"AdMob SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
-					return false;
-				}
-
 				if (!seenAdTypes.ContainsKey(adUnit.AdUnitType)) {
 					seenAdTypes.Add(adUnit.AdUnitType, true);
 				}
@@ -1059,12 +1053,6 @@ namespace Nimbus.Editor {
 				if (adUnit.AdUnitId.IsNullOrEmpty()) {
 					Debug.unityLogger.LogError("Nimbus", 
 						$"Mintegral SDK has been included, the Ad Unit id for {platform} cannot be empty, object NimbusAdsManager not created");
-					return false;
-				}
-
-				if (adUnit.AdUnitType == AdUnitType.Undefined) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"Mintegral SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
 					return false;
 				}
 
@@ -1133,12 +1121,6 @@ namespace Nimbus.Editor {
 					return false;
 				}
 
-				if (adUnit.AdUnitType == AdUnitType.Undefined) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"Moloco SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
-					return false;
-				}
-
 				if (!seenAdTypes.ContainsKey(adUnit.AdUnitType)) {
 					seenAdTypes.Add(adUnit.AdUnitType, true);
 				}
@@ -1191,12 +1173,6 @@ namespace Nimbus.Editor {
 				if (adUnit.AdUnitId.IsNullOrEmpty()) {
 					Debug.unityLogger.LogError("Nimbus", 
 						$"InMobi SDK has been included, the Ad Unit id for {platform} cannot be empty, object NimbusAdsManager not created");
-					return false;
-				}
-
-				if (adUnit.AdUnitType == AdUnitType.Undefined) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"InMobi SDK has been included, Ad Unit type for {platform} cannot be Undefined, object NimbusAdsManager not created");
 					return false;
 				}
 

@@ -170,10 +170,10 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
-		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, 
+		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, 
 				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50, bool respectSafeArea = false, 
 				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea, adPosition);
+			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -196,9 +196,8 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
-		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition, float bannerFloor = 0f,
-			float videoFloor = 0f) {
-			var adUnit = RequestHybridFullScreenAd(nimbusReportingPosition, bannerFloor, videoFloor);
+		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition) {
+			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents, nimbusReportingPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -217,8 +216,8 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition, float videoFloor = 0f) {
-			var adUnit = RequestRewardVideoAd(nimbusReportingPosition, videoFloor);
+		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition) {
+			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents, nimbusReportingPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -251,49 +250,13 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
-		public async void RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
-			string nimbusReportingPosition, float bannerFloor = 0f,
-			int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
+		public NimbusAdUnit RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
+			string nimbusReportingPosition, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-
-			NimbusAdUnit nextAdUnit = null; 
-			var delay = (refreshIntervalInSeconds <= 20 ? 30: refreshIntervalInSeconds) * 1000;
-			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea, adPosition);
-			while (!source.IsCancellationRequested) {
-				try {
-					await Task.Delay(delay, source.Token);
-					
-					// stop making updates if the application is backgrounded
-					while (!source.IsCancellationRequested && _isTheApplicationBackgrounded) {
-						await Task.Yield();
-					}
-					
-					// make sure to reset to avoid any leaks
-					nextAdUnit?.Destroy();
-					nextAdUnit = RequestBannerAd(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea, adPosition);
-					
-					// while the ad was not fully returned and we did not receive an error from Nimbus
-					// we give the response some time to load into the ad unit object
-					await nextAdUnit.Request;
-					
-					// confirm that the ad was returned, it will be false if there was an error
-					if (!nextAdUnit.WasAnAdReturned()) {
-						nextAdUnit?.Destroy();
-						continue;
-					}
-	
-					// nextAdUnit was fully returned, we can swap the current unit out with the new returned banner
-					currentAdUnit?.Destroy();
-					currentAdUnit = nextAdUnit;
-					ShowLoadedAd(currentAdUnit);
-				}
-				catch (TaskCanceledException) {
-					break;
-				}
-			}
-			// requesting behavior killed
-			currentAdUnit?.Destroy();
-			nextAdUnit?.Destroy();
+			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
+			//FIGURE OUT HOW TO PASS THROUGH CANCEL
+			ShowLoadedAd(adUnit);
+			return adUnit;
 		}
 		
 
@@ -310,27 +273,17 @@ namespace Nimbus.Runtime.Scripts {
 					"there was no ad to render, likely there was no fill meaning that demand did not want to spend");
 				return;
 			}
-			if (adUnit.WasAdRendered()) {
-				Debug.unityLogger.LogError(adUnit.InstanceID.ToString(),
-					"the was already rendered, you cannot render the same ad twice");
-				return;
-			}
-			StartCoroutine(LoadAd(adUnit));
+			StartCoroutine(LoadAd(adUnit, true));
 		}
 
-
-		private IEnumerator LoadAd(NimbusAdUnit adUnit)
+		private void LoadAdinNativeSDKButDontShow(NimbusAdUnit adUnit)
 		{
-			/*while (adUnit.ErrResponse.IsNullOrEmpty())
-			{
-				if (adUnit.WasAnAdReturned())
-				{
-					_nimbusPlatformAPI.ShowAd(adUnit);
-					yield break;
-				}
-				yield return null;
-			}*/
-			_nimbusPlatformAPI.ShowAd(adUnit);
+			StartCoroutine(LoadAd(adUnit, false));
+		}
+
+		private IEnumerator LoadAd(NimbusAdUnit adUnit, bool showAd)
+		{
+			_nimbusPlatformAPI.getAd(adUnit, showAd);
 			yield break;
 		}
 		
@@ -352,16 +305,10 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
-		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition, float bannerFloor = 0f,
-			float videoFloor = 0f) {
-			
-			const AdUnitType adUnitType = AdUnitType.Interstitial;
-			var bidRequest = NimbusRtbBidRequestHelper.ForHybridInterstitialAd(nimbusReportingPosition);
-			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).
-				SetBannerFloor(bannerFloor).
-				SetVideoFloor(videoFloor);
-			
-			return RequestForNimbusAdUnit(bidRequest, adUnitType);
+		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition) {
+			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents, nimbusReportingPosition);
+			LoadAdinNativeSDKButDontShow(adUnit);
+			return adUnit;
 		}
 
 		
@@ -386,13 +333,11 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
-		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			const AdUnitType adUnitType = AdUnitType.Banner;
-			
-			var bidRequest = NimbusRtbBidRequestHelper.ForBannerAd(nimbusReportingPosition, adSize);
-			
-			return RequestForNimbusAdUnit(bidRequest, adUnitType, respectSafeArea, adPosition);
+			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
+			LoadAdinNativeSDKButDontShow(adUnit);
+			return adUnit;
 		}
 
 		/// <summary>
@@ -408,25 +353,11 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition, float videoFloor = 0f) {
-			const AdUnitType adUnitType = AdUnitType.Rewarded;
-			
-			var bidRequest = NimbusRtbBidRequestHelper.ForVideoInterstitialAd(nimbusReportingPosition);
-			bidRequest = SetUniversalRtbData(bidRequest, nimbusReportingPosition).AttemptToShowVideoEndCard()
-				.SetVideoFloor(videoFloor);
-			return RequestForNimbusAdUnit(bidRequest, adUnitType);
-		}
-		
-		private NimbusAdUnit RequestForNimbusAdUnit(BidRequest bidRequest, AdUnitType adUnitType, bool respectSafeArea = false, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(adUnitType, NimbusEvents);
-			adUnit.AdPosition = adPosition;
-			adUnit.RespectSafeArea = respectSafeArea;
-			adUnit.LoadJsonResponseAsync(
-				MakeRequestAsyncWithInterceptor(bidRequest, adUnitType, AdUnitHelper.IsAdTypeFullScreen(adUnitType)));
+		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition) {
+			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents, nimbusReportingPosition);
+			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
-
 	
 		/// <summary>
 		///     If this inventory is subject to CCPA regulations use this function to pass in RTB CCPA information for all Nimbus requests
@@ -563,7 +494,7 @@ namespace Nimbus.Runtime.Scripts {
 		// in production app data properly construction on Nimbus from database information assuming the account is not a 1:many account
 		// if the account is 1:many the publisher needs submit proper App object
 		private void SetTestData(BidRequest bidRequest) {
-			if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
+			//if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
 		}
 
 		private void SetRegulations(BidRequest bidRequest) {
