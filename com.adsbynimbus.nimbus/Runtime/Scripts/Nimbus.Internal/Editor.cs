@@ -17,11 +17,6 @@ namespace Nimbus.Internal {
 			Debug.unityLogger.Log("In Editor mode, ShowAd was called, however ads cannot be shown in the editor");
 		}
 
-		internal override string GetSessionID() {
-			Debug.unityLogger.Log("Mock Session ID the SDK is not initialized");
-			return Guid.NewGuid().ToString();
-		}
-
 		internal override Device GetDevice() {
 			return new Device {
 				Ua = "UnityPlayer/2020.3.34f1 personal (UnityWebRequest/1.0, libcurl/7.52.0-DEV)",

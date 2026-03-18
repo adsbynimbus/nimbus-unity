@@ -7,7 +7,6 @@ namespace Nimbus.Internal {
 	public abstract class NimbusAPI {
 		internal abstract void InitializeSDK(NimbusSDKConfiguration configuration);
 		internal abstract void getAd(NimbusAdUnit nimbusAdUnit, bool showAd);
-		internal abstract string GetSessionID();
 		internal abstract Device GetDevice();
 		internal abstract void SetCoppaFlag(bool flag);
 		internal abstract List<IInterceptor> Interceptors();

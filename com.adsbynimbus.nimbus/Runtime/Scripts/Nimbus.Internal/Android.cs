@@ -187,13 +187,6 @@ namespace Nimbus.Internal {
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
 				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiPlacementId, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
-		
-		internal override string GetSessionID() {
-			if (_sessionId.IsNullOrEmpty()) {
-				_sessionId = _nimbus.CallStatic<string>("getSessionId");
-			}
-			return _sessionId;
-		}
 
 		internal override Device GetDevice() {
 			_deviceCache ??= new Device {

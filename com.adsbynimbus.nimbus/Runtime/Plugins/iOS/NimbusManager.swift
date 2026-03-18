@@ -50,6 +50,8 @@ import InMobiSDK
     private let adUnitInstanceId: Int
     
     var ad: Ad?
+    
+    private var contentView: UIView?
         
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
@@ -110,22 +112,32 @@ import InMobiSDK
     
     @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){                
         let group = DispatchGroup()
+        if (showAd) {
+            contentView = UIView()
+            let viewController = self.unityViewController() ?? UIViewController()
+            contentView?.translatesAutoresizingMaskIntoConstraints = false
+            viewController.view.addSubview(contentView ?? UIView())
+            NSLayoutConstraint.activate(constraints(to: contentView ?? UIView(), viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+        }
         group.wait(for: {
             do {
-                ad = try await Nimbus.bannerAd(position: position, size: Format(width, height), refreshInterval: 30).onEvent { event in
-                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event)
+                let instanceId = self.adUnitInstanceId
+                let bannerAd = try await Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30).onEvent { event in
+                    NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
-                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error)
+                    NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
-                if (showAd) {
-                    let contentView = UIView()
-                    contentView.translatesAutoresizingMaskIntoConstraints = false
-                    viewController.view.addSubview(contentView)
-                    NSLayoutConstraint.activate(constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
-                    bannerAd.show(in: contentView)
-                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
-                } else {
-                    bannerAd.load()
+                do {
+                    if (showAd) {
+                        if let contentView = self.contentView {
+                            try await bannerAd.show(in: contentView)
+                            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                        }
+                    } else {
+                        try await bannerAd.fetch()
+                    }
+                } catch {
+                    Nimbus.Log.ad.error(error.localizedDescription)
                 }
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
@@ -137,16 +149,23 @@ import InMobiSDK
         let group = DispatchGroup()
         group.wait(for: {
             do {
-                ad = try await Nimbus.interstitialAd(position:"unity_test").onEvent { event in
-                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event)
+                let instanceId = self.adUnitInstanceId
+                let interstitialAd = try await Nimbus.interstitialAd(position:"unity_test").onEvent { event in
+                    NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
-                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error)
+                    NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
-                if (showAd) {
-                    interstitialAd.show()
-                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
-                } else {
-                    interstitialAd.load()
+                do {
+                    if (showAd) {
+                        try await interstitialAd.show()
+                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                    } else {
+                        try await interstitialAd.load()
+                    }
+                    self.ad = interstitialAd
+                }
+                catch {
+                    Nimbus.Log.ad.error(error.localizedDescription)
                 }
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
@@ -158,16 +177,22 @@ import InMobiSDK
         let group = DispatchGroup()
         group.wait(for: {
             do {
-                ad = try await Nimbus.RewardedAd(position:"unity_test").onEvent { event in
-                    didReceiveNimbusEvent(adUnitInstanceID: adUnitInstanceID, event: event)
+                let instanceId = self.adUnitInstanceId
+                let rewardedAd = try await Nimbus.rewardedAd(position:"unity_test").onEvent { event in
+                    NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
-                    didReceiveNimbusError(adUnitInstanceID: adUnitInstanceID, nimbusError: error)
+                    NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
-                if (showAd) {
-                    rewardedAd.show()
-                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
-                } else {
-                    rewardedAd.load()
+                do {
+                    if (showAd) {
+                        try await rewardedAd.show()
+                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                    } else {
+                        try await rewardedAd.load()
+                    }
+                    self.ad = rewardedAd
+                } catch {
+                    Nimbus.Log.ad.error(error.localizedDescription)
                 }
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
@@ -175,20 +200,39 @@ import InMobiSDK
         })
     }
     
-    @objc public func showAd(adUnitInstanceID: String, respectSafeArea: Bool, bannerPosition: Int) {
-        if (ad.type == .inline) {
-            let contentView = UIView()
-            contentView.translatesAutoresizingMaskIntoConstraints = false
-            viewController.view.addSubview(contentView)
-            NSLayoutConstraint.activate(constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
-            ad.show(in: contentView)
-        } else {
-            ad.show()
+    @objc public func showAd(respectSafeArea: Bool, bannerPosition: Int) {
+        let group = DispatchGroup()
+        let instanceId = self.adUnitInstanceId
+        if let inlineAd = ad as? InlineAd {
+            contentView = UIView()
+            let viewController = self.unityViewController() ?? UIViewController()
+            contentView?.translatesAutoresizingMaskIntoConstraints = false
+            viewController.view.addSubview(contentView ?? UIView())
+            NSLayoutConstraint.activate(constraints(to: contentView ?? UIView(), viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+            group.wait(for: {
+                do {
+                    if let view = self.contentView {
+                        try await inlineAd.show(in: view)
+                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                    }
+                } catch {
+                    Nimbus.Log.ad.error(error.localizedDescription)
+                }
+            })
         }
-        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": adUnitInstanceId])
+        else if let fullscreenAd = ad as? FullscreenAd {
+            group.wait(for: {
+                do {
+                    try await fullscreenAd.show()
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                } catch {
+                    Nimbus.Log.ad.error(error.localizedDescription)
+                }
+            })
+        }
     }
     
-    public static func didReceiveNimbusEvent(adUnitInstanceID: String, event: NimbusEvent) {
+    public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: NimbusEvent) {
         let eventName: String
         switch event {
         case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
@@ -205,7 +249,6 @@ import InMobiSDK
             eventName = "COMPLETED"
         case .destroyed:
             eventName = "DESTROYED"
-            ad = nil
         case .endCardImpression:
             eventName = "END_CARD_IMPRESSION"
         @unknown default:
@@ -222,7 +265,7 @@ import InMobiSDK
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: String, error: NimbusError) {
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
@@ -230,11 +273,10 @@ import InMobiSDK
                 "errorMessage": error.localizedDescription
             ]
         )
-        ad = nil
     }
     
     private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
-        switch (position) {
+        switch (adScreenPosition) {
             // Center Top
             case 1:
                 return [

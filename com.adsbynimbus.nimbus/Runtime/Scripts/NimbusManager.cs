@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
-using Nimbus.Internal.Session;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Request;

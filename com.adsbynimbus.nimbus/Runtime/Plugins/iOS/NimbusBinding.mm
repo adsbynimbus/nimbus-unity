@@ -34,9 +34,9 @@ extern "C" {
                    bool respectSafeArea,
                    int bannerPosition,
                    bool showAd) {
-        return strdup([[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+        [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval respectSafeArea:respectSafeArea
-            bannerPosition:bannerPosition showAd: showAd]);
+            bannerPosition:bannerPosition showAd: showAd];
     }
 
     void _interstitialAd(int adUnitInstanceId,
@@ -57,7 +57,7 @@ extern "C" {
                  bool respectSafeArea,
                  int bannerPosition) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            showAdWithRespectSafeArea:respectSafeArea bannerPosition: bannerPosition]
+         showAdWithRespectSafeArea:respectSafeArea bannerPosition: bannerPosition];
     }
 
     void _destroyAd(int adUnitInstanceId) {

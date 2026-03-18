@@ -58,9 +58,6 @@ namespace Nimbus.Internal {
 		private static extern void _destroyAd(int adUnitInstanceId);
 
 		[DllImport("__Internal")]
-		private static extern string _getSessionId();
-
-		[DllImport("__Internal")]
 		private static extern string _getUserAgent();
 
 		[DllImport("__Internal")]
@@ -212,13 +209,6 @@ namespace Nimbus.Internal {
 					break;
 				}
 			}
-		}
-
-		internal override string GetSessionID() {
-			if (_sessionId.IsNullOrEmpty()) {
-				_sessionId = _getSessionId();
-			}
-			return _sessionId;
 		}
 
 		internal override Device GetDevice() {

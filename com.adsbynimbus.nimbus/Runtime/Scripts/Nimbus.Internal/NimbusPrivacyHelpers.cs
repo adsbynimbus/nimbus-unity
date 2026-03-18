@@ -10,18 +10,11 @@ namespace Nimbus.Internal
 {
     public class NimbusPrivacyHelpers
     {
-        #if UNITY_IOS
-            [DllImport("__Internal")]
-            private static extern string _getPrivacyStrings();
-        #endif
         
         public static Regs getPrivacyRegulations()
         {
             Regs regulations = new Regs();
             var privacyStrings = "";
-            #if UNITY_IOS
-                privacyStrings = _getPrivacyStrings();
-            #endif
             #if UNITY_ANDROID
                 var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 			    var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
