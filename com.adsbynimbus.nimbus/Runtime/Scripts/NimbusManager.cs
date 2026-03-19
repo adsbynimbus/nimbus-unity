@@ -261,7 +261,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		/// <param name="refreshIntervalInSeconds">
 		///		Defines the rate at which Banner ads are refreshed with a new ad.
-		///		Defaults to the IAB recommended 30 seconds. Nimbus does not allow anything lower than 20 seconds
+		///		Defaults to the IAB recommended 30 seconds. Nimbus does not allow anything lower than 10 seconds
 		/// </param>
 		/// <param name="adSize">
 		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
@@ -278,7 +278,7 @@ namespace Nimbus.Runtime.Scripts {
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 
 			NimbusAdUnit nextAdUnit = null; 
-			var delay = (refreshIntervalInSeconds <= 20 ? 30: refreshIntervalInSeconds) * 1000;
+			var delay = (refreshIntervalInSeconds < 10 ? 10: refreshIntervalInSeconds) * 1000;
 			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea, adPosition);
 			while (!source.IsCancellationRequested) {
 				try {
