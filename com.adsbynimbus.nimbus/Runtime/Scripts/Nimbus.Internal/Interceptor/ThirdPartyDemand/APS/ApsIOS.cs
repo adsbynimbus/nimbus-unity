@@ -16,7 +16,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
 
-		private float _timeoutInSeconds = 1.0f;
+		private float _timeoutInSeconds = 3.0f;
 
 		[DllImport("__Internal")]
 		private static extern void _initializeAPSRequestHelper(string appKey, double timeoutInSeconds, bool enableTestMode);
@@ -36,7 +36,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.APS {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
-			_timeoutInSeconds = Math.Clamp(timeoutInMilliseconds, 300, 2000)/1000.0f;
+			_timeoutInSeconds = Math.Clamp(timeoutInMilliseconds, 300, 3000)/1000.0f;
 		}
 
 		public void InitializeNativeSDK() {

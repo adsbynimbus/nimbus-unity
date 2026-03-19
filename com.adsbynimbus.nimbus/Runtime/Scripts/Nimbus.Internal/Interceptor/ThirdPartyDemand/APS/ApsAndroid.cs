@@ -17,7 +17,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 		private readonly ApsSlotData[] _slotData;
 		private readonly AndroidJavaObject _currentActivity;
 		private AndroidJavaClass _aps;
-		private int _timeoutInMilliseconds = 1000;
+		private int _timeoutInMilliseconds = 3000;
 		
 		public ApsAndroid(string appID, ApsSlotData[] slotData) {
 			_appID = appID;
@@ -29,7 +29,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
-			_timeoutInMilliseconds = Math.Clamp(timeoutInMilliseconds, 300, 2000);
+			_timeoutInMilliseconds = Math.Clamp(timeoutInMilliseconds, 300, 3000);
 		}
 
 		public void InitializeNativeSDK() {

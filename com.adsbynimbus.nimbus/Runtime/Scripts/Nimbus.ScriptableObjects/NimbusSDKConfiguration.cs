@@ -17,13 +17,13 @@ namespace Nimbus.ScriptableObjects {
 		// APS data
 		[HideInInspector] public string androidAppID;
 		[HideInInspector] public ApsSlotData[] androidApsSlotData;
-		[HideInInspector] public int androidApsTimeoutInMilliseconds = 1000;
+		[HideInInspector] public int androidApsTimeoutInMilliseconds = 3000;
 		
-		public const int ApsDefaultTimeout = 1000;
+		public const int ApsDefaultTimeout = 3000;
 		
 		[HideInInspector] public string iosAppID;
 		[HideInInspector] public ApsSlotData[] iosApsSlotData;
-		[HideInInspector] public int iosApsTimeoutInMilliseconds = 1000;
+		[HideInInspector] public int iosApsTimeoutInMilliseconds = 3000;
 
 		// Vungle Data
 		[HideInInspector] public string androidVungleAppID;

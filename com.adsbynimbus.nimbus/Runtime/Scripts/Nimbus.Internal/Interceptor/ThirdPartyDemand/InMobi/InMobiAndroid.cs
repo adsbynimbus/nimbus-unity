@@ -41,7 +41,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 				var args = new object[] {};
 				var buyerId = BridgeHelpers.GetStringFromJavaFuture(
 					"com.adsbynimbus.request.internal.NimbusRequestsInMobiInternal",
-					"token", args, 1000L);
+					"token", args, 3000L);
 				if (buyerId != null)
 				{
 					return buyerId;			
