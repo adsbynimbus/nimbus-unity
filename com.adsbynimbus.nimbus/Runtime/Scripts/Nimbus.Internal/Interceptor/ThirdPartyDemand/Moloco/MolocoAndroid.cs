@@ -42,7 +42,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 				var args = new object[] {};
 				var buyerId = BridgeHelpers.GetStringFromJavaFuture(
 					"com.adsbynimbus.request.internal.NimbusRequestsMolocoInternal",
-					"token", args, 1000L);
+					"token", args, 3000L);
 				if (buyerId != null)
 				{
 					return buyerId;			

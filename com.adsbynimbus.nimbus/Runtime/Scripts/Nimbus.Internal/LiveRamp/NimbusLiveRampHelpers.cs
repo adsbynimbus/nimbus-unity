@@ -52,7 +52,7 @@ namespace Nimbus.Internal.LiveRamp
                 {
                     liveRampData = BridgeHelpers.GetStringFromJavaFuture(
                         "com.adsbynimbus.request.internal.NimbusRequestLiverampInternal",
-                        "fetchLiverampEnvelope", new object[]{},500L);
+                        "fetchLiverampEnvelope", new object[]{}, 3000L);
                 }
                 catch (Exception e)
                 {
