@@ -278,7 +278,7 @@ namespace Nimbus.Runtime.Scripts {
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 
 			NimbusAdUnit nextAdUnit = null; 
-			var delay = (refreshIntervalInSeconds < 10 ? 30: refreshIntervalInSeconds) * 1000;
+			var delay = (refreshIntervalInSeconds < 10 ? 10: refreshIntervalInSeconds) * 1000;
 			var currentAdUnit = RequestBannerAdAndLoad(nimbusReportingPosition, bannerFloor, adSize, respectSafeArea, adPosition);
 			while (!source.IsCancellationRequested) {
 				try {
