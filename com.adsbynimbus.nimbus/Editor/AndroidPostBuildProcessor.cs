@@ -26,7 +26,6 @@ namespace Nimbus.Editor {
 							implementation(""androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"")
 							implementation(""androidx.media3:media3-exoplayer:1.3.1"")
 							implementation(""androidx.media3:media3-exoplayer-hls:1.3.1"")
-							implementation(""com.facebook.android:audience-network-sdk:6.20.0"")
 						}
 					}
 				}
