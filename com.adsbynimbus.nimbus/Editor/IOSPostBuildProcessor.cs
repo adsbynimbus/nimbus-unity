@@ -17,8 +17,7 @@ namespace Nimbus.Editor {
 		{
 			"'NimbusKit'",
 			"'NimbusRenderVideoKit'",
-			"'NimbusRenderStaticKit'",
-			"'NimbusRenderVASTKit'"
+			"'NimbusRenderStaticKit'"
 		};
 		[PostProcessBuild(45)]
 		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
@@ -91,7 +90,6 @@ post_install do |installer|
     'NimbusRenderKit',
     'NimbusRenderStaticKit',
     'NimbusRenderVideoKit',
-    'NimbusRenderVASTKit',
     'NimbusRequestAPSKit',
     'NimbusKit',
     'OMSDK_Adsbynimbus',
