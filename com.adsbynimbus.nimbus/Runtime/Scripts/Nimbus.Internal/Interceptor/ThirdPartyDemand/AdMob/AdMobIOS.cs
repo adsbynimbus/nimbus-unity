@@ -12,7 +12,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
 	internal class AdMobIOS : IInterceptor, IProvider {
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
-		private string _adUnitId;
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeAdMob();
