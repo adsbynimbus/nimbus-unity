@@ -12,8 +12,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
 	internal class AdMobIOS : IInterceptor, IProvider {
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
-		private AdUnitType _type;
-		private string _adUnitId;
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeAdMob();
@@ -39,7 +37,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 				}
 			}
 			
-			return _getAdMobRequestModifiers((int) _type, adUnitId, width, height);
+			return _getAdMobRequestModifiers((int) type, adUnitId, width, height);
 		}
 		
 		internal BidRequestDelta GetBidRequestDelta(string data)

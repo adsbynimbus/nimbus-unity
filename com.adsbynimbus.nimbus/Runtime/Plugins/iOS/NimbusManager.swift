@@ -136,6 +136,7 @@ import InMobiSDK
                     } else {
                         try await bannerAd.fetch()
                     }
+                    self.ad = bannerAd
                 } catch {
                     Nimbus.Log.ad.error(error.localizedDescription)
                 }

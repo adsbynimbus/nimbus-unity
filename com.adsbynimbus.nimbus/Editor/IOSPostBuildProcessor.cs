@@ -26,11 +26,12 @@ namespace Nimbus.Editor {
 			#if NIMBUS_ENABLE_APS
 				Dependencies.Add("pod 'NimbusAPSKit'");
 			#endif
+			
 			#if NIMBUS_ENABLE_VUNGLE
 				Dependencies.Add("pod 'NimbusVungleKit'");
 			#endif
+			
 			#if NIMBUS_ENABLE_ADMOB
-				//still needs to be done
                 Dependencies.Add("pod 'NimbusAdMobKit'");
 			#endif
 			
@@ -77,7 +78,16 @@ namespace Nimbus.Editor {
 			var postInstallScript = @"
 post_install do |installer|
   allowed_frameworks = [
+    'NimbusAdMobKit',
     'NimbusAPSKit',
+    'NimbusInMobiKit',
+    'NimbusMetaKit',
+    'FBAudienceNetwork',
+    'NimbusMintegralKit',
+    'NimbusMolocoKit',
+    'NimbusMobileFuseKit',
+    'NimbusUnityKit',
+    'NimbusVungleKit',
     'NimbusKit',
     'OMSDK_Adsbynimbus',
     'DTBiOSSDK',
@@ -92,9 +102,7 @@ post_install do |installer|
 	'NimbusLiveRampKit',
 	'LRAtsSDK',
 	'MolocoSDK',
-	'NimbusMolocoKit',
 	'InMobiSDK',
-	'NimbusInMobiKit'
   ]
 
   main_project = installer.aggregate_targets.first.user_project
