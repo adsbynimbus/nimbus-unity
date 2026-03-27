@@ -29,7 +29,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			{
 				token = BridgeHelpers.GetStringFromJavaFuture(
 					"com.adsbynimbus.request.internal.NimbusRequestsMobileFuseInternal",
-					"token", new object[]{},  500L);
+					"token", new object[]{},  3000L);
 				Debug.unityLogger.Log("MobileFuse Token", token);
 			}
 			catch (Exception e)

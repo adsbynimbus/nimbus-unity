@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.LiveRamp;
@@ -140,11 +141,6 @@ namespace Nimbus.Runtime.Scripts {
 			{
 				_configuration.sdkInitialized = true;
 				_nimbusPlatformAPI.InitializeSDK(_configuration);
-				var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations();
-				if (privacyRegs != null)
-				{
-					_regulations = privacyRegs;
-				}
 			}
 		}
 		
@@ -238,7 +234,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		/// <param name="refreshIntervalInSeconds">
 		///		Defines the rate at which Banner ads are refreshed with a new ad.
-		///		Defaults to the IAB recommended 30 seconds. Nimbus does not allow anything lower than 20 seconds
+		///		Defaults to the IAB recommended 30 seconds. Nimbus does not allow anything lower than 10 seconds
 		/// </param>
 		/// <param name="adSize">
 		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
@@ -496,8 +492,20 @@ namespace Nimbus.Runtime.Scripts {
 			//if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
 		}
 
-		private void SetRegulations(BidRequest bidRequest) {
+		private void SetRegulations(BidRequest bidRequest)
+		{
+			var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations(_regulations);
+			if (privacyRegs != null)
+			{
+				_regulations = privacyRegs;
+			}
 			bidRequest.Regs = _regulations;
+			bidRequest.User ??= new User();
+			bidRequest.User.Ext ??= new JObject();
+			if (!NimbusPrivacyHelpers.TcfUserConsentString.IsNullOrEmpty())
+			{
+				bidRequest.User.Ext["consent"] = NimbusPrivacyHelpers.TcfUserConsentString;
+			}
 		}
 
 		private async Task<BidRequest> ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
@@ -508,7 +516,7 @@ namespace Nimbus.Runtime.Scripts {
 			var interceptorTasks = new List<Task<BidRequestDelta>>();
 			foreach (var interceptor in _nimbusPlatformAPI.Interceptors())
 			{
-				interceptorTasks.Add(interceptor.GetBidRequestDeltaAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(2000));
+				interceptorTasks.Add(interceptor.GetBidRequestDeltaAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(3000));
 			}
 			try
 			{

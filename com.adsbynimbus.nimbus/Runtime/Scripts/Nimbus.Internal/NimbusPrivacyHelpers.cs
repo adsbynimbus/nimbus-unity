@@ -11,9 +11,11 @@ namespace Nimbus.Internal
     public class NimbusPrivacyHelpers
     {
         
-        public static Regs getPrivacyRegulations()
+        public static Regs getPrivacyRegulations(Regs prevRegs)
         {
-            Regs regulations = new Regs();
+            TcfUserConsentString = "";
+            Regs regulations = prevRegs;
+            regulations ??= new Regs();
             var privacyStrings = "";
             #if UNITY_ANDROID
                 var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -61,6 +63,14 @@ namespace Nimbus.Internal
                 {
                     regulations.Ext ??= new RegExt();
                     regulations.Ext.GPPSIDs = privacyObject["gppSectionId"].ToObject<String>();
+                }
+            }
+
+            if (privacyObject.ContainsKey("tcfPrivacyString"))
+            {
+                if (!privacyObject["tcfPrivacyString"].ToObject<String>().IsNullOrEmpty())
+                {
+                    TcfUserConsentString = privacyObject["tcfPrivacyString"].ToObject<String>();
                 }
             }
             if (regulations.Ext == null)

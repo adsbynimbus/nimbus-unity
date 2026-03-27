@@ -53,17 +53,17 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
                case AdUnitType.Banner:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
-                     "fetchAdMobBannerSignal", args, 500L);
+                     "fetchAdMobBannerSignal", args, 3000L);
                   break;
                case AdUnitType.Interstitial:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
-                     "fetchAdMobInterstitialSignal", args, 500L);
+                     "fetchAdMobInterstitialSignal", args, 3000L);
                   break;
                case AdUnitType.Rewarded:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
-                     "fetchAdMobRewardedSignal", args, 500L);
+                     "fetchAdMobRewardedSignal", args, 3000L);
                   break;
             }
             return adMobSignal;

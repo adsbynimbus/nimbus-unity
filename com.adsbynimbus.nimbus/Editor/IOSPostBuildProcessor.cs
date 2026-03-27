@@ -94,6 +94,7 @@ post_install do |installer|
     'DTBiOSSDK',
     'GoogleMobileAds',
     'MobileFuseSDK',
+	'FBAudienceNetwork',
     'MTGSDK',
     'MTGSDKBanner',
     'MTGSDKBidding',

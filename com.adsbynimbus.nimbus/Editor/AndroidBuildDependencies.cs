@@ -27,7 +27,8 @@ namespace Nimbus.Editor {
 		
 		public static string MetaBuildDependencies()
 		{
-			return $@"implementation ""com.adsbynimbus.android:extension-facebook:{SdkVersion}""";
+			return $@"implementation ""com.adsbynimbus.android:extension-facebook:{SdkVersion}""
+					  implementation ""com.facebook.android:audience-network-sdk:6.20.0""";
 		}
 		
 		public static string AdMobNimbusBuildDependency()
