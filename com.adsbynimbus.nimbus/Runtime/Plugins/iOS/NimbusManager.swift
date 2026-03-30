@@ -51,7 +51,6 @@ import InMobiSDK
     
     var ad: Ad?
     
-    private var contentView: UIView?
         
     #if NIMBUS_ENABLE_APS
     private static var apsRequestHelper: NimbusAPSRequestHelper?
@@ -112,6 +111,7 @@ import InMobiSDK
     
     @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){                
         let group = DispatchGroup()
+        var contentView: UIView?
         if (showAd) {
             contentView = UIView()
             let viewController = self.unityViewController() ?? UIViewController()
@@ -128,8 +128,8 @@ import InMobiSDK
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
                 if (showAd) {
-                    if let contentView = self.contentView {
-                        try await bannerAd.show(in: contentView)
+                    if let view = contentView {
+                        try await bannerAd.show(in: view)
                         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                     }
                 } else {
@@ -200,6 +200,7 @@ import InMobiSDK
     @objc public func showAd(respectSafeArea: Bool, bannerPosition: Int) {
         let group = DispatchGroup()
         let instanceId = self.adUnitInstanceId
+        var contentView: UIView?
         if let inlineAd = ad as? InlineAd {
             contentView = UIView()
             let viewController = self.unityViewController() ?? UIViewController()
@@ -208,7 +209,7 @@ import InMobiSDK
             NSLayoutConstraint.activate(constraints(to: contentView ?? UIView(), viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
             group.wait(for: {
                 do {
-                    if let view = self.contentView {
+                    if let view = contentView {
                         try await inlineAd.show(in: view)
                         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                     }
@@ -227,7 +228,7 @@ import InMobiSDK
                 }
             })
         } else {
-            UnityBinding.sendMessage(error: "OnAdRendered", params: ["adUnitInstanceID": instanceId, 
+            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId, 
             "errorMessage": "Attempted to call show() on an invalid ad type"])
             Nimbus.Log.ad.error("Attempted to show invalid ad type.")
         }
@@ -254,7 +255,7 @@ import InMobiSDK
         case .endCardImpression:
             eventName = "END_CARD_IMPRESSION"
         @unknown default:
-            Nimbus.Log.ad.error(("Ad Event not sent: \(event)")
+            Nimbus.Log.ad.error("Ad Event not sent: \(event)")
             return
         }
         
