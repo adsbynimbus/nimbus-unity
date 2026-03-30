@@ -111,27 +111,22 @@ import InMobiSDK
     
     @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){                
         let group = DispatchGroup()
-        var contentView: UIView?
-        if (showAd) {
-            contentView = UIView()
-            let viewController = self.unityViewController() ?? UIViewController()
-            contentView?.translatesAutoresizingMaskIntoConstraints = false
-            viewController.view.addSubview(contentView ?? UIView())
-            NSLayoutConstraint.activate(constraints(to: contentView ?? UIView(), viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
-        }
-        group.wait(for: {
+        group.wait(for: { @MainActor in
             do {
+                let contentView = UIView()
+                let viewController = self.unityViewController() ?? UIViewController()
+                contentView.translatesAutoresizingMaskIntoConstraints = false
+                viewController.view.addSubview(contentView)
+                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
                 let instanceId = self.adUnitInstanceId
-                let bannerAd = try await Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30).onEvent { event in
+                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30).onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
                 if (showAd) {
-                    if let view = contentView {
-                        try await bannerAd.show(in: view)
-                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
-                    }
+                    try await bannerAd.show(in: contentView)
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } else {
                     try await bannerAd.fetch()
                 }
@@ -200,19 +195,16 @@ import InMobiSDK
     @objc public func showAd(respectSafeArea: Bool, bannerPosition: Int) {
         let group = DispatchGroup()
         let instanceId = self.adUnitInstanceId
-        var contentView: UIView?
         if let inlineAd = ad as? InlineAd {
-            contentView = UIView()
-            let viewController = self.unityViewController() ?? UIViewController()
-            contentView?.translatesAutoresizingMaskIntoConstraints = false
-            viewController.view.addSubview(contentView ?? UIView())
-            NSLayoutConstraint.activate(constraints(to: contentView ?? UIView(), viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
-            group.wait(for: {
+            group.wait(for: { @MainActor in
                 do {
-                    if let view = contentView {
-                        try await inlineAd.show(in: view)
-                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
-                    }
+                    var contentView = UIView()
+                    let viewController = self.unityViewController() ?? UIViewController()
+                    contentView.translatesAutoresizingMaskIntoConstraints = false
+                    viewController.view.addSubview(contentView)
+                    NSLayoutConstraint.activate(self.constraints(to: contentView , viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+                    try await inlineAd.show(in: contentView)
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
                     Nimbus.Log.ad.error(error.localizedDescription)
                 }
