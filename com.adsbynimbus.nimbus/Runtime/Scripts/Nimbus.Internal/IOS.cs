@@ -56,42 +56,9 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
-
-		[DllImport("__Internal")]
-		private static extern string _getUserAgent();
-
-		[DllImport("__Internal")]
-		private static extern string _getAdvertisingId();
-
-		[DllImport("__Internal")]
-		private static extern int _getConnectionType();
-
-		[DllImport("__Internal")]
-		private static extern string _getDeviceModel();
-				
-		[DllImport("__Internal")]
-		private static extern string _getDeviceLanguage();
-
-		[DllImport("__Internal")]
-		private static extern string _getSystemVersion();
-		
-		[DllImport("__Internal")]
-		private static extern void _setCoppa(bool flag);
-
-		[DllImport("__Internal")]
-		private static extern bool _isLimitAdTrackingEnabled();
 		
 		[DllImport("__Internal")]
 		private static extern string _getPlistJSON();
-
-		[DllImport("__Internal")]
-		private static extern int _getAtts();
-
-		[DllImport("__Internal")]
-		private static extern string _getVendorId();
-
-		[DllImport("__Internal")]
-		private static extern string _getVersion();
 
 		private Device _deviceCache;
 		private string _sessionId;
@@ -211,43 +178,8 @@ namespace Nimbus.Internal {
 			}
 		}
 
-		internal override Device GetDevice() {
-			_deviceCache ??= new Device {
-				DeviceType = DeviceType.MobileTablet,
-				H = Screen.height,
-				W = Screen.width,
-				Os = "ios",
-				Make = "apple",
-				Model = _getDeviceModel(),
-				Osv = _getSystemVersion(),
-				Language = _getDeviceLanguage(),
-				Ext = new DeviceExt {
-					Ifv = _getVendorId()
-				},
-			};
-
-			_deviceCache.ConnectionType = (ConnectionType)_getConnectionType();
-			_deviceCache.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
-			_deviceCache.Ifa = _getAdvertisingId();
-			_deviceCache.Ua = _getUserAgent();
-			var atts = _getAtts();
-			if (atts > -1) { 
-				_deviceCache.Ext.Atts = atts;
-			}
-
-			return _deviceCache;
-		}
-
 		internal override List<IInterceptor> Interceptors() {
 			return _interceptors;
-		}
-		
-		internal override void SetCoppaFlag(bool flag) {
-			_setCoppa(flag);
-		}
-
-		internal override string GetVersion() {
-			return VersionConstants.IosSdkVersion;
 		}
 
 		private static string GetPlistJson() {

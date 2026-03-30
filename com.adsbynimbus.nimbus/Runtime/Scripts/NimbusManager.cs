@@ -366,17 +366,6 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		/// <summary>
-		///     If this inventory is subject to COPPA restrictions use this function to pass in RTB COPPA information for all Nimbus requests
-		/// </summary>
-		/// <param name="isCoppa">
-		///		Signals that the inventory is under that age of 13
-		/// </param>
-		public void SetCoppa(bool isCoppa) {
-			_regulations.Coppa = isCoppa ? 1 : 0;
-			_nimbusPlatformAPI.SetCoppaFlag(isCoppa);
-		}
-		
-		/// <summary>
 		///     If this inventory is subject to COPPA restrictions use this function to get the passed in RTB COPPA information for all Nimbus requests
 		/// </summary>
 		/// <return>
@@ -491,22 +480,7 @@ namespace Nimbus.Runtime.Scripts {
 		private void SetTestData(BidRequest bidRequest) {
 			//if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
 		}
-
-		private void SetRegulations(BidRequest bidRequest)
-		{
-			var privacyRegs = NimbusPrivacyHelpers.getPrivacyRegulations(_regulations);
-			if (privacyRegs != null)
-			{
-				_regulations = privacyRegs;
-			}
-			bidRequest.Regs = _regulations;
-			bidRequest.User ??= new User();
-			bidRequest.User.Ext ??= new JObject();
-			if (!NimbusPrivacyHelpers.TcfUserConsentString.IsNullOrEmpty())
-			{
-				bidRequest.User.Ext["consent"] = NimbusPrivacyHelpers.TcfUserConsentString;
-			}
-		}
+		
 
 		private async Task<BidRequest> ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
 			if (_nimbusPlatformAPI.Interceptors() == null) {

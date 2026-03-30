@@ -127,19 +127,15 @@ import InMobiSDK
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
-                do {
-                    if (showAd) {
-                        if let contentView = self.contentView {
-                            try await bannerAd.show(in: contentView)
-                            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
-                        }
-                    } else {
-                        try await bannerAd.fetch()
+                if (showAd) {
+                    if let contentView = self.contentView {
+                        try await bannerAd.show(in: contentView)
+                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                     }
-                    self.ad = bannerAd
-                } catch {
-                    Nimbus.Log.ad.error(error.localizedDescription)
+                } else {
+                    try await bannerAd.fetch()
                 }
+                self.ad = bannerAd
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
             }
@@ -151,14 +147,14 @@ import InMobiSDK
         group.wait(for: {
             do {
                 let instanceId = self.adUnitInstanceId
-                let interstitialAd = try await Nimbus.interstitialAd(position:"unity_test").onEvent { event in
+                let interstitialAd = try await Nimbus.interstitialAd(position: position).onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
                 do {
                     if (showAd) {
-                        try await interstitialAd.show()
+                        try await interstitialAd.show(from: self.unityViewController())
                         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                     } else {
                         try await interstitialAd.load()
@@ -179,14 +175,14 @@ import InMobiSDK
         group.wait(for: {
             do {
                 let instanceId = self.adUnitInstanceId
-                let rewardedAd = try await Nimbus.rewardedAd(position:"unity_test").onEvent { event in
+                let rewardedAd = try await Nimbus.rewardedAd(position: position).onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
                 do {
                     if (showAd) {
-                        try await rewardedAd.show()
+                        try await rewardedAd.show(from: self.unityViewController())
                         UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                     } else {
                         try await rewardedAd.load()
@@ -224,13 +220,18 @@ import InMobiSDK
         else if let fullscreenAd = ad as? FullscreenAd {
             group.wait(for: {
                 do {
-                    try await fullscreenAd.show()
+                    try await fullscreenAd.show(from: self.unityViewController())
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
                     Nimbus.Log.ad.error(error.localizedDescription)
                 }
             })
+        } else {
+            UnityBinding.sendMessage(error: "OnAdRendered", params: ["adUnitInstanceID": instanceId, 
+            "errorMessage": "Attempted to call show() on an invalid ad type"])
+            Nimbus.Log.ad.error("Attempted to show invalid ad type.")
         }
+        
     }
     
     public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: NimbusEvent) {
@@ -253,7 +254,7 @@ import InMobiSDK
         case .endCardImpression:
             eventName = "END_CARD_IMPRESSION"
         @unknown default:
-            print("Ad Event not sent: \(event)")
+            Nimbus.Log.ad.error(("Ad Event not sent: \(event)")
             return
         }
         

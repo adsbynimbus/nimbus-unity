@@ -63,49 +63,17 @@ extern "C" {
     void _destroyAd(int adUnitInstanceId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
     }
-
-    const char* _getUserAgent() {
-        return strdup([[NimbusHelper getUserAgent] UTF8String]);
-    }
-
-    const char* _getAdvertisingId() {
-        return strdup([[NimbusHelper getAdvertisingId] UTF8String]);
-    }
-
-    int _getConnectionType() {
-        return (int)[NimbusHelper getConnectionType];
-    }
-    
-    const char* _getDeviceModel() {
-        return strdup([[NimbusHelper getDeviceModel] UTF8String]);
-    }
     
     const char* _getDeviceLanguage() {
         return strdup([[NimbusHelper getDeviceLanguage] UTF8String]);
-    }
-
-    const char* _getSystemVersion() {
-        return strdup([[NimbusHelper getSystemVersion] UTF8String]);
     }
 
     int _getAtts() {
         return (int)[NimbusHelper getAtts];
     }
 
-    const char* _getVendorId() {
-        return strdup([[NimbusHelper getVendorId] UTF8String]);
-    }
-
-    void _setCoppa(bool flag) {
-        [NimbusHelper setCoppaWithFlag: flag];
-    }
-
     bool _isLimitAdTrackingEnabled() {
         return [NimbusHelper isLimitAdTrackingEnabled];
-    }
-
-    const char* _getVersion() {
-        return strdup([[NimbusHelper getVersion] UTF8String]);
     }
     
     const char* _getPlistJSON() {

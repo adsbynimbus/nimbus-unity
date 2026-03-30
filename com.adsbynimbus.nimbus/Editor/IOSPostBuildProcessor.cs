@@ -17,6 +17,7 @@ namespace Nimbus.Editor {
 		[PostProcessBuild(45)]
 		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
 		{
+			Dependencies.Clear();
 			if (target != BuildTarget.iOS) return;
 			
 			#if NIMBUS_ENABLE_LIVERAMP

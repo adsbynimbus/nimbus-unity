@@ -12,25 +12,6 @@ import AppTrackingTransparency
 
 @objc public class NimbusHelper: NSObject {
     
-    @objc public class func getSessionId() -> String {
-        Nimbus.configuration.sessionId
-    }
-        
-    @objc public class func getUserAgent() -> String {
-        Nimbus.userAgent
-    }
-    
-    @objc public class func getAdvertisingId() -> String {
-        ASIdentifierManager.shared().nimbusAdId()
-    }
-    
-    @objc public class func getConnectionType() -> Int {
-        2
-    }
-    
-    @objc public class func getDeviceModel() -> String {
-        UIDevice.current.nimbusModelName
-    }
     
     @objc public class func getDeviceLanguage() -> String? {
         guard let preferred = Locale.preferredLanguages.first else {
@@ -42,18 +23,6 @@ import AppTrackingTransparency
             
         return Locale(identifier: preferred).languageCode
     }
-    
-    @objc public class func getSystemVersion() -> String {
-        UIDevice.current.systemVersion
-    }
-
-    @objc public class func getVendorId() -> String? {
-        UIDevice.current.identifierForVendor?.uuidString
-    }
-
-    @objc public class func getVersion() -> String? {
-        Nimbus.version
-    }
 
     @objc public class func getAtts() -> Int {
         if #available(iOS 14.0, *) {
@@ -61,10 +30,6 @@ import AppTrackingTransparency
         } else {
             return -1
         }
-    }
-    
-    @objc public class func setCoppa(flag: Bool) {
-        Nimbus.configuration.coppa = flag;
     }
     
     @objc public class func isLimitAdTrackingEnabled() -> Bool {
