@@ -159,18 +159,18 @@ namespace Nimbus.Internal {
 			
 			switch (nimbusAdUnit.AdType)
 			{
-				case AdUnitType.Banner:
+				case AdType.Banner:
 				{
 					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
 					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd);
 					break;
 				}
-				case AdUnitType.Interstitial:
+				case AdType.Interstitial:
 				{
 					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd);
 					break;
 				}
-				case AdUnitType.Rewarded:
+				case AdType.Rewarded:
 				{
 					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd);
 					break;

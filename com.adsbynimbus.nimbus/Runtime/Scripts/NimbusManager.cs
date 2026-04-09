@@ -45,11 +45,11 @@ namespace Nimbus.Runtime.Scripts {
 					();
 				NimbusEvents = new AdEvents();
 				_ctx = new CancellationTokenSource();
+				Instance = this;
 				if (!_configuration.enableManualInitialization)
 				{
 					InitializeNimbusSDK();
 				}
-				Instance = this;
 				DontDestroyOnLoad(gameObject);
 			}
 			else if (Instance != this) {
@@ -166,7 +166,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
 		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, 
-				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50, bool respectSafeArea = false, 
+				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
 				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			ShowLoadedAd(adUnit);
@@ -246,7 +246,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
 		public NimbusAdUnit RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
-			string nimbusReportingPosition, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
+			string nimbusReportingPosition, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
 			//FIGURE OUT HOW TO PASS THROUGH CANCEL
@@ -328,7 +328,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
-		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50,
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);

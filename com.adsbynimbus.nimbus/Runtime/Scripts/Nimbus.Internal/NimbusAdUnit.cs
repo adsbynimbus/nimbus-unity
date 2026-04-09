@@ -8,7 +8,7 @@ namespace Nimbus.Internal {
 	internal delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public sealed class NimbusAdUnit {
-		public readonly AdUnitType AdType;
+		public readonly AdType AdType;
 		public bool RespectSafeArea;
 		public IabSupportedAdSizes BannerSize;
 		public string ErrResponse;
@@ -26,7 +26,7 @@ namespace Nimbus.Internal {
 
 		internal Task<string> Request = Task.FromResult("");
 		
-		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner320X50, bool respectSafeArea = false, 
+		public NimbusAdUnit(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
 			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30)
 		{
 			NimbusReportingPosition = nimbusReportingPosition;
@@ -100,15 +100,15 @@ namespace Nimbus.Internal {
 				case AdEventTypes.COMPLETED:
 					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
-					if (AdType == AdUnitType.Interstitial) {
+					if (AdType == AdType.Interstitial) {
 						Destroy();
 					}
 					break;
 				case AdEventTypes.DESTROYED:
 					// ReSharper disable once ConvertIfStatementToSwitchStatement
-					if (AdType == AdUnitType.Rewarded) {
+					if (AdType == AdType.Rewarded) {
 						_adEvents.FireOnAdCompletedEvent(this, !_adCompleted);
-					} else if (AdType == AdUnitType.Interstitial) {
+					} else if (AdType == AdType.Interstitial) {
 						// fired the completed event for interstitial ads force skipped to false everytime, since you
 						// can skip after a set time
 						_adEvents.FireOnAdCompletedEvent(this, false);
@@ -173,8 +173,7 @@ namespace Nimbus.Internal {
 	}
 	
 	public enum IabSupportedAdSizes : byte {
-		Banner300X50,
-		Banner320X50,
+		Banner,
 		FullScreenPortrait,
 		FullScreenLandscape,
 		HalfScreen,
@@ -185,9 +184,7 @@ namespace Nimbus.Internal {
 	public static class IabSupportedAdSizesExtension {
 		public static Tuple<int, int> ToWidthAndHeight(this IabSupportedAdSizes isa) {
 			switch (isa) {
-				case IabSupportedAdSizes.Banner300X50:
-					return new Tuple<int, int>(300, 50);
-				case IabSupportedAdSizes.Banner320X50:
+				case IabSupportedAdSizes.Banner:
 					return new Tuple<int, int>(320, 50);
 				case IabSupportedAdSizes.FullScreenPortrait:
 					return new Tuple<int, int>(320, 480);
@@ -204,7 +201,7 @@ namespace Nimbus.Internal {
 			}
 		}
 	}
-	public enum AdUnitType : byte {
+	public enum AdType : byte {
 		Banner = 0,
 		Interstitial = 1,
 		Rewarded = 2
