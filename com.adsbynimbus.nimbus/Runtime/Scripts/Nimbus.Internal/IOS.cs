@@ -63,12 +63,6 @@ namespace Nimbus.Internal {
 		private Device _deviceCache;
 		private string _sessionId;
 		
-		private ThirdPartyAdUnit[] mintegralAdUnits;
-		
-		private ThirdPartyAdUnit[] molocoAdUnits;
-
-		private ThirdPartyAdUnit[] inMobiAdUnits;
-		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
 			
@@ -115,9 +109,8 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
 				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
-				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
-				mintegralAdUnits = mintegralAdUnitIds;
-				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey, mintegralAdUnitIds);
+				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
+				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif
@@ -136,8 +129,7 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
 				Debug.unityLogger.Log("Initializing iOS Moloco SDK");
-				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
-				molocoAdUnits = molocoAdUnitIds;
+				var molocoAppKey = configuration.GetMolocoData();
 				var moloco = new MolocoIOS(molocoAppKey);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
@@ -145,8 +137,7 @@ namespace Nimbus.Internal {
 			
 			#if NIMBUS_ENABLE_INMOBI
 				Debug.unityLogger.Log("Initializing iOS InMobi SDK");
-				var (inMobiAccountId, inMobiAdUnitIds) = configuration.GetInMobiData();
-				inMobiAdUnits = inMobiAdUnitIds;
+				var inMobiAccountId = configuration.GetInMobiData();
 				var inMobi = new InMobiIOS(inMobiAccountId);
 				inMobi.InitializeNativeSDK();
 				_interceptors.Add(inMobi);

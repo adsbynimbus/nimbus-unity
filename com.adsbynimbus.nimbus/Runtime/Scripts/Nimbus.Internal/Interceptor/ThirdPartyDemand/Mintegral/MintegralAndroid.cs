@@ -14,14 +14,12 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 
 		private readonly string _appID;
 		private readonly string _appKey;
-		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		private readonly AndroidJavaObject _applicationContext;
 		
-		public MintegralAndroid(AndroidJavaObject applicationContext, string appID, string appKey, ThirdPartyAdUnit[] adUnitIds) {
+		public MintegralAndroid(AndroidJavaObject applicationContext, string appID, string appKey) {
 			_applicationContext = applicationContext;
 			_appID = appID;
 			_appKey = appKey;
-			_adUnitIds = adUnitIds;
 		}
 		
 		public void InitializeNativeSDK() {
@@ -37,22 +35,8 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 
 		}
 		
-		private JObject GetProviderRtbDataFromNativeSDK(AdUnitType type)
+		private JObject GetProviderRtbDataFromNativeSDK(AdType type)
 		{
-			var adUnitId = "";
-			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
-			{
-				if (adUnit.AdUnitType == type)
-				{
-					adUnitId = adUnit.AdUnitId;
-					break;
-				}
-			}
-			if (adUnitId.IsNullOrEmpty())
-			{
-				return null;
-			}
-			
 			try
 			{
 				AndroidJNI.AttachCurrentThread();
@@ -82,7 +66,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return bidRequestDelta;
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

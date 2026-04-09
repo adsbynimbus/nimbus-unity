@@ -28,7 +28,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			return bidRequestDelta;
 		}
 
-		private string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		private string GetProviderRtbDataFromNativeSDK(AdType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchUnityAdsToken();
 			Debug.unityLogger.Log("Unity Token", biddingToken);
@@ -42,7 +42,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 		public void InitializeNativeSDK() {
 			_initializeUnityAds(_gameID);
 		}
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

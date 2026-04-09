@@ -69,7 +69,6 @@ namespace Example.Scripts {
 				_loadAndShowBannerAdUnit = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position");
 				return;
 			}
-
 			_loadAndShowBannerAdUnit?.Destroy();
 			_loadAndShowBannerAdUnit = null;
 			_shouldDestroyBanner = false;
@@ -120,10 +119,10 @@ namespace Example.Scripts {
 		private void RequestForAd(int index) {
 			var adType = _interactableButtons[index].adUnitType;
 			_interactableButtons[index].CurrentAd = adType switch {
-				AdUnitType.Banner => NimbusManager.Instance.RequestBannerAd("unity_demo_banner_position"),
-				AdUnitType.Interstitial => NimbusManager.Instance.RequestHybridFullScreenAd(
+				AdType.Banner => NimbusManager.Instance.RequestBannerAd("unity_demo_banner_position"),
+				AdType.Interstitial => NimbusManager.Instance.RequestHybridFullScreenAd(
 					"unity_demo_interstitial_position"),
-				AdUnitType.Rewarded => NimbusManager.Instance.RequestRewardVideoAd("unity_demo_video_position"),
+				AdType.Rewarded => NimbusManager.Instance.RequestRewardVideoAd("unity_demo_video_position"),
 				_ => _interactableButtons[index].CurrentAd
 			};
 		}
@@ -136,7 +135,7 @@ namespace Example.Scripts {
 		}
 		
 		private static IEnumerator ResetState(AdController controller, NimbusAdUnit adUnit) {
-			if (adUnit.AdType != AdUnitType.Interstitial && adUnit.AdType != AdUnitType.Rewarded) yield break;
+			if (adUnit.AdType != AdType.Interstitial && adUnit.AdType != AdType.Rewarded) yield break;
 			while (adUnit.CurrentAdState != AdEventTypes.COMPLETED ||
 			       adUnit.CurrentAdState != AdEventTypes.DESTROYED) {
 				yield return null;
@@ -155,7 +154,7 @@ namespace Example.Scripts {
 	public class AdController {
 		[HideInInspector] public AdState state;
 		public TextMeshProUGUI button;
-		public AdUnitType adUnitType;
+		public AdType adUnitType;
 		public NimbusAdUnit CurrentAd;
 
 		public void NextState() {

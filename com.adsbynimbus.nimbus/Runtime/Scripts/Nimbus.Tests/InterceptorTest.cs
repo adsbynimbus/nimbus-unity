@@ -287,20 +287,7 @@ namespace Nimbus.Tests {
 						{
 							Ext = JObject.Parse(mintegralUserData),
 						}
-					}, new MintegralAndroid(null, "mintegral_app_id", "mintegral_app_key", new[] {
-						new ThirdPartyAdUnit {
-							AdUnitId = "rewarded_video_slot",
-							AdUnitType = AdUnitType.Rewarded,
-						},
-						new ThirdPartyAdUnit {
-							AdUnitId = "interstitial_slot",
-							AdUnitType =  AdUnitType.Interstitial,
-						},
-						new ThirdPartyAdUnit {
-							AdUnitId = "banner_slot",
-							AdUnitType = AdUnitType.Banner,
-						}
-					})
+					}, new MintegralAndroid(null, "mintegral_app_id", "mintegral_app_key")
 				),
 
 				new (
@@ -317,20 +304,7 @@ namespace Nimbus.Tests {
 						{
 							Ext = JObject.Parse(mintegralUserData),
 						}
-					}, new MintegralIOS("mintegral_app_id", "mintegral_app_key", new[] {
-						new ThirdPartyAdUnit {
-							AdUnitId = "rewarded_video_slot",
-							AdUnitType = AdUnitType.Rewarded,
-						},
-						new ThirdPartyAdUnit {
-							AdUnitId = "interstitial_slot",
-							AdUnitType =  AdUnitType.Interstitial,
-						},
-						new ThirdPartyAdUnit {
-							AdUnitId = "banner_slot",
-							AdUnitType = AdUnitType.Banner,
-						}
-					})
+					}, new MintegralIOS("mintegral_app_id", "mintegral_app_key")
 				),
 			};
 				

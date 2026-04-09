@@ -39,7 +39,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdType type, bool isFullScreen)
 		{
 			var biddingToken = _fetchMetaBiddingToken();
 			Debug.unityLogger.Log("METABIDDINGTOKEN", biddingToken);
@@ -55,7 +55,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			_initializeMeta(_appID);
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{
