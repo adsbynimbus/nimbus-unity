@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using Nimbus.Runtime.Scripts;
 using OpenRTB.Request;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
@@ -52,23 +53,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 		}
 
 		public void InitializeNativeSDK() {
-			_initializeInMobi(_accountId);
 		}
-
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
+		
+		public JObject GetConfigObject()
 		{
-			return Task<BidRequestDelta>.Run(() =>
-			{
-				try
-				{
-					return GetBidRequestDelta(GetInMobiToken());
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.Log("InMobi ERROR", e.Message);
-					return null;
-				}
-			});
+			var jObject = new JObject();
+			jObject["demand"] = "InMobi";
+			jObject["accountId"] = _accountId;
+			return jObject;
 		}
 	}
 #endif

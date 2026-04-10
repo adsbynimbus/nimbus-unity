@@ -18,6 +18,7 @@ using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
 using Nimbus.Internal.Utility;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
@@ -66,10 +67,6 @@ namespace Nimbus.Internal {
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing iOS SDK");
 			
-			_initializeSDKWithPublisher(configuration.publisherKey,
-				configuration.apiKey,
-				configuration.enableUnityLogs, configuration.enableSDKInTestMode);
-			
 			var plist = GetPlistJson();
 			if (StaticMethod.InitializeInterceptor() || !plist.IsNullOrEmpty()) {
 				_interceptors = new List<IInterceptor>();		
@@ -78,6 +75,8 @@ namespace Nimbus.Internal {
 			if (!plist.IsNullOrEmpty()) {
 				_interceptors.Add(new SkAdNetworkIOS(plist));
 			}
+
+			var interceptorConfigArr = new JArray();
 			
 			#if NIMBUS_ENABLE_APS
 				Debug.unityLogger.Log("Initializing iOS APS SDK");
@@ -91,13 +90,14 @@ namespace Nimbus.Internal {
 				var vungleAppID = configuration.GetVungleData();
 				var vungle = new VungleIOS(vungleAppID);
 				vungle.InitializeNativeSDK();
+				interceptorConfigArr.Add(vungle.GetConfigObject());
 				_interceptors.Add(vungle);
 			#endif
 			#if NIMBUS_ENABLE_META
 				Debug.unityLogger.Log("Initializing iOS Meta SDK");
 				var metaAppID = configuration.GetMetaData();
 				var meta = new MetaIOS(metaAppID, configuration.enableSDKInTestMode);
-				meta.InitializeNativeSDK();
+				interceptorConfigArr.Add(meta.GetConfigObject());
 				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
@@ -111,27 +111,27 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
 				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
 				var mintegral = new MintegralIOS(mintegralAppID, mintegralAppKey);
-				mintegral.InitializeNativeSDK();
+				interceptorConfigArr.Add(mintegral.GetConfigObject());
 				_interceptors.Add(mintegral);
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
 				Debug.unityLogger.Log("Initializing iOS Unity Ads SDK");
 				var unityGameId = configuration.GetUnityAdsData();
 				var unityAds = new UnityAdsIOS(unityGameId);
-				unityAds.InitializeNativeSDK();
+				interceptorConfigArr.Add(unityAds.GetConfigObject());
 				_interceptors.Add(unityAds);
 			#endif
 			#if NIMBUS_ENABLE_MOBILEFUSE
 				Debug.unityLogger.Log("Initializing iOS MobileFuse SDK");
 				var mobileFuse = new MobileFuseIOS();
-				mobileFuse.InitializeNativeSDK();
+				interceptorConfigArr.Add(mobileFuse.GetConfigObject());
 				_interceptors.Add(mobileFuse);
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
 				Debug.unityLogger.Log("Initializing iOS Moloco SDK");
 				var molocoAppKey = configuration.GetMolocoData();
 				var moloco = new MolocoIOS(molocoAppKey);
-				moloco.InitializeNativeSDK();
+				interceptorConfigArr.Add(moloco.GetConfigObject());
 				_interceptors.Add(moloco);
 			#endif
 			
@@ -139,9 +139,13 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS InMobi SDK");
 				var inMobiAccountId = configuration.GetInMobiData();
 				var inMobi = new InMobiIOS(inMobiAccountId);
-				inMobi.InitializeNativeSDK();
+				interceptorConfigArr.Add(inMobi.GetConfigObject());
 				_interceptors.Add(inMobi);
 			#endif
+			
+			_initializeSDKWithPublisher(configuration.publisherKey,
+				configuration.apiKey,
+				configuration.enableUnityLogs, configuration.enableSDKInTestMode);
 		}
 
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {

@@ -47,24 +47,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			_appID = appID;
 			_appKey = appKey;
 		}
-
-		public void InitializeNativeSDK() {
-			_initializeMintegral(_appID, _appKey);
-		}
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
+		
+		public JObject GetConfigObject()
 		{
-			return Task<BidRequestDelta>.Run(() =>
-			{
-				try
-				{
-					return GetBidRequestDelta(bidRequest, GetProviderRtbDataFromNativeSDK(type));
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
-					return null;
-				}
-			});
+			var jObject = new JObject();
+			jObject["demand"] = "Mintegral";
+			jObject["appId"] = _appID;
+			jObject["appKey"] = _appKey;
+			return jObject;
 		}
 	}
 #endif

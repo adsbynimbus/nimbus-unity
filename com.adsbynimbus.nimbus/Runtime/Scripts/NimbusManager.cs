@@ -168,7 +168,7 @@ namespace Nimbus.Runtime.Scripts {
 		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, 
 				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
 				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -192,7 +192,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
 		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -212,7 +212,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -248,7 +248,7 @@ namespace Nimbus.Runtime.Scripts {
 		public NimbusAdUnit RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
 			string nimbusReportingPosition, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
 			//FIGURE OUT HOW TO PASS THROUGH CANCEL
 			ShowLoadedAd(adUnit);
 			return adUnit;
@@ -301,7 +301,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
 		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
@@ -330,7 +330,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
@@ -349,7 +349,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
@@ -481,29 +481,7 @@ namespace Nimbus.Runtime.Scripts {
 			//if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
 		}
 		
-
-		private async Task<BidRequest> ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
-			if (_nimbusPlatformAPI.Interceptors() == null) {
-				return bidRequest;
-			}
-
-			var interceptorTasks = new List<Task<BidRequestDelta>>();
-			foreach (var interceptor in _nimbusPlatformAPI.Interceptors())
-			{
-				interceptorTasks.Add(interceptor.GetBidRequestDeltaAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(3000));
-			}
-			try
-			{
-				var results = await Task.WhenAll(interceptorTasks);
-				bidRequest = BidRequestDeltaManager.ApplyDeltas(results, bidRequest);
-			}
-			catch (Exception e)
-			{
-				Debug.unityLogger.Log($"NIMBUS INTERCEPTOR ERROR: {e.Message}  {e.StackTrace}");
-			}
-
-			return bidRequest;
-		}
+		
 		#endregion
 	}
 

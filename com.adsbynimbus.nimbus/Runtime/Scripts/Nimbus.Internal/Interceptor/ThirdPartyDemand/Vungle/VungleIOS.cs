@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
@@ -25,6 +26,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 
 		public void InitializeNativeSDK() {
 			_initializeVungle(_appID);
+		}
+
+		public JObject GetConfigObject()
+		{
+			var jObject = new JObject();
+			jObject["demand"] = "Vungle";
+			jObject["appId"] = _appID;
+			return jObject;
 		}
 
 		internal BidRequestDelta GetBidRequestDelta(string data) {
