@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
-using Unity.Plastic.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
@@ -14,12 +14,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 	internal class MetaIOS : IInterceptor, IProvider {
 		private readonly string _appID;
 		private readonly bool _testMode;
-		
-		[DllImport("__Internal")]
-		private static extern void _initializeMeta(string appKey);
-
-		[DllImport("__Internal")]
-		private static extern string _fetchMetaBiddingToken();
 
 		public MetaIOS(string appID, bool enableTestMode) {
 			_appID = appID;

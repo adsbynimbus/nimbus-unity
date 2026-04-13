@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using Nimbus.Runtime.Scripts;
 using OpenRTB.Request;
-using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
@@ -14,12 +14,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 	#if UNITY_IOS && NIMBUS_ENABLE_INMOBI
 	internal class InMobiIOS : IInterceptor, IProvider {
 		private readonly string _accountId;
-		
-		[DllImport("__Internal")]
-		private static extern void _initializeInMobi(string accountId);
-
-		[DllImport("__Internal")]
-		private static extern string _fetchInMobiToken(bool coppa);
 		
 		public InMobiIOS(string accountId) {
 			_accountId = accountId;
@@ -34,22 +28,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 			bidRequestDelta.SimpleUserExt = 
 					new KeyValuePair<string, string> ("inmobi_buyeruid", data);			
 			return bidRequestDelta;
-		}
-
-		internal string GetInMobiToken()
-		{
-			var coppa = false;
-			if (NimbusManager.Instance != null)
-			{
-				coppa = NimbusManager.Instance.GetCoppa();
-			}
-			var inMobiToken = _fetchInMobiToken(coppa);
-			if (inMobiToken != null)
-			{
-				return inMobiToken;
-			}
-
-			return "";
 		}
 
 		public void InitializeNativeSDK() {

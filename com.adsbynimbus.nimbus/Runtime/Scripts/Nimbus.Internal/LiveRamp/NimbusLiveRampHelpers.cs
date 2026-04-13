@@ -16,9 +16,7 @@ namespace Nimbus.Internal.LiveRamp
             [DllImport("__Internal")]
             private static extern void _initializeLiveRamp(String configId, String email, 
                 String phoneNumber, Boolean isTestMode, Boolean hasConsentForNoLegislation);
-
-            [DllImport("__Internal")]
-            private static extern string _getLiveRampData();
+        
         #endif
 
         public static void initializeLiveRamp(String configId, 
@@ -39,35 +37,6 @@ namespace Nimbus.Internal.LiveRamp
                     liveRamp.CallStatic("initialize", configId, email, phoneNumber, hasConsentForNoLegislation);
                 }
             #endif
-        }
-
-        public static BidRequest addLiveRampToRequest(BidRequest bidRequest)
-        {
-            var liveRampData = "";
-            #if UNITY_IOS
-                liveRampData = _getLiveRampData();
-            #endif
-            #if UNITY_ANDROID
-                try 
-                {
-                    liveRampData = BridgeHelpers.GetStringFromJavaFuture(
-                        "com.adsbynimbus.request.internal.NimbusRequestLiverampInternal",
-                        "fetchLiverampEnvelope", new object[]{}, 3000L);
-                }
-                catch (Exception e)
-                {
-                    Debug.unityLogger.Log("LiveRamp Request Info ERROR", e.Message);
-                }
-            #endif
-            if (liveRampData.IsNullOrEmpty())
-            {
-                return bidRequest;
-            }
-            var eidsObject = JsonConvert.DeserializeObject(liveRampData, typeof(JArray)) as JArray;
-            bidRequest.User ??= new User();
-            bidRequest.User.Ext ??= new JObject();
-            bidRequest.User.Ext.Add("eids", eidsObject);
-            return bidRequest;
         }
     }
     #endif

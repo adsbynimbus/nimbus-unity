@@ -19,11 +19,13 @@ extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
                                      bool enableUnityLogs,
-                                     bool enableSDKInTestMode) {
+                                     bool enableSDKInTestMode,
+                                     const char* thirdPartyJson) {
         [NimbusManager initializeNimbusSDKWithPublisher: GetStringParam(publisher)
                                                  apiKey: GetStringParam(apikey)
                                         enableUnityLogs: enableUnityLogs
-                                        enableSDKInTestMode: enableSDKInTestMode];
+                                        enableSDKInTestMode: enableSDKInTestMode
+                                        thirdPartyJson: GetStringParam(thirdPartyJson)];
     }
 
     void _bannerAd(int adUnitInstanceId, 

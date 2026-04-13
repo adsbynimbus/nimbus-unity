@@ -46,7 +46,6 @@ import InMobiSDK
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
-    
     private let adUnitInstanceId: Int
     
     var ad: Ad?
@@ -69,7 +68,8 @@ import InMobiSDK
         publisher: String,
         apiKey: String,
         enableUnityLogs: Bool,
-        enableSDKInTestMode: Bool
+        enableSDKInTestMode: Bool,
+        thirdPartyJson: String
     ) {
         Nimbus.initialize(publisher: publisher, apiKey: apiKey)
         Nimbus.configuration.testMode = enableSDKInTestMode

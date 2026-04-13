@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 using Nimbus.Internal.Interceptor;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
@@ -18,7 +19,7 @@ using OpenRTB.Enumerations;
 using OpenRTB.Request;
 using UnityEngine;
 using Nimbus.Internal.Utility;
-using Unity.Plastic.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
@@ -40,7 +41,8 @@ namespace Nimbus.Internal {
 			string publisher,
 			string apiKey,
 			bool enableUnityLogs,
-			bool enableSDKInTestMode);
+			bool enableSDKInTestMode,
+			string thirdPartyJson);
 
 		[DllImport("__Internal")]
 		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, int refreshInterval, 
@@ -89,7 +91,6 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS Vungle SDK");
 				var vungleAppID = configuration.GetVungleData();
 				var vungle = new VungleIOS(vungleAppID);
-				vungle.InitializeNativeSDK();
 				interceptorConfigArr.Add(vungle.GetConfigObject());
 				_interceptors.Add(vungle);
 			#endif
@@ -145,7 +146,7 @@ namespace Nimbus.Internal {
 			
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
-				configuration.enableUnityLogs, configuration.enableSDKInTestMode);
+				configuration.enableUnityLogs, configuration.enableSDKInTestMode, JsonConvert.SerializeObject(interceptorConfigArr));
 		}
 
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {

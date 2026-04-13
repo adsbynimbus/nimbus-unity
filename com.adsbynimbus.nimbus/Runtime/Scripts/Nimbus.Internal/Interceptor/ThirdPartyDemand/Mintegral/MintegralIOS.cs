@@ -16,11 +16,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 		private readonly string _appID;
 		private readonly string _appKey;
 		
-		[DllImport("__Internal")]
-		private static extern void _initializeMintegral(string appID, string appKey);
-
-		[DllImport("__Internal")]
-		private static extern string _getMintegralRequestModifiers();
 
 		internal BidRequestDelta GetBidRequestDelta(BidRequest bidRequest, string data)
 		{
@@ -36,11 +31,6 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 					new KeyValuePair<string, JObject> ("mintegral_sdk", mintegralObject);			
 			}
 			return bidRequestDelta;
-		}
-
-		internal string GetProviderRtbDataFromNativeSDK(AdType type)
-		{
-			return _getMintegralRequestModifiers();
 		}
 
 		public MintegralIOS(string appID, string appKey) {

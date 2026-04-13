@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
 using OpenRTB.Request;
-using Unity.Plastic.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
