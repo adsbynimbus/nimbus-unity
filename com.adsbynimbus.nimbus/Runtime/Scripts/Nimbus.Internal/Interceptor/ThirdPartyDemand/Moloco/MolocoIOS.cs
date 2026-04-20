@@ -18,12 +18,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco {
 			_appKey = appKey;
 		}
 		
-		public JObject GetConfigObject()
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "Moloco";
-			jObject["appKey"] = _appKey;
-			return jObject;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.Moloco, _appKey);
 		}
 	}
 #endif

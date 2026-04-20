@@ -78,7 +78,7 @@ namespace Nimbus.Internal {
 				_interceptors.Add(new SkAdNetworkIOS(plist));
 			}
 
-			var interceptorConfigArr = new JArray();
+			var interceptorConfigArr = new List<ThirdPartyDemandObj>();
 			
 			#if NIMBUS_ENABLE_APS
 				Debug.unityLogger.Log("Initializing iOS APS SDK");

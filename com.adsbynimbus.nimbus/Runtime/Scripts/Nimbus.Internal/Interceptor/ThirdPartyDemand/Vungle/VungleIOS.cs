@@ -17,22 +17,10 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle {
 		public VungleIOS(string appID) {
 			_appID = appID;
 		}
-
-		public JObject GetConfigObject()
+		
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "Vungle";
-			jObject["appId"] = _appID;
-			return jObject;
-		}
-
-		internal BidRequestDelta GetBidRequestDelta(string data) {
-			var bidRequestDelta = new BidRequestDelta();
-			if (data.IsNullOrEmpty()) {
-				return bidRequestDelta;
-			}
-			bidRequestDelta.SimpleUserExt = new KeyValuePair<string, string>("vungle_buyeruid", data);
-			return bidRequestDelta;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.Vungle, _appID);
 		}
 	}
 #endif

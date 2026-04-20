@@ -441,26 +441,18 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="configId">
 		///		Config ID provided by LiveRamp
 		/// </param>
+		/// <param name="email">
+		///		Email is the preferred method for identifying a user
+		/// </param>
 		/// <param name="hasConsentForNoLegislation">
 		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
 		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
 		/// </param>
-		/// <param name="email">
-		///		Email is the preferred method for identifying a user, if null will attempt to use phone number
-		/// </param>
-		///  <param name="phoneNumber">
-		///		Optional phone if email isn't known, only US is supported
-		/// </param>
-		/// <param name="testMode">
-		///		Optional parameter if debugging / testing
-		/// </param>
-			public static void initializeLiveRamp(String configId,
-				Boolean hasConsentForNoLegislation, String email, 
-				String phoneNumber = "", Boolean testMode = false)
+			public static void initializeLiveRamp(String configId, String email,
+				Boolean hasConsentForNoLegislation)
 			{
 					// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
-					NimbusLiveRampHelpers.initializeLiveRamp(configId, hasConsentForNoLegislation, testMode,
-							email, phoneNumber);
+					NimbusLiveRampHelpers.initializeLiveRamp(configId, email, hasConsentForNoLegislation);
 			}
 		#endif
 		

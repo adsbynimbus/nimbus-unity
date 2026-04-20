@@ -15,30 +15,32 @@ import NimbusRequestAPSKit
 import DTBiOSSDK
 #endif
 #if NIMBUS_ENABLE_VUNGLE
-import VungleAdsSDK
+import NimbusVungleKit
 #endif
 #if NIMBUS_ENABLE_META
 import FBAudienceNetwork
+import NimbusMetaKit
 #endif
 #if NIMBUS_ENABLE_ADMOB
 import GoogleMobileAds
 #endif
 #if NIMBUS_ENABLE_MINTEGRAL
-import MTGSDK
-import MTGSDKBidding
+import NimbusMintegralKit
 #endif
 #if NIMBUS_ENABLE_UNITY_ADS
-import UnityAds
+import NimbusUnityKit
 #endif
 #if NIMBUS_ENABLE_LIVERAMP
 import NimbusLiveRampKit
-import LRAtsSDK
 #endif
 #if NIMBUS_ENABLE_MOLOCO
-import MolocoSDK
+import NimbusMolocoKit
 #endif
 #if NIMBUS_ENABLE_INMOBI
-import InMobiSDK
+import NimbusInMobiKit
+#endif
+#if NIMBUS_ENABLE_MOBILEFUSE
+import NimbusMobileFuseKit
 #endif
 
 
@@ -50,18 +52,6 @@ import InMobiSDK
     
     var ad: Ad?
     
-        
-    #if NIMBUS_ENABLE_APS
-    private static var apsRequestHelper: NimbusAPSRequestHelper?
-    #endif
-    
-    #if NIMBUS_ENABLE_LIVERAMP
-    private static var liveRampInterceptor: NimbusLiveRampInterceptor?
-    private static var liveRampEmail: String?
-    private static var liveRampPhone: String?
-    #endif
- 
-    
     // MARK: - Class Functions
     
     @objc public class func initializeNimbusSDK(
@@ -71,9 +61,89 @@ import InMobiSDK
         enableSDKInTestMode: Bool,
         thirdPartyJson: String
     ) {
+        print(thirdPartyJson)
+        var thirdPartyDemand: [ThirdPartyDemand] = []
+
+        if (thirdPartyJson != "" && !thirdPartyJson.isEmpty) {
+            do {
+                if let dataFromString = thirdPartyJson.data(using: .utf8) {
+                    thirdPartyDemand = try JSONDecoder().decode([ThirdPartyDemand].self, from: dataFromString)
+                }
+            } catch {
+                Nimbus.Log.lifecycle.error(error.localizedDescription)
+            }
+        }
         Nimbus.initialize(publisher: publisher, apiKey: apiKey)
+        {
+            #if NIMBUS_ENABLE_APS
+            initAPS()
+            #endif
+            #if NIMBUS_ENABLE_MOBILEFUSE
+            MobileFuseExtension()
+            #endif
+            if (!thirdPartyDemand.isEmpty) {
+                #if NIMBUS_ENABLE_INMOBI
+                InMobiExtension(accountId: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.firstKey)
+                #endif
+                #if NIMBUS_ENABLE_META
+                MetaExtension(appId: thirdPartyDemand.first(where: {$0.demandType == .Meta})?.firstKey ?? "", forceTestAd: thirdPartyDemand.first(where: {$0.demandType == .Meta})?.testMode ?? false)
+                #endif
+                #if NIMBUS_ENABLE_MINTEGRAL
+                let mintegral = thirdPartyDemand.first(where: {$0.demandType == .Mintegral})
+                MintegralExtension(appId: mintegral?.firstKey ?? "",
+                                    appKey: mintegral?.secondKey ?? "")
+                #endif
+                #if NIMBUS_ENABLE_MOLOCO
+                MolocoExtension(appKey: thirdPartyDemand.first(where: {$0.demandType == .Moloco})?.firstKey ?? "")
+                #endif
+                #if NIMBUS_ENABLE_UNITY_ADS
+                UnityExtension(gameId: thirdPartyDemand.first(where: {$0.demandType == .UnityAds})?.firstKey ?? "")
+                #endif
+                #if NIMBUS_ENABLE_VUNGLE
+                VungleExtension(appId: thirdPartyDemand.first(where: {$0.demandType == .Vungle})?.firstKey ?? "")
+                #endif
+            }
+        }
         Nimbus.configuration.testMode = enableSDKInTestMode
     }
+    
+    #if NIMBUS_ENABLE_APS
+    @objc private class func initAPS(appKey: String) {
+        // Initialize APS SDK
+        DTBAds.sharedInstance().setAppKey(appKey)
+
+        // Set the MRAID Policy
+        DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
+        DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
+
+        // Set Nimbus as the Mediatior
+        DTBAds.sharedInstance().setAdNetworkInfo(.init(networkName: DTBADNETWORK_NIMBUS))
+
+        // Set Nimbus as the Open Measurement partner
+        DTBAds.sharedInstance().addCustomAttribute("omidPartnerName", value: Nimbus.configuration.sdkName)
+        DTBAds.sharedInstance().addCustomAttribute("omidPartnerVersion", value: Nimbus.configuration.version)
+
+        // Optional: Enable APS logging / test mode to verify the integration
+        DTBAds.sharedInstance().setLogLevel(DTBLogLevelAll)
+        DTBAds.sharedInstance().testMode = true
+    }
+    #endif
+    
+    #if NIMBUS_ENABLE_LIVERAMP
+    @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true) {
+        let liveRamp = LiveRamp(
+            configId: configId,
+            email: email,
+            hasConsentForNoLegislation: hasConsentForNoLegislation
+        )
+
+        // Applies LiveRamp to all future Nimbus requests
+        let group = DispatchGroup()
+        group.wait(for: { @MainActor in
+            try await liveRamp.fetchEnvelope().applyToNimbus()
+        })
+    }
+    #endif
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
         guard let manager = managerDictionary[adUnityInstanceId] else {
@@ -83,19 +153,6 @@ import InMobiSDK
         }
         return manager
     }
-    
-    #if NIMBUS_ENABLE_LIVERAMP
-        @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
-                                               hasConsentForNoLegislation: Bool) {
-            if (phoneNumber != "") {
-                liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, phoneNumber: phoneNumber, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
-                liveRampPhone = phoneNumber
-            } else {
-                liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, email: email, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
-                liveRampEmail = email
-            }
-        }
-    #endif
     
     // MARK: - Private Functions
     
@@ -109,7 +166,7 @@ import InMobiSDK
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){                
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
@@ -329,6 +386,27 @@ import InMobiSDK
     private func removeReferenceFromManagerDictionary() {
         NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
     }
+    
+    enum ThirdPartyDemandEnum: Int, Codable
+    {
+        case AdMob = 0
+        case Aps = 1
+        case InMobi = 2
+        case Meta = 3
+        case Mintegral = 4
+        case MobileFuse = 5
+        case Moloco = 6
+        case UnityAds = 7
+        case Vungle = 8
+    }
+    
+    struct ThirdPartyDemand: Codable {
+        var demandType: ThirdPartyDemandEnum = .AdMob
+        var firstKey: String?
+        var secondKey: String?
+        var testMode: Bool = false
+    }
+    
 }
 
 extension UIView {

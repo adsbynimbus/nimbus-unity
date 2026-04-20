@@ -18,12 +18,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			_gameID = gameID;
 		}
 		
-		public JObject GetConfigObject()
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "Unity";
-			jObject["gameId"] = _gameID;
-			return jObject;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.UnityAds, _gameID);
 		}
 	}
 #endif

@@ -20,13 +20,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			_testMode = enableTestMode;
 		}
 		
-		public JObject GetConfigObject()
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "Meta";
-			jObject["appId"] = _appID;
-			jObject["testMode"] = _testMode;
-			return jObject;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.Meta, _appID, "", _testMode);
 		}
 
 	}

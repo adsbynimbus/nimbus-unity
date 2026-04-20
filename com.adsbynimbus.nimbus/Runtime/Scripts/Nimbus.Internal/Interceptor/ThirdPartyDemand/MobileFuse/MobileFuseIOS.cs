@@ -14,11 +14,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 	#if UNITY_IOS && NIMBUS_ENABLE_MOBILEFUSE
 	internal class MobileFuseIOS : IInterceptor, IProvider {
 		
-		public JObject GetConfigObject()
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "MobileFuse";
-			return jObject;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.MobileFuse);
 		}
 	}
 #endif

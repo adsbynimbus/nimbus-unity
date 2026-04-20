@@ -38,13 +38,9 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			_appKey = appKey;
 		}
 		
-		public JObject GetConfigObject()
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "Mintegral";
-			jObject["appId"] = _appID;
-			jObject["appKey"] = _appKey;
-			return jObject;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.Mintegral, _appID, _appKey);
 		}
 	}
 #endif

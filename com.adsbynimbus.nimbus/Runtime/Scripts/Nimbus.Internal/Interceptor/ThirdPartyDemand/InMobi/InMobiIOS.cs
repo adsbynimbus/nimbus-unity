@@ -18,27 +18,10 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 		public InMobiIOS(string accountId) {
 			_accountId = accountId;
 		}
-
-		internal BidRequestDelta GetBidRequestDelta(string data)
-		{
-			var bidRequestDelta = new BidRequestDelta();
-			if (data.IsNullOrEmpty()) {
-				return bidRequestDelta;
-			} 
-			bidRequestDelta.SimpleUserExt = 
-					new KeyValuePair<string, string> ("inmobi_buyeruid", data);			
-			return bidRequestDelta;
-		}
-
-		public void InitializeNativeSDK() {
-		}
 		
-		public JObject GetConfigObject()
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var jObject = new JObject();
-			jObject["demand"] = "InMobi";
-			jObject["accountId"] = _accountId;
-			return jObject;
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.InMobi, _accountId);
 		}
 	}
 #endif
