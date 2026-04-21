@@ -35,24 +35,30 @@ extern "C" {
                    int refreshInterval,
                    bool respectSafeArea,
                    int bannerPosition,
-                   bool showAd) {
+                   bool showAd,
+                   const char* apsAdUnitId,
+                   const char* adMobAdUnitId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval respectSafeArea:respectSafeArea
-            bannerPosition:bannerPosition showAd: showAd];
+            bannerPosition:bannerPosition showAd: showAd apsAdUnitId:GetStringParam(apsAdUnitId) adMobAdUnitId:GetStringParam(adMobAdUnitId)];
     }
 
     void _interstitialAd(int adUnitInstanceId,
                                 const char* position,
-                                bool showAd) {
+                                bool showAd,
+                                const char* apsAdUnitId,
+                                const char* adMobAdUnitId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            interstitialAdWithPosition:GetStringParam(position) showAd: showAd];
+            interstitialAdWithPosition:GetStringParam(position) showAd: showAd apsAdUnitId:GetStringParam(apsAdUnitId) adMobAdUnitId:GetStringParam(adMobAdUnitId)];
     }
     
     void _rewardedAd(int adUnitInstanceId,
                             const char* position,
-                            bool showAd) {
+                            bool showAd,
+                            const char* apsAdUnitId,
+                            const char* adMobAdUnitId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            rewardedAdWithPosition:GetStringParam(position) showAd: showAd];
+            rewardedAdWithPosition:GetStringParam(position) showAd: showAd apsAdUnitId:GetStringParam(apsAdUnitId) adMobAdUnitId:GetStringParam(adMobAdUnitId)];
     }
     
     void _showAd(int adUnitInstanceId,

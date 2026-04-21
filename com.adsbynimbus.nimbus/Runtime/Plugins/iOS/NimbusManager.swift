@@ -23,6 +23,7 @@ import NimbusMetaKit
 #endif
 #if NIMBUS_ENABLE_ADMOB
 import GoogleMobileAds
+import NimbusAdMobKit
 #endif
 #if NIMBUS_ENABLE_MINTEGRAL
 import NimbusMintegralKit
@@ -42,6 +43,7 @@ import NimbusInMobiKit
 #if NIMBUS_ENABLE_MOBILEFUSE
 import NimbusMobileFuseKit
 #endif
+
 
 
 @objc public class NimbusManager: NSObject {
@@ -73,7 +75,7 @@ import NimbusMobileFuseKit
                 Nimbus.Log.lifecycle.error(error.localizedDescription)
             }
         }
-        Nimbus.initialize(publisher: publisher, apiKey: apiKey)
+        Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
             #if NIMBUS_ENABLE_APS
             initAPS()
@@ -82,6 +84,9 @@ import NimbusMobileFuseKit
             MobileFuseExtension()
             #endif
             if (!thirdPartyDemand.isEmpty) {
+                #if NIMBUS_ENABLE_ADMOB
+                AdMobExtension(autoInitialize: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.autoInit ?? false)
+                #endif
                 #if NIMBUS_ENABLE_INMOBI
                 InMobiExtension(accountId: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.firstKey)
                 #endif
@@ -166,17 +171,35 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String){
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
+                #if NIMBUS_ENABLE_APS
+                    let bannerAdRequest = APSAdRequest(
+                        slotUUID: apsAdUnitId,
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    bannerAdRequest.setAdFormat(.banner)
+                        
+                    let apsAd = try await bannerAdRequest.loadAd()
+                #endif
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
                 let instanceId = self.adUnitInstanceId
-                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30).onEvent { event in
+                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                        admob(bannerAdUnitId: adMobAdUnitId)
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                        aps(ads: [apsAd])
+                        #endif
+                    }
+                }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -194,12 +217,30 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool){
+    @objc public func interstitialAd(position: String, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String){
         let group = DispatchGroup()
         group.wait(for: {
             do {
+                #if NIMBUS_ENABLE_APS
+                    let interstitialAdRequest = APSAdRequest(
+                        slotUUID: apsAdUnitId,
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    interstitialAdRequest.setAdFormat(.interstitial)
+                        
+                    let apsAd = try await interstitialAdRequest.loadAd()
+                #endif
                 let instanceId = self.adUnitInstanceId
-                let interstitialAd = try await Nimbus.interstitialAd(position: position).onEvent { event in
+                let interstitialAd = try await Nimbus.interstitialAd(position: position){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                        admob(bannerAdUnitId: adMobAdUnitId)
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                        aps(ads: [apsAd])
+                        #endif
+                    }
+                }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -222,12 +263,30 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func rewardedAd(position: String, showAd: Bool) {
+    @objc public func rewardedAd(position: String, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String) {
         let group = DispatchGroup()
         group.wait(for: {
             do {
+                #if NIMBUS_ENABLE_APS
+                    let rewardedAdRequest = APSAdRequest(
+                        slotUUID: apsAdUnitId,
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    rewardedAdRequest.setAdFormat(.rewarded)
+                        
+                    let apsAd = try await rewardedAdRequest.loadAd()
+                #endif
                 let instanceId = self.adUnitInstanceId
-                let rewardedAd = try await Nimbus.rewardedAd(position: position).onEvent { event in
+                let rewardedAd = try await Nimbus.rewardedAd(position: position){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                        admob(bannerAdUnitId: adMobAdUnitId)
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                        aps(ads: [apsAd])
+                        #endif
+                    }
+                }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -284,10 +343,10 @@ import NimbusMobileFuseKit
         
     }
     
-    public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: NimbusEvent) {
+    public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: AdEvent) {
         let eventName: String
         switch event {
-        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
+        case .loaded, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
             return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"
@@ -405,6 +464,7 @@ import NimbusMobileFuseKit
         var firstKey: String?
         var secondKey: String?
         var testMode: Bool = false
+        var autoInit: Bool = true
     }
     
 }

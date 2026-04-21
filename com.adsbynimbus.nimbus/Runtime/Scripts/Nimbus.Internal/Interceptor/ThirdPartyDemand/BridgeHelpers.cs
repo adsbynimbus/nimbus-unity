@@ -35,13 +35,15 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand
         public String firstKey;
         public String secondKey;
         public Boolean testMode;
+        public Boolean autoInit;
 
-        public ThirdPartyDemandObj(ThirdPartyDemandEnum demandType, String firstKey = "", String secondKey = "", Boolean testMode = false)
+        public ThirdPartyDemandObj(ThirdPartyDemandEnum demandType, String firstKey = "", String secondKey = "", Boolean testMode = false, Boolean autoInit = false)
         {
             this.demandType = demandType;
             this.firstKey = firstKey;
             this.secondKey = secondKey;
             this.testMode = testMode;
+            this.autoInit = autoInit;
         }
     }
 }

@@ -34,6 +34,7 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public string iosMetaAppID;
 		
 		// AdMob Data
+		[HideInInspector] public bool adMobAutoInit;
 		[HideInInspector] public string androidAdMobAppID;
 		[HideInInspector] public ThirdPartyAdUnit[] androidAdMobAdUnitData;
 		[HideInInspector] public string iosAdMobAppID;
@@ -209,14 +210,12 @@ namespace Nimbus.ScriptableObjects {
 			return appID;
 		}
 		
-		public Tuple<string, ThirdPartyAdUnit[]> GetAdMobData() {
-			var appID = androidAdMobAppID;
+		public ThirdPartyAdUnit[] GetAdMobData() {
 			var adUnitIds = androidAdMobAdUnitData;
 			#if UNITY_IOS
-				appID = iosAdMobAppID;
 				adUnitIds =  iosAdMobAdUnitData;
 			#endif
-			return new Tuple<string, ThirdPartyAdUnit[]>(appID, adUnitIds);
+			return adUnitIds;
 		}
 		
 		public Tuple<string, string> GetMintegralData() {

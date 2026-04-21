@@ -86,7 +86,7 @@ namespace Nimbus.Internal {
 				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
-				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
+				var adMobAdUnitIds = configuration.GetAdMobData();
 				var admob = new AdMobAndroid(adMobAdUnitIds);
 				_interceptors.Add(admob);
 			#endif
