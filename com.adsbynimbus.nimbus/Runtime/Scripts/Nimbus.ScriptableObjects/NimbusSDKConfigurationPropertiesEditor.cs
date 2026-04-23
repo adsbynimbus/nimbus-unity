@@ -39,6 +39,8 @@ namespace Nimbus.ScriptableObjects {
 		private SerializedProperty _iosMetaAppId;
 		
 		// AdMob
+		private SerializedProperty _adMobAutoInit;
+		
 		private SerializedProperty _androidAdMobAppId;
 		private ReorderableList _androidAdMobAdUnitDataList = null;
 		private SerializedProperty _androidAdMobAdUnitData = null;
@@ -147,6 +149,7 @@ namespace Nimbus.ScriptableObjects {
 			_androidAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobAndroidAdUnitData;
 			
 			// IOS AdMob UI
+			_adMobAutoInit = serializedObject.FindProperty("adMobAutoInit");
 			_iosAdMobAppId = serializedObject.FindProperty("iosAdMobAppID");
 			_iosAdMobAdUnitData = serializedObject.FindProperty("iosAdMobAdUnitData");
 			_iosAdMobAdUnitDataList = new ReorderableList(
@@ -407,6 +410,8 @@ namespace Nimbus.ScriptableObjects {
 					EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "AdMob Android Ad Unit Id Data");
 				#endif
 				#if NIMBUS_ENABLE_ADMOB_IOS
+					EditorGUILayout.LabelField("Auto Initialization", headerStyle);
+					EditorGUILayout.PropertyField(_adMobAutoInit);
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosAdMobAppId));
 					GUILayout.Space(10);

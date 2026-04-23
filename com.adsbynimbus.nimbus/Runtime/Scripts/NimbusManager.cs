@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
 using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
 using Nimbus.Internal.LiveRamp;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
@@ -433,6 +434,16 @@ namespace Nimbus.Runtime.Scripts {
 			}
 			return bidRequest;
 		}
+		
+		#if NIMBUS_ENABLE_ADMOB_IOS
+			/// <summary>
+			///     This method will manually initialize the AdMob SDK if the option to auto-initialize wasn't selected.
+			/// </summary>
+			public static void initializeAdMob()
+			{
+				AdMobIOS.ManuallyInitAdMob();
+			}
+		#endif
 		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>

@@ -31,7 +31,7 @@ namespace Nimbus.Internal {
 			private AdMobIOS _adMobIOS;
 		#endif
 		#if NIMBUS_ENABLE_APS_IOS
-			private APSIOS _apsIOS;
+			private ApsIOS _apsIOS;
 		#endif
 		
 		private static void OnDestroyIOSAd(int adUnitInstanceId) {
@@ -56,7 +56,7 @@ namespace Nimbus.Internal {
 		
 		[DllImport("__Internal")]
 		private static extern void _interstitialAd(int adUnitInstanceId, string position, bool showAd, 
-			string apsAdUnitId, string adMobAdUnitId);
+			string apsStaticAdUnitId, string apsVideoAdUnitId, string adMobAdUnitId);
 		
 		[DllImport("__Internal")]
 		private static extern void _rewardedAd(int adUnitInstanceId, string position, bool showAd, 
@@ -92,6 +92,7 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS APS SDK");
 				var (apsAppID, slots, timeout) = configuration.GetApsData();
 				_apsIOS = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode, timeout);
+				interceptorConfigArr.Add(_apsIOS.GetConfigObject());
 				_interceptors.Add(_apsIOS);
 			#endif
 			#if NIMBUS_ENABLE_VUNGLE
@@ -159,19 +160,21 @@ namespace Nimbus.Internal {
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
+			var apsInterstitialAdUnitIds = new List<string>();
 			var apsAdUnitId = "";
 			var adMobAdUnitId = "";
 			#if NIMBUS_ENABLE_ADMOB_IOS
 				adMobAdUnitId = _adMobIOS.GetAdUnitId(nimbusAdUnit.AdType);
 			#endif
-			#if NIMBUS_ENABLE_APS_IOS
-				apsAdUnitId = _apsIOS.GetAdUnitId(nimbusAdUnit.AdType);
-			#endif
+
 			switch (nimbusAdUnit.AdType)
 			{
 				case AdType.Banner:
 				{
 					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
+					#if NIMBUS_ENABLE_APS_IOS
+						apsAdUnitId = _apsIOS.GetAdUnitId(AdType.Banner, size.Item1, size.Item2).Item1;
+					#endif
 					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, 
 						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, 
 						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, apsAdUnitId, adMobAdUnitId);
@@ -179,12 +182,20 @@ namespace Nimbus.Internal {
 				}
 				case AdType.Interstitial:
 				{
+					#if NIMBUS_ENABLE_APS_IOS
+						var interstitialIds = _apsIOS.GetAdUnitId(AdType.Interstitial, 0, 0);
+						apsInterstitialAdUnitIds.Add(interstitialIds.Item1);
+						apsInterstitialAdUnitIds.Add(interstitialIds.Item2);
+					#endif
 					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
-						showAd, apsAdUnitId, adMobAdUnitId);
+						showAd, apsInterstitialAdUnitIds[0], apsInterstitialAdUnitIds[1], adMobAdUnitId);
 					break;
 				}
 				case AdType.Rewarded:
 				{
+					#if NIMBUS_ENABLE_APS_IOS
+						apsAdUnitId = _apsIOS.GetAdUnitId(AdType.Rewarded, 0, 0).Item1;
+					#endif
 					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd, 
 						apsAdUnitId, adMobAdUnitId);
 					break;

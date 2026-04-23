@@ -8,11 +8,17 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
+
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
+	
+	
 	internal class AdMobIOS : IInterceptor, IProvider {
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		private readonly bool _autoInit;
+		
+		[DllImport("__Internal")]
+		private static extern void _initializeAdMob();
 
 		public string GetAdUnitId(AdType type)
 		{
@@ -34,6 +40,11 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 		public ThirdPartyDemandObj GetConfigObject()
 		{
 			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.AdMob, autoInit: _autoInit);
+		}
+
+		public static void ManuallyInitAdMob()
+		{
+			_initializeAdMob();
 		}
 
 	}

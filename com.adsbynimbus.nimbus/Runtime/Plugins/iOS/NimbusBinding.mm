@@ -46,10 +46,12 @@ extern "C" {
     void _interstitialAd(int adUnitInstanceId,
                                 const char* position,
                                 bool showAd,
-                                const char* apsAdUnitId,
+                                const char* apsStaticAdUnitId,
+                                const char* apsVideoAdUnitId,
                                 const char* adMobAdUnitId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            interstitialAdWithPosition:GetStringParam(position) showAd: showAd apsAdUnitId:GetStringParam(apsAdUnitId) adMobAdUnitId:GetStringParam(adMobAdUnitId)];
+            interstitialAdWithPosition:GetStringParam(position) showAd: showAd apsStaticAdUnitId:GetStringParam(apsStaticAdUnitId) 
+            apsVideoAdUnitId:GetStringParam(apsVideoAdUnitId) adMobAdUnitId:GetStringParam(adMobAdUnitId)];
     }
     
     void _rewardedAd(int adUnitInstanceId,
@@ -87,6 +89,12 @@ extern "C" {
     const char* _getPlistJSON() {
         return strdup([[NimbusHelper getPlistJSON] UTF8String]);
     }
+
+#if NIMBUS_ENABLE_ADMOB
+    void _initializeAdMob() {
+        [NimbusManager initAdMob];
+    }
+#endif
 
 #if NIMBUS_ENABLE_LIVERAMP
     void _initializeLiveRamp(const char* configId, const char* email, bool hasConsentForNoLegislation) {

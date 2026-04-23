@@ -11,8 +11,8 @@ import NimbusKit
 import AppTrackingTransparency
 import AdSupport
 #if NIMBUS_ENABLE_APS
-import NimbusRequestAPSKit
-import DTBiOSSDK
+import NimbusAPSKit
+@preconcurrency import DTBiOSSDK
 #endif
 #if NIMBUS_ENABLE_VUNGLE
 import NimbusVungleKit
@@ -78,14 +78,14 @@ import NimbusMobileFuseKit
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
             #if NIMBUS_ENABLE_APS
-            initAPS()
+            initAPS(appKey: thirdPartyDemand.first(where: {$0.demandType == .Aps})?.firstKey ?? "")
             #endif
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
             if (!thirdPartyDemand.isEmpty) {
                 #if NIMBUS_ENABLE_ADMOB
-                AdMobExtension(autoInitialize: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.autoInit ?? false)
+                AdMobExtension(autoInitialize: thirdPartyDemand.first(where: {$0.demandType == .AdMob})?.autoInit ?? false)
                 #endif
                 #if NIMBUS_ENABLE_INMOBI
                 InMobiExtension(accountId: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.firstKey)
@@ -114,23 +114,19 @@ import NimbusMobileFuseKit
     
     #if NIMBUS_ENABLE_APS
     @objc private class func initAPS(appKey: String) {
-        // Initialize APS SDK
-        DTBAds.sharedInstance().setAppKey(appKey)
-
-        // Set the MRAID Policy
-        DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
-        DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
-
-        // Set Nimbus as the Mediatior
-        DTBAds.sharedInstance().setAdNetworkInfo(.init(networkName: DTBADNETWORK_NIMBUS))
-
-        // Set Nimbus as the Open Measurement partner
-        DTBAds.sharedInstance().addCustomAttribute("omidPartnerName", value: Nimbus.configuration.sdkName)
-        DTBAds.sharedInstance().addCustomAttribute("omidPartnerVersion", value: Nimbus.configuration.version)
-
-        // Optional: Enable APS logging / test mode to verify the integration
-        DTBAds.sharedInstance().setLogLevel(DTBLogLevelAll)
-        DTBAds.sharedInstance().testMode = true
+        if (appKey != ""){
+            DTBAds.sharedInstance().setAppKey(appKey)
+            DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
+            DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
+            DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
+            DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
+        }
+    }
+    #endif
+    
+    #if NIMBUS_ENABLE_ADMOB
+    @objc public static func initAdMob() {
+        MobileAds.shared.start()
     }
     #endif
     
@@ -176,13 +172,17 @@ import NimbusMobileFuseKit
         group.wait(for: { @MainActor in
             do {
                 #if NIMBUS_ENABLE_APS
-                    let bannerAdRequest = APSAdRequest(
-                        slotUUID: apsAdUnitId,
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    bannerAdRequest.setAdFormat(.banner)
-                        
-                    let apsAd = try await bannerAdRequest.loadAd()
+                    var apsAds: [APSAd] = []
+                    if (apsAdUnitId != "")
+                    {
+                        let bannerAdRequest = APSAdRequest(
+                            slotUUID: apsAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        bannerAdRequest.setAdFormat(.banner)
+                            
+                        apsAds.append(try await bannerAdRequest.loadAd())
+                    }
                 #endif
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
@@ -196,7 +196,7 @@ import NimbusMobileFuseKit
                         admob(bannerAdUnitId: adMobAdUnitId)
                         #endif
                         #if NIMBUS_ENABLE_APS
-                        aps(ads: [apsAd])
+                        aps(ads: apsAds)
                         #endif
                     }
                 }.onEvent { event in
@@ -217,27 +217,37 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String){
+    @objc public func interstitialAd(position: String, showAd: Bool, apsStaticAdUnitId: String,  apsVideoAdUnitId: String, adMobAdUnitId: String){
         let group = DispatchGroup()
         group.wait(for: {
             do {
                 #if NIMBUS_ENABLE_APS
-                    let interstitialAdRequest = APSAdRequest(
-                        slotUUID: apsAdUnitId,
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    interstitialAdRequest.setAdFormat(.interstitial)
-                        
-                    let apsAd = try await interstitialAdRequest.loadAd()
+                    var apsAds: [APSAd] = []
+                    if (apsStaticAdUnitId != "") {
+                        let interstitialStaticAdRequest = APSAdRequest(
+                            slotUUID: apsStaticAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        interstitialStaticAdRequest.setAdFormat(.interstitial)
+                        apsAds.append(try await interstitialStaticAdRequest.loadAd())
+                    }
+                    if (apsVideoAdUnitId != "") {
+                        let interstitialVideoAdRequest = APSAdRequest(
+                            slotUUID: apsVideoAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        interstitialVideoAdRequest.setAdFormat(.interstitial)
+                        apsAds.append(try await interstitialVideoAdRequest.loadAd())
+                    }
                 #endif
                 let instanceId = self.adUnitInstanceId
                 let interstitialAd = try await Nimbus.interstitialAd(position: position){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
-                        admob(bannerAdUnitId: adMobAdUnitId)
+                            admob(bannerAdUnitId: adMobAdUnitId)
                         #endif
                         #if NIMBUS_ENABLE_APS
-                        aps(ads: [apsAd])
+                            aps(ads: apsAds)
                         #endif
                     }
                 }.onEvent { event in
@@ -268,22 +278,25 @@ import NimbusMobileFuseKit
         group.wait(for: {
             do {
                 #if NIMBUS_ENABLE_APS
-                    let rewardedAdRequest = APSAdRequest(
-                        slotUUID: apsAdUnitId,
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    rewardedAdRequest.setAdFormat(.rewarded)
-                        
-                    let apsAd = try await rewardedAdRequest.loadAd()
+                    var apsAds: [APSAd] = []
+                    if (apsAdUnitId != "")
+                    {
+                        let rewardedAdRequest = APSAdRequest(
+                            slotUUID: apsAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        rewardedAdRequest.setAdFormat(.rewardedVideo)
+                        apsAds.append(try await rewardedAdRequest.loadAd())
+                    }
                 #endif
                 let instanceId = self.adUnitInstanceId
                 let rewardedAd = try await Nimbus.rewardedAd(position: position){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
-                        admob(bannerAdUnitId: adMobAdUnitId)
+                            admob(bannerAdUnitId: adMobAdUnitId)
                         #endif
                         #if NIMBUS_ENABLE_APS
-                        aps(ads: [apsAd])
+                            aps(ads: apsAds)
                         #endif
                     }
                 }.onEvent { event in
@@ -464,7 +477,7 @@ import NimbusMobileFuseKit
         var firstKey: String?
         var secondKey: String?
         var testMode: Bool = false
-        var autoInit: Bool = true
+        var autoInit: Bool = false
     }
     
 }
