@@ -119,6 +119,7 @@ import NimbusMobileFuseKit
             DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
             DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
             DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
+            DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
             DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
         }
     }
@@ -180,8 +181,11 @@ import NimbusMobileFuseKit
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         bannerAdRequest.setAdFormat(.banner)
-                            
-                        apsAds.append(try await bannerAdRequest.loadAd())
+                        do {
+                            apsAds.append(try await bannerAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
                     }
                 #endif
                 let contentView = UIView()
@@ -229,7 +233,11 @@ import NimbusMobileFuseKit
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         interstitialStaticAdRequest.setAdFormat(.interstitial)
-                        apsAds.append(try await interstitialStaticAdRequest.loadAd())
+                        do {
+                            apsAds.append(try await interstitialStaticAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
                     }
                     if (apsVideoAdUnitId != "") {
                         let interstitialVideoAdRequest = APSAdRequest(
@@ -237,7 +245,11 @@ import NimbusMobileFuseKit
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         interstitialVideoAdRequest.setAdFormat(.interstitial)
-                        apsAds.append(try await interstitialVideoAdRequest.loadAd())
+                        do {
+                            apsAds.append(try await interstitialVideoAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
                     }
                 #endif
                 let instanceId = self.adUnitInstanceId
@@ -286,7 +298,11 @@ import NimbusMobileFuseKit
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         rewardedAdRequest.setAdFormat(.rewardedVideo)
-                        apsAds.append(try await rewardedAdRequest.loadAd())
+                        do {
+                            apsAds.append(try await rewardedAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
                     }
                 #endif
                 let instanceId = self.adUnitInstanceId
