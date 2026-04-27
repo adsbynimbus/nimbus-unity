@@ -13,55 +13,52 @@ namespace Nimbus.Editor {
 	public class PostProcessIOS : MonoBehaviour
 	{
 		private const string SdkVersion = VersionConstants.IosSdkVersion;
-		private static readonly List<string> Dependencies = new List<string>
-		{
-			"'NimbusKit'",
-			"'NimbusRenderVideoKit'",
-			"'NimbusRenderStaticKit'"
-		};
+		private static readonly List<string> Dependencies = new List<string>();
 		[PostProcessBuild(45)]
 		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
 		{
+			Dependencies.Clear();
 			if (target != BuildTarget.iOS) return;
 			
 			#if NIMBUS_ENABLE_LIVERAMP
-				Dependencies.Add("'NimbusRequestKit'");
-				Dependencies.Add("'NimbusLiveRampKit'");
+				Dependencies.Add("pod 'NimbusLiveRampKit'");
 			#endif
 			
 			#if NIMBUS_ENABLE_APS
-				Dependencies.Add("'NimbusRequestAPSKit'");
+				Dependencies.Add("pod 'NimbusAPSKit'");
+				Dependencies.Add("pod 'AmazonPublisherServicesSDK'")
 			#endif
+			
 			#if NIMBUS_ENABLE_VUNGLE
-				Dependencies.Add("'NimbusVungleKit'");
+				Dependencies.Add("pod 'NimbusVungleKit'");
 			#endif
+			
 			#if NIMBUS_ENABLE_ADMOB
-                Dependencies.Add("'NimbusAdMobKit'");
+                Dependencies.Add("pod 'NimbusAdMobKit'");
 			#endif
 			
 			#if NIMBUS_ENABLE_META
-			    Dependencies.Add("'NimbusRequestFANKit'");
-				Dependencies.Add("'NimbusRenderFANKit'");
+			    Dependencies.Add("pod 'NimbusMetaKit'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
-				Dependencies.Add("'NimbusMintegralKit'");
+				Dependencies.Add("pod 'NimbusMintegralKit'");
 			#endif
 
 			#if NIMBUS_ENABLE_UNITY_ADS
-				Dependencies.Add("'NimbusUnityKit'");
+				Dependencies.Add("pod 'NimbusUnityKit'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOBILEFUSE
-				Dependencies.Add("'NimbusMobileFuseKit'");
+				Dependencies.Add("pod 'NimbusMobileFuseKit'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOLOCO
-				Dependencies.Add("'NimbusMolocoKit'");
+				Dependencies.Add("pod 'NimbusMolocoKit'");
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
-				Dependencies.Add("'NimbusInMobiKit'");
+				Dependencies.Add("pod 'NimbusInMobiKit'");
 			#endif
 			
 			var path = buildPath + "/Podfile";
@@ -72,25 +69,27 @@ namespace Nimbus.Editor {
 			else {
 				Debug.unityLogger.Log("Podfile already exists");
 			}
-			var lines = File.ReadAllLines(path);
-			for(int i = 0 ; i < lines.Length ; i++)
+			var lines = File.ReadAllLines(path).ToList();
+			var index = lines.FindIndex(a => a.Contains("NimbusSDK")); 
+			if (index != -1)
 			{
-				if (lines[i].Contains("NimbusSDK"))
-				{
-					lines[i] = ($"{lines[i]}, subspecs: [{string.Join<string>(", ", Dependencies)}]");
-				}
+				lines.InsertRange(index,  Dependencies);
 			}
 			File.WriteAllLines(path, lines);
 
 			var postInstallScript = @"
 post_install do |installer|
   allowed_frameworks = [
-    'NimbusCoreKit',
-    'NimbusRequestKit',
-    'NimbusRenderKit',
-    'NimbusRenderStaticKit',
-    'NimbusRenderVideoKit',
-    'NimbusRequestAPSKit',
+    'NimbusAdMobKit',
+    'NimbusAPSKit',
+    'NimbusInMobiKit',
+    'NimbusMetaKit',
+    'FBAudienceNetwork',
+    'NimbusMintegralKit',
+    'NimbusMolocoKit',
+    'NimbusMobileFuseKit',
+    'NimbusUnityKit',
+    'NimbusVungleKit',
     'NimbusKit',
     'OMSDK_Adsbynimbus',
     'DTBiOSSDK',
@@ -106,9 +105,7 @@ post_install do |installer|
 	'NimbusLiveRampKit',
 	'LRAtsSDK',
 	'MolocoSDK',
-	'NimbusMolocoKit',
 	'InMobiSDK',
-	'NimbusInMobiKit'
   ]
 
   main_project = installer.aggregate_targets.first.user_project
@@ -247,10 +244,6 @@ end";
 			
 			#if NIMBUS_ENABLE_INMOBI
 				flags.Add("NIMBUS_ENABLE_INMOBI");
-			#endif
-			
-			#if NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
-				flags.Add("NIMBUS_ENABLE_SDK_DEMAND");
 			#endif
 			
 			if (flags.Count > 0)

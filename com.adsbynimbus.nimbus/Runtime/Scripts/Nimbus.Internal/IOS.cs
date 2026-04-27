@@ -42,51 +42,23 @@ namespace Nimbus.Internal {
 			bool enableSDKInTestMode);
 
 		[DllImport("__Internal")]
-		private static extern void _renderAd(int adUnitInstanceId, string bidResponse, bool isBlocking, bool isRewarded,
-			double closeButtonDelay, string mintegralAdUnitId, string mintegralAdUnitPlacementId, string molocoAdUnitId, 
-			string inMobiPlacementId, bool respectSafeArea, int position);
+		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, int refreshInterval, 
+			bool respectSafeArea, int bannerPosition, bool showAd);
+		
+		[DllImport("__Internal")]
+		private static extern void _interstitialAd(int adUnitInstanceId, string position, bool showAd);
+		
+		[DllImport("__Internal")]
+		private static extern void _rewardedAd(int adUnitInstanceId, string position, bool showAd);
+		
+		[DllImport("__Internal")]
+		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
-
-		[DllImport("__Internal")]
-		private static extern string _getSessionId();
-
-		[DllImport("__Internal")]
-		private static extern string _getUserAgent();
-
-		[DllImport("__Internal")]
-		private static extern string _getAdvertisingId();
-
-		[DllImport("__Internal")]
-		private static extern int _getConnectionType();
-
-		[DllImport("__Internal")]
-		private static extern string _getDeviceModel();
-				
-		[DllImport("__Internal")]
-		private static extern string _getDeviceLanguage();
-
-		[DllImport("__Internal")]
-		private static extern string _getSystemVersion();
-		
-		[DllImport("__Internal")]
-		private static extern void _setCoppa(bool flag);
-
-		[DllImport("__Internal")]
-		private static extern bool _isLimitAdTrackingEnabled();
 		
 		[DllImport("__Internal")]
 		private static extern string _getPlistJSON();
-
-		[DllImport("__Internal")]
-		private static extern int _getAtts();
-
-		[DllImport("__Internal")]
-		private static extern string _getVendorId();
-
-		[DllImport("__Internal")]
-		private static extern string _getVersion();
 
 		private Device _deviceCache;
 		private string _sessionId;
@@ -181,112 +153,33 @@ namespace Nimbus.Internal {
 			#endif
 		}
 
-		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
+		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
-
-			var isBlocking = false;
-			var isRewarded = false;
-			var closeButtonDelay = 0;
-			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
-				isBlocking = true;
-				closeButtonDelay = 5;
-				if (nimbusAdUnit.AdType == AdUnitType.Rewarded)
-				{
-					isRewarded = true;
-					closeButtonDelay = (int)TimeSpan.FromMinutes(60).TotalSeconds;
-				}
-			}
-			var mintegralAdUnitId = "";
-			var mintegralAdUnitPlacementId = "";
-			var molocoAdUnitId = "";
-			var inMobiAdUnitId = "";
-			#if NIMBUS_ENABLE_MINTEGRAL
-				try
-				{
-					var minteralAdUnit =
-						mintegralAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					mintegralAdUnitId = minteralAdUnit.AdUnitId;
-					mintegralAdUnitPlacementId = minteralAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_MOLOCO
-				try
-				{
-					var molocoAdUnit =
-						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					molocoAdUnitId = molocoAdUnit.AdUnitId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_INMOBI
-				try
-				{
-					var inMobiAdUnit =
-						inMobiAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					inMobiAdUnitId = inMobiAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
 			
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(nimbusAdUnit.RawBidResponse);
-			_renderAd(nimbusAdUnit.InstanceID, System.Convert.ToBase64String(plainTextBytes), isBlocking, isRewarded, closeButtonDelay, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiAdUnitId, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
-		}
-
-		internal override string GetSessionID() {
-			if (_sessionId.IsNullOrEmpty()) {
-				_sessionId = _getSessionId();
+			switch (nimbusAdUnit.AdType)
+			{
+				case AdType.Banner:
+				{
+					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
+					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd);
+					break;
+				}
+				case AdType.Interstitial:
+				{
+					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd);
+					break;
+				}
+				case AdType.Rewarded:
+				{
+					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd);
+					break;
+				}
 			}
-			return _sessionId;
-		}
-
-		internal override Device GetDevice() {
-			_deviceCache ??= new Device {
-				DeviceType = DeviceType.MobileTablet,
-				H = Screen.height,
-				W = Screen.width,
-				Os = "ios",
-				Make = "apple",
-				Model = _getDeviceModel(),
-				Osv = _getSystemVersion(),
-				Language = _getDeviceLanguage(),
-				Ext = new DeviceExt {
-					Ifv = _getVendorId()
-				},
-			};
-
-			_deviceCache.ConnectionType = (ConnectionType)_getConnectionType();
-			_deviceCache.Lmt = _isLimitAdTrackingEnabled() ? 1 : 0;
-			_deviceCache.Ifa = _getAdvertisingId();
-			_deviceCache.Ua = _getUserAgent();
-			var atts = _getAtts();
-			if (atts > -1) { 
-				_deviceCache.Ext.Atts = atts;
-			}
-
-			return _deviceCache;
 		}
 
 		internal override List<IInterceptor> Interceptors() {
 			return _interceptors;
-		}
-		
-		internal override void SetCoppaFlag(bool flag) {
-			_setCoppa(flag);
-		}
-
-		internal override string GetVersion() {
-			return VersionConstants.IosSdkVersion;
 		}
 
 		private static string GetPlistJson() {

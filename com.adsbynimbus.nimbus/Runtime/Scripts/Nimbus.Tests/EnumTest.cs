@@ -1,11 +1,11 @@
 using System;
-using Nimbus.Internal.RequestBuilder;
+using Nimbus.Internal;
 using NUnit.Framework;
 
 namespace Nimbus.Tests {
 	public class EnumTest {
-		[TestCase(IabSupportedAdSizes.Banner320X50, 320, 50,
-			TestName = "Check that Banner320X50 returns a 320x50 tuple")]
+		[TestCase(IabSupportedAdSizes.Banner, 320, 50,
+			TestName = "Check that Banner returns a 320x50 tuple")]
 		[TestCase(IabSupportedAdSizes.FullScreenPortrait, 320, 480,
 			TestName = "Check that FullScreenPortrait returns a 320x480 tuple")]
 		public void TestIabEnumSizes(IabSupportedAdSizes size, int expectedWidth, int expectedHeight) {

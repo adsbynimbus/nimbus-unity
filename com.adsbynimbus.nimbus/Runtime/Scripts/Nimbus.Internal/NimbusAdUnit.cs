@@ -2,21 +2,21 @@ using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Nimbus.Internal.Utility;
-using OpenRTB.Response;
 using UnityEngine;
 
 namespace Nimbus.Internal {
 	internal delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public sealed class NimbusAdUnit {
-		public readonly AdUnitType AdType;
-		public BidResponse BidResponse;
+		public readonly AdType AdType;
 		public bool RespectSafeArea;
+		public IabSupportedAdSizes BannerSize;
+		public string ErrResponse;
+		public string NimbusReportingPosition;
+		public int BannerRefreshIntervalInSeconds;
 		public NimbusAdUnitPosition AdPosition;
-		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED;
-		public ErrResponse ErrResponse;
+		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED; 
 		public readonly int InstanceID;
-		
 		private bool _adCompleted;
 		private bool _adWasReturned;
 		private readonly AdEvents _adEvents;
@@ -26,14 +26,17 @@ namespace Nimbus.Internal {
 
 		internal Task<string> Request = Task.FromResult("");
 		
-		public NimbusAdUnit(AdUnitType adType, in AdEvents adEvents, bool respectSafeArea = false, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER)
+		public NimbusAdUnit(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30)
 		{
+			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;
 			InstanceID = GetHashCode();
 			_adEvents = adEvents;
+			BannerSize = adSize;
 			RespectSafeArea = respectSafeArea;
 			AdPosition = adPosition;
+			BannerRefreshIntervalInSeconds = bannerRefreshIntervalInSeconds;
 		}
 
 		# region IOS specific
@@ -97,15 +100,15 @@ namespace Nimbus.Internal {
 				case AdEventTypes.COMPLETED:
 					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
-					if (AdType == AdUnitType.Interstitial && BidResponse.Type == "video") {
+					if (AdType == AdType.Interstitial) {
 						Destroy();
 					}
 					break;
 				case AdEventTypes.DESTROYED:
 					// ReSharper disable once ConvertIfStatementToSwitchStatement
-					if (AdType == AdUnitType.Rewarded) {
+					if (AdType == AdType.Rewarded) {
 						_adEvents.FireOnAdCompletedEvent(this, !_adCompleted);
-					} else if (AdType == AdUnitType.Interstitial) {
+					} else if (AdType == AdType.Interstitial) {
 						// fired the completed event for interstitial ads force skipped to false everytime, since you
 						// can skip after a set time
 						_adEvents.FireOnAdCompletedEvent(this, false);
@@ -126,7 +129,6 @@ namespace Nimbus.Internal {
 				try
 				{
 					response = await jsonBody;
-					BidResponse = JsonConvert.DeserializeObject<BidResponse>(response);
 					_adWasReturned = true;
 					RawBidResponse = response;
 					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
@@ -169,4 +171,40 @@ namespace Nimbus.Internal {
 		TOP_LEFT = 5,
 		TOP_RIGHT = 6,
 	}
+	
+	public enum IabSupportedAdSizes : byte {
+		Banner,
+		FullScreenPortrait,
+		FullScreenLandscape,
+		HalfScreen,
+		Letterbox,
+		LeaderBoard
+	}
+
+	public static class IabSupportedAdSizesExtension {
+		public static Tuple<int, int> ToWidthAndHeight(this IabSupportedAdSizes isa) {
+			switch (isa) {
+				case IabSupportedAdSizes.Banner:
+					return new Tuple<int, int>(320, 50);
+				case IabSupportedAdSizes.FullScreenPortrait:
+					return new Tuple<int, int>(320, 480);
+				case IabSupportedAdSizes.FullScreenLandscape:
+					return new Tuple<int, int>(480, 320);
+				case IabSupportedAdSizes.HalfScreen:
+					return new Tuple<int, int>(300, 600);
+				case IabSupportedAdSizes.Letterbox:
+					return new Tuple<int, int>(300, 250);
+				case IabSupportedAdSizes.LeaderBoard:
+					return new Tuple<int, int>(728, 90);
+				default:
+					return new Tuple<int, int>(0, 0);
+			}
+		}
+	}
+	public enum AdType : byte {
+		Banner = 0,
+		Interstitial = 1,
+		Rewarded = 2
+	}
+
 }

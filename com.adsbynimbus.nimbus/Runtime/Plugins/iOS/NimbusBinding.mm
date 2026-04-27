@@ -26,188 +26,60 @@ extern "C" {
                                         enableSDKInTestMode: enableSDKInTestMode];
     }
 
-     void _renderAd(int adUnitInstanceId,
-                    const char* bidResponse,
-                    bool isBlocking,
-                    bool isRewarded,
-                    double closeButtonDelay, 
-                    const char* mintegralAdUnitId,
-                    const char* mintegralAdUnitPlacementId,
-                    const char* molocoAdUnitId,
-                    const char* inMobiPlacementId,
-                    bool respectSafeArea,
-                    int position) {
+    void _bannerAd(int adUnitInstanceId, 
+                   const char* position,
+                   int width,
+                   int height,                   
+                   int refreshInterval,
+                   bool respectSafeArea,
+                   int bannerPosition,
+                   bool showAd) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            renderAdWithBidResponse:GetStringParam(bidResponse) isBlocking:isBlocking isRewarded:isRewarded closeButtonDelay:closeButtonDelay
-            mintegralAdUnitId:GetStringParam(mintegralAdUnitId) mintegralAdUnitPlacementId:GetStringParam(mintegralAdUnitPlacementId)
-            molocoAdUnitId:GetStringParam(molocoAdUnitId) inMobiPlacementId:GetStringParam(inMobiPlacementId) respectSafeArea:respectSafeArea position: position];
+            bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval respectSafeArea:respectSafeArea
+            bannerPosition:bannerPosition showAd: showAd];
+    }
+
+    void _interstitialAd(int adUnitInstanceId,
+                                const char* position,
+                                bool showAd) {
+        [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+            interstitialAdWithPosition:GetStringParam(position) showAd: showAd];
+    }
+    
+    void _rewardedAd(int adUnitInstanceId,
+                            const char* position,
+                            bool showAd) {
+        [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+            rewardedAdWithPosition:GetStringParam(position) showAd: showAd];
+    }
+    
+    void _showAd(int adUnitInstanceId,
+                 bool respectSafeArea,
+                 int bannerPosition) {
+        [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
+         showAdWithRespectSafeArea:respectSafeArea bannerPosition: bannerPosition];
     }
 
     void _destroyAd(int adUnitInstanceId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
-    }
-
-    const char* _getSessionId() {
-        return strdup([[NimbusHelper getSessionId] UTF8String]);
-    }
-
-    const char* _getUserAgent() {
-        return strdup([[NimbusHelper getUserAgent] UTF8String]);
-    }
-
-    const char* _getAdvertisingId() {
-        return strdup([[NimbusHelper getAdvertisingId] UTF8String]);
-    }
-
-    int _getConnectionType() {
-        return (int)[NimbusHelper getConnectionType];
-    }
-    
-    const char* _getDeviceModel() {
-        return strdup([[NimbusHelper getDeviceModel] UTF8String]);
     }
     
     const char* _getDeviceLanguage() {
         return strdup([[NimbusHelper getDeviceLanguage] UTF8String]);
     }
 
-    const char* _getSystemVersion() {
-        return strdup([[NimbusHelper getSystemVersion] UTF8String]);
-    }
-
     int _getAtts() {
         return (int)[NimbusHelper getAtts];
-    }
-
-    const char* _getVendorId() {
-        return strdup([[NimbusHelper getVendorId] UTF8String]);
-    }
-
-    void _setCoppa(bool flag) {
-        [NimbusHelper setCoppaWithFlag: flag];
     }
 
     bool _isLimitAdTrackingEnabled() {
         return [NimbusHelper isLimitAdTrackingEnabled];
     }
-
-    const char* _getVersion() {
-        return strdup([[NimbusHelper getVersion] UTF8String]);
-    }
     
     const char* _getPlistJSON() {
         return strdup([[NimbusHelper getPlistJSON] UTF8String]);
     }
-    
 
-#if NIMBUS_ENABLE_APS
-    void _initializeAPSRequestHelper(const char* appKey, double timeoutInSeconds, bool enableTestMode) {
-          [NimbusManager initializeAPSRequestHelperWithAppKey: GetStringParam(appKey)
-                                                  timeoutInSeconds: timeoutInSeconds 
-                                                  enableTestMode: enableTestMode];
-    }
-
-    void _addAPSSlot(const char* slotUUID, int width, int height, bool isVideo) {
-        [NimbusManager addAPSSlotWithSlotUUID: GetStringParam(slotUUID) 
-                                        width: width 
-                                        height: height 
-                                        isVideo: isVideo];
-    }
-
-    const char* _fetchAPSParams(int width, int height, bool includeVideo) {
-        return strdup([[NimbusManager fetchAPSParamsWithWidth: width height:height includeVideo:includeVideo] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_VUNGLE
-    void _initializeVungle(const char* appKey) {
-        [NimbusManager initializeVungleWithAppKey: GetStringParam(appKey)];
-    }
-    
-    const char* _fetchVungleBuyerId() {
-        return strdup([[NimbusManager fetchVungleBuyerId] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_META
-    void _initializeMeta(const char* appKey) {
-        [NimbusManager initializeMetaWithAppKey: GetStringParam(appKey)];
-    }
-    
-    const char* _fetchMetaBiddingToken() {
-        return strdup([[NimbusManager fetchMetaBiddingToken] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_ADMOB
-    void _initializeAdMob() {
-        [NimbusManager initializeAdMob];
-    }
-    
-    const char* _getAdMobRequestModifiers(int adUnitType, const char* adUnitId, int width, int height) {
-        return strdup([[NimbusManager getAdMobRequestModifiersWithAdUnitType: adUnitType adUnitId: GetStringParam(adUnitId)  width: width height: height] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_MINTEGRAL
-    void _initializeMintegral(const char* appId, const char* appKey) {
-        [NimbusManager initializeMintegralWithAppId: GetStringParam(appId) 
-                                                appKey: GetStringParam(appKey) ];
-    }
-    
-    const char* _getMintegralRequestModifiers() {
-        return strdup([[NimbusManager getMintegralRequestModifiers] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_UNITY_ADS
-    void _initializeUnityAds(const char* gameId) {
-        [NimbusManager initializeUnityAdsWithGameId: GetStringParam(gameId)];
-    }
-    
-    const char* _fetchUnityAdsToken() {
-        return strdup([[NimbusManager fetchUnityAdsToken] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_MOBILEFUSE
-    void _initializeMobileFuse() {
-        [NimbusManager initializeMobileFuse];
-    }
-    
-    const char* _fetchMobileFuseToken() {
-        return strdup([[NimbusManager fetchMobileFuseToken] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_MOLOCO
-    void _initializeMoloco(const char* appKey) {
-        [NimbusManager initializeMolocoWithAppKey: GetStringParam(appKey)];
-    }
-    
-    const char* _fetchMolocoToken() {
-        return strdup([[NimbusManager fetchMolocoToken] UTF8String]);
-    }
-#endif
-
-#if NIMBUS_ENABLE_INMOBI
-    void _initializeInMobi(const char* accountId) {
-        [NimbusManager initializeInMobiWithAccountId: GetStringParam(accountId)];
-    }
-    
-    const char* _fetchInMobiToken(bool coppa) {
-        return strdup([[NimbusManager fetchInMobiTokenWithCoppa:coppa] UTF8String]);
-    }
-#endif
-
-    const char* _getPrivacyStrings() {
-        return strdup([[NimbusManager getPrivacyStrings] UTF8String]);
-    }
-    
-    const char* _getSessionInfo() {
-        return strdup([[NimbusManager getSessionInfo] UTF8String]);
-    }
-    
 #if NIMBUS_ENABLE_LIVERAMP
     void _initializeLiveRamp(const char* configId, const char* email, const char* phoneNumber, bool isTestMode, bool hasConsentForNoLegislation) {
         [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) phoneNumber:GetStringParam(phoneNumber) isTestMode:isTestMode hasConsentForNoLegislation:hasConsentForNoLegislation];

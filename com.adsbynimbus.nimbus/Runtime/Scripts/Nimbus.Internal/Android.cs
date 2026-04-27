@@ -132,7 +132,7 @@ namespace Nimbus.Internal {
 		}
 
 
-		internal override void ShowAd(NimbusAdUnit nimbusAdUnit) {
+		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			const string functionCall = "render";
 			var holdTime = 0;
 			var shouldBlock = false;
@@ -187,50 +187,9 @@ namespace Nimbus.Internal {
 			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
 				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiPlacementId, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
-		
-		internal override string GetSessionID() {
-			if (_sessionId.IsNullOrEmpty()) {
-				_sessionId = _nimbus.CallStatic<string>("getSessionId");
-			}
-			return _sessionId;
-		}
-
-		internal override Device GetDevice() {
-			_deviceCache ??= new Device {
-				DeviceType = DeviceType.MobileTablet,
-				H = Screen.height,
-				W = Screen.width,
-				Os = "android",
-				Make = _build.GetStatic<string>("MANUFACTURER"),
-				Model = _build.GetStatic<string>("MODEL"),
-				Osv = _buildVersion.GetStatic<string>("RELEASE")
-			};
-
-			var ctx = CastToJavaObject(_currentActivity, "android.content.Context");
-			_deviceCache.Ua = _nimbus.CallStatic<string>("getUserAgent", ctx);
-			_deviceCache.ConnectionType =
-				(ConnectionType)_connectionTypeHelper.CallStatic<sbyte>("getConnectionType", ctx);
-
-			var _adInfo = _nimbus.CallStatic<AndroidJavaObject>("getAdIdInfo");
-			var cls = new AndroidJavaClass("java.util.Locale");
-			var locale = cls.CallStatic<AndroidJavaObject>("getDefault");
-			_deviceCache.Language = locale.Call<string>("getLanguage"); 
-			_deviceCache.Lmt = _adInfo.Call<bool>("isLimitAdTrackingEnabled") ? 1 : 0;
-			_deviceCache.Ifa = _adInfo.Call<string>("getId");
-			return _deviceCache;
-		}
 
 		internal override List<IInterceptor> Interceptors() {
 			return _interceptors;
-		}
-		
-		internal override void SetCoppaFlag(bool flag) {
-			_nimbus.SetStatic("COPPA", flag);
-		}
-
-		internal override string GetVersion()
-		{
-			return VersionConstants.AndroidSdkVersion;
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {
