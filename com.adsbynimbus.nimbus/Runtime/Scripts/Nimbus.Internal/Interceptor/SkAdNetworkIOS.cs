@@ -34,7 +34,7 @@ namespace Nimbus.Internal.Interceptor {
 		}
 
 
-		public string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen) {
+		public string GetProviderRtbDataFromNativeSDK(AdType type, bool isFullScreen) {
 			return "";
 		}
 
@@ -58,7 +58,7 @@ namespace Nimbus.Internal.Interceptor {
 			return bidRequestDelta;
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

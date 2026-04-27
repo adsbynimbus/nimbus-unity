@@ -15,18 +15,15 @@ namespace Nimbus.Internal.LiveRamp
         #if UNITY_IOS
             [DllImport("__Internal")]
             private static extern void _initializeLiveRamp(String configId, String email, 
-                String phoneNumber, Boolean isTestMode, Boolean hasConsentForNoLegislation);
-
-            [DllImport("__Internal")]
-            private static extern string _getLiveRampData();
+                Boolean hasConsentForNoLegislation);
+        
         #endif
 
         public static void initializeLiveRamp(String configId, 
-            Boolean hasConsentForNoLegislation, Boolean isTestMode, String email = "", 
-            String phoneNumber = "")
+            String email = "", Boolean hasConsentForNoLegislation = false)
         {
             #if UNITY_IOS
-                _initializeLiveRamp(configId, email, phoneNumber, isTestMode, hasConsentForNoLegislation);
+                _initializeLiveRamp(configId, email, hasConsentForNoLegislation);
             #endif
             #if UNITY_ANDROID
                 var liveRamp = new AndroidJavaClass("com.adsbynimbus.request.LiveRampExtension");
@@ -39,35 +36,6 @@ namespace Nimbus.Internal.LiveRamp
                     liveRamp.CallStatic("initialize", configId, email, phoneNumber, hasConsentForNoLegislation);
                 }
             #endif
-        }
-
-        public static BidRequest addLiveRampToRequest(BidRequest bidRequest)
-        {
-            var liveRampData = "";
-            #if UNITY_IOS
-                liveRampData = _getLiveRampData();
-            #endif
-            #if UNITY_ANDROID
-                try 
-                {
-                    liveRampData = BridgeHelpers.GetStringFromJavaFuture(
-                        "com.adsbynimbus.request.internal.NimbusRequestLiverampInternal",
-                        "fetchLiverampEnvelope", new object[]{}, 3000L);
-                }
-                catch (Exception e)
-                {
-                    Debug.unityLogger.Log("LiveRamp Request Info ERROR", e.Message);
-                }
-            #endif
-            if (liveRampData.IsNullOrEmpty())
-            {
-                return bidRequest;
-            }
-            var eidsObject = JsonConvert.DeserializeObject(liveRampData, typeof(JArray)) as JArray;
-            bidRequest.User ??= new User();
-            bidRequest.User.Ext ??= new JObject();
-            bidRequest.User.Ext.Add("eids", eidsObject);
-            return bidRequest;
         }
     }
     #endif

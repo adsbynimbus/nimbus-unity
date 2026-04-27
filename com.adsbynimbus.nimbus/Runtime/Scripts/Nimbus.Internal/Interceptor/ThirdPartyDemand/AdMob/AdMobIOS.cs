@@ -8,47 +8,19 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
+
 namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
+	
+	
 	internal class AdMobIOS : IInterceptor, IProvider {
 		private readonly ThirdPartyAdUnit[] _adUnitIds;
+		private readonly bool _autoInit;
 		
 		[DllImport("__Internal")]
 		private static extern void _initializeAdMob();
 
-		[DllImport("__Internal")]
-		private static extern string _getAdMobRequestModifiers(int adUnitType, string adUnitId, int width, int height);
-
-		private String GetProviderRtbDataFromNativeSDK(BidRequest bidRequest, AdUnitType type)
-		{
-			var adUnitId = GetAdUnitId(type);
-			if (adUnitId.IsNullOrEmpty())
-			{
-				return "";
-			}
-			var width = 0;
-			var height = 0;
-			if (!bidRequest.Imp.IsNullOrEmpty())
-			{
-				if (bidRequest.Imp[0].Banner != null)
-				{
-					width = bidRequest.Imp[0].Banner.W ?? 0;
-					height = bidRequest.Imp[0].Banner.H ?? 0;
-				}
-			}
-			
-			return _getAdMobRequestModifiers((int) type, adUnitId, width, height);
-		}
-		
-		internal BidRequestDelta GetBidRequestDelta(string data)
-		{
-			return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
-			{
-				SimpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
-			};
-		}
-
-		private string GetAdUnitId(AdUnitType type)
+		public string GetAdUnitId(AdType type)
 		{
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
@@ -60,28 +32,19 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 			return "";
 		}
 
-		public AdMobIOS(ThirdPartyAdUnit[] adUnitIds) {
+		public AdMobIOS(ThirdPartyAdUnit[] adUnitIds, bool autoInit) {
 			_adUnitIds = adUnitIds;
-		}
-
-		public void InitializeNativeSDK() {
-			_initializeAdMob();
+			_autoInit = autoInit;
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			return Task<BidRequestDelta>.Run(() =>
-			{
-				try
-	            {
-	               return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK(bidRequest, type));
-	            }
-	            catch (Exception e)
-	            {
-	               Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
-	               return null;
-	            }
-			});
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.AdMob, autoInit: _autoInit);
+		}
+
+		public static void ManuallyInitAdMob()
+		{
+			_initializeAdMob();
 		}
 
 	}

@@ -50,7 +50,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			using var adRegistration = new AndroidJavaClass("com.amazon.device.ads.AdRegistration");
 			adRegistration.CallStatic("enableTesting", true);
 		}
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, BidRequest bidRequest, bool isFullScreen) {
+		internal string GetProviderRtbDataFromNativeSDK(AdType type, BidRequest bidRequest, bool isFullScreen) {
 			var found = false;
 			var interstitialVideo = false;
 			var width = 0;
@@ -64,7 +64,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 				}
 			}
 			foreach (ApsSlotData slot in _slotData){
-				if (type == AdUnitType.Banner)
+				if (type == AdType.Banner)
 				{
 					if (width == 320 && height == 50 && slot.APSAdUnitType == APSAdUnitType.Display320X50)
 					{
@@ -82,7 +82,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 						break;
 					}
 				}
-				if (type == AdUnitType.Interstitial)
+				if (type == AdType.Interstitial)
 				{
 					if (slot.APSAdUnitType == APSAdUnitType.InterstitialDisplay ||
 					    slot.APSAdUnitType == APSAdUnitType.InterstitialVideo)
@@ -92,7 +92,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 						break;
 					}
 				}
-				if (type == AdUnitType.Rewarded)
+				if (type == AdType.Rewarded)
 				{
 					if (slot.APSAdUnitType == APSAdUnitType.RewardedVideo)
 					{
@@ -110,7 +110,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 
 			var w = width;
 			var h = height;
-			if (interstitialVideo || type == AdUnitType.Rewarded) {
+			if (interstitialVideo || type == AdType.Rewarded) {
 				w = 0;
 				h = 0;
 				isFullScreen = true;
@@ -142,7 +142,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand {
 			_aps.CallStatic("setApsRequestTimeout", timeoutInMilliseconds);
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

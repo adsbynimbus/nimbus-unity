@@ -42,7 +42,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse {
 			// No initialization needed
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

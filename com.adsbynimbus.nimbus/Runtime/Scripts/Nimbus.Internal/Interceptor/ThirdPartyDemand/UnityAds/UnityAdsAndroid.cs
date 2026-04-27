@@ -23,7 +23,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdType type, bool isFullScreen)
 		{
 			AndroidJNI.AttachCurrentThread();
 			var unityAds = new AndroidJavaClass(UnityAdsPackage);
@@ -46,7 +46,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds {
 			unityAds.CallStatic("initialize", _applicationContext, _gameID);
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

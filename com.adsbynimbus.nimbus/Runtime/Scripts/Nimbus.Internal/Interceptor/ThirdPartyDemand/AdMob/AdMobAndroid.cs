@@ -14,7 +14,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
 
       private readonly bool _testMode;
       private readonly ThirdPartyAdUnit[] _adUnitIds;
-      private AdUnitType _adUnitType;
+      private AdType _adUnitType;
 
 
       public AdMobAndroid(ThirdPartyAdUnit[] adUnitIds)
@@ -28,7 +28,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          //do nothing
       }
 
-      private string GetAdUnitId(AdUnitType type)
+      private string GetAdUnitId(AdType type)
       {
          foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
          {
@@ -42,7 +42,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          return "";
       }
 
-      internal String GetProviderRtbDataFromNativeSDK(BidRequest bidRequest, AdUnitType type)
+      internal String GetProviderRtbDataFromNativeSDK(BidRequest bidRequest, AdType type)
       {
          try
          {
@@ -50,17 +50,17 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
             var args = new object[] { GetAdUnitId(type) };
             switch (_adUnitType)
             {
-               case AdUnitType.Banner:
+               case AdType.Banner:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
                      "fetchAdMobBannerSignal", args, 3000L);
                   break;
-               case AdUnitType.Interstitial:
+               case AdType.Interstitial:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
                      "fetchAdMobInterstitialSignal", args, 3000L);
                   break;
-               case AdUnitType.Rewarded:
+               case AdType.Rewarded:
                   adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
                      NimbusAdMobPackage,
                      "fetchAdMobRewardedSignal", args, 3000L);
@@ -84,7 +84,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob {
          };
       }
       
-      public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+      public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
       {
          return Task<BidRequestDelta>.Run(() =>
          {

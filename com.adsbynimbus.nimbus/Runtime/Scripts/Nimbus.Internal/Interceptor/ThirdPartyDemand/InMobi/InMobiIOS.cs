@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
 using Nimbus.Runtime.Scripts;
 using OpenRTB.Request;
@@ -14,61 +15,13 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi {
 	internal class InMobiIOS : IInterceptor, IProvider {
 		private readonly string _accountId;
 		
-		[DllImport("__Internal")]
-		private static extern void _initializeInMobi(string accountId);
-
-		[DllImport("__Internal")]
-		private static extern string _fetchInMobiToken(bool coppa);
-		
 		public InMobiIOS(string accountId) {
 			_accountId = accountId;
 		}
-
-		internal BidRequestDelta GetBidRequestDelta(string data)
+		
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			var bidRequestDelta = new BidRequestDelta();
-			if (data.IsNullOrEmpty()) {
-				return bidRequestDelta;
-			} 
-			bidRequestDelta.SimpleUserExt = 
-					new KeyValuePair<string, string> ("inmobi_buyeruid", data);			
-			return bidRequestDelta;
-		}
-
-		internal string GetInMobiToken()
-		{
-			var coppa = false;
-			if (NimbusManager.Instance != null)
-			{
-				coppa = NimbusManager.Instance.GetCoppa();
-			}
-			var inMobiToken = _fetchInMobiToken(coppa);
-			if (inMobiToken != null)
-			{
-				return inMobiToken;
-			}
-
-			return "";
-		}
-
-		public void InitializeNativeSDK() {
-			_initializeInMobi(_accountId);
-		}
-
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
-		{
-			return Task<BidRequestDelta>.Run(() =>
-			{
-				try
-				{
-					return GetBidRequestDelta(GetInMobiToken());
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.Log("InMobi ERROR", e.Message);
-					return null;
-				}
-			});
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.InMobi, _accountId);
 		}
 	}
 #endif

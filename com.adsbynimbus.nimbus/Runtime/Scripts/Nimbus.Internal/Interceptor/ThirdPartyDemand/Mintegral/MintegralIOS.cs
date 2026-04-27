@@ -15,13 +15,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 	internal class MintegralIOS : IInterceptor, IProvider {
 		private readonly string _appID;
 		private readonly string _appKey;
-		private readonly ThirdPartyAdUnit[] _adUnitIds;
 		
-		[DllImport("__Internal")]
-		private static extern void _initializeMintegral(string appID, string appKey);
-
-		[DllImport("__Internal")]
-		private static extern string _getMintegralRequestModifiers();
 
 		internal BidRequestDelta GetBidRequestDelta(BidRequest bidRequest, string data)
 		{
@@ -39,43 +33,14 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type)
-		{
-			var adUnitId = "";
-			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
-			{
-				if (adUnit.AdUnitType == type)
-				{
-					adUnitId = adUnit.AdUnitId;
-					break;
-				}
-			}
-			return adUnitId.IsNullOrEmpty() ? "" : _getMintegralRequestModifiers();
-		}
-
-		public MintegralIOS(string appID, string appKey, ThirdPartyAdUnit[] adUnitIds) {
+		public MintegralIOS(string appID, string appKey) {
 			_appID = appID;
 			_appKey = appKey;
-			_adUnitIds = adUnitIds;
 		}
-
-		public void InitializeNativeSDK() {
-			_initializeMintegral(_appID, _appKey);
-		}
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		
+		public ThirdPartyDemandObj GetConfigObject()
 		{
-			return Task<BidRequestDelta>.Run(() =>
-			{
-				try
-				{
-					return GetBidRequestDelta(bidRequest, GetProviderRtbDataFromNativeSDK(type));
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.Log("Mintegral ERROR", e.Message);
-					return null;
-				}
-			});
+			return new ThirdPartyDemandObj(ThirdPartyDemandEnum.Mintegral, _appID, _appKey);
 		}
 	}
 #endif

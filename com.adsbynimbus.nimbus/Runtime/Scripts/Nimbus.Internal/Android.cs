@@ -41,12 +41,6 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
 		
-		private ThirdPartyAdUnit[] mintegralAdUnits;
-		
-		private ThirdPartyAdUnit[] molocoAdUnits;
-		
-		private ThirdPartyAdUnit[] inMobiAdUnits;
-		
 		// ThirdParty Providers
 		private List<IInterceptor> _interceptors;
 
@@ -62,10 +56,11 @@ namespace Nimbus.Internal {
 			var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 
 			var androidLogger = new AndroidJavaObject(AndroidLogger, 0);
-			_nimbus.CallStatic("addLogger", androidLogger);
-			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
+			//_nimbus.CallStatic("addLogger", androidLogger);
+			/*_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
+				configuration.apiKey.Trim());*/
+			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
-
 			if (StaticMethod.InitializeInterceptor()) {
 				_interceptors = new List<IInterceptor>();		
 			}
@@ -91,14 +86,13 @@ namespace Nimbus.Internal {
 				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
-				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
+				var adMobAdUnitIds = configuration.GetAdMobData();
 				var admob = new AdMobAndroid(adMobAdUnitIds);
 				_interceptors.Add(admob);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
-				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
-				mintegralAdUnits = mintegralAdUnitIds;
-				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, mintegralAdUnitIds);
+				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
+				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey);
 				mintegral.InitializeNativeSDK();
 				_interceptors.Add(mintegral);
 			#endif
@@ -115,16 +109,14 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
 				Debug.unityLogger.Log("Initializing Android Moloco SDK");
-				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
-				molocoAdUnits = molocoAdUnitIds;
+				var molocoAppKey = configuration.GetMolocoData();
 				var moloco = new MolocoAndroid(applicationContext, molocoAppKey);
 				moloco.InitializeNativeSDK();
 				_interceptors.Add(moloco);
 			#endif
 			#if NIMBUS_ENABLE_INMOBI
 				Debug.unityLogger.Log("Initializing Android InMobi SDK");
-				var (inMobiAccountId, inMobiAdUnitIds) = configuration.GetInMobiData();
-				inMobiAdUnits = inMobiAdUnitIds;
+				var inMobiAccountId = configuration.GetInMobiData();
 				var inMobi = new InMobiAndroid(applicationContext, inMobiAccountId);
 				inMobi.InitializeNativeSDK();
 				_interceptors.Add(inMobi);
@@ -135,57 +127,16 @@ namespace Nimbus.Internal {
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			const string functionCall = "render";
 			var holdTime = 0;
-			var shouldBlock = false;
-			var listener = new AdManagerListener(in _helper, ref nimbusAdUnit);
+			var shouldBlock = nimbusAdUnit.AdType != AdType.Banner;
+			//var listener = new AdManagerListener(in _helper, ref nimbusAdUnit);
 
-			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
+			/*f (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
 				shouldBlock = true;
 				holdTime = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
-			}
-			var mintegralAdUnitId = "";
-			var mintegralAdUnitPlacementId = "";
-			var molocoAdUnitId = "";
-			var inMobiPlacementId = "";
-			#if NIMBUS_ENABLE_MINTEGRAL
-				try
-				{
-					var minteralAdUnit =
-						mintegralAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					mintegralAdUnitId = minteralAdUnit.AdUnitId;
-					mintegralAdUnitPlacementId = minteralAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_MOLOCO
-				try
-				{
-					var molocoAdUnit =
-						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					molocoAdUnitId = molocoAdUnit.AdUnitId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_INMOBI
-				try
-				{
-					var inMobiAdUnit =
-						inMobiAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					inMobiPlacementId = inMobiAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
-				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiPlacementId, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
+			}*/
+			_helper.CallStatic(functionCall, _currentActivity, shouldBlock, (nimbusAdUnit.AdType == AdType.Rewarded), holdTime,
+				null,"", "","","", true, 0);
 		}
 
 		internal override List<IInterceptor> Interceptors() {

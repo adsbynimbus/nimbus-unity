@@ -33,7 +33,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			return bidRequestDelta;
 		}
 
-		internal string GetProviderRtbDataFromNativeSDK(AdUnitType type, bool isFullScreen)
+		internal string GetProviderRtbDataFromNativeSDK(AdType type, bool isFullScreen)
 		{
 			AndroidJNI.AttachCurrentThread();
 			var meta = new AndroidJavaClass(NimbusMetaPackage);
@@ -52,7 +52,7 @@ namespace Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta {
 			meta.CallStatic("initialize", _applicationContext, _appID);
 		}
 		
-		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdUnitType type, bool isFullScreen, BidRequest bidRequest)
+		public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
 		{
 			return Task<BidRequestDelta>.Run(() =>
 			{

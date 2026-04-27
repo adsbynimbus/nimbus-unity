@@ -11,69 +11,143 @@ import NimbusKit
 import AppTrackingTransparency
 import AdSupport
 #if NIMBUS_ENABLE_APS
-import NimbusRequestAPSKit
-import DTBiOSSDK
+import NimbusAPSKit
+@preconcurrency import DTBiOSSDK
 #endif
 #if NIMBUS_ENABLE_VUNGLE
-import VungleAdsSDK
+import NimbusVungleKit
 #endif
 #if NIMBUS_ENABLE_META
 import FBAudienceNetwork
+import NimbusMetaKit
 #endif
 #if NIMBUS_ENABLE_ADMOB
 import GoogleMobileAds
+import NimbusAdMobKit
 #endif
 #if NIMBUS_ENABLE_MINTEGRAL
-import MTGSDK
-import MTGSDKBidding
+import NimbusMintegralKit
 #endif
 #if NIMBUS_ENABLE_UNITY_ADS
-import UnityAds
+import NimbusUnityKit
 #endif
 #if NIMBUS_ENABLE_LIVERAMP
 import NimbusLiveRampKit
-import LRAtsSDK
 #endif
 #if NIMBUS_ENABLE_MOLOCO
-import MolocoSDK
+import NimbusMolocoKit
 #endif
 #if NIMBUS_ENABLE_INMOBI
-import InMobiSDK
+import NimbusInMobiKit
 #endif
+#if NIMBUS_ENABLE_MOBILEFUSE
+import NimbusMobileFuseKit
+#endif
+
 
 
 @objc public class NimbusManager: NSObject {
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
     
-    
     private let adUnitInstanceId: Int
     
     var ad: Ad?
     
-        
-    #if NIMBUS_ENABLE_APS
-    private static var apsRequestHelper: NimbusAPSRequestHelper?
-    #endif
-    
-    #if NIMBUS_ENABLE_LIVERAMP
-    private static var liveRampInterceptor: NimbusLiveRampInterceptor?
-    private static var liveRampEmail: String?
-    private static var liveRampPhone: String?
-    #endif
- 
-    
     // MARK: - Class Functions
     
-    @objc public class func initializeNimbusSDK(
+    @objc public func initializeNimbusSDK(
         publisher: String,
         apiKey: String,
         enableUnityLogs: Bool,
-        enableSDKInTestMode: Bool
+        enableSDKInTestMode: Bool,
+        thirdPartyJson: String
     ) {
-        Nimbus.initialize(publisher: publisher, apiKey: apiKey)
+        var thirdPartyDemand: [ThirdPartyDemand] = []
+
+        if (thirdPartyJson != "" && !thirdPartyJson.isEmpty) {
+            do {
+                if let dataFromString = thirdPartyJson.data(using: .utf8) {
+                    thirdPartyDemand = try JSONDecoder().decode([ThirdPartyDemand].self, from: dataFromString)
+                }
+            } catch {
+                Nimbus.Log.lifecycle.error(error.localizedDescription)
+                var adUnitInstance = self.adUnitInstanceId
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: adUnitInstance, error: nil, errorMessage: "Failed to decode third party json")
+                
+            }
+        }
+        Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
+        {
+            NimbusManager.initAPS(appKey: thirdPartyDemand.first(where: {$0.demandType == .Aps})?.firstKey ?? "")
+            #if NIMBUS_ENABLE_MOBILEFUSE
+            MobileFuseExtension()
+            #endif
+            if (!thirdPartyDemand.isEmpty) {
+                #if NIMBUS_ENABLE_ADMOB
+                AdMobExtension(autoInitialize: thirdPartyDemand.first(where: {$0.demandType == .AdMob})?.autoInit ?? false)
+                #endif
+                #if NIMBUS_ENABLE_INMOBI
+                InMobiExtension(accountId: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.firstKey)
+                #endif
+                #if NIMBUS_ENABLE_META
+                MetaExtension(appId: thirdPartyDemand.first(where: {$0.demandType == .Meta})?.firstKey ?? "", forceTestAd: thirdPartyDemand.first(where: {$0.demandType == .Meta})?.testMode ?? false)
+                #endif
+                #if NIMBUS_ENABLE_MINTEGRAL
+                let mintegral = thirdPartyDemand.first(where: {$0.demandType == .Mintegral})
+                MintegralExtension(appId: mintegral?.firstKey ?? "",
+                                    appKey: mintegral?.secondKey ?? "")
+                #endif
+                #if NIMBUS_ENABLE_MOLOCO
+                MolocoExtension(appKey: thirdPartyDemand.first(where: {$0.demandType == .Moloco})?.firstKey ?? "")
+                #endif
+                #if NIMBUS_ENABLE_UNITY_ADS
+                UnityExtension(gameId: thirdPartyDemand.first(where: {$0.demandType == .UnityAds})?.firstKey ?? "")
+                #endif
+                #if NIMBUS_ENABLE_VUNGLE
+                VungleExtension(appId: thirdPartyDemand.first(where: {$0.demandType == .Vungle})?.firstKey ?? "")
+                #endif
+            }
+        }
         Nimbus.configuration.testMode = enableSDKInTestMode
     }
+    
+    #if NIMBUS_ENABLE_APS
+    @objc private class func initAPS(appKey: String) {
+        #if NIMBUS_ENABLE_APS
+        if (appKey != ""){
+            DTBAds.sharedInstance().setAppKey(appKey)
+            DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
+            DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
+            DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
+            DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
+            DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
+        }
+        #endif
+    }
+    #endif
+    
+    #if NIMBUS_ENABLE_ADMOB
+    @objc public static func initAdMob() {
+        MobileAds.shared.start()
+    }
+    #endif
+    
+    #if NIMBUS_ENABLE_LIVERAMP
+    @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true) {
+        let liveRamp = LiveRamp(
+            configId: configId,
+            email: email,
+            hasConsentForNoLegislation: hasConsentForNoLegislation
+        )
+
+        // Applies LiveRamp to all future Nimbus requests
+        let group = DispatchGroup()
+        group.wait(for: { @MainActor in
+            try await liveRamp.fetchEnvelope().applyToNimbus()
+        })
+    }
+    #endif
     
     @objc public class func nimbusManager(forAdUnityInstanceId adUnityInstanceId: Int) -> NimbusManager {
         guard let manager = managerDictionary[adUnityInstanceId] else {
@@ -83,19 +157,6 @@ import InMobiSDK
         }
         return manager
     }
-    
-    #if NIMBUS_ENABLE_LIVERAMP
-        @objc public class func initializeLiveRamp(configId: String, email: String, phoneNumber: String, isTestMode: Bool,
-                                               hasConsentForNoLegislation: Bool) {
-            if (phoneNumber != "") {
-                liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, phoneNumber: phoneNumber, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
-                liveRampPhone = phoneNumber
-            } else {
-                liveRampInterceptor = NimbusLiveRampInterceptor(configId: configId, email: email, hasConsentForNoLegislation: hasConsentForNoLegislation, isTestMode: isTestMode)
-                liveRampEmail = email
-            }
-        }
-    #endif
     
     // MARK: - Private Functions
     
@@ -109,17 +170,42 @@ import InMobiSDK
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool){                
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String){
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
+                #if NIMBUS_ENABLE_APS
+                    var apsAds: [APSAd] = []
+                    if (apsAdUnitId != "")
+                    {
+                        let bannerAdRequest = APSAdRequest(
+                            slotUUID: apsAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        bannerAdRequest.setAdFormat(.banner)
+                        do {
+                            apsAds.append(try await bannerAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    }
+                #endif
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
                 let instanceId = self.adUnitInstanceId
-                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30).onEvent { event in
+                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                        admob(bannerAdUnitId: adMobAdUnitId)
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                        aps(ads: apsAds)
+                        #endif
+                    }
+                }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -137,12 +223,48 @@ import InMobiSDK
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool){
+    @objc public func interstitialAd(position: String, showAd: Bool, apsStaticAdUnitId: String,  apsVideoAdUnitId: String, adMobAdUnitId: String){
         let group = DispatchGroup()
         group.wait(for: {
             do {
+                #if NIMBUS_ENABLE_APS
+                    var apsAds: [APSAd] = []
+                    if (apsStaticAdUnitId != "") {
+                        let interstitialStaticAdRequest = APSAdRequest(
+                            slotUUID: apsStaticAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        interstitialStaticAdRequest.setAdFormat(.interstitial)
+                        do {
+                            apsAds.append(try await interstitialStaticAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    }
+                    if (apsVideoAdUnitId != "") {
+                        let interstitialVideoAdRequest = APSAdRequest(
+                            slotUUID: apsVideoAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        interstitialVideoAdRequest.setAdFormat(.interstitial)
+                        do {
+                            apsAds.append(try await interstitialVideoAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    }
+                #endif
                 let instanceId = self.adUnitInstanceId
-                let interstitialAd = try await Nimbus.interstitialAd(position: position).onEvent { event in
+                let interstitialAd = try await Nimbus.interstitialAd(position: position){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                            admob(bannerAdUnitId: adMobAdUnitId)
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                            aps(ads: apsAds)
+                        #endif
+                    }
+                }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -165,12 +287,37 @@ import InMobiSDK
         })
     }
     
-    @objc public func rewardedAd(position: String, showAd: Bool) {
+    @objc public func rewardedAd(position: String, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String) {
         let group = DispatchGroup()
         group.wait(for: {
             do {
+                #if NIMBUS_ENABLE_APS
+                    var apsAds: [APSAd] = []
+                    if (apsAdUnitId != "")
+                    {
+                        let rewardedAdRequest = APSAdRequest(
+                            slotUUID: apsAdUnitId,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        rewardedAdRequest.setAdFormat(.rewardedVideo)
+                        do {
+                            apsAds.append(try await rewardedAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    }
+                #endif
                 let instanceId = self.adUnitInstanceId
-                let rewardedAd = try await Nimbus.rewardedAd(position: position).onEvent { event in
+                let rewardedAd = try await Nimbus.rewardedAd(position: position){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                            admob(bannerAdUnitId: adMobAdUnitId)
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                            aps(ads: apsAds)
+                        #endif
+                    }
+                }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
                     NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -198,7 +345,7 @@ import InMobiSDK
         if let inlineAd = ad as? InlineAd {
             group.wait(for: { @MainActor in
                 do {
-                    var contentView = UIView()
+                    let contentView = UIView()
                     let viewController = self.unityViewController() ?? UIViewController()
                     contentView.translatesAutoresizingMaskIntoConstraints = false
                     viewController.view.addSubview(contentView)
@@ -227,10 +374,10 @@ import InMobiSDK
         
     }
     
-    public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: NimbusEvent) {
+    public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: AdEvent) {
         let eventName: String
         switch event {
-        case .loaded, .loadedCompanionAd, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
+        case .loaded, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
             return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"
@@ -260,12 +407,12 @@ import InMobiSDK
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError?, errorMessage: String = "") {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
                 "adUnitInstanceID": adUnitInstanceID, 
-                "errorMessage": error.localizedDescription
+                "errorMessage": error?.localizedDescription ?? errorMessage
             ]
         )
     }
@@ -329,6 +476,28 @@ import InMobiSDK
     private func removeReferenceFromManagerDictionary() {
         NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
     }
+    
+    enum ThirdPartyDemandEnum: Int, Codable
+    {
+        case AdMob = 0
+        case Aps = 1
+        case InMobi = 2
+        case Meta = 3
+        case Mintegral = 4
+        case MobileFuse = 5
+        case Moloco = 6
+        case UnityAds = 7
+        case Vungle = 8
+    }
+    
+    struct ThirdPartyDemand: Codable {
+        var demandType: ThirdPartyDemandEnum = .AdMob
+        var firstKey: String?
+        var secondKey: String?
+        var testMode: Bool = false
+        var autoInit: Bool = false
+    }
+    
 }
 
 extension UIView {
