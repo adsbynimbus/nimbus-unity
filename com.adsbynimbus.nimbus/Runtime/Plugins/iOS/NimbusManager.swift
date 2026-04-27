@@ -63,7 +63,6 @@ import NimbusMobileFuseKit
         enableSDKInTestMode: Bool,
         thirdPartyJson: String
     ) {
-        print(thirdPartyJson)
         var thirdPartyDemand: [ThirdPartyDemand] = []
 
         if (thirdPartyJson != "" && !thirdPartyJson.isEmpty) {
