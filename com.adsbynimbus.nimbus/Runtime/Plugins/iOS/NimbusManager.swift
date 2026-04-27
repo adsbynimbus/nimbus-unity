@@ -56,7 +56,7 @@ import NimbusMobileFuseKit
     
     // MARK: - Class Functions
     
-    @objc public class func initializeNimbusSDK(
+    @objc public func initializeNimbusSDK(
         publisher: String,
         apiKey: String,
         enableUnityLogs: Bool,
@@ -72,13 +72,14 @@ import NimbusMobileFuseKit
                 }
             } catch {
                 Nimbus.Log.lifecycle.error(error.localizedDescription)
+                var adUnitInstance = self.adUnitInstanceId
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: adUnitInstance, error: nil, errorMessage: "Failed to decode third party json")
+                
             }
         }
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
-            #if NIMBUS_ENABLE_APS
-            initAPS(appKey: thirdPartyDemand.first(where: {$0.demandType == .Aps})?.firstKey ?? "")
-            #endif
+            NimbusManager.initAPS(appKey: thirdPartyDemand.first(where: {$0.demandType == .Aps})?.firstKey ?? "")
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
@@ -113,6 +114,7 @@ import NimbusMobileFuseKit
     
     #if NIMBUS_ENABLE_APS
     @objc private class func initAPS(appKey: String) {
+        #if NIMBUS_ENABLE_APS
         if (appKey != ""){
             DTBAds.sharedInstance().setAppKey(appKey)
             DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
@@ -121,6 +123,7 @@ import NimbusMobileFuseKit
             DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
             DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
         }
+        #endif
     }
     #endif
     
@@ -193,7 +196,7 @@ import NimbusMobileFuseKit
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
                 let instanceId = self.adUnitInstanceId
-                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: 30){
+                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
                         admob(bannerAdUnitId: adMobAdUnitId)
@@ -342,7 +345,7 @@ import NimbusMobileFuseKit
         if let inlineAd = ad as? InlineAd {
             group.wait(for: { @MainActor in
                 do {
-                    var contentView = UIView()
+                    let contentView = UIView()
                     let viewController = self.unityViewController() ?? UIViewController()
                     contentView.translatesAutoresizingMaskIntoConstraints = false
                     viewController.view.addSubview(contentView)
@@ -404,12 +407,12 @@ import NimbusMobileFuseKit
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError?, errorMessage: String = "") {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
                 "adUnitInstanceID": adUnitInstanceID, 
-                "errorMessage": error.localizedDescription
+                "errorMessage": error?.localizedDescription ?? errorMessage
             ]
         )
     }
