@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nimbus.Internal.Interceptor;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
+using Nimbus.Internal.Extensions.AdMob;
+using Nimbus.Internal.Extensions.APS;
+using Nimbus.Internal.Extensions.InMobi;
+using Nimbus.Internal.Extensions.Meta;
+using Nimbus.Internal.Extensions.Mintegral;
+using Nimbus.Internal.Extensions.Moloco;
+using Nimbus.Internal.Extensions.UnityAds;
+using Nimbus.Internal.Extensions.Vungle;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -41,9 +39,6 @@ namespace Nimbus.Internal {
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
 		
-		// ThirdParty Providers
-		private List<IInterceptor> _interceptors;
-
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing Android SDK");
 			_unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -61,15 +56,11 @@ namespace Nimbus.Internal {
 				configuration.apiKey.Trim());*/
 			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim());
-			if (StaticMethod.InitializeInterceptor()) {
-				_interceptors = new List<IInterceptor>();		
-			}
 
 			#if NIMBUS_ENABLE_APS
 				var (apsAppID, slots, timeout) = configuration.GetApsData();
 				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, timeout);
 				aps.InitializeNativeSDK();
-				_interceptors.Add(aps);
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
@@ -77,49 +68,41 @@ namespace Nimbus.Internal {
 				Debug.unityLogger.Log(vungleAppId);
 				var vungle = new VungleAndroid(applicationContext, vungleAppId);
 				vungle.InitializeNativeSDK();
-				_interceptors.Add(vungle);
 			#endif
 			#if NIMBUS_ENABLE_META
 				var metaAppId = configuration.GetMetaData();
 				var meta = new MetaAndroid(_currentActivity, configuration.enableSDKInTestMode, metaAppId);
 				meta.InitializeNativeSDK();
-				_interceptors.Add(meta);
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
 				var adMobAdUnitIds = configuration.GetAdMobData();
 				var admob = new AdMobAndroid(adMobAdUnitIds);
-				_interceptors.Add(admob);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
 				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
 				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey);
 				mintegral.InitializeNativeSDK();
-				_interceptors.Add(mintegral);
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
 				var unityAdsGameId = configuration.GetUnityAdsData();
 				var unityAds = new UnityAdsAndroid(applicationContext, unityAdsGameId);
 				unityAds.InitializeNativeSDK();
-				_interceptors.Add(unityAds);
 			#endif
 			#if NIMBUS_ENABLE_MOBILEFUSE
 				var mobileFuse = new MobileFuseAndroid();
 				// No Initialization Needed
-				_interceptors.Add(mobileFuse);
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
 				Debug.unityLogger.Log("Initializing Android Moloco SDK");
 				var molocoAppKey = configuration.GetMolocoData();
 				var moloco = new MolocoAndroid(applicationContext, molocoAppKey);
 				moloco.InitializeNativeSDK();
-				_interceptors.Add(moloco);
 			#endif
 			#if NIMBUS_ENABLE_INMOBI
 				Debug.unityLogger.Log("Initializing Android InMobi SDK");
 				var inMobiAccountId = configuration.GetInMobiData();
 				var inMobi = new InMobiAndroid(applicationContext, inMobiAccountId);
 				inMobi.InitializeNativeSDK();
-				_interceptors.Add(inMobi);
 			#endif
 		}
 
@@ -137,10 +120,6 @@ namespace Nimbus.Internal {
 			}*/
 			_helper.CallStatic(functionCall, _currentActivity, shouldBlock, (nimbusAdUnit.AdType == AdType.Rewarded), holdTime,
 				null,"", "","","", true, 0);
-		}
-
-		internal override List<IInterceptor> Interceptors() {
-			return _interceptors;
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

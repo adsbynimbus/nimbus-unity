@@ -1,7 +1,8 @@
 using System;
 using System.IO;
 using System.Text;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Extensions;
+using Nimbus.Internal.Extensions.APS;
 using UnityEngine;
 
 namespace Nimbus.ScriptableObjects {

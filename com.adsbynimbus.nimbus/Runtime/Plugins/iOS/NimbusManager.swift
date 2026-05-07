@@ -2,8 +2,8 @@
 //
 //  NimbusManager.swift
 //
-//  Created by Bruno Bruggemann on 5/7/21.
-//  Copyright © 2025 AdsByNimbus. All rights reserved.
+//  Created by Jonathan Sligh on 5/7/26.
+//  Copyright © 2026 AdsByNimbus. All rights reserved.
 //
 
 import Foundation
@@ -56,56 +56,54 @@ import NimbusMobileFuseKit
     
     // MARK: - Class Functions
     
-    @objc public func initializeNimbusSDK(
+    @objc public static func initializeNimbusSDK(
         publisher: String,
         apiKey: String,
         enableUnityLogs: Bool,
         enableSDKInTestMode: Bool,
         thirdPartyJson: String
     ) {
-        var thirdPartyDemand: [ThirdPartyDemand] = []
+        var extensions: Extensions?
 
         if (thirdPartyJson != "" && !thirdPartyJson.isEmpty) {
             do {
                 if let dataFromString = thirdPartyJson.data(using: .utf8) {
-                    thirdPartyDemand = try JSONDecoder().decode([ThirdPartyDemand].self, from: dataFromString)
+                    extensions = try JSONDecoder().decode(Extensions.self, from: dataFromString)
                 }
             } catch {
                 Nimbus.Log.lifecycle.error(error.localizedDescription)
-                var adUnitInstance = self.adUnitInstanceId
-                NimbusManager.didReceiveNimbusError(adUnitInstanceID: adUnitInstance, error: nil, errorMessage: "Failed to decode third party json")
-                
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: 0, error: nil, errorMessage: "Failed to decode third party json")
             }
         }
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
-            NimbusManager.initAPS(appKey: thirdPartyDemand.first(where: {$0.demandType == .Aps})?.firstKey ?? "")
+            NimbusManager.initAPS(appKey: extensions?.aps?.appKey ?? "")
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
-            if (!thirdPartyDemand.isEmpty) {
+            if (extensions != nil) {
                 #if NIMBUS_ENABLE_ADMOB
-                AdMobExtension(autoInitialize: thirdPartyDemand.first(where: {$0.demandType == .AdMob})?.autoInit ?? false)
+                AdMobExtension()
                 #endif
                 #if NIMBUS_ENABLE_INMOBI
-                InMobiExtension(accountId: thirdPartyDemand.first(where: {$0.demandType == .InMobi})?.firstKey)
+                InMobiExtension(accountId: extensions?.inMobi?.accountId ?? "")
                 #endif
                 #if NIMBUS_ENABLE_META
-                MetaExtension(appId: thirdPartyDemand.first(where: {$0.demandType == .Meta})?.firstKey ?? "", forceTestAd: thirdPartyDemand.first(where: {$0.demandType == .Meta})?.testMode ?? false)
+                MetaExtension(appId: extensions?.meta?.appId ?? "", forceTestAd: extensions?.meta?.forceTestAd ?? false)
                 #endif
                 #if NIMBUS_ENABLE_MINTEGRAL
-                let mintegral = thirdPartyDemand.first(where: {$0.demandType == .Mintegral})
-                MintegralExtension(appId: mintegral?.firstKey ?? "",
-                                    appKey: mintegral?.secondKey ?? "")
+                let mintegral = extensions?.mintegral
+                MintegralExtension(appId: mintegral?.appId ?? "",
+                                    appKey: mintegral?.appKey ?? "")
                 #endif
                 #if NIMBUS_ENABLE_MOLOCO
-                MolocoExtension(appKey: thirdPartyDemand.first(where: {$0.demandType == .Moloco})?.firstKey ?? "")
+                MolocoExtension(appKey: extensions?.moloco?.appKey ?? "")
                 #endif
                 #if NIMBUS_ENABLE_UNITY_ADS
-                UnityExtension(gameId: thirdPartyDemand.first(where: {$0.demandType == .UnityAds})?.firstKey ?? "")
+                UnityExtension(gameId: extensions?.unityAds?.gameId ?? "")
                 #endif
                 #if NIMBUS_ENABLE_VUNGLE
-                VungleExtension(appId: thirdPartyDemand.first(where: {$0.demandType == .Vungle})?.firstKey ?? "")
+                VungleExtension(appId: extensions?.vungle?.appId ?? "")
                 #endif
             }
         }
@@ -476,28 +474,58 @@ import NimbusMobileFuseKit
     private func removeReferenceFromManagerDictionary() {
         NimbusManager.managerDictionary.removeValue(forKey: adUnitInstanceId)
     }
+}
+
+
+struct Extensions: Codable {
+    let aps: Aps?
+    let adMob: AdMob?
+    let inMobi: InMobi?
+    let meta: Meta?
+    let mintegral: Mintegral?
+    let mobileFuse: MobileFuse?
+    let moloco: Moloco?
+    let unityAds: UnityAds?
+    let vungle: Vungle?
+}
+
+extension Extensions {
     
-    enum ThirdPartyDemandEnum: Int, Codable
-    {
-        case AdMob = 0
-        case Aps = 1
-        case InMobi = 2
-        case Meta = 3
-        case Mintegral = 4
-        case MobileFuse = 5
-        case Moloco = 6
-        case UnityAds = 7
-        case Vungle = 8
+    struct Aps: Codable {
+        let appKey: String?
     }
     
-    struct ThirdPartyDemand: Codable {
-        var demandType: ThirdPartyDemandEnum = .AdMob
-        var firstKey: String?
-        var secondKey: String?
-        var testMode: Bool = false
-        var autoInit: Bool = false
+    struct AdMob: Codable {
     }
     
+    struct InMobi: Codable {
+        let accountId: String?
+    }
+    
+    struct Meta: Codable {
+        let appId: String?
+        let forceTestAd: Bool
+    }
+    
+    struct Mintegral: Codable {
+        let appId: String?
+        let appKey: String?
+    }
+    
+    struct MobileFuse: Codable {
+    }
+    
+    struct Moloco: Codable {
+        let appKey: String?
+    }
+    
+    struct UnityAds: Codable {
+        let gameId: String?
+    }
+    
+    struct Vungle: Codable {
+        let appId: String?
+    }
 }
 
 extension UIView {

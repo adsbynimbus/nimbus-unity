@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Extensions;
+using Nimbus.Internal.Extensions.APS;
 using Nimbus.Runtime.Scripts;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
