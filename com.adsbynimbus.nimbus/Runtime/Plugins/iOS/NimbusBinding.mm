@@ -92,8 +92,8 @@ extern "C" {
 #endif
 
 #if NIMBUS_ENABLE_LIVERAMP
-    void _initializeLiveRamp(const char* configId, const char* email, bool hasConsentForNoLegislation) {
-        [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) hasConsentForNoLegislation:hasConsentForNoLegislation];
+    void _initializeLiveRamp(const char* configId, const char* email, bool hasConsentForNoLegislation, bool testMode) {
+        [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) hasConsentForNoLegislation:hasConsentForNoLegislation testMode:testMode];
     }
 #endif
 }

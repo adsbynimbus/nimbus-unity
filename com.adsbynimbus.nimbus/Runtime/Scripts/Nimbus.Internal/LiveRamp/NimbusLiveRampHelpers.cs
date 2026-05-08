@@ -14,15 +14,15 @@ namespace Nimbus.Internal.LiveRamp
         #if UNITY_IOS
             [DllImport("__Internal")]
             private static extern void _initializeLiveRamp(String configId, String email, 
-                Boolean hasConsentForNoLegislation);
+                Boolean hasConsentForNoLegislation, Boolean isTestMode);
         
         #endif
 
         public static void initializeLiveRamp(String configId, 
-            String email = "", Boolean hasConsentForNoLegislation = false)
+            String email = "", Boolean hasConsentForNoLegislation = false,  Boolean isTestMode = false)
         {
             #if UNITY_IOS
-                _initializeLiveRamp(configId, email, hasConsentForNoLegislation);
+                _initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
             #endif
             #if UNITY_ANDROID
                 var liveRamp = new AndroidJavaClass("com.adsbynimbus.request.LiveRampExtension");

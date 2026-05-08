@@ -458,11 +458,14 @@ namespace Nimbus.Runtime.Scripts {
 		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
 		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
 		/// </param>
+		/// <param name="isTestMode">
+		///		Set to true if wishing to use test mode.
+		/// </param>
 			public static void initializeLiveRamp(String configId, String email,
-				Boolean hasConsentForNoLegislation)
+				Boolean hasConsentForNoLegislation, Boolean isTestMode)
 			{
 					// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
-					NimbusLiveRampHelpers.initializeLiveRamp(configId, email, hasConsentForNoLegislation);
+					NimbusLiveRampHelpers.initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
 			}
 		#endif
 		

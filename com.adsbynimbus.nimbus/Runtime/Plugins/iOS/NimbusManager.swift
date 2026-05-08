@@ -120,7 +120,7 @@ import NimbusMobileFuseKit
     #endif
     
     #if NIMBUS_ENABLE_LIVERAMP
-    @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true) {
+    @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true, testMode: Bool = false) {
         let liveRamp = LiveRamp(
             configId: configId,
             email: email,
@@ -130,7 +130,11 @@ import NimbusMobileFuseKit
         // Applies LiveRamp to all future Nimbus requests
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
-            try await liveRamp.fetchEnvelope().applyToNimbus()
+            do {
+                try await liveRamp.fetchEnvelope(isTestMode: testMode).applyToNimbus()
+            } catch {
+                Nimbus.Log.lifecycle.error(error.localizedDescription)
+            }
         })
     }
     #endif
@@ -410,12 +414,12 @@ import NimbusMobileFuseKit
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError?, errorMessage: String = "") {
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError?) {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
                 "adUnitInstanceID": adUnitInstanceID, 
-                "errorMessage": error?.localizedDescription ?? errorMessage
+                "errorMessage": error?.localizedDescription ?? ""
             ]
         )
     }
@@ -428,8 +432,10 @@ import NimbusMobileFuseKit
                     extensions = try JSONDecoder().decode(Extensions.self, from: dataFromString)
                 }
             } catch {
-                Nimbus.Log.lifecycle.error(error.localizedDescription)
-                NimbusManager.didReceiveNimbusError(adUnitInstanceID: 0, error: nil, errorMessage: "Failed to decode third party json")
+                NimbusManager.didReceiveNimbusError(
+                    adUnitInstanceID: 0,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode third party json: \(error)")
+                )
             }
         }
         return extensions
@@ -589,5 +595,15 @@ extension DispatchGroup {
         }
         
         _ = wait(timeout: .now() + 0.5)
+    }
+}
+
+extension NimbusError.Domain {
+    static let unitysdk = Self(rawValue: "unitysdk")
+}
+
+extension NimbusError {
+    static func unitysdk(reason: Reason = .failure, stage: Stage, detail: String? = nil) -> NimbusError {
+        NimbusError(reason: reason, domain: .unitysdk, stage: stage, detail: detail)
     }
 }
