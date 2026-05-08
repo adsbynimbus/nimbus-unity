@@ -1,4 +1,5 @@
 using System;
+using Nimbus.Internal.Extensions.APS;
 using UnityEngine;
 
 namespace Nimbus.Internal.Extensions
@@ -18,55 +19,56 @@ namespace Nimbus.Internal.Extensions
     
     public class Extensions
     {
-        public ApsExt aps;
-        public AdMobExt adMob;
-        public InMobiExt inMobi;
-        public MetaExt meta;
-        public MintegralExt mintegral;
-        public MobileFuseExt mobileFuse;
-        public MolocoExt moloco;
-        public UnityAdsExt unityAds;
-        public VungleExt vungle;
+        public Aps aps;
+        public Admob adMob;
+        public InMobi inMobi;
+        public Meta meta;
+        public Mintegral mintegral;
+        public MobileFuse mobileFuse;
+        public Moloco moloco;
+        public UnityAds unityAds;
+        public Vungle vungle;
     }
-    public struct ApsExt
-    {
+    public struct Aps {
         public String appKey;
+        public ApsSlotData[] slotData;
+    }
+    public struct Admob
+    {
+        public String[] adUnitIds;
     }
     
-    public struct AdMobExt {
-    }
-    
-    public struct InMobiExt
+    public struct InMobi
     {
         public String accountId;
     }
     
-    public struct MetaExt
+    public struct Meta
     {
         public String appId;
         public Boolean forceTestAd;
     }
     
-    public struct MintegralExt
+    public struct Mintegral
     {
         public String appId;
         public String appKey;
     }
     
-    public struct MobileFuseExt {
+    public struct MobileFuse {
     }
     
-    public struct MolocoExt
+    public struct Moloco
     {
         public String appKey;
     }
     
-    public struct UnityAdsExt
+    public struct UnityAds
     {
         public String gameId;
     }
     
-    public struct VungleExt
+    public struct Vungle
     {
         public String appId;
     }

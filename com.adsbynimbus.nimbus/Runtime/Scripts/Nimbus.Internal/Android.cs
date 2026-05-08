@@ -1,14 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nimbus.Internal.Extensions;
 using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.Internal.Extensions.APS;
-using Nimbus.Internal.Extensions.InMobi;
-using Nimbus.Internal.Extensions.Meta;
-using Nimbus.Internal.Extensions.Mintegral;
-using Nimbus.Internal.Extensions.Moloco;
-using Nimbus.Internal.Extensions.UnityAds;
-using Nimbus.Internal.Extensions.Vungle;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using OpenRTB.Enumerations;
@@ -58,8 +53,8 @@ namespace Nimbus.Internal {
 				configuration.apiKey.Trim());
 
 			#if NIMBUS_ENABLE_APS
-				var (apsAppID, slots, timeout) = configuration.GetApsData();
-				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, timeout);
+				var (apsAppID, slots) = configuration.GetApsData();
+				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, 0);
 				aps.InitializeNativeSDK();
 			#endif
 			

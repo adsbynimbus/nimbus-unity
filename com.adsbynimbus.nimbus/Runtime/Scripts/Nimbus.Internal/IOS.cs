@@ -37,24 +37,21 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, int refreshInterval, 
-			bool respectSafeArea, int bannerPosition, bool showAd, string apsAdUnitId, string adMobAdUnitId);
+			bool respectSafeArea, int bannerPosition, bool showAd, string demand);
 		
 		[DllImport("__Internal")]
 		private static extern void _interstitialAd(int adUnitInstanceId, string position, bool showAd, 
-			string apsStaticAdUnitId, string apsVideoAdUnitId, string adMobAdUnitId);
+			string demand);
 		
 		[DllImport("__Internal")]
 		private static extern void _rewardedAd(int adUnitInstanceId, string position, bool showAd, 
-			string apsAdUnitId, string adMobAdUnitId);
+			string demand);
 		
 		[DllImport("__Internal")]
 		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
-		
-		[DllImport("__Internal")]
-		private static extern string _getPlistJSON();
 
 		private Device _deviceCache;
 		private string _sessionId;
@@ -65,8 +62,8 @@ namespace Nimbus.Internal {
 			
 			#if NIMBUS_ENABLE_APS
 				Debug.unityLogger.Log("Initializing iOS APS SDK");
-				var (apsAppID, slots, timeout) = configuration.GetApsData();
-				_apsIOS = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode, timeout);
+				var (apsAppID, slots) = configuration.GetApsData();
+				_apsIOS = new ApsIOS(apsAppID, slots, configuration.enableSDKInTestMode);
 				extensions.aps.appKey = apsAppID;
 			#endif
 			#if NIMBUS_ENABLE_VUNGLE
@@ -81,7 +78,7 @@ namespace Nimbus.Internal {
 			#if NIMBUS_ENABLE_ADMOB
 				Debug.unityLogger.Log("Initializing iOS AdMob SDK");
 				var adMobAdUnitIds = configuration.GetAdMobData();
-				_adMobIOS = new AdMobIOS(adMobAdUnitIds, configuration.adMobAutoInit);
+				_adMobIOS = new AdMobIOS(adMobAdUnitIds);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
 				Debug.unityLogger.Log("Initializing iOS Mintegral SDK");
@@ -109,13 +106,11 @@ namespace Nimbus.Internal {
 		}
 
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
+			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
-			var apsInterstitialAdUnitIds = new List<string>();
-			var apsAdUnitId = "";
-			var adMobAdUnitId = "";
 			#if NIMBUS_ENABLE_ADMOB_IOS
-				adMobAdUnitId = _adMobIOS.GetAdUnitId(nimbusAdUnit.AdType);
+				extensions.adMob.adUnitIds = _adMobIOS.GetAdUnitId(nimbusAdUnit.AdType);
 			#endif
 
 			switch (nimbusAdUnit.AdType)
@@ -124,31 +119,29 @@ namespace Nimbus.Internal {
 				{
 					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
 					#if NIMBUS_ENABLE_APS_IOS
-						apsAdUnitId = _apsIOS.GetAdUnitId(AdType.Banner, size.Item1, size.Item2).Item1;
+						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
 					#endif
 					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, 
 						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, 
-						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, apsAdUnitId, adMobAdUnitId);
+						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
 				case AdType.Interstitial:
 				{
 					#if NIMBUS_ENABLE_APS_IOS
-						var interstitialIds = _apsIOS.GetAdUnitId(AdType.Interstitial, 0, 0);
-						apsInterstitialAdUnitIds.Add(interstitialIds.Item1);
-						apsInterstitialAdUnitIds.Add(interstitialIds.Item2);
+						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Interstitial, 0, 0);
 					#endif
 					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
-						showAd, apsInterstitialAdUnitIds[0], apsInterstitialAdUnitIds[1], adMobAdUnitId);
+						showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
 				case AdType.Rewarded:
 				{
 					#if NIMBUS_ENABLE_APS_IOS
-						apsAdUnitId = _apsIOS.GetAdUnitId(AdType.Rewarded, 0, 0).Item1;
+						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
 					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd, 
-						apsAdUnitId, adMobAdUnitId);
+						JsonConvert.SerializeObject(extensions));
 					break;
 				}
 			}

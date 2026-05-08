@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -14,21 +15,21 @@ namespace Nimbus.Internal.Extensions.AdMob {
 		[DllImport("__Internal")]
 		private static extern void _initializeAdMob();
 
-		public string GetAdUnitId(AdType type)
+		public string[] GetAdUnitId(AdType type)
 		{
+			var ids = new List<string>();
 			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
 			{
 				if (adUnit.AdUnitType == type)
 				{
-					return adUnit.AdUnitId;
+					ids.Add(adUnit.AdUnitId);
 				}
 			}
-			return "";
+			return ids.ToArray();
 		}
 
-		public AdMobIOS(ThirdPartyAdUnit[] adUnitIds, bool autoInit) {
+		public AdMobIOS(ThirdPartyAdUnit[] adUnitIds) {
 			_adUnitIds = adUnitIds;
-			_autoInit = autoInit;
 		}
 
 		public static void ManuallyInitAdMob()

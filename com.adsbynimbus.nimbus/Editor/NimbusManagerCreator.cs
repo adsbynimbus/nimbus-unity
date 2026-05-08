@@ -512,7 +512,6 @@ namespace Nimbus.Editor {
 					HandleAdMobAdUnitData(_androidAdMobAdUnitData, out _asset.androidAdMobAdUnitData);
 				#endif
 				#if NIMBUS_ENABLE_ADMOB_IOS
-					_asset.adMobAutoInit = _adMobAutoInit;
 					HandleAdMobAdUnitData(_iosAdMobAdUnitData, out _asset.iosAdMobAdUnitData);
 				#endif
 				
@@ -660,12 +659,12 @@ namespace Nimbus.Editor {
 				var slotId = item.FindPropertyRelative("SlotId");
 
 				var apsData = new ApsSlotData {
-					SlotId = slotId?.stringValue
+					slotId = slotId?.stringValue
 				};
 
 				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
 				if (adUnitType != null) {
-					apsData.APSAdUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
+					apsData.adUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
 				}
 
 				apsSlotData.Add(apsData);
@@ -688,18 +687,18 @@ namespace Nimbus.Editor {
 
 			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
 			foreach (var apsSlot in slotData) {
-				if (apsSlot.SlotId.IsNullOrEmpty()) {
+				if (apsSlot.slotId.IsNullOrEmpty()) {
 					Debug.unityLogger.LogError("Nimbus", 
 						$"APS SDK has been included, the APS slot id for {platform} cannot be empty, object NimbusAdsManager not created");
 					return false;
 				}
 
-				if (!seenAdTypes.ContainsKey(apsSlot.APSAdUnitType)) {
-					seenAdTypes.Add(apsSlot.APSAdUnitType, true);
+				if (!seenAdTypes.ContainsKey(apsSlot.adUnitType)) {
+					seenAdTypes.Add(apsSlot.adUnitType, true);
 				}
 				else {
 					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.APSAdUnitType} for {platform}, object NimbusAdsManager not created");
+						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.adUnitType} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}
 			}

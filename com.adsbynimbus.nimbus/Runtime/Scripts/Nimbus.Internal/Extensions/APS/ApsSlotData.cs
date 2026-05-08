@@ -4,8 +4,8 @@ using UnityEngine;
 namespace Nimbus.Internal.Extensions.APS {
 	[Serializable]
 	public class ApsSlotData {
-		public string SlotId;
-		public APSAdUnitType APSAdUnitType;
+		public string slotId;
+		public APSAdUnitType adUnitType;
 	}
 	
 	public enum APSAdUnitType : byte {

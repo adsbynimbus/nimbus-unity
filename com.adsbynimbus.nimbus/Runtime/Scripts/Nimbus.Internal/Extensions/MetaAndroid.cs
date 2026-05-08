@@ -7,7 +7,7 @@ using OpenRTB.Request;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Nimbus.Internal.Extensions.Meta {
+namespace Nimbus.Internal.Extensions {
 	internal class MetaAndroid {
 		private const string NimbusMetaPackage = "com.adsbynimbus.request.FANDemandProvider";
 		private readonly string _appID;

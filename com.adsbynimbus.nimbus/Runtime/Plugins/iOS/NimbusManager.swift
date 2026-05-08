@@ -45,7 +45,6 @@ import NimbusMobileFuseKit
 #endif
 
 
-
 @objc public class NimbusManager: NSObject {
     
     private static var managerDictionary: [Int: NimbusManager] = [:]
@@ -63,18 +62,7 @@ import NimbusMobileFuseKit
         enableSDKInTestMode: Bool,
         thirdPartyJson: String
     ) {
-        var extensions: Extensions?
-
-        if (thirdPartyJson != "" && !thirdPartyJson.isEmpty) {
-            do {
-                if let dataFromString = thirdPartyJson.data(using: .utf8) {
-                    extensions = try JSONDecoder().decode(Extensions.self, from: dataFromString)
-                }
-            } catch {
-                Nimbus.Log.lifecycle.error(error.localizedDescription)
-                NimbusManager.didReceiveNimbusError(adUnitInstanceID: 0, error: nil, errorMessage: "Failed to decode third party json")
-            }
-        }
+        let extensions = extensionsFromJsonString(thirdPartyDemand: thirdPartyJson)
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
             NimbusManager.initAPS(appKey: extensions?.aps?.appKey ?? "")
@@ -168,16 +156,18 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String){
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String) {
+        let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
                 #if NIMBUS_ENABLE_APS
                     var apsAds: [APSAd] = []
-                    if (apsAdUnitId != "")
-                    {
+                if (!(extensions?.aps?.slotData?.isEmpty ?? false))
+                {
+                    for slot in extensions?.aps?.slotData ?? [] {
                         let bannerAdRequest = APSAdRequest(
-                            slotUUID: apsAdUnitId,
+                            slotUUID: slot?.slotId ?? "",
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         bannerAdRequest.setAdFormat(.banner)
@@ -187,6 +177,7 @@ import NimbusMobileFuseKit
                             Nimbus.Log.request.error(error.localizedDescription)
                         }
                     }
+                }
                 #endif
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
@@ -194,7 +185,11 @@ import NimbusMobileFuseKit
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
                 let instanceId = self.adUnitInstanceId
-                let bannerAd = try Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
+                var adMobAdUnitId: String = ""
+                if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                    adMobAdUnitId = adUnitId ?? ""
+                }
+                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
                         admob(bannerAdUnitId: adMobAdUnitId)
@@ -221,15 +216,18 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool, apsStaticAdUnitId: String,  apsVideoAdUnitId: String, adMobAdUnitId: String){
+    @objc public func interstitialAd(position: String, showAd: Bool, thirdPartyDemand: String){
+        let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
-            do {
-                #if NIMBUS_ENABLE_APS
-                    var apsAds: [APSAd] = []
-                    if (apsStaticAdUnitId != "") {
+            #if NIMBUS_ENABLE_APS
+                var apsAds: [APSAd] = []
+            if (!(extensions?.aps?.slotData?.isEmpty ?? false))
+            {
+                for slot in extensions?.aps?.slotData ?? [] {
+                    if (slot?.adUnitType == .interstitialDisplay) {
                         let interstitialStaticAdRequest = APSAdRequest(
-                            slotUUID: apsStaticAdUnitId,
+                            slotUUID: slot?.slotId ?? "",
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         interstitialStaticAdRequest.setAdFormat(.interstitial)
@@ -239,9 +237,9 @@ import NimbusMobileFuseKit
                             Nimbus.Log.request.error(error.localizedDescription)
                         }
                     }
-                    if (apsVideoAdUnitId != "") {
+                    else if (slot?.adUnitType == .interstitialVideo) {
                         let interstitialVideoAdRequest = APSAdRequest(
-                            slotUUID: apsVideoAdUnitId,
+                            slotUUID: slot?.slotId ?? "",
                             adNetworkInfo: .init(networkName: .nimbus)
                         )
                         interstitialVideoAdRequest.setAdFormat(.interstitial)
@@ -251,88 +249,95 @@ import NimbusMobileFuseKit
                             Nimbus.Log.request.error(error.localizedDescription)
                         }
                     }
-                #endif
-                let instanceId = self.adUnitInstanceId
-                let interstitialAd = try await Nimbus.interstitialAd(position: position){
-                    demand {
-                        #if NIMBUS_ENABLE_ADMOB
-                            admob(bannerAdUnitId: adMobAdUnitId)
-                        #endif
-                        #if NIMBUS_ENABLE_APS
-                            aps(ads: apsAds)
-                        #endif
-                    }
-                }.onEvent { event in
-                    NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
-                }                .onError { error in
-                    NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
-                do {
-                    if (showAd) {
-                        try await interstitialAd.show(from: self.unityViewController())
-                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
-                    } else {
-                        try await interstitialAd.load()
-                    }
-                    self.ad = interstitialAd
-                }
-                catch {
-                    Nimbus.Log.ad.error(error.localizedDescription)
-                }
-            } catch {
-                Nimbus.Log.request.error(error.localizedDescription)
             }
+            #endif
+            var adMobAdUnitId: String = ""
+            if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                adMobAdUnitId = adUnitId ?? ""
+            }
+            let instanceId = self.adUnitInstanceId
+            let interstitialAd = await Nimbus.interstitialAd(position: position){
+                demand {
+                    #if NIMBUS_ENABLE_ADMOB
+                        admob(bannerAdUnitId: adMobAdUnitId)
+                    #endif
+                    #if NIMBUS_ENABLE_APS
+                        aps(ads: apsAds)
+                    #endif
+                }
+            }.onEvent { event in
+                NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
+            }                .onError { error in
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+            }
+            do {
+                if (showAd) {
+                    try await interstitialAd.show(from: self.unityViewController())
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                } else {
+                    try await interstitialAd.load()
+                }
+                self.ad = interstitialAd
+            }
+            catch {
+                Nimbus.Log.ad.error(error.localizedDescription)
+            }
+
         })
     }
     
-    @objc public func rewardedAd(position: String, showAd: Bool, apsAdUnitId: String, adMobAdUnitId: String) {
+    @objc public func rewardedAd(position: String, showAd: Bool, thirdPartyDemand: String) {
+        let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
+            #if NIMBUS_ENABLE_APS
+            var apsAds: [APSAd] = []
+            if (!(extensions?.aps?.slotData?.isEmpty ?? false))
+            {
+                for slot in extensions?.aps?.slotData ?? [] {
+                    let rewardedAdRequest = APSAdRequest(
+                        slotUUID: slot?.slotId ?? "",
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    rewardedAdRequest.setAdFormat(.rewardedVideo)
+                    do {
+                        apsAds.append(try await rewardedAdRequest.loadAd())
+                    } catch {
+                        Nimbus.Log.request.error(error.localizedDescription)
+                    }
+                }
+            }
+            #endif
+            var adMobAdUnitId: String = ""
+            if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                adMobAdUnitId = adUnitId ?? ""
+            }
+            let instanceId = self.adUnitInstanceId
+            let rewardedAd = await Nimbus.rewardedAd(position: position){
+                demand {
+                    #if NIMBUS_ENABLE_ADMOB
+                        admob(rewardedAdUnitId: adMobAdUnitId)
+                    #endif
+                    #if NIMBUS_ENABLE_APS
+                        aps(ads: apsAds)
+                    #endif
+                }
+            }.onEvent { event in
+                NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
+            }                .onError { error in
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+            }
             do {
-                #if NIMBUS_ENABLE_APS
-                    var apsAds: [APSAd] = []
-                    if (apsAdUnitId != "")
-                    {
-                        let rewardedAdRequest = APSAdRequest(
-                            slotUUID: apsAdUnitId,
-                            adNetworkInfo: .init(networkName: .nimbus)
-                        )
-                        rewardedAdRequest.setAdFormat(.rewardedVideo)
-                        do {
-                            apsAds.append(try await rewardedAdRequest.loadAd())
-                        } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
-                        }
-                    }
-                #endif
-                let instanceId = self.adUnitInstanceId
-                let rewardedAd = try await Nimbus.rewardedAd(position: position){
-                    demand {
-                        #if NIMBUS_ENABLE_ADMOB
-                            admob(bannerAdUnitId: adMobAdUnitId)
-                        #endif
-                        #if NIMBUS_ENABLE_APS
-                            aps(ads: apsAds)
-                        #endif
-                    }
-                }.onEvent { event in
-                    NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
-                }                .onError { error in
-                    NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                if (showAd) {
+                    try await rewardedAd.show(from: self.unityViewController())
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                } else {
+                    try await rewardedAd.load()
                 }
-                do {
-                    if (showAd) {
-                        try await rewardedAd.show(from: self.unityViewController())
-                        UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
-                    } else {
-                        try await rewardedAd.load()
-                    }
-                    self.ad = rewardedAd
-                } catch {
-                    Nimbus.Log.ad.error(error.localizedDescription)
-                }
+                self.ad = rewardedAd
             } catch {
-                Nimbus.Log.request.error(error.localizedDescription)
+                Nimbus.Log.ad.error(error.localizedDescription)
             }
         })
     }
@@ -415,6 +420,21 @@ import NimbusMobileFuseKit
         )
     }
     
+    private static func extensionsFromJsonString(thirdPartyDemand: String) -> Extensions? {
+        var extensions: Extensions?
+        if (thirdPartyDemand != "" && !thirdPartyDemand.isEmpty) {
+            do {
+                if let dataFromString = thirdPartyDemand.data(using: .utf8) {
+                    extensions = try JSONDecoder().decode(Extensions.self, from: dataFromString)
+                }
+            } catch {
+                Nimbus.Log.lifecycle.error(error.localizedDescription)
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: 0, error: nil, errorMessage: "Failed to decode third party json")
+            }
+        }
+        return extensions
+    }
+    
     private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
         switch (adScreenPosition) {
             // Center Top
@@ -491,11 +511,27 @@ struct Extensions: Codable {
 
 extension Extensions {
     
-    struct Aps: Codable {
-        let appKey: String?
+    struct AdMob: Codable {
+        let adUnitIds: [String?]?
     }
     
-    struct AdMob: Codable {
+    struct Aps: Codable {
+        let appKey: String?
+        let slotData: [ApsSlotData?]?
+    }
+    
+    struct ApsSlotData: Codable {
+        let slotId: String?
+        let adUnitType: APSAdUnitType?
+    }
+    
+    public enum APSAdUnitType: Int, Codable {
+        case display320X50
+        case display300X250
+        case display728X90
+        case interstitialDisplay
+        case interstitialVideo
+        case rewardedVideo
     }
     
     struct InMobi: Codable {

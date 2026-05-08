@@ -8,7 +8,7 @@ using UnityEngine;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
 
-namespace Nimbus.Internal.Extensions.InMobi {
+namespace Nimbus.Internal.Extensions {
 	internal class InMobiAndroid {
 
 		private readonly string _accountId;

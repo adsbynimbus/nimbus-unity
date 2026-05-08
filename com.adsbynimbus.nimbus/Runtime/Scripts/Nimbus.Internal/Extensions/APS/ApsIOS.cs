@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
@@ -9,7 +10,6 @@ namespace Nimbus.Internal.Extensions.APS {
 		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
 
-		private float _timeoutInSeconds = 3.0f;
 
 		public ApsIOS(string appID, ApsSlotData[] slotData) {
 			_appID = appID;
@@ -17,28 +17,26 @@ namespace Nimbus.Internal.Extensions.APS {
 		}
 
 
-		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode, int timeoutInMilliseconds) {
+		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode) {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
-			_timeoutInSeconds = Math.Clamp(timeoutInMilliseconds, 300, 3000)/1000.0f;
 		}
 		
-		public Tuple<string, string> GetAdUnitId(AdType type, int width, int height)
+		public ApsSlotData[] GetAdUnitId(AdType type, int width, int height)
 		{
-			var interstitialId1 = "";
-			var interstitialId2 = "";
+			var slotData = new List<ApsSlotData>();
 			foreach (ApsSlotData slot in _slotData)
 			{
 				if (type == AdType.Banner)
 				{
-					switch (slot.APSAdUnitType)
+					switch (slot.adUnitType)
 					{
 						case APSAdUnitType.Display320X50:
 						{
 							if (width == 320 || height == 50)
 							{
-								return new Tuple<string, string>(slot.SlotId, "");
+								slotData.Add(slot);
 							}
 							break;
 						}
@@ -46,7 +44,7 @@ namespace Nimbus.Internal.Extensions.APS {
 						{
 							if (width == 300 || height == 250)
 							{
-								return new Tuple<string, string>(slot.SlotId, "");
+								slotData.Add(slot);
 							}
 							break;
 						}
@@ -54,7 +52,7 @@ namespace Nimbus.Internal.Extensions.APS {
 						{
 							if (width == 728 || height == 90)
 							{
-								return new Tuple<string, string>(slot.SlotId, "");
+								slotData.Add(slot);
 							}
 							break;
 						}
@@ -62,30 +60,30 @@ namespace Nimbus.Internal.Extensions.APS {
 				} 
 				else if (type == AdType.Interstitial)
 				{
-					switch (slot.APSAdUnitType)
+					switch (slot.adUnitType)
 					{
 						case APSAdUnitType.InterstitialDisplay:
 						{
-							interstitialId1 = slot.SlotId;
+							slotData.Add(slot);
 							break;
 						}
 						case APSAdUnitType.InterstitialVideo:
 						{
-							interstitialId2 = slot.SlotId;
+							slotData.Add(slot);
 							break;
 						}
 					}
 				}
 				else
 				{
-					if (slot.APSAdUnitType == APSAdUnitType.RewardedVideo)
+					if (slot.adUnitType == APSAdUnitType.RewardedVideo)
 					{
-						return new Tuple<string, string>(slot.SlotId, "");
+						slotData.Add(slot);
 					}
 				}
 
 			}
-			return new Tuple<string, string>(interstitialId1, interstitialId2);
+			return slotData.ToArray();
 		}
 	}
 #endif

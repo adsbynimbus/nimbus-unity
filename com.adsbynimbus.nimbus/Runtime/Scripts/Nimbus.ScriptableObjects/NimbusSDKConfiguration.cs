@@ -24,7 +24,6 @@ namespace Nimbus.ScriptableObjects {
 		
 		[HideInInspector] public string iosAppID;
 		[HideInInspector] public ApsSlotData[] iosApsSlotData;
-		[HideInInspector] public int iosApsTimeoutInMilliseconds = 3000;
 
 		// Vungle Data
 		[HideInInspector] public string androidVungleAppID;
@@ -35,7 +34,6 @@ namespace Nimbus.ScriptableObjects {
 		[HideInInspector] public string iosMetaAppID;
 		
 		// AdMob Data
-		[HideInInspector] public bool adMobAutoInit;
 		[HideInInspector] public string androidAdMobAppID;
 		[HideInInspector] public ThirdPartyAdUnit[] androidAdMobAdUnitData;
 		[HideInInspector] public string iosAdMobAppID;
@@ -80,13 +78,13 @@ namespace Nimbus.ScriptableObjects {
 				// ReSharper disable InvertIf
 				if (androidApsSlotData != null) {
 					for (var i = 0; i < androidApsSlotData.Length; i++) {
-						androidApsSlotData[i].SlotId = androidApsSlotData[i].SlotId?.Trim();
+						androidApsSlotData[i].slotId = androidApsSlotData[i].slotId?.Trim();
 					}
 				}
 				
 				if (iosApsSlotData != null) {
 					for (var i = 0; i < iosApsSlotData.Length; i++) {
-						iosApsSlotData[i].SlotId = iosApsSlotData[i].SlotId?.Trim();
+						iosApsSlotData[i].slotId = iosApsSlotData[i].slotId?.Trim();
 					}
 				}
 			#endif
@@ -181,16 +179,14 @@ namespace Nimbus.ScriptableObjects {
 		
 
 
-		public Tuple<string, ApsSlotData[], int> GetApsData() {
+		public Tuple<string, ApsSlotData[]> GetApsData() {
 			var appID = androidAppID;
 			var slots = androidApsSlotData;
-			var timeoutInMilliseconds = androidApsTimeoutInMilliseconds;
 			#if UNITY_IOS
 				appID = iosAppID;
 				slots =  iosApsSlotData;
-				timeoutInMilliseconds = iosApsTimeoutInMilliseconds;
 			#endif
-			return new Tuple<string, ApsSlotData[], int>(appID, slots, timeoutInMilliseconds);
+			return new Tuple<string, ApsSlotData[]>(appID, slots);
 		}
 
 		public string GetVungleData()
