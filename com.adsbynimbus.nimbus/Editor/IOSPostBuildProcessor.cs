@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR && UNITY_IOS
+#if UNITY_EDITOR && UNITY_IOS
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -174,7 +174,6 @@ end";
 			var builder = new StringBuilder();
 			
 			builder.AppendLine(@"platform :ios, '13.0'
-				use_frameworks!
 				source 'https://cdn.cocoapods.org/'
 				");
 			if (SdkVersion.Contains("internal")) {
@@ -184,13 +183,17 @@ end";
 			builder.AppendLine("def sdk_dependencies");
 			builder.AppendLine($"  pod 'NimbusSDK', '{SdkVersion}'");
 			builder.AppendLine("end");
-
-
+			
 			builder.AppendLine(@"
-			target 'UnityFramework' do
+			target 'Unity-iPhone' do
 			  sdk_dependencies
+
+			  target 'UnityFramework' do
+			    inherit! :search_paths
+			  end
 			end
 			");
+			
 			return builder.ToString();
 		}
 	}
@@ -263,9 +266,11 @@ end";
 			pbx.AddBuildProperty(targetGuid, "SWIFT_VERSION", "5.0");
 			pbx.SetBuildProperty(targetGuid, "SDKROOT", "iphoneos");
 			pbx.SetBuildProperty(targetGuid, "SUPPORTED_PLATFORMS", "iphonesimulator iphoneos");
-
+			
 			// UnityFramework
 			var unityFrameworkGuid = pbx.GetUnityFrameworkTargetGuid();
+			pbx.AddBuildProperty(unityFrameworkGuid, "OTHER_LDFLAGS", "-Wl,-undefined,dynamic_lookup");
+			
 			var unityInterfaceHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityInterface.h");
 			var unityForwardDeclsHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityForwardDecls.h");
 			var unityRenderingHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityRendering.h");
