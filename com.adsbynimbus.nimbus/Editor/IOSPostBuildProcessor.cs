@@ -76,6 +76,42 @@ namespace Nimbus.Editor {
 				lines.InsertRange(index,  Dependencies);
 			}
 			File.WriteAllLines(path, lines);
+
+			var postInstallScript = @"
+post_install do |installer|
+  dynamic_frameworks = []
+  
+  installer.pod_targets.each do |pod_target|
+    pod_target.file_accessors.each do |fa|
+      (fa.vendored_frameworks || []).each do |fw|
+        slice = fw.extname == '.xcframework' ?
+          Dir.glob(""#{fw}/ios-arm64*"").reject { |d| d.include?('simulator') }.first : fw
+        next unless slice
+        inner = fw.extname == '.xcframework' ? Dir.glob(""#{slice}/*.framework"").first : fw.to_s
+        next unless inner
+        name = File.basename(inner, '.framework')
+        binary = ""#{inner}/#{name}""
+        next unless File.exist?(binary)
+        next if `file ""#{binary}""`.match?(/ar archive|Mach-O object/)
+        dynamic_frameworks << fw.to_s
+      end
+    end
+  end
+  
+  project = installer.aggregate_targets.first.user_project
+  target = project.targets.find { |t| t.name == 'Unity-iPhone' }
+  embed = target.copy_files_build_phases.find { |p| p.symbol_dst_subfolder_spec == :frameworks } ||
+          target.new_copy_files_build_phase('Embed Frameworks').tap { |p| p.symbol_dst_subfolder_spec = :frameworks }
+  
+  dynamic_frameworks.each do |path|
+    ref = project.frameworks_group.new_file(path)
+    target.frameworks_build_phase.add_file_reference(ref)
+    embed.add_file_reference(ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy'] }
+  end
+  
+  project.save
+end";
+			File.AppendAllText(path, postInstallScript);
 		}
 		
 		private static void CreatePodfile(string pathToBuiltProject)
@@ -91,6 +127,7 @@ namespace Nimbus.Editor {
 			var builder = new StringBuilder();
 			
 			builder.AppendLine(@"platform :ios, '13.0'
+				use_frameworks!
 				source 'https://cdn.cocoapods.org/'
 				");
 			if (SdkVersion.Contains("internal")) {
@@ -102,12 +139,8 @@ namespace Nimbus.Editor {
 			builder.AppendLine("end");
 			
 			builder.AppendLine(@"
-			target 'Unity-iPhone' do
+			target 'UnityFramework' do
 			  sdk_dependencies
-
-			  target 'UnityFramework' do
-			    inherit! :search_paths
-			  end
 			end
 			");
 			
@@ -186,8 +219,6 @@ namespace Nimbus.Editor {
 			
 			// UnityFramework
 			var unityFrameworkGuid = pbx.GetUnityFrameworkTargetGuid();
-			pbx.AddBuildProperty(unityFrameworkGuid, "OTHER_LDFLAGS", "-Wl,-undefined,dynamic_lookup");
-			
 			var unityInterfaceHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityInterface.h");
 			var unityForwardDeclsHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityForwardDecls.h");
 			var unityRenderingHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityRendering.h");
