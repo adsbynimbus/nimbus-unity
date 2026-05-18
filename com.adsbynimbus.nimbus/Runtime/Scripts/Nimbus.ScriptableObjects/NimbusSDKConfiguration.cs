@@ -35,17 +35,17 @@ namespace Nimbus.ScriptableObjects {
 		
 		// AdMob Data
 		[HideInInspector] public string androidAdMobAppID;
-		[HideInInspector] public ThirdPartyAdUnit[] androidAdMobAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidAdMobAdUnitData;
 		[HideInInspector] public string iosAdMobAppID;
-		[HideInInspector] public ThirdPartyAdUnit[] iosAdMobAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosAdMobAdUnitData;
 		
 		// Mintegral Data
 		[HideInInspector] public string androidMintegralAppID;
 		[HideInInspector] public string androidMintegralAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] androidMintegralAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidMintegralAdUnitData;
 		[HideInInspector] public string iosMintegralAppID;
 		[HideInInspector] public string iosMintegralAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] iosMintegralAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosMintegralAdUnitData;
 		
 		//Unity Ads Data
 		[HideInInspector] public string androidUnityAdsGameID;
@@ -53,15 +53,15 @@ namespace Nimbus.ScriptableObjects {
 		
 		//Moloco Data
 		[HideInInspector] public string androidMolocoAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] androidMolocoAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidMolocoAdUnitData;
 		[HideInInspector] public string iosMolocoAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] iosMolocoAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosMolocoAdUnitData;
 		
 		//InMobi Data
 		[HideInInspector] public string androidInMobiAccountId;
-		[HideInInspector] public ThirdPartyAdUnit[] androidInMobiAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidInMobiAdUnitData;
 		[HideInInspector] public string iosInMobiAccountId;
-		[HideInInspector] public ThirdPartyAdUnit[] iosInMobiAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosInMobiAdUnitData;
 		
 		private void OnValidate() {
 			Sanitize();
@@ -207,7 +207,7 @@ namespace Nimbus.ScriptableObjects {
 			return appID;
 		}
 		
-		public ThirdPartyAdUnit[] GetAdMobData() {
+		public AdMobAdUnit[] GetAdMobData() {
 			var adUnitIds = androidAdMobAdUnitData;
 			#if UNITY_IOS
 				adUnitIds =  iosAdMobAdUnitData;

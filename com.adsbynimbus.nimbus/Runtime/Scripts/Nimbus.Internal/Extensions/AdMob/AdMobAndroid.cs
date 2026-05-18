@@ -13,11 +13,11 @@ namespace Nimbus.Internal.Extensions.AdMob {
       private const string NimbusAdMobPackage = "com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal";
 
       private readonly bool _testMode;
-      private readonly ThirdPartyAdUnit[] _adUnitIds;
+      private readonly AdMobAdUnit[] _adUnitIds;
       private AdType _adUnitType;
 
 
-      public AdMobAndroid(ThirdPartyAdUnit[] adUnitIds)
+      public AdMobAndroid(AdMobAdUnit[] adUnitIds)
       {
          _adUnitIds = adUnitIds;
       }
@@ -30,7 +30,7 @@ namespace Nimbus.Internal.Extensions.AdMob {
 
       private string GetAdUnitId(AdType type)
       {
-         foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
+         foreach (AdMobAdUnit adUnit in _adUnitIds)
          {
             if (adUnit.AdUnitType == type)
             {

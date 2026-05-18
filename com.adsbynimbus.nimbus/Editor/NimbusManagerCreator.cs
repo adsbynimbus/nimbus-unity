@@ -723,14 +723,14 @@ namespace Nimbus.Editor {
 			return true;
 		}
 
-		private void HandleAdMobAdUnitData(SerializedProperty adUnitData, out ThirdPartyAdUnit[] adUnits)
+		private void HandleAdMobAdUnitData(SerializedProperty adUnitData, out AdMobAdUnit[] adUnits)
 		{
-			var adUnitList = new List<ThirdPartyAdUnit>();
+			var adUnitList = new List<AdMobAdUnit>();
 			for (var i = 0; i < adUnitData.arraySize; i++) {
 				var item = adUnitData.GetArrayElementAtIndex(i);
 				var adUnitId = item.FindPropertyRelative("AdUnitId");
 
-				var adMobData  = new ThirdPartyAdUnit() {
+				var adMobData  = new AdMobAdUnit() {
 					AdUnitId = adUnitId?.stringValue
 				};
 
@@ -744,7 +744,7 @@ namespace Nimbus.Editor {
 			adUnits = adUnitList.ToArray();
 		}
 		
-		private bool ValidateAdMobData(string platform, SerializedProperty appId, ThirdPartyAdUnit[] adUnitData) {
+		private bool ValidateAdMobData(string platform, SerializedProperty appId, AdMobAdUnit[] adUnitData) {
 			
 			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 

@@ -6,7 +6,7 @@ using Nimbus.Internal.Utility;
 using OpenRTB.Request;
 using UnityEngine;
 
-namespace Nimbus.Internal.LiveRamp
+namespace Nimbus.Internal.Extensions
 {
     #if NIMBUS_ENABLE_LIVERAMP
     public class NimbusLiveRampHelpers

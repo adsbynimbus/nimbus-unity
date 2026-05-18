@@ -9,7 +9,7 @@ namespace Nimbus.Internal.Extensions.AdMob {
 	
 	
 	internal class AdMobIOS {
-		private readonly ThirdPartyAdUnit[] _adUnitIds;
+		private readonly AdMobAdUnit[] _adUnitIds;
 		private readonly bool _autoInit;
 		
 		[DllImport("__Internal")]
@@ -18,7 +18,7 @@ namespace Nimbus.Internal.Extensions.AdMob {
 		public string[] GetAdUnitId(AdType type)
 		{
 			var ids = new List<string>();
-			foreach (ThirdPartyAdUnit adUnit in _adUnitIds)
+			foreach (AdMobAdUnit adUnit in _adUnitIds)
 			{
 				if (adUnit.AdUnitType == type)
 				{
@@ -28,7 +28,7 @@ namespace Nimbus.Internal.Extensions.AdMob {
 			return ids.ToArray();
 		}
 
-		public AdMobIOS(ThirdPartyAdUnit[] adUnitIds) {
+		public AdMobIOS(AdMobAdUnit[] adUnitIds) {
 			_adUnitIds = adUnitIds;
 		}
 

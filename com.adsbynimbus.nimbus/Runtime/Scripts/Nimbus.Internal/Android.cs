@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Nimbus.Internal.Extensions;
 using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.Internal.Extensions.APS;
@@ -16,6 +17,13 @@ using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
 	public class Android : NimbusAPI {
+		// ThirdParty Providers
+		#if NIMBUS_ENABLE_ADMOB_IOS
+				private AdMobAndroid _adMobAndroid;
+		#endif
+		#if NIMBUS_ENABLE_APS_IOS
+				private ApsAndroid _apsAndroid;
+		#endif
 		private const string AndroidBuild = "android.os.Build";
 		private const string AndroidBuildVersion = "android.os.Build$VERSION";
 		private const string AndroidLogger = "com.adsbynimbus.Nimbus$Logger$Default";
@@ -45,60 +53,42 @@ namespace Nimbus.Internal {
 			_buildVersion = new AndroidJavaClass(AndroidBuildVersion);
 			var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 
-			var androidLogger = new AndroidJavaObject(AndroidLogger, 0);
-			//_nimbus.CallStatic("addLogger", androidLogger);
-			/*_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
-				configuration.apiKey.Trim());*/
-			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
-				configuration.apiKey.Trim());
-
+			var extensions = new Nimbus.Internal.Extensions.Extensions();
+			
 			#if NIMBUS_ENABLE_APS
 				var (apsAppID, slots) = configuration.GetApsData();
-				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, 0);
-				aps.InitializeNativeSDK();
+				_apsAndroid = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, 0);
+				extensions.aps.appKey = apsAppID;
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				var vungleAppId = configuration.GetVungleData();
-				Debug.unityLogger.Log(vungleAppId);
-				var vungle = new VungleAndroid(applicationContext, vungleAppId);
-				vungle.InitializeNativeSDK();
+				extensions.vungle.appId = configuration.GetVungleData();
 			#endif
 			#if NIMBUS_ENABLE_META
-				var metaAppId = configuration.GetMetaData();
-				var meta = new MetaAndroid(_currentActivity, configuration.enableSDKInTestMode, metaAppId);
-				meta.InitializeNativeSDK();
+				extensions.meta.appId = configuration.GetMetaData();
+				extensions.meta.forceTestAd = configuration.enableSDKInTestMode;
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
 				var adMobAdUnitIds = configuration.GetAdMobData();
-				var admob = new AdMobAndroid(adMobAdUnitIds);
+				_adMobAndroid = new AdMobAndroid(adMobAdUnitIds);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
 				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
-				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey);
-				mintegral.InitializeNativeSDK();
+				extensions.mintegral.appId = mintegralAppID;
+				extensions.mintegral.appKey = mintegralAppKey;
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
-				var unityAdsGameId = configuration.GetUnityAdsData();
-				var unityAds = new UnityAdsAndroid(applicationContext, unityAdsGameId);
-				unityAds.InitializeNativeSDK();
-			#endif
-			#if NIMBUS_ENABLE_MOBILEFUSE
-				var mobileFuse = new MobileFuseAndroid();
-				// No Initialization Needed
+				extensions.unityAds.gameId = configuration.GetUnityAdsData();
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
-				Debug.unityLogger.Log("Initializing Android Moloco SDK");
-				var molocoAppKey = configuration.GetMolocoData();
-				var moloco = new MolocoAndroid(applicationContext, molocoAppKey);
-				moloco.InitializeNativeSDK();
+				extensions.moloco.appKey = configuration.GetMolocoData();
 			#endif
 			#if NIMBUS_ENABLE_INMOBI
-				Debug.unityLogger.Log("Initializing Android InMobi SDK");
-				var inMobiAccountId = configuration.GetInMobiData();
-				var inMobi = new InMobiAndroid(applicationContext, inMobiAccountId);
-				inMobi.InitializeNativeSDK();
+				extensions.inMobi.accountId = configuration.GetInMobiData();
 			#endif
+			
+			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
+				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));
 		}
 
 
