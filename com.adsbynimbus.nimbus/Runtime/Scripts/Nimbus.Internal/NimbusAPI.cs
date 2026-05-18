@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Request;
 
 namespace Nimbus.Internal {
 	public abstract class NimbusAPI {

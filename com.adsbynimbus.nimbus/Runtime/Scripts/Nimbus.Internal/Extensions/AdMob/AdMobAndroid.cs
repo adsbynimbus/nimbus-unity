@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Nimbus.Internal.Utility;
-using OpenRTB.Request;
 using UnityEngine;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
@@ -40,64 +39,6 @@ namespace Nimbus.Internal.Extensions.AdMob {
          }
 
          return "";
-      }
-
-      internal String GetProviderRtbDataFromNativeSDK(BidRequest bidRequest, AdType type)
-      {
-         try
-         {
-            var adMobSignal = "";
-            var args = new object[] { GetAdUnitId(type) };
-            switch (_adUnitType)
-            {
-               case AdType.Banner:
-                  adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
-                     NimbusAdMobPackage,
-                     "fetchAdMobBannerSignal", args, 3000L);
-                  break;
-               case AdType.Interstitial:
-                  adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
-                     NimbusAdMobPackage,
-                     "fetchAdMobInterstitialSignal", args, 3000L);
-                  break;
-               case AdType.Rewarded:
-                  adMobSignal = BridgeHelpers.GetStringFromJavaFuture(
-                     NimbusAdMobPackage,
-                     "fetchAdMobRewardedSignal", args, 3000L);
-                  break;
-            }
-            return adMobSignal;
-         }
-         catch (Exception e)
-         {
-            Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
-         }
-
-         return "";
-      }
-      
-      internal BidRequestDelta GetBidRequestDelta(string data)
-      {
-         return data.IsNullOrEmpty() ? new BidRequestDelta() : new BidRequestDelta()
-         {
-            SimpleUserExt = new KeyValuePair<string, string>("admob_gde_signals", data)
-         };
-      }
-      
-      public Task<BidRequestDelta> GetBidRequestDeltaAsync(AdType type, bool isFullScreen, BidRequest bidRequest)
-      {
-         return Task<BidRequestDelta>.Run(() =>
-         {
-            try
-            {
-               return GetBidRequestDelta(GetProviderRtbDataFromNativeSDK(bidRequest, type));
-            }
-            catch (Exception e)
-            {
-               Debug.unityLogger.Log("AdMob AdUnitSignal ERROR", e.Message);
-               return null;
-            }
-         });
       }
    }
 

@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Enumerations;
-using OpenRTB.Request;
 using UnityEngine;
-using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 namespace Nimbus.Internal {
 	public class Editor : NimbusAPI {

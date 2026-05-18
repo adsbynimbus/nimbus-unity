@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Request;
 using UnityEngine;
 using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.Internal.Extensions.APS;
@@ -53,7 +52,6 @@ namespace Nimbus.Internal {
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
 
-		private Device _deviceCache;
 		private string _sessionId;
 		
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {

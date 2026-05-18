@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
-using OpenRTB.Request;
 using UnityEngine;
 
 namespace Nimbus.Internal.Extensions

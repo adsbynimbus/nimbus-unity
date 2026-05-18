@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal.Utility;
-using OpenRTB.Request;
 using UnityEngine;
 
 [assembly:InternalsVisibleTo("nimbus.test")]

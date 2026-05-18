@@ -7,10 +7,7 @@ using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.Internal.Extensions.APS;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Enumerations;
-using OpenRTB.Request;
 using UnityEngine;
-using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
@@ -36,7 +33,6 @@ namespace Nimbus.Internal {
 
 		private AndroidJavaObject _currentActivity;
 
-		private Device _deviceCache;
 		private AndroidJavaClass _helper;
 		private AndroidJavaClass _nimbus;
 		private AndroidJavaClass _unityPlayer;

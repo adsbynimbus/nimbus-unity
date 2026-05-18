@@ -10,10 +10,8 @@ using Nimbus.Internal;
 using Nimbus.Internal.Extensions;
 using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Request;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Gender = OpenRTB.Request.Gender;
 
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
@@ -22,8 +20,6 @@ namespace Nimbus.Runtime.Scripts {
 		
 		private bool _isTheApplicationBackgrounded;
 		private NimbusAPI _nimbusPlatformAPI;
-		private Regs _regulations;
-		private List<Segment> _userData = new ();
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
@@ -360,8 +356,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		The user generated CCPA consent string
 		/// </param>
 		public void SetUsPrivacyString(string usPrivacyString) {
-			_regulations.Ext ??= new RegExt();
-			_regulations.Ext.UsPrivacy = usPrivacyString;
+			
 		}
 		
 		/// <summary>
@@ -371,11 +366,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Returns if COPPA as enabled or not
 		/// </return>
 		public Boolean GetCoppa() {
-			if (_regulations == null)
-			{
-				return false;
-			}
-			return _regulations.Coppa == 1;
+			return false;
 		}
 		
 		/// <summary>
@@ -384,19 +375,8 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="gender">
 		///		enum representing the user's gender (F, M, O)
 		/// </param>
-		public void SetUserGender(Gender gender)
+		public void SetUserGender()
 		{
-			var index = _userData.FindIndex(seg => seg.Name == "gender");
-			if (index >= 0) 
-			{
-				_userData[index].Value = gender.ToString();
-			} 
-			else {
-				var genderObj = new Segment();
-				genderObj.Name = "gender";
-				genderObj.Value = gender.ToString();
-				_userData.Add(genderObj);
-			}	
 		}
 		
 		/// <summary>
@@ -406,31 +386,6 @@ namespace Nimbus.Runtime.Scripts {
 		///		integer greater than 0 representing user's age
 		/// </param>
 		public void SetUserAge(int age) {
-			var index = _userData.FindIndex(seg => seg.Name == "age");
-			if (index >= 0) 
-			{
-				_userData[index].Value = age.ToString();
-			} 
-			else {
-				var ageObj = new Segment();
-				ageObj.Name = "age";
-				ageObj.Value = age.ToString();
-				_userData.Add(ageObj);
-			}				
-		}
-
-		internal BidRequest ApplyUserData(BidRequest bidRequest)
-		{
-			if (_userData.Count > 0)
-			{
-				bidRequest.User ??= new User();
-				var data = new Data();
-				data.Name = "nimbus";
-				data.Segment = _userData.ToArray();
-				bidRequest.User.Data = (bidRequest.User.Data == null ? 
-					new[] { data } : new List<Data>(bidRequest.User.Data) { data }.ToArray());
-			}
-			return bidRequest;
 		}
 		
 		#if NIMBUS_ENABLE_ADMOB_IOS
@@ -476,17 +431,6 @@ namespace Nimbus.Runtime.Scripts {
 			return _configuration;
 		}
 
-		#region Private helpers
-		
-		// with test = 1 Nimbus servers check that the app object is present
-		// in production app data properly construction on Nimbus from database information assuming the account is not a 1:many account
-		// if the account is 1:many the publisher needs submit proper App object
-		private void SetTestData(BidRequest bidRequest) {
-			//if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
-		}
-		
-		
-		#endregion
 	}
 
 }
