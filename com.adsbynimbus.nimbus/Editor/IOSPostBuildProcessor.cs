@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR && UNITY_IOS
+#if UNITY_EDITOR && UNITY_IOS
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace Nimbus.Editor {
 			
 			#if NIMBUS_ENABLE_APS
 				Dependencies.Add("pod 'NimbusAPSKit'");
-				Dependencies.Add("pod 'AmazonPublisherServicesSDK'")
+				Dependencies.Add("pod 'AmazonPublisherServicesSDK'");
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
@@ -79,85 +79,38 @@ namespace Nimbus.Editor {
 
 			var postInstallScript = @"
 post_install do |installer|
-  allowed_frameworks = [
-    'NimbusAdMobKit',
-    'NimbusAPSKit',
-    'NimbusInMobiKit',
-    'NimbusMetaKit',
-    'FBAudienceNetwork',
-    'NimbusMintegralKit',
-    'NimbusMolocoKit',
-    'NimbusMobileFuseKit',
-    'NimbusUnityKit',
-    'NimbusVungleKit',
-    'NimbusKit',
-    'OMSDK_Adsbynimbus',
-    'DTBiOSSDK',
-    'GoogleMobileAds',
-    'MobileFuseSDK',
-	'FBAudienceNetwork',
-    'MTGSDK',
-    'MTGSDKBanner',
-    'MTGSDKBidding',
-    'MTGSDKNewInterstitial',
-    'MTGSDKReward',
-    'UnityAds',
-	'NimbusLiveRampKit',
-	'LRAtsSDK',
-	'MolocoSDK',
-	'InMobiSDK',
-  ]
-
-  main_project = installer.aggregate_targets.first.user_project
-
-  if main_project.nil?
-    puts 'Warning: Could not find the main project.'
-    return
-  end
-
-  unity_iphone_target = main_project.targets.find { |target| target.name == 'Unity-iPhone' }
-
-  if unity_iphone_target.nil?
-    puts 'Warning: Could not find Unity-iPhone target in the main project.'
-    return
-  end
-
-  xcframework_files = Dir.glob(""#{installer.sandbox.root}/**/*.xcframework"")
-
-  xcframework_files.each do |xcframework_path|
-    framework_name = File.basename(xcframework_path)
-    framework_name_no_ext = File.basename(xcframework_path, File.extname(framework_name))
-    
-    unless allowed_frameworks.include?(framework_name_no_ext)
-      next
-    end
-
-    framework_ref = main_project.frameworks_group.files.find do |file|
-      file.name == framework_name || file.real_path.to_s == xcframework_path
-    end
-
-    if framework_ref.nil?
-      framework_ref = main_project.frameworks_group.new_file(xcframework_path)
-      puts ""Added #{framework_name} to the project.""
-    else
-      puts ""#{framework_name} already exists in the project.""
-    end
-
-    embed_phase = unity_iphone_target.build_phases.find { |phase| phase.display_name == 'Embed Frameworks' } || unity_iphone_target.new_copy_files_build_phase('Embed Frameworks')
-    build_file = embed_phase.files_references.find { |file| file.name == framework_name }
-
-    if build_file.nil?
-      build_file = embed_phase.add_file_reference(framework_ref)
-      build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy'] } # Embed & Sign
-      puts ""Embedded #{framework_name} into Unity-iPhone target.""
-    else
-      puts ""#{framework_name} is already embedded in Unity-iPhone target.""
+  dynamic_frameworks = []
+  
+  installer.pod_targets.each do |pod_target|
+    pod_target.file_accessors.each do |fa|
+      (fa.vendored_frameworks || []).each do |fw|
+        slice = fw.extname == '.xcframework' ?
+          Dir.glob(""#{fw}/ios-arm64*"").reject { |d| d.include?('simulator') }.first : fw
+        next unless slice
+        inner = fw.extname == '.xcframework' ? Dir.glob(""#{slice}/*.framework"").first : fw.to_s
+        next unless inner
+        name = File.basename(inner, '.framework')
+        binary = ""#{inner}/#{name}""
+        next unless File.exist?(binary)
+        next if `file ""#{binary}""`.match?(/ar archive|Mach-O object/)
+        dynamic_frameworks << fw.to_s
+      end
     end
   end
-
-  main_project.save
+  
+  project = installer.aggregate_targets.first.user_project
+  target = project.targets.find { |t| t.name == 'Unity-iPhone' }
+  embed = target.copy_files_build_phases.find { |p| p.symbol_dst_subfolder_spec == :frameworks } ||
+          target.new_copy_files_build_phase('Embed Frameworks').tap { |p| p.symbol_dst_subfolder_spec = :frameworks }
+  
+  dynamic_frameworks.each do |path|
+    ref = project.frameworks_group.new_file(path)
+    target.frameworks_build_phase.add_file_reference(ref)
+    embed.add_file_reference(ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy'] }
+  end
+  
+  project.save
 end";
-			
 			File.AppendAllText(path, postInstallScript);
 		}
 		
@@ -184,13 +137,13 @@ end";
 			builder.AppendLine("def sdk_dependencies");
 			builder.AppendLine($"  pod 'NimbusSDK', '{SdkVersion}'");
 			builder.AppendLine("end");
-
-
+			
 			builder.AppendLine(@"
 			target 'UnityFramework' do
 			  sdk_dependencies
 			end
 			");
+			
 			return builder.ToString();
 		}
 	}
@@ -263,7 +216,7 @@ end";
 			pbx.AddBuildProperty(targetGuid, "SWIFT_VERSION", "5.0");
 			pbx.SetBuildProperty(targetGuid, "SDKROOT", "iphoneos");
 			pbx.SetBuildProperty(targetGuid, "SUPPORTED_PLATFORMS", "iphonesimulator iphoneos");
-
+			
 			// UnityFramework
 			var unityFrameworkGuid = pbx.GetUnityFrameworkTargetGuid();
 			var unityInterfaceHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityInterface.h");

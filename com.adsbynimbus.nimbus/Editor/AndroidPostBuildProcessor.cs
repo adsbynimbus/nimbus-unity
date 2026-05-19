@@ -8,7 +8,7 @@ namespace Nimbus.Editor {
 	public class AndroidPostBuildProcessor : IPostGenerateGradleAndroidProject {
 
 		private const string KeepRules = @"
--keep class com.nimbus.demo.UnityHelper { *; }
+-keep class com.adsbynimbus.unity.UnityHelper { *; }
 -keep class com.adsbynimbus.** { *; }";
 
 		private const string PackagingOptions = @"

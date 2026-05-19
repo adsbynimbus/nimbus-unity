@@ -1,7 +1,8 @@
 using System;
 using System.IO;
 using System.Text;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
+using Nimbus.Internal.Extensions;
+using Nimbus.Internal.Extensions.APS;
 using UnityEngine;
 
 namespace Nimbus.ScriptableObjects {
@@ -23,7 +24,6 @@ namespace Nimbus.ScriptableObjects {
 		
 		[HideInInspector] public string iosAppID;
 		[HideInInspector] public ApsSlotData[] iosApsSlotData;
-		[HideInInspector] public int iosApsTimeoutInMilliseconds = 3000;
 
 		// Vungle Data
 		[HideInInspector] public string androidVungleAppID;
@@ -35,17 +35,17 @@ namespace Nimbus.ScriptableObjects {
 		
 		// AdMob Data
 		[HideInInspector] public string androidAdMobAppID;
-		[HideInInspector] public ThirdPartyAdUnit[] androidAdMobAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidAdMobAdUnitData;
 		[HideInInspector] public string iosAdMobAppID;
-		[HideInInspector] public ThirdPartyAdUnit[] iosAdMobAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosAdMobAdUnitData;
 		
 		// Mintegral Data
 		[HideInInspector] public string androidMintegralAppID;
 		[HideInInspector] public string androidMintegralAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] androidMintegralAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidMintegralAdUnitData;
 		[HideInInspector] public string iosMintegralAppID;
 		[HideInInspector] public string iosMintegralAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] iosMintegralAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosMintegralAdUnitData;
 		
 		//Unity Ads Data
 		[HideInInspector] public string androidUnityAdsGameID;
@@ -53,15 +53,15 @@ namespace Nimbus.ScriptableObjects {
 		
 		//Moloco Data
 		[HideInInspector] public string androidMolocoAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] androidMolocoAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidMolocoAdUnitData;
 		[HideInInspector] public string iosMolocoAppKey;
-		[HideInInspector] public ThirdPartyAdUnit[] iosMolocoAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosMolocoAdUnitData;
 		
 		//InMobi Data
 		[HideInInspector] public string androidInMobiAccountId;
-		[HideInInspector] public ThirdPartyAdUnit[] androidInMobiAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] androidInMobiAdUnitData;
 		[HideInInspector] public string iosInMobiAccountId;
-		[HideInInspector] public ThirdPartyAdUnit[] iosInMobiAdUnitData;
+		[HideInInspector] public AdMobAdUnit[] iosInMobiAdUnitData;
 		
 		private void OnValidate() {
 			Sanitize();
@@ -78,13 +78,13 @@ namespace Nimbus.ScriptableObjects {
 				// ReSharper disable InvertIf
 				if (androidApsSlotData != null) {
 					for (var i = 0; i < androidApsSlotData.Length; i++) {
-						androidApsSlotData[i].SlotId = androidApsSlotData[i].SlotId?.Trim();
+						androidApsSlotData[i].slotId = androidApsSlotData[i].slotId?.Trim();
 					}
 				}
 				
 				if (iosApsSlotData != null) {
 					for (var i = 0; i < iosApsSlotData.Length; i++) {
-						iosApsSlotData[i].SlotId = iosApsSlotData[i].SlotId?.Trim();
+						iosApsSlotData[i].slotId = iosApsSlotData[i].slotId?.Trim();
 					}
 				}
 			#endif
@@ -179,16 +179,14 @@ namespace Nimbus.ScriptableObjects {
 		
 
 
-		public Tuple<string, ApsSlotData[], int> GetApsData() {
+		public Tuple<string, ApsSlotData[]> GetApsData() {
 			var appID = androidAppID;
 			var slots = androidApsSlotData;
-			var timeoutInMilliseconds = androidApsTimeoutInMilliseconds;
 			#if UNITY_IOS
 				appID = iosAppID;
 				slots =  iosApsSlotData;
-				timeoutInMilliseconds = iosApsTimeoutInMilliseconds;
 			#endif
-			return new Tuple<string, ApsSlotData[], int>(appID, slots, timeoutInMilliseconds);
+			return new Tuple<string, ApsSlotData[]>(appID, slots);
 		}
 
 		public string GetVungleData()
@@ -209,26 +207,22 @@ namespace Nimbus.ScriptableObjects {
 			return appID;
 		}
 		
-		public Tuple<string, ThirdPartyAdUnit[]> GetAdMobData() {
-			var appID = androidAdMobAppID;
+		public AdMobAdUnit[] GetAdMobData() {
 			var adUnitIds = androidAdMobAdUnitData;
 			#if UNITY_IOS
-				appID = iosAdMobAppID;
 				adUnitIds =  iosAdMobAdUnitData;
 			#endif
-			return new Tuple<string, ThirdPartyAdUnit[]>(appID, adUnitIds);
+			return adUnitIds;
 		}
 		
-		public Tuple<string, string, ThirdPartyAdUnit[]> GetMintegralData() {
+		public Tuple<string, string> GetMintegralData() {
 			var appID = androidMintegralAppID;
 			var appKey = androidMintegralAppKey;
-			var adUnitIds = androidMintegralAdUnitData;
 			#if UNITY_IOS
 				appID = iosMintegralAppID;
 				appKey = iosMintegralAppKey;
-				adUnitIds =  iosMintegralAdUnitData;
 			#endif
-			return new Tuple<string, string, ThirdPartyAdUnit[]>(appID, appKey, adUnitIds);
+			return new Tuple<string, string>(appID, appKey);
 		}
 		
 		public string GetUnityAdsData()
@@ -240,24 +234,20 @@ namespace Nimbus.ScriptableObjects {
 			return appID;
 		}
 		
-		public Tuple<string, ThirdPartyAdUnit[]> GetMolocoData() {
+		public string GetMolocoData() {
 			var appKey = androidMolocoAppKey;
-			var adUnitIds = androidMolocoAdUnitData;
 			#if UNITY_IOS
 				appKey = iosMolocoAppKey;
-				adUnitIds =  iosMolocoAdUnitData;
 			#endif
-			return new Tuple<string, ThirdPartyAdUnit[]>(appKey, adUnitIds);
+			return appKey;
 		}
 		
-		public Tuple<string, ThirdPartyAdUnit[]> GetInMobiData() {
+		public string GetInMobiData() {
 			var appKey = androidInMobiAccountId;
-			var adUnitIds = androidInMobiAdUnitData;
 			#if UNITY_IOS
 				appKey = iosInMobiAccountId;
-				adUnitIds =  iosInMobiAdUnitData;
 			#endif
-			return new Tuple<string, ThirdPartyAdUnit[]>(appKey, adUnitIds);
+			return appKey;
 		}
 
 	}

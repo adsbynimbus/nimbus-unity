@@ -1,28 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nimbus.Internal.Interceptor;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.AdMob;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.InMobi;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Meta;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Vungle;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Mintegral;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.MobileFuse;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.Moloco;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand.UnityAds;
+using Newtonsoft.Json;
+using Nimbus.Internal.Extensions;
+using Nimbus.Internal.Extensions.AdMob;
+using Nimbus.Internal.Extensions.APS;
 using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Enumerations;
-using OpenRTB.Request;
 using UnityEngine;
-using DeviceType = OpenRTB.Enumerations.DeviceType;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 
 namespace Nimbus.Internal {
 	public class Android : NimbusAPI {
+		// ThirdParty Providers
+		#if NIMBUS_ENABLE_ADMOB
+			private AdMobAndroid _adMobAndroid;
+		#endif
+		#if NIMBUS_ENABLE_APS
+			private ApsAndroid _apsAndroid;
+		#endif
 		private const string AndroidBuild = "android.os.Build";
 		private const string AndroidBuildVersion = "android.os.Build$VERSION";
 		private const string AndroidLogger = "com.adsbynimbus.Nimbus$Logger$Default";
@@ -35,21 +33,11 @@ namespace Nimbus.Internal {
 
 		private AndroidJavaObject _currentActivity;
 
-		private Device _deviceCache;
 		private AndroidJavaClass _helper;
 		private AndroidJavaClass _nimbus;
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
 		
-		private ThirdPartyAdUnit[] mintegralAdUnits;
-		
-		private ThirdPartyAdUnit[] molocoAdUnits;
-		
-		private ThirdPartyAdUnit[] inMobiAdUnits;
-		
-		// ThirdParty Providers
-		private List<IInterceptor> _interceptors;
-
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Initializing Android SDK");
 			_unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -59,137 +47,60 @@ namespace Nimbus.Internal {
 			_connectionTypeHelper = new AndroidJavaClass(ConnectionHelper);
 			_build = new AndroidJavaClass(AndroidBuild);
 			_buildVersion = new AndroidJavaClass(AndroidBuildVersion);
-			var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 
-			var androidLogger = new AndroidJavaObject(AndroidLogger, 0);
-			_nimbus.CallStatic("addLogger", androidLogger);
-			_nimbus.CallStatic("initialize", _currentActivity, configuration.publisherKey.Trim(),
-				configuration.apiKey.Trim());
-
-			if (StaticMethod.InitializeInterceptor()) {
-				_interceptors = new List<IInterceptor>();		
-			}
-
+			var extensions = new Nimbus.Internal.Extensions.Extensions();
+			
 			#if NIMBUS_ENABLE_APS
-				var (apsAppID, slots, timeout) = configuration.GetApsData();
-				var aps = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, timeout);
-				aps.InitializeNativeSDK();
-				_interceptors.Add(aps);
+				var (apsAppID, slots) = configuration.GetApsData();
+				_apsAndroid = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, 0);
+				extensions.aps.appKey = apsAppID;
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				var vungleAppId = configuration.GetVungleData();
-				Debug.unityLogger.Log(vungleAppId);
-				var vungle = new VungleAndroid(applicationContext, vungleAppId);
-				vungle.InitializeNativeSDK();
-				_interceptors.Add(vungle);
+				extensions.vungle.appId = configuration.GetVungleData();
 			#endif
 			#if NIMBUS_ENABLE_META
-				var metaAppId = configuration.GetMetaData();
-				var meta = new MetaAndroid(_currentActivity, configuration.enableSDKInTestMode, metaAppId);
-				meta.InitializeNativeSDK();
-				_interceptors.Add(meta);
+				extensions.meta.appId = configuration.GetMetaData();
+				extensions.meta.forceTestAd = configuration.enableSDKInTestMode;
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
-				var (adMobAppID, adMobAdUnitIds) = configuration.GetAdMobData();
-				var admob = new AdMobAndroid(adMobAdUnitIds);
-				_interceptors.Add(admob);
+				var adMobAdUnitIds = configuration.GetAdMobData();
+				_adMobAndroid = new AdMobAndroid(adMobAdUnitIds);
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
-				var (mintegralAppID, mintegralAppKey, mintegralAdUnitIds) = configuration.GetMintegralData();
-				mintegralAdUnits = mintegralAdUnitIds;
-				var mintegral = new MintegralAndroid(applicationContext, mintegralAppID, mintegralAppKey, mintegralAdUnitIds);
-				mintegral.InitializeNativeSDK();
-				_interceptors.Add(mintegral);
+				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
+				extensions.mintegral.appId = mintegralAppID;
+				extensions.mintegral.appKey = mintegralAppKey;
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
-				var unityAdsGameId = configuration.GetUnityAdsData();
-				var unityAds = new UnityAdsAndroid(applicationContext, unityAdsGameId);
-				unityAds.InitializeNativeSDK();
-				_interceptors.Add(unityAds);
-			#endif
-			#if NIMBUS_ENABLE_MOBILEFUSE
-				var mobileFuse = new MobileFuseAndroid();
-				// No Initialization Needed
-				_interceptors.Add(mobileFuse);
+				extensions.unityAds.gameId = configuration.GetUnityAdsData();
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
-				Debug.unityLogger.Log("Initializing Android Moloco SDK");
-				var (molocoAppKey, molocoAdUnitIds) = configuration.GetMolocoData();
-				molocoAdUnits = molocoAdUnitIds;
-				var moloco = new MolocoAndroid(applicationContext, molocoAppKey);
-				moloco.InitializeNativeSDK();
-				_interceptors.Add(moloco);
+				extensions.moloco.appKey = configuration.GetMolocoData();
 			#endif
 			#if NIMBUS_ENABLE_INMOBI
-				Debug.unityLogger.Log("Initializing Android InMobi SDK");
-				var (inMobiAccountId, inMobiAdUnitIds) = configuration.GetInMobiData();
-				inMobiAdUnits = inMobiAdUnitIds;
-				var inMobi = new InMobiAndroid(applicationContext, inMobiAccountId);
-				inMobi.InitializeNativeSDK();
-				_interceptors.Add(inMobi);
+				extensions.inMobi.accountId = configuration.GetInMobiData();
 			#endif
+			
+			//commenting this out so the automated build works until 3.0 Android is complete
+			/*_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
+				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));*/
 		}
 
 
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			const string functionCall = "render";
 			var holdTime = 0;
-			var shouldBlock = false;
-			var listener = new AdManagerListener(in _helper, ref nimbusAdUnit);
+			var shouldBlock = nimbusAdUnit.AdType != AdType.Banner;
+			//var listener = new AdManagerListener(in _helper, ref nimbusAdUnit);
 
-			if (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
+			/*f (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
 				shouldBlock = true;
 				holdTime = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
-			}
-			var mintegralAdUnitId = "";
-			var mintegralAdUnitPlacementId = "";
-			var molocoAdUnitId = "";
-			var inMobiPlacementId = "";
-			#if NIMBUS_ENABLE_MINTEGRAL
-				try
-				{
-					var minteralAdUnit =
-						mintegralAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					mintegralAdUnitId = minteralAdUnit.AdUnitId;
-					mintegralAdUnitPlacementId = minteralAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_MOLOCO
-				try
-				{
-					var molocoAdUnit =
-						molocoAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					molocoAdUnitId = molocoAdUnit.AdUnitId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			#if NIMBUS_ENABLE_INMOBI
-				try
-				{
-					var inMobiAdUnit =
-						inMobiAdUnits.SingleOrDefault(adUnit => adUnit.AdUnitType == nimbusAdUnit.AdType);
-					inMobiPlacementId = inMobiAdUnit.AdUnitPlacementId;
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.LogException(e);
-				}
-			#endif
-			_helper.CallStatic(functionCall, _currentActivity, nimbusAdUnit.RawBidResponse, shouldBlock, (nimbusAdUnit.AdType == AdUnitType.Rewarded), holdTime,
-				listener, mintegralAdUnitId, mintegralAdUnitPlacementId, molocoAdUnitId, inMobiPlacementId, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
-		}
-
-		internal override List<IInterceptor> Interceptors() {
-			return _interceptors;
+			}*/
+			_helper.CallStatic(functionCall, _currentActivity, shouldBlock, (nimbusAdUnit.AdType == AdType.Rewarded), holdTime,
+				null,"", "","","", true, 0);
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

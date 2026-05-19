@@ -19,11 +19,13 @@ extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
                                      bool enableUnityLogs,
-                                     bool enableSDKInTestMode) {
+                                     bool enableSDKInTestMode,
+                                     const char* thirdPartyJson) {
         [NimbusManager initializeNimbusSDKWithPublisher: GetStringParam(publisher)
                                                  apiKey: GetStringParam(apikey)
                                         enableUnityLogs: enableUnityLogs
-                                        enableSDKInTestMode: enableSDKInTestMode];
+                                        enableSDKInTestMode: enableSDKInTestMode
+                                        thirdPartyJson: GetStringParam(thirdPartyJson)];
     }
 
     void _bannerAd(int adUnitInstanceId, 
@@ -33,24 +35,27 @@ extern "C" {
                    int refreshInterval,
                    bool respectSafeArea,
                    int bannerPosition,
-                   bool showAd) {
+                   bool showAd,
+                   const char* thirdPartyDemand) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval respectSafeArea:respectSafeArea
-            bannerPosition:bannerPosition showAd: showAd];
+            bannerPosition:bannerPosition showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
     }
 
     void _interstitialAd(int adUnitInstanceId,
                                 const char* position,
-                                bool showAd) {
+                                bool showAd,
+                                const char* thirdPartyDemand) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            interstitialAdWithPosition:GetStringParam(position) showAd: showAd];
+            interstitialAdWithPosition:GetStringParam(position) showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
     }
     
     void _rewardedAd(int adUnitInstanceId,
                             const char* position,
-                            bool showAd) {
+                            bool showAd,
+                            const char* thirdPartyDemand) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            rewardedAdWithPosition:GetStringParam(position) showAd: showAd];
+            rewardedAdWithPosition:GetStringParam(position) showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
     }
     
     void _showAd(int adUnitInstanceId,
@@ -80,13 +85,15 @@ extern "C" {
         return strdup([[NimbusHelper getPlistJSON] UTF8String]);
     }
 
-#if NIMBUS_ENABLE_LIVERAMP
-    void _initializeLiveRamp(const char* configId, const char* email, const char* phoneNumber, bool isTestMode, bool hasConsentForNoLegislation) {
-        [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) phoneNumber:GetStringParam(phoneNumber) isTestMode:isTestMode hasConsentForNoLegislation:hasConsentForNoLegislation];
+#if NIMBUS_ENABLE_ADMOB
+    void _initializeAdMob() {
+        [NimbusManager initAdMob];
     }
-    
-    const char* _getLiveRampData() {
-        return strdup([[NimbusManager getLiveRampData] UTF8String]);
+#endif
+
+#if NIMBUS_ENABLE_LIVERAMP
+    void _initializeLiveRamp(const char* configId, const char* email, bool hasConsentForNoLegislation, bool testMode) {
+        [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) hasConsentForNoLegislation:hasConsentForNoLegislation testMode:testMode];
     }
 #endif
 }

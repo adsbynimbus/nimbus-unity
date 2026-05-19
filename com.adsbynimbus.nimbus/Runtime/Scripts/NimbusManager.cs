@@ -7,14 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
-using Nimbus.Internal.Interceptor.ThirdPartyDemand;
-using Nimbus.Internal.LiveRamp;
-using Nimbus.Internal.Utility;
+using Nimbus.Internal.Extensions;
+using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.ScriptableObjects;
-using OpenRTB.Request;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Gender = OpenRTB.Request.Gender;
 
 namespace Nimbus.Runtime.Scripts {
 	[DisallowMultipleComponent]
@@ -23,8 +20,6 @@ namespace Nimbus.Runtime.Scripts {
 		
 		private bool _isTheApplicationBackgrounded;
 		private NimbusAPI _nimbusPlatformAPI;
-		private Regs _regulations;
-		private List<Segment> _userData = new ();
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
@@ -168,7 +163,7 @@ namespace Nimbus.Runtime.Scripts {
 		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, 
 				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
 				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -192,7 +187,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
 		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -212,7 +207,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition);
 			ShowLoadedAd(adUnit);
 			return adUnit;
 		}
@@ -248,7 +243,7 @@ namespace Nimbus.Runtime.Scripts {
 		public NimbusAdUnit RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
 			string nimbusReportingPosition, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
 			//FIGURE OUT HOW TO PASS THROUGH CANCEL
 			ShowLoadedAd(adUnit);
 			return adUnit;
@@ -301,7 +296,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
 		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Interstitial, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
@@ -330,7 +325,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
@@ -349,7 +344,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition) {
-			var adUnit = new NimbusAdUnit(AdUnitType.Rewarded, NimbusEvents, nimbusReportingPosition);
+			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition);
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
@@ -361,8 +356,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		The user generated CCPA consent string
 		/// </param>
 		public void SetUsPrivacyString(string usPrivacyString) {
-			_regulations.Ext ??= new RegExt();
-			_regulations.Ext.UsPrivacy = usPrivacyString;
+			
 		}
 		
 		/// <summary>
@@ -372,11 +366,17 @@ namespace Nimbus.Runtime.Scripts {
 		///		Returns if COPPA as enabled or not
 		/// </return>
 		public Boolean GetCoppa() {
-			if (_regulations == null)
-			{
-				return false;
-			}
-			return _regulations.Coppa == 1;
+			return false;
+		}
+		
+		/// <summary>
+		///     If this inventory is subject to COPPA restrictions use this function to pass in RTB COPPA information for all Nimbus requests
+		/// </summary>
+		/// <param name="isCoppa">
+		///		Signals that the inventory is under that age of 13
+		/// </param>
+		public void SetCoppa(bool isCoppa) {
+			//nothing for now until Android is finished
 		}
 		
 		/// <summary>
@@ -385,19 +385,8 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="gender">
 		///		enum representing the user's gender (F, M, O)
 		/// </param>
-		public void SetUserGender(Gender gender)
+		public void SetUserGender()
 		{
-			var index = _userData.FindIndex(seg => seg.Name == "gender");
-			if (index >= 0) 
-			{
-				_userData[index].Value = gender.ToString();
-			} 
-			else {
-				var genderObj = new Segment();
-				genderObj.Name = "gender";
-				genderObj.Value = gender.ToString();
-				_userData.Add(genderObj);
-			}	
 		}
 		
 		/// <summary>
@@ -407,32 +396,17 @@ namespace Nimbus.Runtime.Scripts {
 		///		integer greater than 0 representing user's age
 		/// </param>
 		public void SetUserAge(int age) {
-			var index = _userData.FindIndex(seg => seg.Name == "age");
-			if (index >= 0) 
-			{
-				_userData[index].Value = age.ToString();
-			} 
-			else {
-				var ageObj = new Segment();
-				ageObj.Name = "age";
-				ageObj.Value = age.ToString();
-				_userData.Add(ageObj);
-			}				
 		}
-
-		internal BidRequest ApplyUserData(BidRequest bidRequest)
-		{
-			if (_userData.Count > 0)
+		
+		#if NIMBUS_ENABLE_ADMOB_IOS
+			/// <summary>
+			///     This method will manually initialize the AdMob SDK if the option to auto-initialize wasn't selected.
+			/// </summary>
+			public static void initializeAdMob()
 			{
-				bidRequest.User ??= new User();
-				var data = new Data();
-				data.Name = "nimbus";
-				data.Segment = _userData.ToArray();
-				bidRequest.User.Data = (bidRequest.User.Data == null ? 
-					new[] { data } : new List<Data>(bidRequest.User.Data) { data }.ToArray());
+				AdMobIOS.ManuallyInitAdMob();
 			}
-			return bidRequest;
-		}
+		#endif
 		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>
@@ -441,26 +415,21 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="configId">
 		///		Config ID provided by LiveRamp
 		/// </param>
+		/// <param name="email">
+		///		Email is the preferred method for identifying a user
+		/// </param>
 		/// <param name="hasConsentForNoLegislation">
 		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
 		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
 		/// </param>
-		/// <param name="email">
-		///		Email is the preferred method for identifying a user, if null will attempt to use phone number
+		/// <param name="isTestMode">
+		///		Set to true if wishing to use test mode.
 		/// </param>
-		///  <param name="phoneNumber">
-		///		Optional phone if email isn't known, only US is supported
-		/// </param>
-		/// <param name="testMode">
-		///		Optional parameter if debugging / testing
-		/// </param>
-			public static void initializeLiveRamp(String configId,
-				Boolean hasConsentForNoLegislation, String email, 
-				String phoneNumber = "", Boolean testMode = false)
+			public static void initializeLiveRamp(String configId, String email,
+				Boolean hasConsentForNoLegislation, Boolean isTestMode)
 			{
 					// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
-					NimbusLiveRampHelpers.initializeLiveRamp(configId, hasConsentForNoLegislation, testMode,
-							email, phoneNumber);
+					NimbusLiveRampHelpers.initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
 			}
 		#endif
 		
@@ -472,39 +441,6 @@ namespace Nimbus.Runtime.Scripts {
 			return _configuration;
 		}
 
-		#region Private helpers
-		
-		// with test = 1 Nimbus servers check that the app object is present
-		// in production app data properly construction on Nimbus from database information assuming the account is not a 1:many account
-		// if the account is 1:many the publisher needs submit proper App object
-		private void SetTestData(BidRequest bidRequest) {
-			//if (_configuration.enableSDKInTestMode) bidRequest.SetAppName(Application.productName);
-		}
-		
-
-		private async Task<BidRequest> ApplyInterceptors(BidRequest bidRequest, AdUnitType adUnitType, bool isFullScreen) {
-			if (_nimbusPlatformAPI.Interceptors() == null) {
-				return bidRequest;
-			}
-
-			var interceptorTasks = new List<Task<BidRequestDelta>>();
-			foreach (var interceptor in _nimbusPlatformAPI.Interceptors())
-			{
-				interceptorTasks.Add(interceptor.GetBidRequestDeltaAsync(adUnitType, isFullScreen, bidRequest).TimeoutWithResult(3000));
-			}
-			try
-			{
-				var results = await Task.WhenAll(interceptorTasks);
-				bidRequest = BidRequestDeltaManager.ApplyDeltas(results, bidRequest);
-			}
-			catch (Exception e)
-			{
-				Debug.unityLogger.Log($"NIMBUS INTERCEPTOR ERROR: {e.Message}  {e.StackTrace}");
-			}
-
-			return bidRequest;
-		}
-		#endregion
 	}
 
 }
