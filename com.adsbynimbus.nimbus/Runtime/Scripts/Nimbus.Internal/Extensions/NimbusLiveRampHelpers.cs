@@ -31,7 +31,7 @@ namespace Nimbus.Internal.Extensions
                 }
                 else
                 {
-                    liveRamp.CallStatic("initialize", configId, email, phoneNumber, hasConsentForNoLegislation);
+                    liveRamp.CallStatic("initialize", configId, email, hasConsentForNoLegislation);
                 }
             #endif
         }
