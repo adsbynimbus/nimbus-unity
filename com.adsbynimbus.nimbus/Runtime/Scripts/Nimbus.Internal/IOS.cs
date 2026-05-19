@@ -11,10 +11,10 @@ namespace Nimbus.Internal {
 	#if UNITY_IOS
 	public class IOS : NimbusAPI {
 		// ThirdParty Providers
-		#if NIMBUS_ENABLE_ADMOB_IOS
+		#if NIMBUS_ENABLE_ADMOB
 			private AdMobIOS _adMobIOS;
 		#endif
-		#if NIMBUS_ENABLE_APS_IOS
+		#if NIMBUS_ENABLE_APS
 			private ApsIOS _apsIOS;
 		#endif
 		
