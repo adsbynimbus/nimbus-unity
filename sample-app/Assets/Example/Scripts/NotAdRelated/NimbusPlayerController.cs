@@ -43,7 +43,7 @@ namespace Example.Scripts.NotAdRelated {
 			#if UNITY_6000_0_OR_NEWER
 				var velocity = _mRb.linearVelocity;
 			#else
-				var velocity = _mRb.linearVelocity;
+				var velocity = _mRb.velocity;
 			#endif
 			var targetVelocity = new Vector2(_velocity * _movementSpeed, velocity.y);
 			#if UNITY_6000_0_OR_NEWER
