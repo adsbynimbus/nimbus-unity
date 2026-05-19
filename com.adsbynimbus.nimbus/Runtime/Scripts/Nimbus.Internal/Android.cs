@@ -15,11 +15,11 @@ using UnityEngine;
 namespace Nimbus.Internal {
 	public class Android : NimbusAPI {
 		// ThirdParty Providers
-		#if NIMBUS_ENABLE_ADMOB_IOS
-				private AdMobAndroid _adMobAndroid;
+		#if NIMBUS_ENABLE_ADMOB
+			private AdMobAndroid _adMobAndroid;
 		#endif
-		#if NIMBUS_ENABLE_APS_IOS
-				private ApsAndroid _apsAndroid;
+		#if NIMBUS_ENABLE_APS
+			private ApsAndroid _apsAndroid;
 		#endif
 		private const string AndroidBuild = "android.os.Build";
 		private const string AndroidBuildVersion = "android.os.Build$VERSION";
@@ -47,7 +47,6 @@ namespace Nimbus.Internal {
 			_connectionTypeHelper = new AndroidJavaClass(ConnectionHelper);
 			_build = new AndroidJavaClass(AndroidBuild);
 			_buildVersion = new AndroidJavaClass(AndroidBuildVersion);
-			var applicationContext = _currentActivity.Call<AndroidJavaObject>("getApplicationContext");
 
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			
@@ -83,8 +82,9 @@ namespace Nimbus.Internal {
 				extensions.inMobi.accountId = configuration.GetInMobiData();
 			#endif
 			
-			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
-				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));
+			//commenting this out so the automated build works until 3.0 Android is complete
+			/*_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
+				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));*/
 		}
 
 
