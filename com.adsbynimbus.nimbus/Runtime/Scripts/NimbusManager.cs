@@ -370,6 +370,16 @@ namespace Nimbus.Runtime.Scripts {
 		}
 		
 		/// <summary>
+		///     If this inventory is subject to COPPA restrictions use this function to pass in RTB COPPA information for all Nimbus requests
+		/// </summary>
+		/// <param name="isCoppa">
+		///		Signals that the inventory is under that age of 13
+		/// </param>
+		public void SetCoppa(bool isCoppa) {
+			//nothing for now until Android is finished
+		}
+		
+		/// <summary>
 		///     Sets the Gender of the User
 		/// </summary>
 		/// <param name="gender">
