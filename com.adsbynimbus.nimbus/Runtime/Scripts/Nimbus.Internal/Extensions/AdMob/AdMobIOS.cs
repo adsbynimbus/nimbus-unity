@@ -7,11 +7,9 @@ using System.Runtime.InteropServices;
 namespace Nimbus.Internal.Extensions.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
 	
-	
 	internal class AdMobIOS {
 		private readonly AdMobAdUnit[] _adUnitIds;
 		private readonly bool _autoInit;
-		
 		[DllImport("__Internal")]
 		private static extern void _initializeAdMob();
 

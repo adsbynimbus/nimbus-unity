@@ -62,46 +62,45 @@ import NimbusMobileFuseKit
         enableSDKInTestMode: Bool,
         thirdPartyJson: String
     ) {
-        let extensions = extensionsFromJsonString(thirdPartyDemand: thirdPartyJson)
+        guard let extensions = extensionsFromJsonString(thirdPartyDemand: thirdPartyJson) else {
+            return
+        }
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
-            NimbusManager.initAPS(appKey: extensions?.aps?.appKey ?? "")
+            NimbusManager.initAPS(appKey: extensions.aps?.appKey ?? "")
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
-            if (extensions != nil) {
-                #if NIMBUS_ENABLE_ADMOB
-                AdMobExtension()
-                #endif
-                #if NIMBUS_ENABLE_INMOBI
-                InMobiExtension(accountId: extensions?.inMobi?.accountId ?? "")
-                #endif
-                #if NIMBUS_ENABLE_META
-                MetaExtension(appId: extensions?.meta?.appId ?? "", forceTestAd: extensions?.meta?.forceTestAd ?? false)
-                #endif
-                #if NIMBUS_ENABLE_MINTEGRAL
-                let mintegral = extensions?.mintegral
-                MintegralExtension(appId: mintegral?.appId ?? "",
-                                    appKey: mintegral?.appKey ?? "")
-                #endif
-                #if NIMBUS_ENABLE_MOLOCO
-                MolocoExtension(appKey: extensions?.moloco?.appKey ?? "")
-                #endif
-                #if NIMBUS_ENABLE_UNITY_ADS
-                UnityExtension(gameId: extensions?.unityAds?.gameId ?? "")
-                #endif
-                #if NIMBUS_ENABLE_VUNGLE
-                VungleExtension(appId: extensions?.vungle?.appId ?? "")
-                #endif
-            }
+            #if NIMBUS_ENABLE_ADMOB
+            AdMobExtension()
+            #endif
+            #if NIMBUS_ENABLE_INMOBI
+            InMobiExtension(accountId: extensions.inMobi?.accountId ?? "")
+            #endif
+            #if NIMBUS_ENABLE_META
+            MetaExtension(appId: extensions.meta?.appId ?? "", forceTestAd: extensions.meta?.forceTestAd ?? false)
+            #endif
+            #if NIMBUS_ENABLE_MINTEGRAL
+            let mintegral = extensions.mintegral
+            MintegralExtension(appId: mintegral?.appId ?? "",
+                                appKey: mintegral?.appKey ?? "")
+            #endif
+            #if NIMBUS_ENABLE_MOLOCO
+            MolocoExtension(appKey: extensions.moloco?.appKey ?? "")
+            #endif
+            #if NIMBUS_ENABLE_UNITY_ADS
+            UnityExtension(gameId: extensions.unityAds?.gameId ?? "")
+            #endif
+            #if NIMBUS_ENABLE_VUNGLE
+            VungleExtension(appId: extensions.vungle?.appId ?? "")
+            #endif
         }
         Nimbus.configuration.testMode = enableSDKInTestMode
     }
     
-    #if NIMBUS_ENABLE_APS
     @objc private class func initAPS(appKey: String) {
         #if NIMBUS_ENABLE_APS
-        if (appKey != ""){
+        if (appKey != "") {
             DTBAds.sharedInstance().setAppKey(appKey)
             DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
             DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
@@ -111,7 +110,6 @@ import NimbusMobileFuseKit
         }
         #endif
     }
-    #endif
     
     #if NIMBUS_ENABLE_ADMOB
     @objc public static func initAdMob() {
@@ -167,21 +165,22 @@ import NimbusMobileFuseKit
             do {
                 #if NIMBUS_ENABLE_APS
                     var apsAds: [APSAd] = []
-                if (!(extensions?.aps?.slotData?.isEmpty ?? false))
-                {
-                    for slot in extensions?.aps?.slotData ?? [] {
-                        let bannerAdRequest = APSAdRequest(
-                            slotUUID: slot?.slotId ?? "",
-                            adNetworkInfo: .init(networkName: .nimbus)
-                        )
-                        bannerAdRequest.setAdFormat(.banner)
-                        do {
-                            apsAds.append(try await bannerAdRequest.loadAd())
-                        } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
+                    if (!(extensions?.aps?.slotData?.isEmpty ?? false)) {
+                        for slot in extensions?.aps?.slotData ?? [] {
+                            if let slotUUID = slot?.slotId {
+                                let bannerAdRequest = APSAdRequest(
+                                    slotUUID: slotUUID,
+                                    adNetworkInfo: .init(networkName: .nimbus)
+                                )
+                                bannerAdRequest.setAdFormat(.banner)
+                                do {
+                                    apsAds.append(try await bannerAdRequest.loadAd())
+                                } catch {
+                                    Nimbus.Log.request.error(error.localizedDescription)
+                                }
+                            }
                         }
                     }
-                }
                 #endif
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
@@ -285,7 +284,7 @@ import NimbusMobileFuseKit
                 self.ad = interstitialAd
             }
             catch {
-                Nimbus.Log.ad.error(error.localizedDescription)
+                NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
 
         })
@@ -374,7 +373,7 @@ import NimbusMobileFuseKit
                 }
             })
         } else {
-            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId, 
+            UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId,
             "errorMessage": "Attempted to call show() on an invalid ad type"])
             Nimbus.Log.ad.error("Attempted to show invalid ad type.")
         }
@@ -408,18 +407,28 @@ import NimbusMobileFuseKit
         UnityBinding.sendMessage(
             methodName: "OnAdEvent",
             params: [
-                "adUnitInstanceID": adUnitInstanceID, 
+                "adUnitInstanceID": adUnitInstanceID,
                 "eventName": eventName
             ]
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError?) {
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
         UnityBinding.sendMessage(
             methodName: "OnError",
             params: [
-                "adUnitInstanceID": adUnitInstanceID, 
-                "errorMessage": error?.localizedDescription ?? ""
+                "adUnitInstanceID": adUnitInstanceID,
+                "errorMessage": error.localizedDescription
+            ]
+        )
+    }
+    
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: Error) {
+        UnityBinding.sendMessage(
+            methodName: "OnError",
+            params: [
+                "adUnitInstanceID": adUnitInstanceID,
+                "errorMessage": error.localizedDescription
             ]
         )
     }

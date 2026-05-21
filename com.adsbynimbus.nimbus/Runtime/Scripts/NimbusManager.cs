@@ -23,6 +23,7 @@ namespace Nimbus.Runtime.Scripts {
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
 		public static NimbusManager Instance;
+		private bool _coppa;
 
 		private void Awake() {
 			if (_configuration == null) throw new Exception("The configuration object cannot be null");
@@ -348,36 +349,15 @@ namespace Nimbus.Runtime.Scripts {
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
-	
-		/// <summary>
-		///     If this inventory is subject to CCPA regulations use this function to pass in RTB CCPA information for all Nimbus requests
-		/// </summary>
-		/// <param name="usPrivacyString">
-		///		The user generated CCPA consent string
-		/// </param>
-		public void SetUsPrivacyString(string usPrivacyString) {
-			
-		}
-		
+
 		/// <summary>
 		///     If this inventory is subject to COPPA restrictions use this function to get the passed in RTB COPPA information for all Nimbus requests
 		/// </summary>
 		/// <return>
 		///		Returns if COPPA as enabled or not
 		/// </return>
-		public Boolean GetCoppa() {
-			return false;
-		}
-		
-		/// <summary>
-		///     If this inventory is subject to COPPA restrictions use this function to pass in RTB COPPA information for all Nimbus requests
-		/// </summary>
-		/// <param name="isCoppa">
-		///		Signals that the inventory is under that age of 13
-		/// </param>
-		public void SetCoppa(bool isCoppa) {
-			//nothing for now until Android is finished
-		}
+		// TODO: Add functionality for using this
+		public bool Coppa { get; set; }
 		
 		/// <summary>
 		///     Sets the Gender of the User
@@ -387,6 +367,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// </param>
 		public void SetUserGender()
 		{
+			// TODO: Add functionality
 		}
 		
 		/// <summary>
@@ -396,6 +377,7 @@ namespace Nimbus.Runtime.Scripts {
 		///		integer greater than 0 representing user's age
 		/// </param>
 		public void SetUserAge(int age) {
+			// TODO: Add functionality
 		}
 		
 		#if NIMBUS_ENABLE_ADMOB_IOS

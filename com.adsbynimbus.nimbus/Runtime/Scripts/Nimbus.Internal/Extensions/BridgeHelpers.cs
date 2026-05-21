@@ -6,6 +6,7 @@ namespace Nimbus.Internal.Extensions
 {
     public class BridgeHelpers
     {
+        #if UNITY_ANDROID
         public static string GetStringFromJavaFuture(String className, String methodName, object[] methodParams, long timeout)
         {
             AndroidJNI.AttachCurrentThread();
@@ -15,6 +16,7 @@ namespace Nimbus.Internal.Extensions
             var future = unityHelper.CallStatic<AndroidJavaObject>(methodName, methodParams);
             return future.Call<String>("get", timeout, timeUnitMillis);
         }
+        #endif
     }
     
     public class Extensions
