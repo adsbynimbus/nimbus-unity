@@ -158,23 +158,7 @@ import NimbusMobileFuseKit
         group.wait(for: { @MainActor in
             do {
                 #if NIMBUS_ENABLE_APS
-                    var apsAds: [APSAd] = []
-                    if (!(extensions?.aps?.slotData?.isEmpty ?? false)) {
-                        for slot in extensions?.aps?.slotData ?? [] {
-                            if let slotUUID = slot?.slotId {
-                                let bannerAdRequest = APSAdRequest(
-                                    slotUUID: slotUUID,
-                                    adNetworkInfo: .init(networkName: .nimbus)
-                                )
-                                bannerAdRequest.setAdFormat(.banner)
-                                do {
-                                    apsAds.append(try await bannerAdRequest.loadAd())
-                                } catch {
-                                    Nimbus.Log.request.error(error.localizedDescription)
-                                }
-                            }
-                        }
-                    }
+                    let apsAds = await self.loadAPSAds(from: extensions)
                 #endif
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
@@ -260,7 +244,7 @@ import NimbusMobileFuseKit
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
-                var apsAds = await self.loadAPSAds(from: extensions)
+                let apsAds = await self.loadAPSAds(from: extensions)
             #endif
             var adMobAdUnitId: String = ""
             if let adUnitId = extensions?.adMob?.adUnitIds?.first {
