@@ -111,12 +111,6 @@ import NimbusMobileFuseKit
         #endif
     }
     
-    #if NIMBUS_ENABLE_ADMOB
-    @objc public static func initAdMob() {
-        MobileAds.shared.start()
-    }
-    #endif
-    
     #if NIMBUS_ENABLE_LIVERAMP
     @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true, testMode: Bool = false) {
         let liveRamp = LiveRamp(
@@ -224,36 +218,7 @@ import NimbusMobileFuseKit
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
-                var apsAds: [APSAd] = []
-            if (!(extensions?.aps?.slotData?.isEmpty ?? false))
-            {
-                for slot in extensions?.aps?.slotData ?? [] {
-                    if (slot?.adUnitType == .interstitialDisplay) {
-                        let interstitialStaticAdRequest = APSAdRequest(
-                            slotUUID: slot?.slotId ?? "",
-                            adNetworkInfo: .init(networkName: .nimbus)
-                        )
-                        interstitialStaticAdRequest.setAdFormat(.interstitial)
-                        do {
-                            apsAds.append(try await interstitialStaticAdRequest.loadAd())
-                        } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
-                        }
-                    }
-                    else if (slot?.adUnitType == .interstitialVideo) {
-                        let interstitialVideoAdRequest = APSAdRequest(
-                            slotUUID: slot?.slotId ?? "",
-                            adNetworkInfo: .init(networkName: .nimbus)
-                        )
-                        interstitialVideoAdRequest.setAdFormat(.interstitial)
-                        do {
-                            apsAds.append(try await interstitialVideoAdRequest.loadAd())
-                        } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
-                        }
-                    }
-                }
-            }
+                var apsAds = await self.loadAPSAds(from: extensions)
             #endif
             var adMobAdUnitId: String = ""
             if let adUnitId = extensions?.adMob?.adUnitIds?.first {
@@ -263,7 +228,7 @@ import NimbusMobileFuseKit
             let interstitialAd = await Nimbus.interstitialAd(position: position){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                        admob(bannerAdUnitId: adMobAdUnitId)
+                        admob(interstitialAdUnitId: adMobAdUnitId)
                     #endif
                     #if NIMBUS_ENABLE_APS
                         aps(ads: apsAds)
@@ -295,22 +260,7 @@ import NimbusMobileFuseKit
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
-            var apsAds: [APSAd] = []
-            if (!(extensions?.aps?.slotData?.isEmpty ?? false))
-            {
-                for slot in extensions?.aps?.slotData ?? [] {
-                    let rewardedAdRequest = APSAdRequest(
-                        slotUUID: slot?.slotId ?? "",
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    rewardedAdRequest.setAdFormat(.rewardedVideo)
-                    do {
-                        apsAds.append(try await rewardedAdRequest.loadAd())
-                    } catch {
-                        Nimbus.Log.request.error(error.localizedDescription)
-                    }
-                }
-            }
+                var apsAds = await self.loadAPSAds(from: extensions)
             #endif
             var adMobAdUnitId: String = ""
             if let adUnitId = extensions?.adMob?.adUnitIds?.first {
@@ -377,14 +327,58 @@ import NimbusMobileFuseKit
             "errorMessage": "Attempted to call show() on an invalid ad type"])
             Nimbus.Log.ad.error("Attempted to show invalid ad type.")
         }
-        
     }
+    
+    #if NIMBUS_ENABLE_APS
+    private func loadAPSAds(from extensions: Extensions?) async -> [APSAd] {
+        var apsAds: [APSAd] = []
+        if (!(extensions?.aps?.slotData?.isEmpty ?? false)) {
+            for slot in extensions?.aps?.slotData ?? [] {
+                if (slot?.adUnitType == .interstitialDisplay) {
+                    let interstitialStaticAdRequest = APSAdRequest(
+                        slotUUID: slot?.slotId ?? "",
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    interstitialStaticAdRequest.setAdFormat(.interstitial)
+                    do {
+                        apsAds.append(try await interstitialStaticAdRequest.loadAd())
+                    } catch {
+                        Nimbus.Log.request.error(error.localizedDescription)
+                    }
+                }
+                else if (slot?.adUnitType == .interstitialVideo) {
+                    let interstitialVideoAdRequest = APSAdRequest(
+                        slotUUID: slot?.slotId ?? "",
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    interstitialVideoAdRequest.setAdFormat(.interstitial)
+                    do {
+                        apsAds.append(try await interstitialVideoAdRequest.loadAd())
+                    } catch {
+                        Nimbus.Log.request.error(error.localizedDescription)
+                    }
+                }
+                else if (slot?.adUnitType == .rewardedVideo) {
+                    let rewardedAdRequest = APSAdRequest(
+                        slotUUID: slot?.slotId ?? "",
+                        adNetworkInfo: .init(networkName: .nimbus)
+                    )
+                    rewardedAdRequest.setAdFormat(.rewardedVideo)
+                    do {
+                        apsAds.append(try await rewardedAdRequest.loadAd())
+                    } catch {
+                        Nimbus.Log.request.error(error.localizedDescription)
+                    }
+                }
+            }
+        }
+        return apsAds
+    }
+    #endif
     
     public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: AdEvent) {
         let eventName: String
         switch event {
-        case .loaded, .firstQuartile, .midpoint, .thirdQuartile, .skipped:
-            return // Unity doesn't handle these events
         case .impression:
             eventName = "IMPRESSION"
         case .clicked:
@@ -399,8 +393,7 @@ import NimbusMobileFuseKit
             eventName = "DESTROYED"
         case .endCardImpression:
             eventName = "END_CARD_IMPRESSION"
-        @unknown default:
-            Nimbus.Log.ad.error("Ad Event not sent: \(event)")
+        default:
             return
         }
         

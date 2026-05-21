@@ -9,9 +9,6 @@ namespace Nimbus.Internal.Extensions.AdMob {
 	
 	internal class AdMobIOS {
 		private readonly AdMobAdUnit[] _adUnitIds;
-		private readonly bool _autoInit;
-		[DllImport("__Internal")]
-		private static extern void _initializeAdMob();
 
 		public string[] GetAdUnitId(AdType type)
 		{
@@ -28,11 +25,6 @@ namespace Nimbus.Internal.Extensions.AdMob {
 
 		public AdMobIOS(AdMobAdUnit[] adUnitIds) {
 			_adUnitIds = adUnitIds;
-		}
-
-		public static void ManuallyInitAdMob()
-		{
-			_initializeAdMob();
 		}
 
 	}

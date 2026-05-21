@@ -26,7 +26,6 @@ namespace Nimbus.Editor {
 			
 			#if NIMBUS_ENABLE_APS
 				Dependencies.Add("pod 'NimbusAPSKit'");
-				Dependencies.Add("pod 'AmazonPublisherServicesSDK'");
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE

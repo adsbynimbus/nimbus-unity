@@ -380,16 +380,6 @@ namespace Nimbus.Runtime.Scripts {
 			// TODO: Add functionality
 		}
 		
-		#if NIMBUS_ENABLE_ADMOB_IOS
-			/// <summary>
-			///     This method will manually initialize the AdMob SDK if the option to auto-initialize wasn't selected.
-			/// </summary>
-			public static void initializeAdMob()
-			{
-				AdMobIOS.ManuallyInitAdMob();
-			}
-		#endif
-		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>
 		///     This method will initialize the LiveRamp Identity SDK
