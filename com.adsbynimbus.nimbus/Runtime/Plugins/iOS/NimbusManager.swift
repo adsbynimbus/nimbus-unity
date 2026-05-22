@@ -173,10 +173,14 @@ import NimbusMobileFuseKit
                 let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
-                        admob(bannerAdUnitId: adMobAdUnitId)
+                        if (!adMobAdUnitId.isEmpty) {
+                            admob(bannerAdUnitId: adMobAdUnitId)
+                        }
                         #endif
                         #if NIMBUS_ENABLE_APS
-                        aps(ads: apsAds)
+                        if (!apsAds.isEmpty) {
+                            aps(ads: apsAds)
+                        }
                         #endif
                     }
                 }.onEvent { event in
@@ -212,10 +216,14 @@ import NimbusMobileFuseKit
             let interstitialAd = await Nimbus.interstitialAd(position: position){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
+                    if (!adMobAdUnitId.isEmpty) {
                         admob(interstitialAdUnitId: adMobAdUnitId)
+                    }
                     #endif
                     #if NIMBUS_ENABLE_APS
+                    if (!apsAds.isEmpty) {
                         aps(ads: apsAds)
+                    }
                     #endif
                 }
             }.onEvent { event in
@@ -254,10 +262,14 @@ import NimbusMobileFuseKit
             let rewardedAd = await Nimbus.rewardedAd(position: position){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
+                    if (!adMobAdUnitId.isEmpty) {
                         admob(rewardedAdUnitId: adMobAdUnitId)
+                    }
                     #endif
                     #if NIMBUS_ENABLE_APS
+                    if (!apsAds.isEmpty) {
                         aps(ads: apsAds)
+                    }
                     #endif
                 }
             }.onEvent { event in
@@ -318,40 +330,57 @@ import NimbusMobileFuseKit
         var apsAds: [APSAd] = []
         if (!(extensions?.aps?.slotData?.isEmpty ?? false)) {
             for slot in extensions?.aps?.slotData ?? [] {
-                if (slot?.adUnitType == .interstitialDisplay) {
-                    let interstitialStaticAdRequest = APSAdRequest(
-                        slotUUID: slot?.slotId ?? "",
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    interstitialStaticAdRequest.setAdFormat(.interstitial)
-                    do {
-                        apsAds.append(try await interstitialStaticAdRequest.loadAd())
-                    } catch {
-                        Nimbus.Log.request.error(error.localizedDescription)
+                if let uuid = slot?.slotId {
+                    if (uuid.isEmpty) {
+                        continue
                     }
-                }
-                else if (slot?.adUnitType == .interstitialVideo) {
-                    let interstitialVideoAdRequest = APSAdRequest(
-                        slotUUID: slot?.slotId ?? "",
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    interstitialVideoAdRequest.setAdFormat(.interstitial)
-                    do {
-                        apsAds.append(try await interstitialVideoAdRequest.loadAd())
-                    } catch {
-                        Nimbus.Log.request.error(error.localizedDescription)
-                    }
-                }
-                else if (slot?.adUnitType == .rewardedVideo) {
-                    let rewardedAdRequest = APSAdRequest(
-                        slotUUID: slot?.slotId ?? "",
-                        adNetworkInfo: .init(networkName: .nimbus)
-                    )
-                    rewardedAdRequest.setAdFormat(.rewardedVideo)
-                    do {
-                        apsAds.append(try await rewardedAdRequest.loadAd())
-                    } catch {
-                        Nimbus.Log.request.error(error.localizedDescription)
+                    switch (slot?.adUnitType) {
+                    case .display300X250,.display320X50,.display728X90:
+                        let bannerAdRequest = APSAdRequest(
+                            slotUUID: uuid,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        bannerAdRequest.setAdFormat(.banner)
+                        do {
+                            apsAds.append(try await bannerAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    case .interstitialDisplay:
+                        let interstitialStaticAdRequest = APSAdRequest(
+                            slotUUID: uuid,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        interstitialStaticAdRequest.setAdFormat(.interstitial)
+                        do {
+                            apsAds.append(try await interstitialStaticAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    case .interstitialVideo:
+                        let interstitialVideoAdRequest = APSAdRequest(
+                            slotUUID: uuid,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        interstitialVideoAdRequest.setAdFormat(.interstitial)
+                        do {
+                            apsAds.append(try await interstitialVideoAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    case .rewardedVideo:
+                        let rewardedAdRequest = APSAdRequest(
+                            slotUUID: uuid,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        rewardedAdRequest.setAdFormat(.rewardedVideo)
+                        do {
+                            apsAds.append(try await rewardedAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
+                    default:
+                        continue
                     }
                 }
             }
