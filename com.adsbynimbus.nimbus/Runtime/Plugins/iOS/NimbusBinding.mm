@@ -85,12 +85,6 @@ extern "C" {
         return strdup([[NimbusHelper getPlistJSON] UTF8String]);
     }
 
-#if NIMBUS_ENABLE_ADMOB
-    void _initializeAdMob() {
-        [NimbusManager initAdMob];
-    }
-#endif
-
 #if NIMBUS_ENABLE_LIVERAMP
     void _initializeLiveRamp(const char* configId, const char* email, bool hasConsentForNoLegislation, bool testMode) {
         [NimbusManager initializeLiveRampWithConfigId:GetStringParam(configId) email:GetStringParam(email) hasConsentForNoLegislation:hasConsentForNoLegislation testMode:testMode];

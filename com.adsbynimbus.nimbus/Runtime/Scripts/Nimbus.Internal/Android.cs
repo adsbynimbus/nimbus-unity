@@ -82,9 +82,8 @@ namespace Nimbus.Internal {
 				extensions.inMobi.accountId = configuration.GetInMobiData();
 			#endif
 			
-			//commenting this out so the automated build works until 3.0 Android is complete
-			/*_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
-				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));*/
+			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
+				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));
 		}
 
 
