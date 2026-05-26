@@ -40,9 +40,17 @@ namespace Example.Scripts.NotAdRelated {
 		}
 		
 		private void HorizontalMovement() {
-			var velocity = _mRb.linearVelocity;
+			#if UNITY_6000_0_OR_NEWER
+				var velocity = _mRb.linearVelocity;
+			#else
+				var velocity = _mRb.velocity;
+			#endif
 			var targetVelocity = new Vector2(_velocity * _movementSpeed, velocity.y);
-			_mRb.linearVelocity = Vector3.SmoothDamp(velocity, targetVelocity, ref _mVelocity, .0001f);
+			#if UNITY_6000_0_OR_NEWER
+				_mRb.linearVelocity = Vector3.SmoothDamp(velocity, targetVelocity, ref _mVelocity, .0001f);
+			#else
+				_mRb.velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref _mVelocity, .0001f);
+			#endif
 		}
 
 		private void GroundCheck() {

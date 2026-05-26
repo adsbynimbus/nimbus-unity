@@ -17,7 +17,7 @@ namespace Example.Scripts.NotAdRelated {
 		}
 
 		public void ToggleCoppa(bool value) {
-			NimbusManager.Instance.SetCoppa(value);	
+			NimbusManager.Instance.Coppa = value;
 		}
 	}
 
