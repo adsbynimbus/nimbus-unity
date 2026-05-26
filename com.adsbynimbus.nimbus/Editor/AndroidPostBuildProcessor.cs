@@ -138,7 +138,7 @@ namespace Nimbus.Editor {
 					builder.AppendLine(AndroidBuildDependencies.LiveRampBuildDependencies());
 				#endif
 				#if NIMBUS_ENABLE_APS
-					builder.AppendLine(AndroidBuildDependencies.APSBuildDependencies());
+					builder.AppendLine(AndroidBuildDependencies.ApsBuildDependencies());
 				#endif
 				#if NIMBUS_ENABLE_VUNGLE
 					builder.AppendLine(AndroidBuildDependencies.VungleBuildDependencies());

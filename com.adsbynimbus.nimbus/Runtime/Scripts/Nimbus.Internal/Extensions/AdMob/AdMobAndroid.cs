@@ -9,36 +9,24 @@ using UnityEngine;
 namespace Nimbus.Internal.Extensions.AdMob {
    internal class AdMobAndroid
    {
-      private const string NimbusAdMobPackage = "com.adsbynimbus.request.internal.NimbusRequestsAdMobInternal";
-
-      private readonly bool _testMode;
       private readonly AdMobAdUnit[] _adUnitIds;
-      private AdType _adUnitType;
-
-
+      
       public AdMobAndroid(AdMobAdUnit[] adUnitIds)
       {
          _adUnitIds = adUnitIds;
       }
-      
 
-      public void InitializeNativeSDK()
+      public string[] GetAdUnitId(AdType type)
       {
-         //do nothing
-      }
-
-      private string GetAdUnitId(AdType type)
-      {
+         var ids = new List<string>();
          foreach (AdMobAdUnit adUnit in _adUnitIds)
          {
             if (adUnit.AdUnitType == type)
             {
-               _adUnitType = type;
-               return adUnit.AdUnitId;
+               ids.Add(adUnit.AdUnitId);
             }
          }
-
-         return "";
+         return ids.ToArray();
       }
    }
 

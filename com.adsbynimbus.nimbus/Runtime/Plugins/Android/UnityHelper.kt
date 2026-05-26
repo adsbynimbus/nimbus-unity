@@ -17,20 +17,13 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
-import com.adsbynimbus.InMobiExtension
 import com.adsbynimbus.Nimbus
-import com.adsbynimbus.bannerAd
-import com.adsbynimbus.internal.NimbusExtension
-import com.adsbynimbus.internal.lifecycleOrNimbusScope
-import com.adsbynimbus.interstitialAd
-import com.adsbynimbus.openrtb.enumerations.Position
-import com.adsbynimbus.render.AdController
-import com.adsbynimbus.request.AdSize
-import com.adsbynimbus.rewardedAd
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -41,12 +34,37 @@ class UnityHelper {
     companion object {
 
         @JvmStatic
-        fun initNimbusAndThirdParties(obj: Any?, publisherKey: String, apiKey: String) {
+        fun initNimbusAndThirdParties(obj: Any?, publisherKey: String, apiKey: String, 
+            enableSDKInTestMode: Boolean,
+            thirdPartyJson: String
+        ) {
             if (obj is Activity) {
-                val extensions = mutableSetOf<NimbusExtension>()
-                extensions.add(InMobiExtension("f5ccf534fc594454b1a21138527cc47b"))
-                Nimbus.initialize(obj, publisherKey, apiKey, extensions)
+                val extensions = Json.decodeFromString<Extensions>(thirdPartyJson)
+                Nimbus.initialize(obj, publisherKey, apiKey)
             }
+        }
+
+
+        @JvmStatic
+        fun bannerAd(position: String, width: Int, height: Int, refreshInterval: Int,
+                     respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String): String {
+
+            return ""
+        }
+
+        @JvmStatic
+        fun interstitialAd(position: String, showAd: Boolean, thirdPartyDemand: String): String {
+            return ""
+        }
+
+        @JvmStatic
+        fun rewardedAd(position: String, showAd: Boolean, thirdPartyDemand: String): String {
+            return ""
+        }
+
+        @JvmStatic
+        fun showAd(adId: String, respectSafeArea: Boolean, bannerPosition: Int) {
+
         }
 
         @JvmStatic
@@ -91,22 +109,6 @@ class UnityHelper {
             }
         }
 
-    }
-
-    fun addListener(controller: Any?, listener: Any?) {
-        if (controller is AdController) {
-            controller.listeners()
-                .add((listener as com.adsbynimbus.render.AdController.Listener?)!!)
-        }
-    }
-
-    fun destroyController(obj: Any?, controller: Any?) {
-        if (obj is Activity) {
-            val activity = obj
-            if (controller is AdController) {
-                activity.runOnUiThread(Runnable { controller.destroy() })
-            }
-        }
     }
 
     internal class BannerHandler {
@@ -202,3 +204,42 @@ class UnityHelper {
         }
     }
 }
+
+@Serializable
+data class Extensions(
+    val aps: Aps?,
+    val adMob: AdMob?,
+    val inMobi: InMobi?,
+    val meta: Meta?,
+    val mintegral: Mintegral?,
+    val mobileFuse: JsonObject?,
+    val moloco: Moloco?,
+    val unityAds: UnityAds?,
+    val vungle: Vungle?)
+@Serializable
+data class AdMob (val adUnitIds: Array<String?>?)
+@Serializable
+data class Aps (val appKey : String?, val slotData: Array<ApsSlotData?>?)
+@Serializable
+data class ApsSlotData(val slotId: String?, val adUnitType: APSAdUnitType?)
+@Serializable
+enum class APSAdUnitType(val i: Int) {
+    display320X50(0),
+    display300X250(1),
+    display728X90(2),
+    interstitialDisplay(3),
+    interstitialVideo(4),
+    rewardedVideo(5),
+}
+@Serializable
+data class InMobi(val accountId: String?)
+@Serializable
+data class Meta(val appId: String?, val forceTestAd: Boolean)
+@Serializable
+data class Mintegral(val appId: String?, val appKey : String?)
+@Serializable
+data class Moloco(val appKey: String?)
+@Serializable
+data class UnityAds(val gameId: String?)
+@Serializable
+data class Vungle(val appId:String?)
