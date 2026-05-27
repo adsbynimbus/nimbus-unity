@@ -1,36 +1,33 @@
 package com.adsbynimbus.unity
 
 import android.app.Activity
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
-import androidx.constraintlayout.motion.widget.Key
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginEnd
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
+import com.adsbynimbus.Ad
+import com.adsbynimbus.AdSize
+import com.adsbynimbus.InlineAd
+import com.adsbynimbus.InterstitialAd
 import com.adsbynimbus.Nimbus
+import com.adsbynimbus.RewardedAd
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class UnityHelper {
-    val executor: ExecutorService? = Executors.newSingleThreadExecutor()
-    public val LifecycleOwner.lifecycleScope: LifecycleCoroutineScope
-        get() = lifecycle.coroutineScope
     companion object {
 
         @JvmStatic
@@ -39,32 +36,165 @@ class UnityHelper {
             thirdPartyJson: String
         ) {
             if (obj is Activity) {
-                val extensions = Json.decodeFromString<Extensions>(thirdPartyJson)
+                Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
+                val extensions = extensionsFromJsonString(thirdPartyJson) ?: return
                 Nimbus.initialize(obj, publisherKey, apiKey)
             }
         }
 
 
         @JvmStatic
-        fun bannerAd(position: String, width: Int, height: Int, refreshInterval: Int,
+        fun bannerAd(obj: Any?, position: String, adWidth: Int, adHeight: Int, refreshInterval: Int,
                      respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String): String {
-
-            return ""
+            var ad: Ad
+            if (obj !is Activity) {
+                /*TODO: Pass Error back to Unity*/
+                return ""
+            }
+            val extensions = extensionsFromJsonString(thirdPartyDemand)
+            /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
+            var adSize = AdSize.Banner
+            when (adWidth) {
+                300 -> adSize = if (adHeight == 600) AdSize.HalfScreen else AdSize.Mrec
+                320 -> adSize = if (adHeight == 480) AdSize.InterstitialPortrait else AdSize.Banner
+                480 -> adSize = AdSize.InterstitialLandscape
+                728 -> adSize = AdSize.Leaderboard
+            }
+            ad = Nimbus.bannerAd(position = position, size = adSize)
+                .onEvent {
+                    /*TODO: Pass Event back to Unity*/
+                }.onError {
+                    /*TODO: Pass Error back to Unity*/
+                }
+            if (showAd) {
+                showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+            }
+            return if (!showAd) NimbusAdCache.addAd(ad) else ""
         }
 
         @JvmStatic
-        fun interstitialAd(position: String, showAd: Boolean, thirdPartyDemand: String): String {
-            return ""
+        fun interstitialAd(obj: Any?, position: String, showAd: Boolean, thirdPartyDemand: String): String {
+            if (obj !is Activity) {
+                /*TODO: Pass Error back to Unity*/
+                return ""
+            }
+            val extensions = extensionsFromJsonString(thirdPartyDemand)
+            /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
+            val ad = Nimbus.interstitialAd(position).onEvent { event ->
+                /*TODO: Pass Event back to Unity*/
+            }.onError {error ->  /*TODO: Pass ERROR back to Unity*/ }
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                if (showAd) {
+                    ad.show(obj)
+                } else {
+                    ad.load(obj)
+                }
+            }
+            return if (!showAd) NimbusAdCache.addAd(ad) else ""
         }
 
         @JvmStatic
-        fun rewardedAd(position: String, showAd: Boolean, thirdPartyDemand: String): String {
-            return ""
+        fun rewardedAd(obj: Any?, position: String, showAd: Boolean, thirdPartyDemand: String): String {
+            if (obj !is Activity) {
+                /*TODO: Pass Error back to Unity*/
+                return ""
+            }
+            val extensions = extensionsFromJsonString(thirdPartyDemand)
+            /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
+            val ad = Nimbus.rewardedAd(position).onEvent { event ->
+                /*TODO: Pass Event back to Unity*/
+            }.onError {error ->  /*TODO: Pass ERROR back to Unity*/ }
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                if (showAd) {
+                    ad.show(obj)
+                } else {
+                    ad.load(obj)
+                }
+            }
+            return if (!showAd) NimbusAdCache.addAd(ad) else ""
         }
 
         @JvmStatic
-        fun showAd(adId: String, respectSafeArea: Boolean, bannerPosition: Int) {
+        fun showAd(obj: Any?, adId: String, respectSafeArea: Boolean, bannerPosition: Int) {
+            val ad = NimbusAdCache.getAd(adId)
+            if (obj !is Activity) {
+                /*TODO: Pass Error back to Unity*/
+                return
+            }
+            if (ad == null) {
+                /*TODO: Pass Error back to Unity*/
+                return
+            }
+            if (ad is InlineAd) {
+                showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+            } else {
+                val scope = CoroutineScope(Dispatchers.Main)
+                scope.launch {
+                    if (ad is InterstitialAd) {
+                        ad.show(obj)
+                    } else if (ad is RewardedAd) {
+                        ad.show(obj)
+                    }
+                }
+            }
+        }
 
+        @JvmStatic
+        fun showBannerAd(obj: Activity, ad: InlineAd, respectSafeArea: Boolean, bannerPosition: Int) {
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                val adFrame = FrameLayout(obj)
+                obj.addContentView(
+                    adFrame, ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+                var bannerGravity = 0
+                when (bannerPosition) {
+                    0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                    1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                    2 -> bannerGravity = Gravity.CENTER
+                    3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
+                    4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
+                    5 -> bannerGravity = Gravity.TOP or Gravity.START
+                    6 -> bannerGravity = Gravity.TOP or Gravity.END
+                }
+                ad.show(adFrame).also {
+                    // TODO: Fix this as the lefts and rights arent working
+                    it.adView?.updateLayoutParams<FrameLayout.LayoutParams> {
+                        gravity = bannerGravity
+                        height = WRAP_CONTENT
+                    }
+                    if (respectSafeArea) {
+                        // TODO: Fix this as the safe area stuff isnt working
+                        ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->
+                            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                            val mlp = view.layoutParams as ViewGroup.MarginLayoutParams
+                            mlp.leftMargin = systemBars.left
+                            mlp.bottomMargin = systemBars.bottom
+                            mlp.rightMargin = systemBars.right
+                            mlp.topMargin = systemBars.top
+                            view.layoutParams = mlp
+                            insets
+                        }
+                    }
+                }
+            }
+        }
+
+        fun extensionsFromJsonString(thirdPartyDemand: String): Extensions? {
+            var extensions: Extensions? = null
+            if (thirdPartyDemand != "" && !thirdPartyDemand.isEmpty()) {
+                try {
+                    extensions = Json.decodeFromString<Extensions>(thirdPartyDemand)
+                } catch(e: Exception) {
+                    // TODO: Pass Error back to Unity
+                }
+            }
+            return extensions
         }
 
         @JvmStatic
@@ -82,126 +212,12 @@ class UnityHelper {
             adPosition: Int
         ) {
             if (obj is Activity) {
-                Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
-                val ad = Nimbus.interstitialAd("unity_test").onEvent { event ->
-                    Log.d("WTF", "WTF$event")
-                }.onError {error ->  Log.d("WTF", "LOL", error) }
-                val scope = CoroutineScope(Dispatchers.Main)
-                scope.launch {
-                    val adframe = FrameLayout(obj)
-                    obj.addContentView(adframe, ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    ))
-                    /*val adr = Nimbus.bannerAd(position = "", size = AdSize.Banner)
-                        .onEvent {
-                            Log.d("Event", it.toString(), )
-                        }.onError {
-                            Log.d("ERROR", "ERROR", it)
-                        }.show(adframe).also {
-                            it.adView?.updateLayoutParams<FrameLayout.LayoutParams> {
-                                gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                                height = WRAP_CONTENT
-                            }
-                        }*/
-                    ad.show(obj)
-                }
+                bannerAd(obj, "unityTest", 320, 50, 30, true, 0, true, "")
+                //interstitialAd(obj, "unityTest", true, "")
+                //rewardedAd(obj, "unityTest", true, "")
             }
         }
 
-    }
-
-    internal class BannerHandler {
-        protected var activity: Activity?
-        protected var adFrame: ViewGroup? = null
-        protected var respectSafeArea: Boolean = false
-
-        protected var adPosition: Int = 0
-
-        protected var width: Int = 0
-
-        protected var height: Int = 0
-
-        constructor(
-            activity: Activity?, width: Int, height: Int, respectSafeArea: Boolean, adPosition: Int
-        ) {
-            this.activity = activity
-            this.width = width
-            this.height = height
-            this.respectSafeArea = respectSafeArea
-            this.adPosition = adPosition
-        }
-
-        fun getBannerFrame(): ViewGroup? {
-            if (adFrame == null && activity != null) {
-                adFrame = object : ViewGroup(activity!!) {
-                    override fun onLayout(
-                        p0: Boolean,
-                        p1: Int,
-                        p2: Int,
-                        p3: Int,
-                        p4: Int
-                    ) {
-
-                    }
-
-                    override fun onViewAdded(child: View) {
-                        super.onViewAdded(child)
-                        if (respectSafeArea) {
-                            ViewCompat.setOnApplyWindowInsetsListener(
-                                child,
-                                androidx.core.view.OnApplyWindowInsetsListener { v: View?, windowInsets: WindowInsetsCompat? ->
-                                    val insets =
-                                        windowInsets!!.getInsets(WindowInsetsCompat.Type.systemBars())
-                                            .toPlatformInsets()
-                                    // Apply the insets as a margin to the view. This solution sets only the
-                                    // bottom, left, and right dimensions, but you can apply whichever insets are
-                                    // appropriate to your layout. You can also update the view padding if that's
-                                    // more appropriate.
-                                    val mlp = v!!.getLayoutParams() as MarginLayoutParams
-                                    mlp.leftMargin = insets.left
-                                    mlp.bottomMargin = insets.bottom
-                                    mlp.rightMargin = insets.right
-                                    v.setLayoutParams(mlp)
-                                    WindowInsetsCompat.CONSUMED
-                                })
-                        }
-                        var gravity = 0
-                        when (adPosition) {
-                            0 -> gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                            1 -> gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                            2 -> gravity = Gravity.CENTER
-                            3 -> gravity = Gravity.BOTTOM or Gravity.START
-                            4 -> gravity = Gravity.BOTTOM or Gravity.END
-                            5 -> gravity = Gravity.TOP or Gravity.START
-                            6 -> gravity = Gravity.TOP or Gravity.END
-                        }
-                        if (width != 0) child.getLayoutParams().width =
-                            TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP,
-                                width.toFloat(),
-                                getResources().getDisplayMetrics()
-                            ).toInt()
-                        if (height != 0) child.getLayoutParams().height =
-                            TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP,
-                                height.toFloat(),
-                                getResources().getDisplayMetrics()
-                            ).toInt()
-                        //(child.getLayoutParams() as LayoutParams).gravity = gravity
-                    }
-                }
-
-                activity!!.addContentView(
-                    adFrame,
-                    ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                )
-            }
-            return adFrame
-        }
     }
 }
 
