@@ -8,11 +8,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.marginEnd
 import androidx.core.view.updateLayoutParams
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.coroutineScope
 import com.adsbynimbus.Ad
 import com.adsbynimbus.AdSize
 import com.adsbynimbus.InlineAd
@@ -24,8 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 class UnityHelper {
     companion object {
@@ -44,12 +38,12 @@ class UnityHelper {
 
 
         @JvmStatic
-        fun bannerAd(obj: Any?, position: String, adWidth: Int, adHeight: Int, refreshInterval: Int,
-                     respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String): String {
+        fun bannerAd(obj: Any?, instanceId: Int, position: String, adWidth: Int, adHeight: Int, refreshInterval: Int,
+                     respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String) {
             var ad: Ad
             if (obj !is Activity) {
                 /*TODO: Pass Error back to Unity*/
-                return ""
+                return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
@@ -60,7 +54,7 @@ class UnityHelper {
                 480 -> adSize = AdSize.InterstitialLandscape
                 728 -> adSize = AdSize.Leaderboard
             }
-            ad = Nimbus.bannerAd(position = position, size = adSize)
+            ad = Nimbus.bannerAd(position = position, size = adSize, refreshInterval = refreshInterval)
                 .onEvent {
                     /*TODO: Pass Event back to Unity*/
                 }.onError {
@@ -69,14 +63,15 @@ class UnityHelper {
             if (showAd) {
                 showBannerAd(obj, ad, respectSafeArea, bannerPosition)
             }
-            return if (!showAd) NimbusAdCache.addAd(ad) else ""
+            NimbusAdCache.addAd(ad, instanceId)
+
         }
 
         @JvmStatic
-        fun interstitialAd(obj: Any?, position: String, showAd: Boolean, thirdPartyDemand: String): String {
+        fun interstitialAd(obj: Any?, instanceId: Int, position: String, showAd: Boolean, thirdPartyDemand: String) {
             if (obj !is Activity) {
                 /*TODO: Pass Error back to Unity*/
-                return ""
+                return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
@@ -91,14 +86,14 @@ class UnityHelper {
                     ad.load(obj)
                 }
             }
-            return if (!showAd) NimbusAdCache.addAd(ad) else ""
+            NimbusAdCache.addAd(ad, instanceId)
         }
 
         @JvmStatic
-        fun rewardedAd(obj: Any?, position: String, showAd: Boolean, thirdPartyDemand: String): String {
+        fun rewardedAd(obj: Any?, instanceId: Int, position: String, showAd: Boolean, thirdPartyDemand: String) {
             if (obj !is Activity) {
                 /*TODO: Pass Error back to Unity*/
-                return ""
+                return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
@@ -113,12 +108,12 @@ class UnityHelper {
                     ad.load(obj)
                 }
             }
-            return if (!showAd) NimbusAdCache.addAd(ad) else ""
+            NimbusAdCache.addAd(ad, instanceId)
         }
 
         @JvmStatic
-        fun showAd(obj: Any?, adId: String, respectSafeArea: Boolean, bannerPosition: Int) {
-            val ad = NimbusAdCache.getAd(adId)
+        fun showAd(obj: Any?, instanceId: Int, respectSafeArea: Boolean, bannerPosition: Int) {
+            val ad = NimbusAdCache.getAd(instanceId)
             if (obj !is Activity) {
                 /*TODO: Pass Error back to Unity*/
                 return
@@ -147,9 +142,9 @@ class UnityHelper {
             scope.launch {
                 val adFrame = FrameLayout(obj)
                 obj.addContentView(
-                    adFrame, ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
+                    adFrame, FrameLayout.LayoutParams(
+                        WRAP_CONTENT,
+                        WRAP_CONTENT
                     )
                 )
                 var bannerGravity = 0
@@ -163,13 +158,11 @@ class UnityHelper {
                     6 -> bannerGravity = Gravity.TOP or Gravity.END
                 }
                 ad.show(adFrame).also {
-                    // TODO: Fix this as the lefts and rights arent working
-                    it.adView?.updateLayoutParams<FrameLayout.LayoutParams> {
+                    adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
                         gravity = bannerGravity
                         height = WRAP_CONTENT
                     }
                     if (respectSafeArea) {
-                        // TODO: Fix this as the safe area stuff isnt working
                         ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->
                             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                             val mlp = view.layoutParams as ViewGroup.MarginLayoutParams
@@ -198,24 +191,13 @@ class UnityHelper {
         }
 
         @JvmStatic
-        fun render(
-            obj: Any?,
-            isBlocking: Boolean,
-            isRewarded: Boolean,
-            closeButtonDelay: Int,
-            listener: Any?,
-            mintegralAdUnitId: String?,
-            mintegralAdUnitPlacementId: String?,
-            molocoAdUnitId: String?,
-            inMobiPlacementId: String?,
-            respectSafeArea: Boolean,
-            adPosition: Int
-        ) {
-            if (obj is Activity) {
-                bannerAd(obj, "unityTest", 320, 50, 30, true, 0, true, "")
-                //interstitialAd(obj, "unityTest", true, "")
-                //rewardedAd(obj, "unityTest", true, "")
+        fun destroyAd(adInstanceId: Int) {
+            val ad = NimbusAdCache.getAd(adInstanceId)
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                ad?.destroy()
             }
+            NimbusAdCache.removeAd(adInstanceId)
         }
 
     }

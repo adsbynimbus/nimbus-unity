@@ -96,9 +96,10 @@ namespace Nimbus.Internal {
 					#if NIMBUS_ENABLE_APS_ANDROID
 					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
 					#endif
-					/*_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, 
-						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, 
-						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));*/
+					_helper.Call("bannerAd", _currentActivity, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1,
+						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.RespectSafeArea, 
+						(int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
 				case AdType.Interstitial:
@@ -106,8 +107,9 @@ namespace Nimbus.Internal {
 					#if NIMBUS_ENABLE_APS_ANDROID
 					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Interstitial, 0, 0);
 					#endif
-					/*_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
-						showAd, JsonConvert.SerializeObject(extensions));*/
+					_helper.Call("interstitialAd", _currentActivity, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
+					   showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
 				case AdType.Rewarded:
@@ -115,8 +117,9 @@ namespace Nimbus.Internal {
 					#if NIMBUS_ENABLE_APS_ANDROID
 					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
-					/*_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd, 
-						JsonConvert.SerializeObject(extensions));*/
+					_helper.Call("rewardedAd", _currentActivity, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
+						showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
 			}
@@ -126,9 +129,9 @@ namespace Nimbus.Internal {
 				shouldBlock = true;
 				holdTime = 5;
 				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
-			}*/
+			}
 			_helper.Call(functionCall, _currentActivity, shouldBlock, (nimbusAdUnit.AdType == AdType.Rewarded), holdTime,
-				null,"", "","","", true, 0);
+				null,"", "","","", true, 0);*/
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

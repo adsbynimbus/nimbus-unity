@@ -4,25 +4,23 @@ import java.util.UUID
 
 object NimbusAdCache{
 
-    // Thread-safe maps to store requests and responses
+    // Thread-safe maps to store ads
     const val cacheSize: Int = 10 // max number of entries
-    private val adCache = LruCache<String, Ad>(cacheSize)
+    private val adCache = LruCache<Int, Ad>(cacheSize)
 
-    fun addAd(ad: Ad): String {
-        val uniqueKey = UUID.randomUUID().toString()
+    fun addAd(ad: Ad, key: Int) {
         synchronized(adCache) {
-            adCache.put(uniqueKey, ad)
+            adCache.put(key, ad)
         }
-        return uniqueKey
     }
 
-    fun getAd(key: String): Ad? {
+    fun getAd(key: Int): Ad? {
         return synchronized(adCache) {
             adCache[key]
         }
     }
 
-    fun removeAd(key: String) {
+    fun removeAd(key: Int) {
         synchronized(adCache) {
             adCache.remove(key)
         }
