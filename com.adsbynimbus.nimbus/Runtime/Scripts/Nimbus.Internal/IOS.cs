@@ -19,7 +19,7 @@ namespace Nimbus.Internal {
 		#endif
 		
 		private static void OnDestroyIOSAd(int adUnitInstanceId) {
-			var nimbusAdUnit = NimbusIOSAdManager.Instance.AdUnitForInstanceID(adUnitInstanceId);
+			var nimbusAdUnit = NimbusCallbackReceiver.Instance.AdUnitForInstanceID(adUnitInstanceId);
 			if (nimbusAdUnit != null) {
 				nimbusAdUnit.OnDestroyIOSAd -= OnDestroyIOSAd;
 			}
@@ -105,7 +105,7 @@ namespace Nimbus.Internal {
 
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
-			NimbusIOSAdManager.Instance.AddAdUnit(nimbusAdUnit);
+			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
 			#if NIMBUS_ENABLE_ADMOB_IOS
 				extensions.adMob.adUnitIds = _adMobIOS.GetAdUnitId(nimbusAdUnit.AdType);

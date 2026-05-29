@@ -81,10 +81,8 @@ namespace Nimbus.Internal {
 
 
 		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
-			const string functionCall = "render";
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
-			var holdTime = 0;
-			var shouldBlock = nimbusAdUnit.AdType != AdType.Banner;
+			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
 			#if NIMBUS_ENABLE_ADMOB_ANDROID
 				extensions.adMob.adUnitIds = _adMobAndroid.GetAdUnitId(nimbusAdUnit.AdType);
 			#endif

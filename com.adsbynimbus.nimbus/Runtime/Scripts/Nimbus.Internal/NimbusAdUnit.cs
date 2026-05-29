@@ -21,7 +21,6 @@ namespace Nimbus.Internal {
 		private bool _adWasReturned;
 		private readonly AdEvents _adEvents;
 		internal bool AdWasRendered;
-		private string RawBidResponse;
 
 		internal Task<string> Request = Task.FromResult("");
 		

@@ -1,5 +1,6 @@
 package com.adsbynimbus.unity
 
+import NimbusAdCache
 import android.app.Activity
 import android.view.Gravity
 import android.view.View
@@ -10,16 +11,23 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import com.adsbynimbus.Ad
+import com.adsbynimbus.AdEvent
 import com.adsbynimbus.AdSize
 import com.adsbynimbus.InlineAd
 import com.adsbynimbus.InterstitialAd
 import com.adsbynimbus.Nimbus
+import com.adsbynimbus.NimbusError
 import com.adsbynimbus.RewardedAd
+import com.unity3d.player.UnityPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+
 
 class UnityHelper {
     companion object {
@@ -30,7 +38,9 @@ class UnityHelper {
             thirdPartyJson: String
         ) {
             if (obj is Activity) {
+                // TODO: REMOVE BELOW URL ONCE DONE TESTING
                 Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
+                Nimbus.configuration.testMode = enableSDKInTestMode
                 val extensions = extensionsFromJsonString(thirdPartyJson) ?: return
                 Nimbus.initialize(obj, publisherKey, apiKey)
             }
@@ -42,7 +52,6 @@ class UnityHelper {
                      respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String) {
             var ad: Ad
             if (obj !is Activity) {
-                /*TODO: Pass Error back to Unity*/
                 return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
@@ -55,13 +64,14 @@ class UnityHelper {
                 728 -> adSize = AdSize.Leaderboard
             }
             ad = Nimbus.bannerAd(position = position, size = adSize, refreshInterval = refreshInterval)
-                .onEvent {
-                    /*TODO: Pass Event back to Unity*/
-                }.onError {
-                    /*TODO: Pass Error back to Unity*/
+                .onEvent { event ->
+                    didReceiveNimbusEvent(instanceId, event)
+                }.onError { error ->
+                    didReceiveNimbusError(instanceId, error)
                 }
             if (showAd) {
                 showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+                sendRenderNimbusEvent(instanceId)
             }
             NimbusAdCache.addAd(ad, instanceId)
 
@@ -70,18 +80,20 @@ class UnityHelper {
         @JvmStatic
         fun interstitialAd(obj: Any?, instanceId: Int, position: String, showAd: Boolean, thirdPartyDemand: String) {
             if (obj !is Activity) {
-                /*TODO: Pass Error back to Unity*/
                 return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
             val ad = Nimbus.interstitialAd(position).onEvent { event ->
-                /*TODO: Pass Event back to Unity*/
-            }.onError {error ->  /*TODO: Pass ERROR back to Unity*/ }
+                didReceiveNimbusEvent(instanceId, event)
+            }.onError { error ->
+                didReceiveNimbusError(instanceId, error)
+            }
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
                 if (showAd) {
                     ad.show(obj)
+                    sendRenderNimbusEvent(instanceId)
                 } else {
                     ad.load(obj)
                 }
@@ -92,18 +104,20 @@ class UnityHelper {
         @JvmStatic
         fun rewardedAd(obj: Any?, instanceId: Int, position: String, showAd: Boolean, thirdPartyDemand: String) {
             if (obj !is Activity) {
-                /*TODO: Pass Error back to Unity*/
                 return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
             val ad = Nimbus.rewardedAd(position).onEvent { event ->
-                /*TODO: Pass Event back to Unity*/
-            }.onError {error ->  /*TODO: Pass ERROR back to Unity*/ }
+                didReceiveNimbusEvent(instanceId, event)
+            }.onError { error ->
+                didReceiveNimbusError(instanceId, error)
+            }
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
                 if (showAd) {
                     ad.show(obj)
+                    sendRenderNimbusEvent(instanceId)
                 } else {
                     ad.load(obj)
                 }
@@ -115,11 +129,9 @@ class UnityHelper {
         fun showAd(obj: Any?, instanceId: Int, respectSafeArea: Boolean, bannerPosition: Int) {
             val ad = NimbusAdCache.getAd(instanceId)
             if (obj !is Activity) {
-                /*TODO: Pass Error back to Unity*/
                 return
             }
             if (ad == null) {
-                /*TODO: Pass Error back to Unity*/
                 return
             }
             if (ad is InlineAd) {
@@ -134,6 +146,7 @@ class UnityHelper {
                     }
                 }
             }
+            sendRenderNimbusEvent(instanceId)
         }
 
         @JvmStatic
@@ -177,14 +190,14 @@ class UnityHelper {
                 }
             }
         }
-
+        
         fun extensionsFromJsonString(thirdPartyDemand: String): Extensions? {
             var extensions: Extensions? = null
             if (thirdPartyDemand != "" && !thirdPartyDemand.isEmpty()) {
                 try {
                     extensions = Json.decodeFromString<Extensions>(thirdPartyDemand)
                 } catch(e: Exception) {
-                    // TODO: Pass Error back to Unity
+                    didReceiveNimbusError(0, e)
                 }
             }
             return extensions
@@ -200,8 +213,67 @@ class UnityHelper {
             NimbusAdCache.removeAd(adInstanceId)
         }
 
+        @JvmStatic
+        private fun sendRenderNimbusEvent(adUnitInstanceID: Int) {
+            val jsonString = buildJsonObject {
+                put("adUnitInstanceID", JsonPrimitive(adUnitInstanceID))
+            }.toString()
+            sendMessageToUnity("OnAdRendered",jsonString)
+        }
+
+
+        @JvmStatic
+        private fun didReceiveNimbusEvent(adUnitInstanceID: Int, event: AdEvent) {
+            var eventName: String
+            when (event) {
+                AdEvent.Loaded ->
+                eventName = "LOADED"
+                AdEvent.Impression ->
+                eventName = "IMPRESSION"
+                AdEvent.Clicked ->
+                eventName = "CLICKED"
+                AdEvent.Paused ->
+                eventName = "PAUSED"
+                AdEvent.Resumed ->
+                eventName = "RESUMED"
+                AdEvent.Completed ->
+                eventName = "COMPLETED"
+                AdEvent.Destroyed ->
+                eventName = "DESTROYED"
+                else ->
+                return
+            }
+            val jsonString = buildJsonObject {
+                put("adUnitInstanceID", JsonPrimitive(adUnitInstanceID))
+                put("eventName", JsonPrimitive(eventName))
+            }.toString()
+            sendMessageToUnity("OnAdEvent",jsonString)
+        }
+        private fun didReceiveNimbusError(adUnitInstanceID: Int, error: Exception) {
+            val jsonString = buildJsonObject {
+                put("adUnitInstanceID", JsonPrimitive(adUnitInstanceID))
+                put("errorMessage", JsonPrimitive(error.message))
+            }.toString()
+            sendMessageToUnity("OnError",jsonString)
+        }
+
+        private fun didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
+            val jsonString = buildJsonObject {
+                put("adUnitInstanceID", JsonPrimitive(adUnitInstanceID))
+                put("errorMessage", JsonPrimitive(error.message))
+            }.toString()
+            sendMessageToUnity("OnError",jsonString)
+        }
+
+        private fun sendMessageToUnity(methodName: String, params: String) {
+            val nimbusCallbackGameObject = "NimbusCallbackReceiver"
+            // Params: (GameObject name, Method name, String message)
+            UnityPlayer.UnitySendMessage(nimbusCallbackGameObject, methodName, params)
+        }
+
     }
 }
+
 
 @Serializable
 data class Extensions(
