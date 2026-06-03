@@ -100,6 +100,8 @@ namespace Nimbus.Editor {
 			packagingWriter.Flush();
 			packagingWriter.Close();
 			
+			AndroidThirdPartyCreator.WriteDemandFile(path + "/../unityLibrary/src/main/java/com/adsbynimbus/unity/NimbusUnityInternal.kt");
+			
 			#if NIMBUS_ENABLE_ADMOB
 				//pull saved appId from file
 				var trimmedID = "";
@@ -200,7 +202,6 @@ namespace Nimbus.Editor {
 			{
 				Debug.unityLogger.LogError("NimbusError", $"File error: {e.Message}");
 			}
-
 		}
 
 		private static void RunEdm4uCheck(string path)

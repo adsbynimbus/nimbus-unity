@@ -581,7 +581,7 @@ namespace Nimbus.Editor {
 				#endif
 				
 				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID
-					if (!ValidateMintegralData("Android", _androidMintegralAppId, _androidMintegralAppKey, _asset.androidMintegralAdUnitData)) {
+					if (!ValidateMintegralData("Android", _androidMintegralAppId, _androidMintegralAppKey)) {
 						return;
 					}
 					_asset.androidMintegralAppID = _androidMintegralAppId.stringValue;
@@ -609,7 +609,7 @@ namespace Nimbus.Editor {
 				#endif
 				
 				#if NIMBUS_ENABLE_MOLOCO_ANDROID
-					if (!ValidateMolocoData("Android", _androidMolocoAppKey, _asset.androidMolocoAdUnitData)) {
+					if (!ValidateMolocoData("Android", _androidMolocoAppKey)) {
 						return;
 					}
 					_asset.androidMolocoAppKey = _androidMolocoAppKey.stringValue;
@@ -622,7 +622,7 @@ namespace Nimbus.Editor {
 				#endif
 				
 				#if NIMBUS_ENABLE_INMOBI_ANDROID
-					if (!ValidateInMobiData("Android", _androidInMobiAccountId, _asset.androidInMobiAdUnitData)) {
+					if (!ValidateInMobiData("Android", _androidInMobiAccountId)) {
 						return;
 					}
 					_asset.androidInMobiAccountId = _androidInMobiAccountId.stringValue;

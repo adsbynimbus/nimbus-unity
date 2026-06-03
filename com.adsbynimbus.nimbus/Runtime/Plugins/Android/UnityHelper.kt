@@ -10,14 +10,6 @@ import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import com.adsbynimbus.Ad
-import com.adsbynimbus.AdEvent
-import com.adsbynimbus.AdSize
-import com.adsbynimbus.InlineAd
-import com.adsbynimbus.InterstitialAd
-import com.adsbynimbus.Nimbus
-import com.adsbynimbus.NimbusError
-import com.adsbynimbus.RewardedAd
 import com.unity3d.player.UnityPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +19,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import com.adsbynimbus.*
+import com.adsbynimbus.request.internal.AdUnitType
 
 
 class UnityHelper {
@@ -42,7 +36,7 @@ class UnityHelper {
                 Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
                 Nimbus.configuration.testMode = enableSDKInTestMode
                 val extensions = extensionsFromJsonString(thirdPartyJson) ?: return
-                Nimbus.initialize(obj, publisherKey, apiKey)
+                NimbusUnityInternal.initNimbus(obj, enableSDKInTestMode, publisherKey, apiKey, extensions)
             }
         }
 
@@ -63,7 +57,11 @@ class UnityHelper {
                 480 -> adSize = AdSize.InterstitialLandscape
                 728 -> adSize = AdSize.Leaderboard
             }
-            ad = Nimbus.bannerAd(position = position, size = adSize, refreshInterval = refreshInterval)
+            ad = Nimbus.bannerAd(position = position, size = adSize, refreshInterval = refreshInterval){
+                demand {
+                    NimbusUnityInternal.demandBlock(AdUnitType.Inline, extensions)
+                }
+            }
                 .onEvent { event ->
                     didReceiveNimbusEvent(instanceId, event)
                 }.onError { error ->
@@ -84,7 +82,11 @@ class UnityHelper {
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
-            val ad = Nimbus.interstitialAd(position).onEvent { event ->
+            val ad = Nimbus.interstitialAd(position){
+                demand {
+                    NimbusUnityInternal.demandBlock(AdUnitType.Interstitial, extensions)
+                }
+            }.onEvent { event ->
                 didReceiveNimbusEvent(instanceId, event)
             }.onError { error ->
                 didReceiveNimbusError(instanceId, error)
@@ -108,7 +110,11 @@ class UnityHelper {
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
-            val ad = Nimbus.rewardedAd(position).onEvent { event ->
+            val ad = Nimbus.rewardedAd(position){
+                demand {
+                    NimbusUnityInternal.demandBlock(AdUnitType.Rewarded, extensions)
+                }
+            }.onEvent { event ->
                 didReceiveNimbusEvent(instanceId, event)
             }.onError { error ->
                 didReceiveNimbusError(instanceId, error)
