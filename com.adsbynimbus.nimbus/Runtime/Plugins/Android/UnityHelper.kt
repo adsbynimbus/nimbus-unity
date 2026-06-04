@@ -21,6 +21,12 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import com.adsbynimbus.*
 import com.adsbynimbus.request.internal.AdUnitType
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 
 class UnityHelper {
@@ -57,21 +63,30 @@ class UnityHelper {
                 480 -> adSize = AdSize.InterstitialLandscape
                 728 -> adSize = AdSize.Leaderboard
             }
-            ad = Nimbus.bannerAd(position = position, size = adSize, refreshInterval = refreshInterval){
-                demand {
-                    NimbusUnityInternal.demandBlock(AdUnitType.Inline, extensions)
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                val demandBlock =
+                    NimbusUnityInternal.demandBlock(obj, AdUnitType.Inline, extensions)
+                ad = Nimbus.bannerAd(
+                    position = position,
+                    size = adSize,
+                    refreshInterval = refreshInterval
+                ) {
+                    demand {
+                        demandBlock()
+                    }
                 }
-            }
-                .onEvent { event ->
-                    didReceiveNimbusEvent(instanceId, event)
-                }.onError { error ->
-                    didReceiveNimbusError(instanceId, error)
+                    .onEvent { event ->
+                        didReceiveNimbusEvent(instanceId, event)
+                    }.onError { error ->
+                        didReceiveNimbusError(instanceId, error)
+                    }
+                if (showAd) {
+                    showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+                    sendRenderNimbusEvent(instanceId)
                 }
-            if (showAd) {
-                showBannerAd(obj, ad, respectSafeArea, bannerPosition)
-                sendRenderNimbusEvent(instanceId)
+                NimbusAdCache.addAd(ad, instanceId)
             }
-            NimbusAdCache.addAd(ad, instanceId)
 
         }
 
@@ -82,25 +97,26 @@ class UnityHelper {
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
             /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
-            val ad = Nimbus.interstitialAd(position){
-                demand {
-                    NimbusUnityInternal.demandBlock(AdUnitType.Interstitial, extensions)
-                }
-            }.onEvent { event ->
-                didReceiveNimbusEvent(instanceId, event)
-            }.onError { error ->
-                didReceiveNimbusError(instanceId, error)
-            }
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
+                val demandBlock = NimbusUnityInternal.demandBlock(obj, AdUnitType.Interstitial, extensions)
+                val ad = Nimbus.interstitialAd(position){
+                    demand {
+                        demandBlock()
+                    }
+                }.onEvent { event ->
+                    didReceiveNimbusEvent(instanceId, event)
+                }.onError { error ->
+                    didReceiveNimbusError(instanceId, error)
+                }
                 if (showAd) {
                     ad.show(obj)
                     sendRenderNimbusEvent(instanceId)
                 } else {
                     ad.load(obj)
                 }
+                NimbusAdCache.addAd(ad, instanceId)
             }
-            NimbusAdCache.addAd(ad, instanceId)
         }
 
         @JvmStatic
@@ -109,26 +125,26 @@ class UnityHelper {
                 return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
-            /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
-            val ad = Nimbus.rewardedAd(position){
-                demand {
-                    NimbusUnityInternal.demandBlock(AdUnitType.Rewarded, extensions)
-                }
-            }.onEvent { event ->
-                didReceiveNimbusEvent(instanceId, event)
-            }.onError { error ->
-                didReceiveNimbusError(instanceId, error)
-            }
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
+                val demandBlock = NimbusUnityInternal.demandBlock(obj, AdUnitType.Rewarded, extensions)
+                val ad = Nimbus.rewardedAd(position){
+                    demand {
+                        demandBlock()
+                    }
+                }.onEvent { event ->
+                    didReceiveNimbusEvent(instanceId, event)
+                }.onError { error ->
+                    didReceiveNimbusError(instanceId, error)
+                }
                 if (showAd) {
                     ad.show(obj)
                     sendRenderNimbusEvent(instanceId)
                 } else {
                     ad.load(obj)
                 }
+                NimbusAdCache.addAd(ad, instanceId)
             }
-            NimbusAdCache.addAd(ad, instanceId)
         }
 
         @JvmStatic
@@ -140,58 +156,58 @@ class UnityHelper {
             if (ad == null) {
                 return
             }
-            if (ad is InlineAd) {
-                showBannerAd(obj, ad, respectSafeArea, bannerPosition)
-            } else {
-                val scope = CoroutineScope(Dispatchers.Main)
-                scope.launch {
-                    if (ad is InterstitialAd) {
-                        ad.show(obj)
-                    } else if (ad is RewardedAd) {
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                when (ad) {
+                    is InlineAd -> {
+                        showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+                    }
+                    is InterstitialAd -> {
                         ad.show(obj)
                     }
+                    is RewardedAd -> {
+                        ad.show(obj)
+                    }
+                    else -> return@launch
                 }
             }
             sendRenderNimbusEvent(instanceId)
         }
 
         @JvmStatic
-        fun showBannerAd(obj: Activity, ad: InlineAd, respectSafeArea: Boolean, bannerPosition: Int) {
-            val scope = CoroutineScope(Dispatchers.Main)
-            scope.launch {
-                val adFrame = FrameLayout(obj)
-                obj.addContentView(
-                    adFrame, FrameLayout.LayoutParams(
-                        WRAP_CONTENT,
-                        WRAP_CONTENT
-                    )
+        suspend fun showBannerAd(obj: Activity, ad: InlineAd, respectSafeArea: Boolean, bannerPosition: Int) {
+            val adFrame = FrameLayout(obj)
+            obj.addContentView(
+                adFrame, FrameLayout.LayoutParams(
+                    WRAP_CONTENT,
+                    WRAP_CONTENT
                 )
-                var bannerGravity = 0
-                when (bannerPosition) {
-                    0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                    1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                    2 -> bannerGravity = Gravity.CENTER
-                    3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
-                    4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
-                    5 -> bannerGravity = Gravity.TOP or Gravity.START
-                    6 -> bannerGravity = Gravity.TOP or Gravity.END
+            )
+            var bannerGravity = 0
+            when (bannerPosition) {
+                0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                2 -> bannerGravity = Gravity.CENTER
+                3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
+                4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
+                5 -> bannerGravity = Gravity.TOP or Gravity.START
+                6 -> bannerGravity = Gravity.TOP or Gravity.END
+            }
+            ad.show(adFrame).also {
+                adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
+                    gravity = bannerGravity
+                    height = WRAP_CONTENT
                 }
-                ad.show(adFrame).also {
-                    adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
-                        gravity = bannerGravity
-                        height = WRAP_CONTENT
-                    }
-                    if (respectSafeArea) {
-                        ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->
-                            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                            val mlp = view.layoutParams as ViewGroup.MarginLayoutParams
-                            mlp.leftMargin = systemBars.left
-                            mlp.bottomMargin = systemBars.bottom
-                            mlp.rightMargin = systemBars.right
-                            mlp.topMargin = systemBars.top
-                            view.layoutParams = mlp
-                            insets
-                        }
+                if (respectSafeArea) {
+                    ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->
+                        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                        val mlp = view.layoutParams as ViewGroup.MarginLayoutParams
+                        mlp.leftMargin = systemBars.left
+                        mlp.bottomMargin = systemBars.bottom
+                        mlp.rightMargin = systemBars.right
+                        mlp.topMargin = systemBars.top
+                        view.layoutParams = mlp
+                        insets
                     }
                 }
             }
@@ -298,14 +314,27 @@ data class AdMob (val adUnitIds: Array<String?>?)
 data class Aps (val appKey : String?, val slotData: Array<ApsSlotData?>?)
 @Serializable
 data class ApsSlotData(val slotId: String?, val adUnitType: APSAdUnitType?)
-@Serializable
-enum class APSAdUnitType(val i: Int) {
+@Serializable(with = APSAdUnitType.Companion::class)
+enum class APSAdUnitType(val value: Int) {
     display320X50(0),
     display300X250(1),
     display728X90(2),
     interstitialDisplay(3),
     interstitialVideo(4),
-    rewardedVideo(5),
+    rewardedVideo(5);
+    companion object : KSerializer<APSAdUnitType> {
+        fun from(value: Int): APSAdUnitType = APSAdUnitType.entries.first { it.value == value }
+
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("adUnitType", PrimitiveKind.INT)
+
+        override fun deserialize(decoder: Decoder): APSAdUnitType =
+            from(decoder.decodeInt())
+
+        override fun serialize(encoder: Encoder, value: APSAdUnitType) {
+            encoder.encodeInt(value.value)
+        }
+    }
 }
 @Serializable
 data class InMobi(val accountId: String?)

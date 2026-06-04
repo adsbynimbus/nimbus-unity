@@ -24,15 +24,9 @@ namespace Nimbus.Internal.Extensions
                 _initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
             #endif
             #if UNITY_ANDROID
-                var liveRamp = new AndroidJavaClass("com.adsbynimbus.request.LiveRampExtension");
-                if (isTestMode)
-                {
-                    liveRamp.CallStatic("initializeTestMode", configId, email);
-                }
-                else
-                {
-                    liveRamp.CallStatic("initialize", configId, email, hasConsentForNoLegislation);
-                }
+                var internalHelper = new AndroidJavaObject("com.adsbynimbus.unity.nimbusunityinternal");
+                var companion = internalHelper.GetStatic<AndroidJavaObject> ("Companion");
+                companion.Call("initLiveRamp", configId, email, hasConsentForNoLegislation, isTestMode);
             #endif
         }
     }

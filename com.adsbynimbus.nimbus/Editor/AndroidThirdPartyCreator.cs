@@ -49,6 +49,7 @@ namespace Nimbus.Editor
             #endif
             #if NIMBUS_ENABLE_META_ANDROID
                 builder.AppendLine(@"extensions.meta?.appId.let {
+                    MetaExtension.forceTestAd = extensions.meta?.forceTestAd ?: false
                     MetaExtension(it)
                 }");
             #endif
@@ -64,7 +65,7 @@ namespace Nimbus.Editor
             #endif
             #if NIMBUS_ENABLE_MOLOCO_ANDROID
                 builder.AppendLine(@"extensions.moloco?.appKey.let {
-                        MolocoExtensions(it)
+                        MolocoExtension(it)
                     }");
             #endif
             #if NIMBUS_ENABLE_UNITY_ADS_ANDROID
@@ -89,7 +90,7 @@ namespace Nimbus.Editor
             //APS Init function
             #if NIMBUS_ENABLE_APS_ANDROID
                 builder.AppendLine(@"@JvmStatic
-                fun initAPS(appKey: String) {
+                fun initAPS(activity: Activity, appKey: String, testMode: Boolean) {
                     AdRegistration.getInstance(appKey, activity)
 
                     AdRegistration.setMRAIDSupportedVersions(arrayOf(""1.0"", ""2.0"", ""3.0""))
@@ -104,22 +105,63 @@ namespace Nimbus.Editor
             #endif
 
             builder.AppendLine(@"@JvmStatic
-                fun demandBlock(adType: AdUnitType, extensions: Extensions): DemandBuilder.() -> Unit {
+                suspend fun demandBlock(activity: Activity, adType: AdUnitType, extensions: Extensions?): DemandBuilder.() -> Unit {
                     if (extensions == null) {
                         return {}
-                    }
-                    return {");
-            #if NIMBUS_ENABLE_ADMOB_ANDROID
-            builder.AppendLine(@"adMobDemand(adType, extensions)");
-            #endif
-            
+                    }");
             #if NIMBUS_ENABLE_APS_ANDROID
-            builder.AppendLine(@"apsDemand(extensions)");
+                builder.AppendLine(@"val aps = apsDemand(activity, extensions)
+                    return { 
+                        aps()");
+            #else
+                builder.AppendLine(@"return{")
+            #endif
+            #if NIMBUS_ENABLE_ADMOB_ANDROID
+            builder.AppendLine(@"adMobDemand(adType, extensions)()");
             #endif
             builder.AppendLine(@"}
                 }");
-            //TODO: APS Demand METHOD
-            #if NIMBUS_ENABLE_APS_ANDROID 
+            #if NIMBUS_ENABLE_APS_ANDROID
+            builder.AppendLine(@"@JvmStatic
+                suspend fun apsDemand(activity: Activity, extensions: Extensions): DemandBuilder.() -> Unit {
+                    if (extensions.aps?.slotData?.isNotEmpty() ?: false) {
+                        val apsRequests: ArrayList<DTBAdRequest> = arrayListOf()
+                        for (slot in extensions.aps.slotData) {
+                            slot?.slotId.let { uuid ->
+                                when(slot?.adUnitType) {
+                                    APSAdUnitType.display320X50 -> apsRequests.add(
+                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                        setSizes(DTBAdSize(320, 50, uuid))
+                                    })
+                                    APSAdUnitType.display300X250 -> apsRequests.add(
+                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                            setSizes(DTBAdSize(300, 250, uuid))
+                                        })
+                                    APSAdUnitType.display728X90 -> apsRequests.add(
+                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                            setSizes(DTBAdSize(728, 90, uuid))
+                                        })
+                                    APSAdUnitType.interstitialDisplay -> apsRequests.add(
+                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                            setSizes(DTBAdSize.DTBInterstitialAdSize(uuid))
+                                        })
+                                    APSAdUnitType.interstitialVideo, APSAdUnitType.rewardedVideo -> apsRequests.add(
+                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                            setSizes(DTBAdSize.DTBVideo(
+                                                activity.resources.displayMetrics.widthPixels,
+                                                activity.resources.displayMetrics.heightPixels, uuid))
+                                        })
+                                    null -> continue
+                                }
+                            }
+                        }
+                        val params = APSFetcher(*apsRequests.toTypedArray()).fetchAds()
+                        return {
+                            aps(params, apsRequests)
+                        }
+                    }
+                    return {}
+                }");
             #endif
             #if NIMBUS_ENABLE_ADMOB_ANDROID
             builder.AppendLine(@"@JvmStatic
@@ -155,14 +197,14 @@ namespace Nimbus.Editor
             #if NIMBUS_ENABLE_LIVERAMP_ANDROID
             builder.AppendLine(@"
                 @JvmStatic
-                fun initLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Boolean) {
+                fun initLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Boolean, isTestMode: Boolean) {
                     val scope = CoroutineScope(Dispatchers.Main)
                     scope.launch {
                         LiveRamp(
                             configId = configId,
                             email = email,
                             hasConsentForNoLegislation = hasConsentForNoLegislation
-                        ).fetchEnvelope()?.applyToNimbus()
+                        ).fetchEnvelope(isTestMode)?.applyToNimbus()
                     }
                 }");
             #endif
