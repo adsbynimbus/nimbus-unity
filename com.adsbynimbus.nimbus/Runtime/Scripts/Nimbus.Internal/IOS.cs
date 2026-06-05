@@ -103,7 +103,7 @@ namespace Nimbus.Internal {
 				configuration.enableUnityLogs, configuration.enableSDKInTestMode, JsonConvert.SerializeObject(extensions));
 		}
 
-		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
+		internal override void GetAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
@@ -143,6 +143,11 @@ namespace Nimbus.Internal {
 					break;
 				}
 			}
+		}
+
+		internal override void ShowAd(NimbusAdUnit nimbusAdUnit)
+		{
+			_showAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 	}
 #endif

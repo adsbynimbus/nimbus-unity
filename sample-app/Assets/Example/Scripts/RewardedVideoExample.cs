@@ -28,7 +28,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_rewarded_video_position");
+			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_rewarded_video_position");
 			_alreadyTriggered = true;
 		}
 

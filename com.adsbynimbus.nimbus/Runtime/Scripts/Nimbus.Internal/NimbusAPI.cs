@@ -4,6 +4,7 @@ using Nimbus.ScriptableObjects;
 namespace Nimbus.Internal {
 	public abstract class NimbusAPI {
 		internal abstract void InitializeSDK(NimbusSDKConfiguration configuration);
-		internal abstract void getAd(NimbusAdUnit nimbusAdUnit, bool showAd);
+		internal abstract void GetAd(NimbusAdUnit nimbusAdUnit, bool showAd);
+		internal abstract void ShowAd(NimbusAdUnit nimbusAdUnit);
 	}
 }

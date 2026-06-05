@@ -165,7 +165,7 @@ namespace Nimbus.Runtime.Scripts {
 				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
 				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition);
-			ShowLoadedAd(adUnit);
+			LoadAdinNativeSDKAndShow(adUnit);
 			return adUnit;
 		}
 
@@ -187,10 +187,9 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
-		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition) {
+		public void RequestHybridFullScreenAndLoad(string nimbusReportingPosition) {
 			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition);
-			ShowLoadedAd(adUnit);
-			return adUnit;
+			LoadAdinNativeSDKAndShow(adUnit);
 		}
 
 		
@@ -207,10 +206,9 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition) {
+		public void RequestRewardVideoAdAndLoad(string nimbusReportingPosition) {
 			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition);
-			ShowLoadedAd(adUnit);
-			return adUnit;
+			LoadAdinNativeSDKAndShow(adUnit);
 		}
 		
 		
@@ -241,13 +239,12 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
-		public NimbusAdUnit RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
+		public void RequestRefreshingBannerAdAndLoad(CancellationTokenSource source,
 			string nimbusReportingPosition, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
 			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
 			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, refreshIntervalInSeconds);
-			//FIGURE OUT HOW TO PASS THROUGH CANCEL
-			ShowLoadedAd(adUnit);
-			return adUnit;
+			//TODO: FIGURE OUT HOW TO PASS THROUGH CANCEL
+			LoadAdinNativeSDKAndShow(adUnit);
 		}
 		
 
@@ -262,8 +259,12 @@ namespace Nimbus.Runtime.Scripts {
 			if (adUnit == null) {
 				Debug.unityLogger.LogError("Nimbus",
 					"there was no ad to render, likely there was no fill meaning that demand did not want to spend");
-				return;
 			}
+			_nimbusPlatformAPI.ShowAd(adUnit);
+		}
+		
+		private void LoadAdinNativeSDKAndShow(NimbusAdUnit adUnit)
+		{
 			StartCoroutine(LoadAd(adUnit, true));
 		}
 
@@ -274,7 +275,7 @@ namespace Nimbus.Runtime.Scripts {
 
 		private IEnumerator LoadAd(NimbusAdUnit adUnit, bool showAd)
 		{
-			_nimbusPlatformAPI.getAd(adUnit, showAd);
+			_nimbusPlatformAPI.GetAd(adUnit, showAd);
 			yield break;
 		}
 		

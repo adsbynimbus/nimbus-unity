@@ -80,7 +80,7 @@ namespace Nimbus.Internal {
 		}
 
 
-		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
+		internal override void GetAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
 			#if NIMBUS_ENABLE_ADMOB_ANDROID
@@ -121,15 +121,18 @@ namespace Nimbus.Internal {
 					break;
 				}
 			}
-			//var listener = new AdManagerListener(in _helper, ref nimbusAdUnit);
+		}
 
-			/*f (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
-				shouldBlock = true;
-				holdTime = 5;
-				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
-			}
-			_helper.Call(functionCall, _currentActivity, shouldBlock, (nimbusAdUnit.AdType == AdType.Rewarded), holdTime,
-				null,"", "","","", true, 0);*/
+		internal override void ShowAd(NimbusAdUnit nimbusAdUnit)
+		{
+			_unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+			_currentActivity = _unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+			var helperClass = new AndroidJavaObject(HelperClass);
+			_helper = helperClass.GetStatic<AndroidJavaObject> ("Companion");
+			var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
+			_helper.Call("showAd", _currentActivity, 
+				nimbusAdUnit.InstanceID, size.Item1, size.Item2,
+				nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

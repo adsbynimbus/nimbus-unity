@@ -2,31 +2,32 @@ package com.adsbynimbus.unity
 
 import NimbusAdCache
 import android.app.Activity
+import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import com.adsbynimbus.*
+import com.adsbynimbus.request.internal.AdUnitType
 import com.unity3d.player.UnityPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
-import com.adsbynimbus.*
-import com.adsbynimbus.request.internal.AdUnitType
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlin.math.roundToInt
 
 
 class UnityHelper {
@@ -55,7 +56,6 @@ class UnityHelper {
                 return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
-            /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
             var adSize = AdSize.Banner
             when (adWidth) {
                 300 -> adSize = if (adHeight == 600) AdSize.HalfScreen else AdSize.Mrec
@@ -82,7 +82,7 @@ class UnityHelper {
                         didReceiveNimbusError(instanceId, error)
                     }
                 if (showAd) {
-                    showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+                    showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                     sendRenderNimbusEvent(instanceId)
                 }
                 NimbusAdCache.addAd(ad, instanceId)
@@ -96,7 +96,6 @@ class UnityHelper {
                 return
             }
             val extensions = extensionsFromJsonString(thirdPartyDemand)
-            /* TODO: Deal with APS / AdMob stuff from Extensions obj*/
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
                 val demandBlock = NimbusUnityInternal.demandBlock(obj, AdUnitType.Interstitial, extensions)
@@ -148,7 +147,7 @@ class UnityHelper {
         }
 
         @JvmStatic
-        fun showAd(obj: Any?, instanceId: Int, respectSafeArea: Boolean, bannerPosition: Int) {
+        fun showAd(obj: Any?, instanceId: Int, adWidth: Int, adHeight: Int, respectSafeArea: Boolean, bannerPosition: Int) {
             val ad = NimbusAdCache.getAd(instanceId)
             if (obj !is Activity) {
                 return
@@ -160,7 +159,7 @@ class UnityHelper {
             scope.launch {
                 when (ad) {
                     is InlineAd -> {
-                        showBannerAd(obj, ad, respectSafeArea, bannerPosition)
+                        showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                     }
                     is InterstitialAd -> {
                         ad.show(obj)
@@ -174,15 +173,18 @@ class UnityHelper {
             sendRenderNimbusEvent(instanceId)
         }
 
+        private fun dpToPx(dp: Int, activity: Activity): Int {
+            val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
+            return (dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
+        }
+
         @JvmStatic
-        suspend fun showBannerAd(obj: Activity, ad: InlineAd, respectSafeArea: Boolean, bannerPosition: Int) {
+        suspend fun showBannerAd(obj: Activity, ad: InlineAd, adWidth: Int, adHeight: Int, respectSafeArea: Boolean, bannerPosition: Int) {
             val adFrame = FrameLayout(obj)
             obj.addContentView(
                 adFrame, FrameLayout.LayoutParams(
-                    WRAP_CONTENT,
-                    WRAP_CONTENT
-                )
-            )
+                    dpToPx(adWidth, obj),
+                    dpToPx(adHeight, obj)))
             var bannerGravity = 0
             when (bannerPosition) {
                 0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
@@ -196,7 +198,6 @@ class UnityHelper {
             ad.show(adFrame).also {
                 adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
                     gravity = bannerGravity
-                    height = WRAP_CONTENT
                 }
                 if (respectSafeArea) {
                     ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->

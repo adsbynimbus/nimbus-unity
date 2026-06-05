@@ -90,11 +90,11 @@ namespace Example.Scripts {
 		}
 
 		public void LoadAndShowInterstitial() {
-			_ = NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_interstitial_position");
+			NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_interstitial_position");
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			_ = NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position");
+			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position");
 		}
 
 		public void LoadAdController(int index) {

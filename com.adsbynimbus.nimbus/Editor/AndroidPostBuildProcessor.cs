@@ -191,12 +191,18 @@ namespace Nimbus.Editor {
 			var serializationUnityLibraryPlugin = "plugins{id 'org.jetbrains.kotlin.plugin.serialization'}";
 			try
 			{
-				var projectLines = File.ReadAllLines(projectGradleFile).ToList();
-				projectLines.Insert(0, serializationCompilerPlugin);
-				File.WriteAllLines(projectGradleFile, projectLines);
-				var unityLibraryLines = File.ReadAllLines(unitylibraryBuildGradle).ToList();
-				unityLibraryLines.Insert(0, serializationUnityLibraryPlugin);
-				File.WriteAllLines(unitylibraryBuildGradle, unityLibraryLines);
+				if (!File.ReadAllText(projectGradleFile).Contains("org.jetbrains.kotlin.plugin.serialization"))
+				{
+					var projectLines = File.ReadAllLines(projectGradleFile).ToList();
+					projectLines.Insert(0, serializationCompilerPlugin);
+					File.WriteAllLines(projectGradleFile, projectLines);
+				}
+				if (!File.ReadAllText(unitylibraryBuildGradle).Contains("org.jetbrains.kotlin.plugin.serialization"))
+				{
+					var unityLibraryLines = File.ReadAllLines(unitylibraryBuildGradle).ToList();
+					unityLibraryLines.Insert(0, serializationUnityLibraryPlugin);
+					File.WriteAllLines(unitylibraryBuildGradle, unityLibraryLines);
+				}
 			}
 			catch (IOException e)
 			{
