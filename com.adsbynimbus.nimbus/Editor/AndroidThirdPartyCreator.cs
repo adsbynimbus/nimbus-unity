@@ -114,7 +114,7 @@ namespace Nimbus.Editor
                     return { 
                         aps()");
             #else
-                builder.AppendLine(@"return{")
+                builder.AppendLine(@"return{");
             #endif
             #if NIMBUS_ENABLE_ADMOB_ANDROID
             builder.AppendLine(@"adMobDemand(adType, extensions)()");
