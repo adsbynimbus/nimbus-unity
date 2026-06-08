@@ -50,7 +50,7 @@ class UnityHelper {
 
         @JvmStatic
         fun bannerAd(obj: Any?, instanceId: Int, position: String, adWidth: Int, adHeight: Int, refreshInterval: Int,
-                     respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String) {
+                     bidFloor: Float, respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean, thirdPartyDemand: String) {
             var ad: Ad
             if (obj !is Activity) {
                 return
@@ -70,7 +70,8 @@ class UnityHelper {
                 ad = Nimbus.bannerAd(
                     position = position,
                     size = adSize,
-                    refreshInterval = refreshInterval
+                    refreshInterval = refreshInterval,
+                    bidFloor = bidFloor
                 ) {
                     demand {
                         demandBlock()
@@ -91,7 +92,7 @@ class UnityHelper {
         }
 
         @JvmStatic
-        fun interstitialAd(obj: Any?, instanceId: Int, position: String, showAd: Boolean, thirdPartyDemand: String) {
+        fun interstitialAd(obj: Any?, instanceId: Int, position: String, bannerFloor: Float, videoFloor: Float, showAd: Boolean, thirdPartyDemand: String) {
             if (obj !is Activity) {
                 return
             }
@@ -99,7 +100,9 @@ class UnityHelper {
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
                 val demandBlock = NimbusUnityInternal.demandBlock(obj, AdUnitType.Interstitial, extensions)
-                val ad = Nimbus.interstitialAd(position){
+                val ad = Nimbus.fullscreenAd(position) {
+                    banner(AdSize.interstitial, bidFloor = bannerFloor)
+                    video(bidFloor = videoFloor)
                     demand {
                         demandBlock()
                     }
@@ -119,7 +122,7 @@ class UnityHelper {
         }
 
         @JvmStatic
-        fun rewardedAd(obj: Any?, instanceId: Int, position: String, showAd: Boolean, thirdPartyDemand: String) {
+        fun rewardedAd(obj: Any?, instanceId: Int, position: String, bidFloor: Float, showAd: Boolean, thirdPartyDemand: String) {
             if (obj !is Activity) {
                 return
             }
@@ -127,7 +130,7 @@ class UnityHelper {
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
                 val demandBlock = NimbusUnityInternal.demandBlock(obj, AdUnitType.Rewarded, extensions)
-                val ad = Nimbus.rewardedAd(position){
+                val ad = Nimbus.rewardedAd(position, videoBidFloor = bidFloor){
                     demand {
                         demandBlock()
                     }

@@ -96,7 +96,7 @@ namespace Nimbus.Internal {
 					#endif
 					_helper.Call("bannerAd", _currentActivity, 
 						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1,
-						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.RespectSafeArea, 
+						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.BannerBidFloor, nimbusAdUnit.RespectSafeArea, 
 						(int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
@@ -106,8 +106,8 @@ namespace Nimbus.Internal {
 					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Interstitial, 0, 0);
 					#endif
 					_helper.Call("interstitialAd", _currentActivity, 
-						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
-					   showAd, JsonConvert.SerializeObject(extensions));
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.BannerBidFloor, 
+						nimbusAdUnit.VideoBidFloor, showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}
 				case AdType.Rewarded:
@@ -116,7 +116,7 @@ namespace Nimbus.Internal {
 					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
 					_helper.Call("rewardedAd", _currentActivity, 
-						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.VideoBidFloor,
 						showAd, JsonConvert.SerializeObject(extensions));
 					break;
 				}

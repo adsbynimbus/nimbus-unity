@@ -1,5 +1,6 @@
 using System.Threading;
 using Example.Scripts.NotAdRelated;
+using Nimbus.Internal;
 using Nimbus.Runtime.Scripts;
 using UnityEngine;
 
@@ -9,22 +10,17 @@ namespace Example.Scripts {
 	/// </summary>
 	public class RefreshingBannerExample : MonoBehaviour {
 		private bool _alreadyTriggered;
-
-		private CancellationTokenSource _ctx;
-
-		private void Awake() {
-			_ctx = new CancellationTokenSource();
-		}
+		private NimbusAdUnit _adUnit;
 
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			NimbusManager.Instance.RequestRefreshingBannerAdAndLoad(_ctx, "unity_demo_banner_position2");
+			_adUnit = NimbusManager.Instance.RequestRefreshingBannerAdAndLoad("unity_demo_banner_position2");
 			_alreadyTriggered = true;
 		}
 
 		public void StopBannerRefresh() {
-			_ctx.Cancel();
+			_adUnit.Destroy();
 		}
 	}
 }

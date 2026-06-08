@@ -21,11 +21,14 @@ namespace Nimbus.Internal {
 		private bool _adWasReturned;
 		private readonly AdEvents _adEvents;
 		internal bool AdWasRendered;
+		public float BannerBidFloor;
+		public float VideoBidFloor;
 
 		internal Task<string> Request = Task.FromResult("");
 		
 		public NimbusAdUnit(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30)
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30, float bannerBidFloor = 0f,
+			float videoBidFloor = 0f)
 		{
 			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;
@@ -35,6 +38,8 @@ namespace Nimbus.Internal {
 			RespectSafeArea = respectSafeArea;
 			AdPosition = adPosition;
 			BannerRefreshIntervalInSeconds = bannerRefreshIntervalInSeconds;
+			BannerBidFloor = bannerBidFloor;
+			VideoBidFloor = videoBidFloor;
 		}
 
 		# region IOS specific
