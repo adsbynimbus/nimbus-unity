@@ -33,29 +33,33 @@ extern "C" {
                    int width,
                    int height,                   
                    int refreshInterval,
+                   float bidFloor,
                    bool respectSafeArea,
                    int bannerPosition,
                    bool showAd,
                    const char* thirdPartyDemand) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval respectSafeArea:respectSafeArea
+            bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval bidFloor: bidFloor respectSafeArea:respectSafeArea
             bannerPosition:bannerPosition showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
     }
 
     void _interstitialAd(int adUnitInstanceId,
                                 const char* position,
+                                float bannerFloor,
+                                float videoFloor,
                                 bool showAd,
                                 const char* thirdPartyDemand) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            interstitialAdWithPosition:GetStringParam(position) showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            interstitialAdWithPosition:GetStringParam(position) bannerFloor:bannerFloor videoFloor:videoFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
     }
     
     void _rewardedAd(int adUnitInstanceId,
                             const char* position,
+                            float bidFloor,
                             bool showAd,
                             const char* thirdPartyDemand) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            rewardedAdWithPosition:GetStringParam(position) showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            rewardedAdWithPosition:GetStringParam(position) bidFloor:bidFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
     }
     
     void _showAd(int adUnitInstanceId,

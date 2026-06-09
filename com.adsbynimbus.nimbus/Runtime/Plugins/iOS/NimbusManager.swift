@@ -152,7 +152,7 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String) {
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
@@ -170,7 +170,7 @@ import NimbusMobileFuseKit
                 if let adUnitId = extensions?.adMob?.adUnitIds?.first {
                     adMobAdUnitId = adUnitId ?? ""
                 }
-                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
+                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
                         if (!adMobAdUnitId.isEmpty) {
@@ -201,7 +201,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool, thirdPartyDemand: String){
+    @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String){
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
@@ -213,7 +213,9 @@ import NimbusMobileFuseKit
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let interstitialAd = await Nimbus.interstitialAd(position: position){
+            let interstitialAd = await Nimbus.fullscreenAd(position: position){
+                banner(bidFloor: bannerFloor)
+                video(bidFloor: videoFloor)
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -247,7 +249,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func rewardedAd(position: String, showAd: Bool, thirdPartyDemand: String) {
+    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
@@ -259,7 +261,7 @@ import NimbusMobileFuseKit
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let rewardedAd = await Nimbus.rewardedAd(position: position){
+            let rewardedAd = await Nimbus.rewardedAd(position: position, videoBidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
