@@ -83,7 +83,7 @@ namespace Nimbus.Internal {
 		internal override void GetAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
-			#if NIMBUS_ENABLE_ADMOB_ANDROID
+			#if NIMBUS_ENABLE_ADMOB_ANDROID && NIMBUS_ENABLE_ANDROID
 				extensions.adMob.adUnitIds = _adMobAndroid.GetAdUnitId(nimbusAdUnit.AdType);
 			#endif
 			switch (nimbusAdUnit.AdType)
@@ -91,8 +91,8 @@ namespace Nimbus.Internal {
 				case AdType.Banner:
 				{
 					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
-					#if NIMBUS_ENABLE_APS_ANDROID
-					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
+					#if NIMBUS_ENABLE_APS_ANDROID && NIMBUS_ENABLE_ANDROID
+						extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
 					#endif
 					_helper.Call("bannerAd", _currentActivity, 
 						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1,
@@ -102,8 +102,8 @@ namespace Nimbus.Internal {
 				}
 				case AdType.Interstitial:
 				{
-					#if NIMBUS_ENABLE_APS_ANDROID
-					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Interstitial, 0, 0);
+					#if NIMBUS_ENABLE_APS_ANDROID && NIMBUS_ENABLE_ANDROID
+						extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Interstitial, 0, 0);
 					#endif
 					_helper.Call("interstitialAd", _currentActivity, 
 						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.BannerBidFloor, 
@@ -112,7 +112,7 @@ namespace Nimbus.Internal {
 				}
 				case AdType.Rewarded:
 				{
-					#if NIMBUS_ENABLE_APS_ANDROID
+					#if NIMBUS_ENABLE_APS_ANDROID && NIMBUS_ENABLE_ANDROID
 					extensions.aps.slotData = _apsAndroid.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
 					_helper.Call("rewardedAd", _currentActivity, 
