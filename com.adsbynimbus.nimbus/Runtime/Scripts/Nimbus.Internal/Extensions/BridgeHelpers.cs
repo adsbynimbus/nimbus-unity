@@ -77,7 +77,7 @@ namespace Nimbus.Internal.Extensions
         public String appId;
     }
 #endif
-#if UNITY_ANDROID || UNITY_EDITOR
+#if UNITY_ANDROID
     public class Extensions
     {
         public String apsAppKey;

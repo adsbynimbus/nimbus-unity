@@ -7,7 +7,7 @@ using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
-
+#if UNITY_ANDROID
 namespace Nimbus.Internal {
 	public class Android : NimbusAPI {
 		// ThirdParty Providers
@@ -138,3 +138,4 @@ namespace Nimbus.Internal {
 		}
 	}
 }
+#endif
