@@ -10,6 +10,7 @@ namespace Nimbus.Internal {
 		public event Action<NimbusAdUnit> OnAdDestroyed;
 		public event Action<NimbusAdUnit> OnVideoAdPaused;
 		public event Action<NimbusAdUnit> OnVideoAdResume;
+		public event Action<NimbusAdUnit> OnAdRewardEarned;
 		public event Action<NimbusAdUnit, bool> OnAdCompleted;
 		
 		internal void FireOnAdLoadedEvent(NimbusAdUnit obj) {
@@ -43,6 +44,11 @@ namespace Nimbus.Internal {
 		internal void FireOnAdCompletedEvent(NimbusAdUnit obj, bool skipped) {
 			OnAdCompleted?.Invoke(obj, skipped);
 		}
+
+		internal void FireOnAdRewardEarnedEvent(NimbusAdUnit obj)
+		{
+			OnAdRewardEarned?.Invoke(obj);
+		}
 		
 		internal void FireOnAdErrorEvent(NimbusAdUnit obj) {
 			OnAdError?.Invoke(obj);
@@ -60,7 +66,7 @@ namespace Nimbus.Internal {
 		CLICKED,
 		PAUSED,
 		RESUMED,
-
+		REWARDEARNED,
 		// FIRST_QUARTILE,
 		// MIDPOINT,
 		// THIRD_QUARTILE,

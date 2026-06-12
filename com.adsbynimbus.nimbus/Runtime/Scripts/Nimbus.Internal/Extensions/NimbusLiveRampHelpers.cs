@@ -25,8 +25,8 @@ namespace Nimbus.Internal.Extensions
             #endif
             #if UNITY_ANDROID
                 var internalHelper = new AndroidJavaObject("com.adsbynimbus.unity.nimbusunityinternal");
-                var companion = internalHelper.GetStatic<AndroidJavaObject> ("Companion");
-                companion.Call("initLiveRamp", configId, email, hasConsentForNoLegislation, isTestMode);
+                var instance = internalHelper.GetStatic<AndroidJavaObject> ("INSTANCE");
+                instance.CallStatic("initLiveRamp", configId, email, hasConsentForNoLegislation, isTestMode);
             #endif
         }
     }

@@ -7,7 +7,6 @@
     </androidPackage>
     <!--The below package is needed to resolve gradle issues with APS-->
     <androidPackage spec="com.google.android.material:material:1.12.0"/>
-    <androidPackage spec="org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"/>
   </androidPackages>
 
   <iosPods>

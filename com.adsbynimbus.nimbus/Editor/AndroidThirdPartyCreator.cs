@@ -12,12 +12,13 @@ namespace Nimbus.Editor
         import com.adsbynimbus.request.DemandBuilder
         import com.adsbynimbus.*
         import com.adsbynimbus.extension.*
-        import com.adsbynimbus.request.internal.AdUnitType";
+        import com.adsbynimbus.request.internal.AdUnitType
+        import org.json.JSONException
+        import org.json.JSONObject";
         private const string BeginningOfClass = @"
-        class NimbusUnityInternal {
-            companion object {
+        object NimbusUnityInternal {
         @JvmStatic
-        fun initNimbus(activity: Activity, testMode: Boolean, publisherKey: String, apiKey: String, extensions: Extensions) {
+        fun initNimbus(activity: Activity, testMode: Boolean, publisherKey: String, apiKey: String, extensions: JSONObject) {
          Nimbus.initialize(activity, publisherKey, apiKey) {";
         
         internal static void WriteDemandFile(string path)
@@ -43,47 +44,60 @@ namespace Nimbus.Editor
                 builder.AppendLine(@"AdMobExtension()");
             #endif
             #if NIMBUS_ENABLE_INMOBI_ANDROID
-                builder.AppendLine(@"extensions.inMobi?.accountId.let {
-                    InMobiExtension(it)
+                builder.AppendLine(@"try {
+                    InMobiExtension(extensions.getString(""inMobiAccountId""))
+                } catch (e: JSONException) {
+                    UnityHelper.didReceiveNimbusError(0, e)
                 }");
             #endif
             #if NIMBUS_ENABLE_META_ANDROID
-                builder.AppendLine(@"extensions.meta?.appId.let {
-                    MetaExtension.forceTestAd = extensions.meta?.forceTestAd ?: false
-                    MetaExtension(it)
+                builder.AppendLine(@"try {
+                    MetaExtension.forceTestAd = extensions.getBoolean(""metaForceTestAd"")
+                    MetaExtension(extensions.getString(""metaAppId""))
+                } catch (e: JSONException) {
+                    UnityHelper.didReceiveNimbusError(0, e)
                 }");
             #endif
             #if NIMBUS_ENABLE_MINTEGRAL_ANDROID
-                builder.AppendLine(@"extensions.mintegral?.appId?.let { appId ->
-                        extensions.mintegral.appKey?.let { appKey ->
-                            MintegralExtension(appId, appKey)
-                        }
-                    }");
+                builder.AppendLine(@"try {
+                    MintegralExtension(extensions.getString(""mintegralAppId""), 
+                        extensions.getString(""mintegralAppKey""))
+                } catch (e: JSONException) {
+                    UnityHelper.didReceiveNimbusError(0, e)
+                }");
             #endif
             #if NIMBUS_ENABLE_MOBILEFUSE_ANDROID
                 builder.AppendLine(@"MobileFuseExtension()");
             #endif
             #if NIMBUS_ENABLE_MOLOCO_ANDROID
-                builder.AppendLine(@"extensions.moloco?.appKey.let {
-                        MolocoExtension(it)
-                    }");
+                builder.AppendLine(@"try {
+                    MolocoExtension(extensions.getString(""molocoAppKey""))
+                } catch (e: JSONException) {
+                    UnityHelper.didReceiveNimbusError(0, e)
+                }");
             #endif
             #if NIMBUS_ENABLE_UNITY_ADS_ANDROID
-                builder.AppendLine(@"extensions.unityAds?.gameId.let {
-                    UnityExtension(it)
+                builder.AppendLine(@"try {
+                    UnityExtension(extensions.getString(""unityAdsGameId""))
+                } catch (e: JSONException) {
+                    UnityHelper.didReceiveNimbusError(0, e)
                 }"); 
             #endif
             #if NIMBUS_ENABLE_VUNGLE_ANDROID
-                builder.AppendLine(@"extensions.vungle?.appId.let {
-                        VungleExtension(it)
-                    }");
+                builder.AppendLine(@"try {
+                    VungleExtension(extensions.getString(""vungleAppId""))
+                } catch (e: JSONException) {
+                    UnityHelper.didReceiveNimbusError(0, e)
+                }");
             #endif
             builder.AppendLine(@"}");
             //init aps outside of init block
             #if NIMBUS_ENABLE_APS_ANDROID
-                builder.AppendLine(@"extensions.aps?.appKey?.let {
-                    initAPS(activity, it, testMode)
-                }");
+                builder.AppendLine(@"try {
+                initAPS(activity, extensions.getString(""apsAppKey""), testMode)
+            } catch (e: JSONException) {
+                UnityHelper.didReceiveNimbusError(0, e)
+            }");
             #endif
             builder.AppendLine(@"}");
             //end init function
@@ -105,54 +119,72 @@ namespace Nimbus.Editor
             #endif
 
             builder.AppendLine(@"@JvmStatic
-                suspend fun demandBlock(activity: Activity, adType: AdUnitType, extensions: Extensions?): DemandBuilder.() -> Unit {
+                suspend fun demandBlock(
+                    activity: Activity,
+                    adUnitInstanceId: Int,
+                    adType: AdUnitType,
+                    extensions: JSONObject?
+                ): DemandBuilder.() -> Unit {
                     if (extensions == null) {
                         return {}
                     }");
             #if NIMBUS_ENABLE_APS_ANDROID
-                builder.AppendLine(@"val aps = apsDemand(activity, extensions)
+                builder.AppendLine(@"val aps = apsDemand(activity, adUnitInstanceId, extensions)
                     return { 
                         aps()");
             #else
                 builder.AppendLine(@"return{");
             #endif
             #if NIMBUS_ENABLE_ADMOB_ANDROID
-            builder.AppendLine(@"adMobDemand(adType, extensions)()");
+            builder.AppendLine(@"adMobDemand(adUnitInstanceId, adType, extensions)()");
             #endif
             builder.AppendLine(@"}
                 }");
             #if NIMBUS_ENABLE_APS_ANDROID
             builder.AppendLine(@"@JvmStatic
-                suspend fun apsDemand(activity: Activity, extensions: Extensions): DemandBuilder.() -> Unit {
-                    if (extensions.aps?.slotData?.isNotEmpty() ?: false) {
+            suspend fun apsDemand(
+                activity: Activity,
+                adUnitInstanceId: Int,
+                extensions: JSONObject
+            ): DemandBuilder.() -> Unit {
+                try {
+                    if (extensions.has(""apsSlotData"")) {
                         val apsRequests: ArrayList<DTBAdRequest> = arrayListOf()
-                        for (slot in extensions.aps.slotData) {
-                            slot?.slotId.let { uuid ->
-                                when(slot?.adUnitType) {
-                                    APSAdUnitType.display320X50 -> apsRequests.add(
-                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
-                                        setSizes(DTBAdSize(320, 50, uuid))
+                        val apsSlotData = extensions.getJSONArray(""apsSlotData"")
+                        for (i in 0 until apsSlotData.length()) {
+                            val slot = apsSlotData.getJSONObject(i)
+                            when (slot.getInt(""adUnitType"")) {
+                                0 -> apsRequests.add(
+                                    DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                        setSizes(DTBAdSize(320, 50, slot.getString(""slotId"")))
                                     })
-                                    APSAdUnitType.display300X250 -> apsRequests.add(
-                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
-                                            setSizes(DTBAdSize(300, 250, uuid))
-                                        })
-                                    APSAdUnitType.display728X90 -> apsRequests.add(
-                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
-                                            setSizes(DTBAdSize(728, 90, uuid))
-                                        })
-                                    APSAdUnitType.interstitialDisplay -> apsRequests.add(
-                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
-                                            setSizes(DTBAdSize.DTBInterstitialAdSize(uuid))
-                                        })
-                                    APSAdUnitType.interstitialVideo, APSAdUnitType.rewardedVideo -> apsRequests.add(
-                                        DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
-                                            setSizes(DTBAdSize.DTBVideo(
+
+                                1 -> apsRequests.add(
+                                    DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                        setSizes(DTBAdSize(300, 250, slot.getString(""slotId"")))
+                                    })
+
+                                2 -> apsRequests.add(
+                                    DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                        setSizes(DTBAdSize(728, 90, slot.getString(""slotId"")))
+                                    })
+
+                                3 -> apsRequests.add(
+                                    DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                        setSizes(DTBAdSize.DTBInterstitialAdSize(slot.getString(""slotId"")))
+                                    })
+
+                                4, 5 -> apsRequests.add(
+                                    DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
+                                        setSizes(
+                                            DTBAdSize.DTBVideo(
                                                 activity.resources.displayMetrics.widthPixels,
-                                                activity.resources.displayMetrics.heightPixels, uuid))
-                                        })
-                                    null -> continue
-                                }
+                                                activity.resources.displayMetrics.heightPixels,
+                                                slot.getString(""slotId"")
+                                            )
+                                        )
+                                    })
+
                             }
                         }
                         val params = APSFetcher(*apsRequests.toTypedArray()).fetchAds()
@@ -160,37 +192,52 @@ namespace Nimbus.Editor
                             aps(params, apsRequests)
                         }
                     }
-                    return {}
-                }");
+                } catch (e: Exception) {
+                    UnityHelper.didReceiveNimbusError(adUnitInstanceId, e)
+                }
+                return {}
+            }");
             #endif
             #if NIMBUS_ENABLE_ADMOB_ANDROID
             builder.AppendLine(@"@JvmStatic
-                fun adMobDemand(adType: AdUnitType, extensions: Extensions): DemandBuilder.() -> Unit {
-                    extensions.adMob?.let {
-                        extensions.adMob.adUnitIds?.let { 
-                            if (it.isNotEmpty()) {
-                                when (adType){
-                                    AdUnitType.Inline ->  { 
-                                        if (!it.first().isNullOrEmpty()) {
-                                            return {admobBanner(it.first() ?: """")} }
-                                        }
-                                    AdUnitType.Interstitial -> {
-                                        if (!it.first().isNullOrEmpty()) {
-                                            return {admobInterstitial(it.first() ?: """")} }
+            fun adMobDemand(adUnitInstanceId: Int, adType: AdUnitType, extensions: JSONObject): DemandBuilder.() -> Unit {
+                try {
+                    if (extensions.has(""adMobAdUnitIds"")) {
+                        val jsonArray = extensions.getJSONArray(""adMobAdUnitIds"")
+                        val adMobAdUnitIds = Array(jsonArray.length()) { i ->
+                            jsonArray.getString(i)
+                        }
+                        if (adMobAdUnitIds.isNotEmpty()) {
+                            when (adType) {
+                                AdUnitType.Inline -> {
+                                    if (adMobAdUnitIds.first().isNullOrEmpty()) {
+                                        return { admobBanner(adMobAdUnitIds.first() ?: """") }
                                     }
-                                    AdUnitType.Rewarded -> {
-                                        if (!it.first().isNullOrEmpty()) {
-                                            return {admobRewarded(it.first() ?: """")} }
+                                }
+
+                                AdUnitType.Interstitial -> {
+                                    if (adMobAdUnitIds.first().isNullOrEmpty()) {
+                                        return { admobInterstitial(adMobAdUnitIds.first() ?: """") }
                                     }
-                                    else -> {
-                                        return {}
+                                }
+
+                                AdUnitType.Rewarded -> {
+                                    if (adMobAdUnitIds.first().isNullOrEmpty()) {
+                                        return { admobRewarded(adMobAdUnitIds.first() ?: """") }
                                     }
+                                }
+
+                                else -> {
+                                    return {}
                                 }
                             }
                         }
                     }
-                    return {}
-                }");
+                } catch (e: Exception) {
+                    UnityHelper.didReceiveNimbusError(adUnitInstanceId, e)
+                }
+                return {}
+            }");
             #endif
             
             //LiveRamp Init Function
@@ -208,7 +255,7 @@ namespace Nimbus.Editor
                     }
                 }");
             #endif
-            builder.AppendLine("}}");
+            builder.AppendLine("}");
             File.WriteAllText(path, builder.ToString());
         }
     }
