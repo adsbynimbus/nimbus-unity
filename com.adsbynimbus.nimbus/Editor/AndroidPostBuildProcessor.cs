@@ -198,7 +198,12 @@ namespace Nimbus.Editor {
 		private static void WriteGradleWrapper(string path)
 		{
 			if (!File.Exists(path))
-				return;
+			{
+				if (Path.GetDirectoryName(path) != null)
+				{
+					Directory.CreateDirectory(Path.GetDirectoryName(path));
+				}
+			}
 			File.WriteAllText(path, @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-all.zip");
 		}
 
