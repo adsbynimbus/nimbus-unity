@@ -95,6 +95,7 @@ namespace Nimbus.Runtime.Scripts {
 				if (iAdEvent is IAdEventsExtended iAdEventExt) {
 					Instance.NimbusEvents.OnAdImpression += iAdEventExt.OnAdImpression;
 					Instance.NimbusEvents.OnAdDestroyed += iAdEventExt.OnAdDestroyed;
+					Instance.NimbusEvents.OnAdRewardEarned += iAdEventExt.OnAdRewardEarned;
 				}
 
 				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt) {

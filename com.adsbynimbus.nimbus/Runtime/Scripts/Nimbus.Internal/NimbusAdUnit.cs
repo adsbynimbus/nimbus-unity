@@ -56,9 +56,9 @@ namespace Nimbus.Internal {
 		public void Destroy() {
 			#if UNITY_ANDROID
 			var helperClass = new AndroidJavaObject("com.adsbynimbus.unity.UnityHelper");
-			var companion = helperClass.GetStatic<AndroidJavaObject> ("Companion");
+			var instance = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
 			//if (_androidController == null || _androidHelper == null) return;
-			companion.Call("destroyAd", InstanceID);
+			instance.CallStatic("destroyAd", InstanceID);
 			_androidController = null;
 			_androidHelper = null;
 			# elif UNITY_IOS
@@ -99,6 +99,9 @@ namespace Nimbus.Internal {
 					break;
 				case AdEventTypes.RESUMED:
 					_adEvents.FireOnVideoAdResumeEvent(this);
+					break;
+				case AdEventTypes.REWARDEARNED:
+					_adEvents.FireOnAdRewardEarnedEvent(this);
 					break;
 				case AdEventTypes.COMPLETED:
 					_adCompleted = true;

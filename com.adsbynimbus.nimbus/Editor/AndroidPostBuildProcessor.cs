@@ -83,7 +83,7 @@ namespace Nimbus.Editor {
 				                includeGroupByRegex("".*\\.adsbynimbus.*"")
 										}" + extraRepositories + "}}}";
 			WriteGradleProps(path + "/../gradle.properties");
-			WriteSerializationPlugins(path);
+			WriteGradleWrapper(path + "/../gradle/wrapper/gradle-wrapper.properties");
 			var repoWriter = File.AppendText(path + "/../settings.gradle");
 			repoWriter.WriteLine(repoString);
 			repoWriter.Flush();
@@ -104,33 +104,46 @@ namespace Nimbus.Editor {
 			
 			#if NIMBUS_ENABLE_ADMOB
 				//pull saved appId from file
-				var trimmedID = "";
-				foreach (var id in File.ReadLines("Assets/Editor/AdMobIds")) {
-					trimmedID = id.Trim();
-					if (trimmedID.Contains("android"))
+				try
+				{
+					var trimmedID = "";
+					foreach (var id in File.ReadLines("Assets/Editor/AdMobIds"))
 					{
-						trimmedID = trimmedID.Remove(0, 8);
-						break;
+						trimmedID = id.Trim();
+						if (trimmedID.Contains("android"))
+						{
+							trimmedID = trimmedID.Remove(0, 8);
+							break;
+						}
+					}
+
+					//put saved appId in AndroidManifest
+					var sb = new StringBuilder();
+					var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
+					var metaData =
+						$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
+					using (var sr = new StreamReader(manifestPath))
+					{
+						string line;
+						do
+						{
+							line = sr.ReadLine();
+							sb.AppendLine(line);
+						} while (line != null && !line.ToLower().Contains("<application"));
+
+						sb.Append(metaData);
+						sb.AppendLine();
+						sb.Append(sr.ReadToEnd());
+					}
+
+					using (var sr = new StreamWriter(manifestPath))
+					{
+						sr.Write(sb.ToString());
 					}
 				}
-				//put saved appId in AndroidManifest
-				var sb = new StringBuilder();
-				var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
-				var metaData =
-					$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
-				using (var sr = new StreamReader(manifestPath)) {
-					string line;
-					do {
-						line = sr.ReadLine();
-						sb.AppendLine(line);
-					} while (line != null && !line.ToLower().Contains("<application"));
-					
-					sb.Append(metaData);
-					sb.AppendLine();
-					sb.Append(sr.ReadToEnd());
-				}
-				using (var sr = new StreamWriter(manifestPath)) {
-					sr.Write(sb.ToString());
+				catch (FileNotFoundException)
+				{
+					Debug.unityLogger.Log($"AdMob App Id is null or blank, it has not been added to the Android manifest.");
 				}
 			#endif
 			
@@ -182,32 +195,16 @@ namespace Nimbus.Editor {
 			File.WriteAllLines(gradleFile, gradleProps);
 		}
 
-		private static void WriteSerializationPlugins(string basePath)
+		private static void WriteGradleWrapper(string path)
 		{
-			var projectGradleFile = basePath + "/../build.gradle";
-			var unitylibraryBuildGradle = basePath + "/../unityLibrary/build.gradle";
-			var serializationCompilerPlugin =
-				"plugins{id 'org.jetbrains.kotlin.plugin.serialization' version '2.3.21' apply false}";
-			var serializationUnityLibraryPlugin = "plugins{id 'org.jetbrains.kotlin.plugin.serialization'}";
-			try
+			if (!File.Exists(path))
 			{
-				if (!File.ReadAllText(projectGradleFile).Contains("org.jetbrains.kotlin.plugin.serialization"))
+				if (Path.GetDirectoryName(path) != null)
 				{
-					var projectLines = File.ReadAllLines(projectGradleFile).ToList();
-					projectLines.Insert(0, serializationCompilerPlugin);
-					File.WriteAllLines(projectGradleFile, projectLines);
-				}
-				if (!File.ReadAllText(unitylibraryBuildGradle).Contains("org.jetbrains.kotlin.plugin.serialization"))
-				{
-					var unityLibraryLines = File.ReadAllLines(unitylibraryBuildGradle).ToList();
-					unityLibraryLines.Insert(0, serializationUnityLibraryPlugin);
-					File.WriteAllLines(unitylibraryBuildGradle, unityLibraryLines);
+					Directory.CreateDirectory(Path.GetDirectoryName(path));
 				}
 			}
-			catch (IOException e)
-			{
-				Debug.unityLogger.LogError("NimbusError", $"File error: {e.Message}");
-			}
+			File.WriteAllText(path, @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-all.zip");
 		}
 
 		private static void RunEdm4uCheck(string path)

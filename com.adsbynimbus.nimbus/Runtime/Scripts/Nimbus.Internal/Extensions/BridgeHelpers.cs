@@ -6,8 +6,9 @@ namespace Nimbus.Internal.Extensions
 {
     public class BridgeHelpers
     {
-        #if UNITY_ANDROID
-        public static string GetStringFromJavaFuture(String className, String methodName, object[] methodParams, long timeout)
+#if UNITY_ANDROID
+        public static string GetStringFromJavaFuture(String className, String methodName, object[] methodParams,
+            long timeout)
         {
             AndroidJNI.AttachCurrentThread();
             var timeUnit = new AndroidJavaClass("java.util.concurrent.TimeUnit");
@@ -16,9 +17,10 @@ namespace Nimbus.Internal.Extensions
             var future = unityHelper.CallStatic<AndroidJavaObject>(methodName, methodParams);
             return future.Call<String>("get", timeout, timeUnitMillis);
         }
-        #endif
+#endif
     }
-    
+
+#if UNITY_IOS
     public class Extensions
     {
         public Aps aps;
@@ -74,4 +76,21 @@ namespace Nimbus.Internal.Extensions
     {
         public String appId;
     }
+#endif
+#if UNITY_ANDROID
+    public class Extensions
+    {
+        public String apsAppKey;
+        public ApsSlotData[] apsSlotData;
+        public String[] adMobAdUnitIds;
+        public String inMobiAccountId;
+        public String metaAppId;
+        public Boolean metaForceTestAd;
+        public String mintegralAppId;
+        public String mintegralAppKey;
+        public String molocoAppKey;
+        public String unityAdsGameId;
+        public String vungleAppId;
+    }
+#endif
 }
