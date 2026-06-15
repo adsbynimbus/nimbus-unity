@@ -76,6 +76,26 @@ namespace Nimbus.Internal.Extensions
     {
         public String appId;
     }
+
+    public struct RequestModifiers
+    {
+        public String[] appPageCat;
+        public String[] appSectionCat;
+        public String userKeywords;
+        public String viewabilityOmidPn;
+        public String viewabilityOmidPv;
+        public double latitude;
+        public double longitude;
+        public LocationType locationType;
+        public int accuracy;
+    }
+    
+    public enum LocationType : byte {
+        Gps = 0,
+        IpLookup = 1,
+        UserProvided = 2
+    }
+    
 #endif
 #if UNITY_ANDROID
     public class Extensions
@@ -91,6 +111,15 @@ namespace Nimbus.Internal.Extensions
         public String molocoAppKey;
         public String unityAdsGameId;
         public String vungleAppId;
+        public String[] appPageCat;
+        public String[] appSectionCat;
+        public String userKeywords;
+        public String viewabilityOmidPn;
+        public String viewabilityOmidPv;
+        public double latitude;
+        public double longitude;
+        public LocationType locationType;
+        public int accuracy;
     }
 #endif
 }
