@@ -103,33 +103,46 @@ namespace Nimbus.Editor {
 			
 			#if NIMBUS_ENABLE_ADMOB
 				//pull saved appId from file
-				var trimmedID = "";
-				foreach (var id in File.ReadLines("Assets/Editor/AdMobIds")) {
-					trimmedID = id.Trim();
-					if (trimmedID.Contains("android"))
+				try
+				{
+					var trimmedID = "";
+					foreach (var id in File.ReadLines("Assets/Editor/AdMobIds"))
 					{
-						trimmedID = trimmedID.Remove(0, 8);
-						break;
+						trimmedID = id.Trim();
+						if (trimmedID.Contains("android"))
+						{
+							trimmedID = trimmedID.Remove(0, 8);
+							break;
+						}
+					}
+
+					//put saved appId in AndroidManifest
+					var sb = new StringBuilder();
+					var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
+					var metaData =
+						$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
+					using (var sr = new StreamReader(manifestPath))
+					{
+						string line;
+						do
+						{
+							line = sr.ReadLine();
+							sb.AppendLine(line);
+						} while (line != null && !line.ToLower().Contains("<application"));
+
+						sb.Append(metaData);
+						sb.AppendLine();
+						sb.Append(sr.ReadToEnd());
+					}
+
+					using (var sr = new StreamWriter(manifestPath))
+					{
+						sr.Write(sb.ToString());
 					}
 				}
-				//put saved appId in AndroidManifest
-				var sb = new StringBuilder();
-				var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
-				var metaData =
-					$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
-				using (var sr = new StreamReader(manifestPath)) {
-					string line;
-					do {
-						line = sr.ReadLine();
-						sb.AppendLine(line);
-					} while (line != null && !line.ToLower().Contains("<application"));
-					
-					sb.Append(metaData);
-					sb.AppendLine();
-					sb.Append(sr.ReadToEnd());
-				}
-				using (var sr = new StreamWriter(manifestPath)) {
-					sr.Write(sb.ToString());
+				catch (FileNotFoundException)
+				{
+					Debug.unityLogger.Log($"AdMob App Id is null or blank, it has not been added to the Android manifest.");
 				}
 			#endif
 			
