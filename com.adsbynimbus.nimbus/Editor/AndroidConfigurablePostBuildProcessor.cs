@@ -1,10 +1,9 @@
 #if UNITY_EDITOR && UNITY_ANDROID
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor.Android;
-using UnityEngine;
 
 namespace Nimbus.Editor
 {
@@ -15,22 +14,7 @@ namespace Nimbus.Editor
         public void OnPostGenerateGradleAndroidProject(string path)
 		{
 			#if NIMBUS_ENABLE_KOTLIN_UPGRADE
-				var projectBuildGradlePath = path + "/../build.gradle";
-				var kotlinLine = "id 'org.jetbrains.kotlin.android' version '2.2.0' apply false";
-				try
-				{
-					CompareVersionInFile(projectBuildGradlePath, "org.jetbrains.kotlin.android",
-						"2.2", kotlinLine);
-				}
-				catch (FileNotFoundException)
-				{
-					Debug.unityLogger.LogError("Nimbus", "Project-level build.gradle not found.");
-				}
-				catch (Exception)
-				{
-					InsertTextAfterString(projectBuildGradlePath, "plugins {", kotlinLine);
-				}
-
+				UpdateGradleFileForKotlinVersion(path + "/../build.gradle");
 			#endif
 
 			#if NIMBUS_ENABLE_GRADLE_UPGRADE
@@ -40,18 +24,20 @@ namespace Nimbus.Editor
 				{
 					CompareVersionInFile(gradleWrapperPath, "distributionUrl", "8.11.1", gradleLine);
 				}
-				catch (FileNotFoundException)
+				catch (Exception e)
 				{
-					if (Path.GetDirectoryName(gradleWrapperPath) != null)
+					if (e.GetType() == typeof(FileNotFoundException))
 					{
-						Directory.CreateDirectory(Path.GetDirectoryName(gradleWrapperPath));
+						if (Path.GetDirectoryName(gradleWrapperPath) != null)
+						{
+							Directory.CreateDirectory(Path.GetDirectoryName(gradleWrapperPath));
+						}
+						File.WriteAllText(gradleWrapperPath, gradleLine);
 					}
-
-					File.WriteAllText(gradleWrapperPath, gradleLine);
-				}
-				catch (Exception)
-				{
-					File.AppendAllText(gradleWrapperPath, Environment.NewLine + gradleLine);
+					else
+					{
+						File.AppendAllText(gradleWrapperPath, Environment.NewLine + gradleLine);
+					}
 				}
 			#endif
 		}
@@ -90,28 +76,76 @@ namespace Nimbus.Editor
 			throw new Exception($"Could not find line containing '{searchText}'.");
 		}
 		
-		public static void InsertTextAfterString(
-			string filePath,
-			string searchText,
-			string textToInsert)
+		public static void UpdateGradleFileForKotlinVersion(
+			string filePath)
 		{
+			var kotlinLine = "id 'org.jetbrains.kotlin.android' version '2.2.0' apply false";
+			var kotlinLineFound = false;
+			var kotlinAddLineIndex = -1;
+
+			
 			if (!File.Exists(filePath))
 				throw new FileNotFoundException(filePath);
 
-			var lines = File.ReadAllLines(filePath).ToList();
-
-			for (int i = 0; i < lines.Count; i++)
+			string[] lines = File.ReadAllLines(filePath);
+			bool updated = false;
+			var versionMappings = new Dictionary<string, string>
 			{
-				if (lines[i].Contains(searchText))
+				{"org.jetbrains.kotlin.android", "2.2.0" },
+				{"com.android.application", "8.13.2" },
+				{"com.android.library", "8.13.2" }
+			};
+
+			for (int i = 0; i < lines.Length; i++)
+			{
+				foreach (var mapping in versionMappings)
 				{
-					lines.Insert(i + 1, textToInsert);
-					File.WriteAllLines(filePath, lines);
-					return;
+					string searchText = mapping.Key;
+					string targetVersionString = mapping.Value;
+
+					if (lines[i].Contains("plugins {"))
+					{
+						kotlinAddLineIndex = i;
+					}
+
+					if (!lines[i].Contains(searchText))
+						continue;
+
+					Match match = Regex.Match(lines[i], @"\d+(\.\d+)+");
+
+					if (!match.Success)
+						continue;
+
+					if (searchText == "org.jetbrains.kotlin.android")
+					{
+						kotlinLineFound = true;
+					}
+					
+					Version currentVersion = new Version(match.Value);
+					Version targetVersion = new Version(targetVersionString);
+
+					if (currentVersion.CompareTo(targetVersion) < 0)
+					{
+						lines[i] = Regex.Replace(
+							lines[i],
+							@"\d+(\.\d+)+",
+							targetVersionString);
+
+						updated = true;
+					}
+
+					break; // stop checking other mappings for this line
 				}
 			}
 
-			throw new Exception($"Could not find '{searchText}' in file.");
-
+			if (!kotlinLineFound)
+			{
+				lines[kotlinAddLineIndex] += kotlinLine;
+			}
+			
+			if (updated)
+				File.WriteAllLines(filePath, lines);
+			
 		}
     }
 }
