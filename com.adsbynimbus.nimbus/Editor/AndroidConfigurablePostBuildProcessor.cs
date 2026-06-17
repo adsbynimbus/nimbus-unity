@@ -19,10 +19,10 @@ namespace Nimbus.Editor
 
 			#if NIMBUS_ENABLE_GRADLE_UPGRADE
 				var gradleWrapperPath = path + "/../gradle/wrapper/gradle-wrapper.properties";
-				var gradleLine = @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-all.zip";
+				var gradleLine = @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip";
 				try
 				{
-					CompareVersionInFile(gradleWrapperPath, "distributionUrl", "8.11.1", gradleLine);
+					CompareVersionInFile(gradleWrapperPath, "distributionUrl", "8.13", gradleLine);
 				}
 				catch (Exception e)
 				{
@@ -70,9 +70,9 @@ namespace Nimbus.Editor
 					lines[i] = newLine;
 
 					File.WriteAllLines(filePath, lines);
+					return;
 				}
 			}
-
 			throw new Exception($"Could not find line containing '{searchText}'.");
 		}
 		
