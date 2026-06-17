@@ -494,7 +494,7 @@ namespace Nimbus.Editor {
 				EditorGUILayout.LabelField("Android Kotlin Version upgraded to 2.2", EditorStyles.label);
 			#endif
 			#if NIMBUS_ENABLE_GRADLE_UPGRADE
-				EditorGUILayout.LabelField("Android Gradle Version upgraded to 8.11.1", EditorStyles.label);
+				EditorGUILayout.LabelField("Android Gradle Version upgraded to 8.14.5", EditorStyles.label);
 			#endif
 			_enableManualInitialization = EditorGUILayout.Toggle("Enable Manual Initialization", _enableManualInitialization);
 			

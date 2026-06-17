@@ -47,7 +47,7 @@ namespace Nimbus.Editor {
 				}
 			}
 			GUILayout.Space(10);
-			EditorGUILayout.LabelField($"Upgrade Gradle Version to 8.11.1", headerStyle);
+			EditorGUILayout.LabelField($"Upgrade Gradle Version to 8.14.5", headerStyle);
 			GUILayout.Space(2);
 			var androidGradleButtonText = _gradleUpgradeEnabled
 				? string.Format(ButtonMessageTemplate, "Remove", "Gradle Upgrade")

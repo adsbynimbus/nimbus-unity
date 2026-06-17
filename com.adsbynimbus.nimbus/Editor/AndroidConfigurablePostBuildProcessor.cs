@@ -19,10 +19,10 @@ namespace Nimbus.Editor
 
 			#if NIMBUS_ENABLE_GRADLE_UPGRADE
 				var gradleWrapperPath = path + "/../gradle/wrapper/gradle-wrapper.properties";
-				var gradleLine = @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip";
+				var gradleLine = @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.5-bin.zip";
 				try
 				{
-					CompareVersionInFile(gradleWrapperPath, "distributionUrl", "8.13", gradleLine);
+					CompareVersionInFile(gradleWrapperPath, "distributionUrl", "8.14.5", gradleLine);
 				}
 				catch (Exception e)
 				{
