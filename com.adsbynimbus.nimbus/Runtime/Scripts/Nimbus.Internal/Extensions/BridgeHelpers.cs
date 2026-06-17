@@ -89,13 +89,6 @@ namespace Nimbus.Internal.Extensions
         public LocationType locationType;
         public int accuracy;
     }
-    
-    public enum LocationType : byte {
-        Gps = 0,
-        IpLookup = 1,
-        UserProvided = 2
-    }
-    
 #endif
 #if UNITY_ANDROID
     public class Extensions
@@ -122,4 +115,10 @@ namespace Nimbus.Internal.Extensions
         public int accuracy;
     }
 #endif
+    public enum LocationType : byte {
+        Gps = 0,
+        IpLookup = 1,
+        UserProvided = 2
+    }
+
 }
