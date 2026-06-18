@@ -288,6 +288,12 @@ namespace Nimbus.Editor {
 			_apiKey = EditorGUILayout.TextField("ApiKey", _apiKey);
 			_enableUnityLogs = EditorGUILayout.Toggle("Enable Unity Logger", _enableUnityLogs);
 			_enableSDKInTestMode = EditorGUILayout.Toggle("Enable SDK In Test Mode", _enableSDKInTestMode);
+			#if NIMBUS_ENABLE_KOTLIN_UPGRADE
+				EditorGUILayout.LabelField("Android Kotlin Version upgraded to 2.2", EditorStyles.label);
+			#endif
+			#if NIMBUS_ENABLE_GRADLE_UPGRADE
+				EditorGUILayout.LabelField("Android Gradle Version upgraded to 8.14.5", EditorStyles.label);
+			#endif
 			_enableManualInitialization = EditorGUILayout.Toggle("Enable Manual Initialization", _enableManualInitialization);
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
