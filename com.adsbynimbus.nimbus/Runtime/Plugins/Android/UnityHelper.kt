@@ -29,8 +29,8 @@ object UnityHelper {
         thirdPartyJson: String
     ) {
         if (obj is Activity) {
-            // TODO: REMOVE BELOW URL ONCE DONE TESTING
-            Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
+            // TODO: Remove when updating to the next Android RC
+            Nimbus.configuration.requestUrl = "https://${publisherKey}.adsbynimbus.com/rta/sdk/v3"
             Nimbus.configuration.testMode = enableSDKInTestMode
             val extensions = extensionsFromJsonString(thirdPartyJson) ?: return
             NimbusUnityInternal.initNimbus(obj, enableSDKInTestMode, publisherKey, apiKey, extensions)
@@ -66,12 +66,11 @@ object UnityHelper {
                 demand {
                     demandBlock()
                 }
+            }.onEvent { event ->
+                didReceiveNimbusEvent(instanceId, event)
+            }.onError { error ->
+                didReceiveNimbusError(instanceId, error)
             }
-                .onEvent { event ->
-                    didReceiveNimbusEvent(instanceId, event)
-                }.onError { error ->
-                    didReceiveNimbusError(instanceId, error)
-                }
             if (showAd) {
                 showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                 sendRenderNimbusEvent(instanceId)
