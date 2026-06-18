@@ -53,8 +53,8 @@ jobs:
           - Android # Build an Android player.
           - iOS # Build an iOS player.
         unityVersion:
-          - 6000.0.26f1
-          - auto          
+          - 6000.5.0f1
+          - auto
     steps:
       # Checkout
       - name: Checkout repository
