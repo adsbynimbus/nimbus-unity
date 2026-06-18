@@ -1,17 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
-using Nimbus.Internal.Extensions;
 using Nimbus.Internal.Extensions.AdMob;
 using Nimbus.Internal.Extensions.APS;
-using Nimbus.Internal.Utility;
 using Nimbus.ScriptableObjects;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
-
+#if UNITY_ANDROID
 namespace Nimbus.Internal {
 	public class Android : NimbusAPI {
 		// ThirdParty Providers
@@ -24,17 +20,14 @@ namespace Nimbus.Internal {
 		private const string AndroidBuild = "android.os.Build";
 		private const string AndroidBuildVersion = "android.os.Build$VERSION";
 		private const string AndroidLogger = "com.adsbynimbus.Nimbus$Logger$Default";
-		private const string ConnectionHelper = "com.adsbynimbus.request.ConnectionTypeKt";
 		private const string HelperClass = "com.adsbynimbus.unity.UnityHelper";
 		private const string NimbusPackage = "com.adsbynimbus.Nimbus";
 		private AndroidJavaClass _build;
 		private AndroidJavaClass _buildVersion;
-		private AndroidJavaClass _connectionTypeHelper;
-
 		private AndroidJavaObject _currentActivity;
 
-		private AndroidJavaClass _helper;
-		private AndroidJavaClass _nimbus;
+
+		private AndroidJavaObject _helper;
 		private AndroidJavaClass _unityPlayer;
 		private string _sessionId;
 		
@@ -42,26 +35,22 @@ namespace Nimbus.Internal {
 			Debug.unityLogger.Log("Initializing Android SDK");
 			_unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 			_currentActivity = _unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-			_nimbus = new AndroidJavaClass(NimbusPackage);
-			_helper = new AndroidJavaClass(HelperClass);
-			_connectionTypeHelper = new AndroidJavaClass(ConnectionHelper);
-			_build = new AndroidJavaClass(AndroidBuild);
-			_buildVersion = new AndroidJavaClass(AndroidBuildVersion);
-
+			var helperClass = new AndroidJavaObject(HelperClass);
+			_helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			
 			#if NIMBUS_ENABLE_APS
 				var (apsAppID, slots) = configuration.GetApsData();
 				_apsAndroid = new ApsAndroid(_currentActivity, apsAppID, slots, configuration.enableSDKInTestMode, 0);
-				extensions.aps.appKey = apsAppID;
+				extensions.apsAppKey = apsAppID;
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				extensions.vungle.appId = configuration.GetVungleData();
+				extensions.vungleAppId = configuration.GetVungleData();
 			#endif
 			#if NIMBUS_ENABLE_META
-				extensions.meta.appId = configuration.GetMetaData();
-				extensions.meta.forceTestAd = configuration.enableSDKInTestMode;
+				extensions.metaAppId = configuration.GetMetaData();
+				extensions.metaForceTestAd = configuration.enableSDKInTestMode;
 			#endif
 			#if NIMBUS_ENABLE_ADMOB
 				var adMobAdUnitIds = configuration.GetAdMobData();
@@ -69,37 +58,77 @@ namespace Nimbus.Internal {
 			#endif
 			#if NIMBUS_ENABLE_MINTEGRAL
 				var (mintegralAppID, mintegralAppKey) = configuration.GetMintegralData();
-				extensions.mintegral.appId = mintegralAppID;
-				extensions.mintegral.appKey = mintegralAppKey;
+				extensions.mintegralAppId = mintegralAppID;
+				extensions.mintegralAppKey = mintegralAppKey;
 			#endif
 			#if NIMBUS_ENABLE_UNITY_ADS
-				extensions.unityAds.gameId = configuration.GetUnityAdsData();
+				extensions.unityAdsGameId = configuration.GetUnityAdsData();
 			#endif
 			#if NIMBUS_ENABLE_MOLOCO
-				extensions.moloco.appKey = configuration.GetMolocoData();
+				extensions.molocoAppKey = configuration.GetMolocoData();
 			#endif
 			#if NIMBUS_ENABLE_INMOBI
-				extensions.inMobi.accountId = configuration.GetInMobiData();
+				extensions.inMobiAccountId = configuration.GetInMobiData();
 			#endif
 			
 			_helper.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
-				configuration.apiKey.Trim(), JsonConvert.SerializeObject(extensions));
+				configuration.apiKey.Trim(), configuration.enableSDKInTestMode, JsonConvert.SerializeObject(extensions));
 		}
 
 
-		internal override void getAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
-			const string functionCall = "render";
-			var holdTime = 0;
-			var shouldBlock = nimbusAdUnit.AdType != AdType.Banner;
-			//var listener = new AdManagerListener(in _helper, ref nimbusAdUnit);
+		internal override void GetAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
+			var extensions = new Nimbus.Internal.Extensions.Extensions();
+			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
+			#if NIMBUS_ENABLE_ADMOB_ANDROID && UNITY_ANDROID
+				extensions.adMobAdUnitIds = _adMobAndroid.GetAdUnitId(nimbusAdUnit.AdType);
+			#endif
+			switch (nimbusAdUnit.AdType)
+			{
+				case AdType.Banner:
+				{
+					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
+					#if NIMBUS_ENABLE_APS_ANDROID && UNITY_ANDROID
+						extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
+					#endif
+					_helper.CallStatic("bannerAd", _currentActivity, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1,
+						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.BannerBidFloor, nimbusAdUnit.RespectSafeArea, 
+						(int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));
+					break;
+				}
+				case AdType.Interstitial:
+				{
+					#if NIMBUS_ENABLE_APS_ANDROID && UNITY_ANDROID
+						extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Interstitial, 0, 0);
+					#endif
+					_helper.CallStatic("interstitialAd", _currentActivity, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.BannerBidFloor, 
+						nimbusAdUnit.VideoBidFloor, showAd, JsonConvert.SerializeObject(extensions));
+					break;
+				}
+				case AdType.Rewarded:
+				{
+					#if NIMBUS_ENABLE_APS_ANDROID && UNITY_ANDROID
+					extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Rewarded, 0, 0);
+					#endif
+					_helper.CallStatic("rewardedAd", _currentActivity, 
+						nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.VideoBidFloor,
+						showAd, JsonConvert.SerializeObject(extensions));
+					break;
+				}
+			}
+		}
 
-			/*f (nimbusAdUnit.AdType == AdUnitType.Interstitial || nimbusAdUnit.AdType == AdUnitType.Rewarded) {
-				shouldBlock = true;
-				holdTime = 5;
-				if (nimbusAdUnit.AdType == AdUnitType.Rewarded) holdTime = (int)TimeSpan.FromMinutes(60).TotalSeconds;
-			}*/
-			_helper.CallStatic(functionCall, _currentActivity, shouldBlock, (nimbusAdUnit.AdType == AdType.Rewarded), holdTime,
-				null,"", "","","", true, 0);
+		internal override void ShowAd(NimbusAdUnit nimbusAdUnit)
+		{
+			_unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+			_currentActivity = _unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+			var helperClass = new AndroidJavaObject(HelperClass);
+			_helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+			var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
+			_helper.CallStatic("showAd", _currentActivity, 
+				nimbusAdUnit.InstanceID, size.Item1, size.Item2,
+				nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {
@@ -109,3 +138,4 @@ namespace Nimbus.Internal {
 		}
 	}
 }
+#endif

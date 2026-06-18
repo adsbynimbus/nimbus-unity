@@ -2,6 +2,7 @@ namespace Nimbus.Internal {
 	public interface IAdEventsExtended : IAdEvents {
 		void OnAdImpression(NimbusAdUnit nimbusAdUnit);
 		void OnAdDestroyed(NimbusAdUnit nimbusAdUnit);
+		void OnAdRewardEarned(NimbusAdUnit nimbusAdUnit);
 	}
 
 	public interface IAdEventsVideoExtended : IAdEvents {

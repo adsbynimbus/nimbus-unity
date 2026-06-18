@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nimbus.Internal {
-	internal class NimbusIOSAdManager : MonoBehaviour {
-		private static NimbusIOSAdManager _instance;
+	internal class NimbusCallbackReceiver : MonoBehaviour {
+		private static NimbusCallbackReceiver _instance;
 
 		private readonly Dictionary<int, NimbusAdUnit> _adUnitDictionary = new Dictionary<int, NimbusAdUnit>();
 
-		internal static NimbusIOSAdManager Instance {
+		internal static NimbusCallbackReceiver Instance {
 			get {
 				if (_instance != null) return _instance;
 				
-				var obj = new GameObject("NimbusIOSAdManager");
-				_instance = (NimbusIOSAdManager)obj.AddComponent(typeof(NimbusIOSAdManager));
+				var obj = new GameObject("NimbusCallbackReceiver");
+				_instance = (NimbusCallbackReceiver)obj.AddComponent(typeof(NimbusCallbackReceiver));
 				return _instance;
 			}
 		}
@@ -36,7 +36,7 @@ namespace Nimbus.Internal {
 		}
 		
 		internal void OnAdRendered(string jsonParams) {
-			var data = NimbusIOSParser.ParseMessage<NimbusIOSParams>(jsonParams);
+			var data = NimbusCallbackParser.ParseMessage<NimbusEventParams>(jsonParams);
 			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
 
 			if (adUnit == null) {
@@ -49,7 +49,7 @@ namespace Nimbus.Internal {
 		}
 		
 		internal void OnAdEvent(string jsonParams) {
-			var data = NimbusIOSParser.ParseMessage<NimbusIOSAdEventData>(jsonParams);
+			var data = NimbusCallbackParser.ParseMessage<NimbusAdEventData>(jsonParams);
 			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
 
 			if (adUnit == null) {
@@ -66,7 +66,7 @@ namespace Nimbus.Internal {
 		}
 
 		internal void OnError(string jsonParams) {
-			var data = NimbusIOSParser.ParseMessage<NimbusIOSErrorData>(jsonParams);
+			var data = NimbusCallbackParser.ParseMessage<NimbusErrorData>(jsonParams);
 			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
 
 			if (adUnit == null) {

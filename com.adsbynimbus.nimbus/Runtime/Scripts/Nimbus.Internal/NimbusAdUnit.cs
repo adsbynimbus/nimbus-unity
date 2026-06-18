@@ -20,14 +20,15 @@ namespace Nimbus.Internal {
 		private bool _adCompleted;
 		private bool _adWasReturned;
 		private readonly AdEvents _adEvents;
-
 		internal bool AdWasRendered;
-		internal string RawBidResponse;
+		public float BannerBidFloor;
+		public float VideoBidFloor;
 
 		internal Task<string> Request = Task.FromResult("");
 		
 		public NimbusAdUnit(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30)
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30, float bannerBidFloor = 0f,
+			float videoBidFloor = 0f)
 		{
 			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;
@@ -37,6 +38,8 @@ namespace Nimbus.Internal {
 			RespectSafeArea = respectSafeArea;
 			AdPosition = adPosition;
 			BannerRefreshIntervalInSeconds = bannerRefreshIntervalInSeconds;
+			BannerBidFloor = bannerBidFloor;
+			VideoBidFloor = videoBidFloor;
 		}
 
 		# region IOS specific
@@ -51,16 +54,16 @@ namespace Nimbus.Internal {
 		///     Destroys the ad at the mobile bridge level
 		/// </summary>
 		public void Destroy() {
-#if UNITY_ANDROID
-			if (_androidController == null || _androidHelper == null) return;
-			var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-			var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-			_androidHelper.CallStatic("destroyController", currentActivity, _androidController);
+			#if UNITY_ANDROID
+			var helperClass = new AndroidJavaObject("com.adsbynimbus.unity.UnityHelper");
+			var instance = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+			//if (_androidController == null || _androidHelper == null) return;
+			instance.CallStatic("destroyAd", InstanceID);
 			_androidController = null;
 			_androidHelper = null;
-# elif UNITY_IOS
+			# elif UNITY_IOS
 			OnDestroyIOSAd?.Invoke(InstanceID);
-#endif
+			#endif
 		}
 
 		/// <summary>
@@ -97,6 +100,9 @@ namespace Nimbus.Internal {
 				case AdEventTypes.RESUMED:
 					_adEvents.FireOnVideoAdResumeEvent(this);
 					break;
+				case AdEventTypes.REWARDEARNED:
+					_adEvents.FireOnAdRewardEarnedEvent(this);
+					break;
 				case AdEventTypes.COMPLETED:
 					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
@@ -122,28 +128,6 @@ namespace Nimbus.Internal {
 			}
 		}
 
-		
-		internal async void LoadJsonResponseAsync(Task<string> jsonBody) {
-			Request = Task.Run(async () => {
-				var response = "";
-				try
-				{
-					response = await jsonBody;
-					_adWasReturned = true;
-					RawBidResponse = response;
-					Debug.unityLogger.Log("Nimbus", $"BID RESPONSE: {RawBidResponse}");
-					_adEvents.FireOnAdLoadedEvent(this);
-				}
-				catch (Exception e)
-				{
-					Debug.unityLogger.Log($"Bid Response Error: {e.Message}");
-					_adEvents.FireOnAdErrorEvent(this);
-				}
-				return response;
-			});
-			await Request;
-		}
-
 		internal void SetAndroidController(AndroidJavaObject controller) {
 			if (_androidController != null) return;
 			_androidController = controller;
@@ -157,7 +141,7 @@ namespace Nimbus.Internal {
 		#region Android Specific
 
 		private AndroidJavaObject _androidController;
-		private AndroidJavaClass _androidHelper;
+		private AndroidJavaObject _androidHelper;
 
 		#endregion
 	}

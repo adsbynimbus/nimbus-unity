@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -28,10 +29,68 @@ namespace Nimbus.Internal.Extensions.APS {
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
 		}
+		
+		public ApsSlotData[] GetAdUnitId(AdType type, int width, int height)
+		{
+			var slotData = new List<ApsSlotData>();
+			foreach (ApsSlotData slot in _slotData)
+			{
+				if (type == AdType.Banner)
+				{
+					switch (slot.adUnitType)
+					{
+						case APSAdUnitType.Display320X50:
+						{
+							if (width == 320 || height == 50)
+							{
+								slotData.Add(slot);
+							}
+							break;
+						}
+						case APSAdUnitType.Display300X250:
+						{
+							if (width == 300 || height == 250)
+							{
+								slotData.Add(slot);
+							}
+							break;
+						}
+						case APSAdUnitType.Display728X90:
+						{
+							if (width == 728 || height == 90)
+							{
+								slotData.Add(slot);
+							}
+							break;
+						}
+					}
+				} 
+				else if (type == AdType.Interstitial)
+				{
+					switch (slot.adUnitType)
+					{
+						case APSAdUnitType.InterstitialDisplay:
+						{
+							slotData.Add(slot);
+							break;
+						}
+						case APSAdUnitType.InterstitialVideo:
+						{
+							slotData.Add(slot);
+							break;
+						}
+					}
+				}
+				else
+				{
+					if (slot.adUnitType == APSAdUnitType.RewardedVideo)
+					{
+						slotData.Add(slot);
+					}
+				}
 
-		public void InitializeNativeSDK() {
-			_aps = new AndroidJavaClass(AndroidApsPackage);
-			_aps.CallStatic("initialize", _currentActivity, _appID);
+			}
+			return slotData.ToArray();
 		}
 	}
 }

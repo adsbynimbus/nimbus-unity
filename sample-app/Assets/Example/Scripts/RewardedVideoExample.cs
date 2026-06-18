@@ -28,7 +28,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_rewarded_video_position");
+			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_rewarded_video_position");
 			_alreadyTriggered = true;
 		}
 
@@ -66,10 +66,17 @@ namespace Example.Scripts {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			if (skipped) return;
 			Debug.unityLogger.Log(
-				"RewardedVideoExample Ad was completed and the use can be rewarded");
-			UnityThread.ExecuteInUpdate(RewardUser);
+				"RewardedVideoExample Ad was completed");
 		}
 
+		public void OnAdRewardEarned(NimbusAdUnit nimbusAdUnit)
+		{
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log(
+				"RewardedVideoExample Ad reward was earned and the user can be rewarded");
+			UnityThread.ExecuteInUpdate(RewardUser);
+		}
+		
 		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log($"RewardedVideoExample Error");

@@ -2,24 +2,24 @@ using System;
 using UnityEngine;
 
 namespace Nimbus.Internal {
-	internal static class NimbusIOSParser {
+	internal static class NimbusCallbackParser {
 		internal static T ParseMessage<T>(string jsonParams) {
 			return JsonUtility.FromJson<T>(jsonParams);
 		}
 	}
 
 	[Serializable]
-	internal class NimbusIOSParams {
+	internal class NimbusEventParams {
 		public int adUnitInstanceID;
 	}
 
 	[Serializable]
-	internal class NimbusIOSErrorData : NimbusIOSParams {
+	internal class NimbusErrorData : NimbusEventParams {
 		public string errorMessage;
 	}
 
 	[Serializable]
-	internal class NimbusIOSAdEventData : NimbusIOSParams {
+	internal class NimbusAdEventData : NimbusEventParams {
 		public string eventName;
 	}
 }

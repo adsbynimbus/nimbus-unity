@@ -61,12 +61,18 @@ namespace Example.Scripts {
 			Debug.unityLogger.Log(
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered.");
 		}
+		
+		public void OnAdRewardEarned(NimbusAdUnit nimbusAdUnit) {
+			Debug.unityLogger.Log(
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} has given a reward.");
+		}
 
 		public void LoadAndShowBanner() {
 			if (!_shouldDestroyBanner) {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
-				_loadAndShowBannerAdUnit = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position");
+				_loadAndShowBannerAdUnit = 
+					NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position", bannerFloor: 0.05f);
 				return;
 			}
 			_loadAndShowBannerAdUnit?.Destroy();
@@ -90,11 +96,12 @@ namespace Example.Scripts {
 		}
 
 		public void LoadAndShowInterstitial() {
-			_ = NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_interstitial_position");
+			NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_interstitial_position", 
+				bannerFloor: 0.05f, videoFloor: 0.03f);
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			_ = NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position");
+			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position", videoFloor: 0.03f);
 		}
 
 		public void LoadAdController(int index) {

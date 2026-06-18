@@ -337,7 +337,6 @@ namespace Nimbus.ScriptableObjects {
 					ValidateApsSlots("Android", _androidApsSlots);
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAppId));
-					_androidApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", value: _androidApsTimeoutInMilliseconds.intValue);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
