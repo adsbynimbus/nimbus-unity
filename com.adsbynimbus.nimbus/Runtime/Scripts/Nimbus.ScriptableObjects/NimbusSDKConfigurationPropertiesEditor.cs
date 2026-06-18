@@ -291,7 +291,13 @@ namespace Nimbus.ScriptableObjects {
 			EditorGUILayout.Space();
 
 			EditorGUILayout.LabelField("SDK Flags", headerStyle);
-			EditorGUILayout.PropertyField((_enableSDKInTestMode));
+			EditorGUILayout.PropertyField(_enableSDKInTestMode);
+			#if NIMBUS_ENABLE_KOTLIN_UPGRADE
+				EditorGUILayout.LabelField("Android Kotlin Version upgraded to 2.2", EditorStyles.label);
+			#endif
+			#if NIMBUS_ENABLE_GRADLE_UPGRADE
+				EditorGUILayout.LabelField("Android Gradle Version upgraded to 8.14.5", EditorStyles.label);
+			#endif
 			EditorGUILayout.Space();
 
 			EditorGUILayout.LabelField("Enable Unity Logs", headerStyle);

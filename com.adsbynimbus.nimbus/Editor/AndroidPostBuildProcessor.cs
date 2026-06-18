@@ -17,41 +17,16 @@ namespace Nimbus.Editor {
 					pickFirst ""META-INF/*.kotlin_module""
 				}
 			}
-			androidComponents.finalizeDsl { dsl ->
-				if (dsl.compileSdk == 34) {
-					dependencies {
-						constraints {
-							implementation(""androidx.core:core-ktx:1.13.1"")
-							implementation(""androidx.fragment:fragment:1.7.1"")
-							implementation(""androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"")
-							implementation(""androidx.media3:media3-exoplayer:1.3.1"")
-							implementation(""androidx.media3:media3-exoplayer-hls:1.3.1"")
-						}
-					}
-				}
-			}
-			// Always update Androidx Collection to 1.4.5
 			dependencies {
 			    constraints {
 			        implementation(""androidx.collection:collection:1.4.5"")
-					implementation(""androidx.collection:collection-ktx:1.4.5"")
-					if (androidComponents.pluginVersion.major < 8) {
-						implementation(""androidx.fragment:fragment:1.7.1"")
-					}
+			        implementation(""androidx.collection:collection-ktx:1.4.5"")
+			        implementation(""com.google.android.gms:play-services-ads-identifier:18.3.0"")
 			    }
 			}
-			// Force Play Services Ads Indentifier to 18.1.0 if using Java 8
-			afterEvaluate {
-			    android.compileOptions {
-			        if (targetCompatibility < JavaVersion.VERSION_11 && !isCoreLibraryDesugaringEnabled) {
-			            configurations.configureEach {
-			                resolutionStrategy.force(""com.google.android.gms:play-services-ads-identifier:18.1.0"")
-			            }
-			        }
-			    }
-			}";
+			";
 
-		public int callbackOrder => 999;
+		public int callbackOrder => 998;
 
 		public void OnPostGenerateGradleAndroidProject(string path)
 		{

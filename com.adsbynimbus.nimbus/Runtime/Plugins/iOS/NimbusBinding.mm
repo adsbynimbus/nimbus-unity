@@ -37,10 +37,12 @@ extern "C" {
                    bool respectSafeArea,
                    int bannerPosition,
                    bool showAd,
-                   const char* thirdPartyDemand) {
+                   const char* thirdPartyDemand,
+                   const char* requestModifiers) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval bidFloor: bidFloor respectSafeArea:respectSafeArea
-            bannerPosition:bannerPosition showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            bannerPosition:bannerPosition showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)
+        requestModifiersJson:GetStringParam(requestModifiers)];
     }
 
     void _interstitialAd(int adUnitInstanceId,
@@ -48,18 +50,20 @@ extern "C" {
                                 float bannerFloor,
                                 float videoFloor,
                                 bool showAd,
-                                const char* thirdPartyDemand) {
+                                const char* thirdPartyDemand,
+                                const char* requestModifiers) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            interstitialAdWithPosition:GetStringParam(position) bannerFloor:bannerFloor videoFloor:videoFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            interstitialAdWithPosition:GetStringParam(position) bannerFloor:bannerFloor videoFloor:videoFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand) requestModifiersJson:GetStringParam(requestModifiers)];
     }
     
     void _rewardedAd(int adUnitInstanceId,
                             const char* position,
                             float bidFloor,
                             bool showAd,
-                            const char* thirdPartyDemand) {
+                            const char* thirdPartyDemand,
+                            const char* requestModifiers) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            rewardedAdWithPosition:GetStringParam(position) bidFloor:bidFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            rewardedAdWithPosition:GetStringParam(position) bidFloor:bidFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand) requestModifiersJson:GetStringParam(requestModifiers)];
     }
     
     void _showAd(int adUnitInstanceId,

@@ -397,7 +397,80 @@ namespace Nimbus.Runtime.Scripts {
 		{
 			ConfigHelpers.SetApp(app);
 		}
-		
+
+		/// <summary>
+		///		Block list of advertisers by their domains (e.g., “ford.com”)
+		/// </summary>
+		/// <param name="blockedAdvertisingDomains">
+		///		string array of blocked domains
+		/// </param>
+		public void SetBlockedAdvertisingDomains(string[] blockedAdvertisingDomains)
+		{
+			ConfigHelpers.SetBlockedAdvertisingDomains(blockedAdvertisingDomains);
+		}
+
+		/// <summary>
+		///		Set Request URL for bid requests
+		/// </summary>
+		/// <param name="requestUrl"/>
+		public void SetRequestUrl(string requestUrl)
+		{
+			ConfigHelpers.SetRequestUrl(requestUrl);
+		}
+
+		/// <summary>
+		///		Set additional request headers
+		/// </summary>
+		/// <param name="additionalRequestHeaders"/>
+		public void SetAdditionalRequestHeaders(Dictionary<string, string> additionalRequestHeaders)
+		{
+			ConfigHelpers.SetAdditionalRequestHeaders(additionalRequestHeaders);
+		}
+
+		/// <summary>
+		///		Maximum time (in milliseconds) interceptors have to modify the request before it fires. Default is 500 milliseconds.
+		/// </summary>
+		/// <param name="interceptorTimeoutInMillis"></param>
+		public void SetInterceptorTimeout(int interceptorTimeoutInMillis)
+		{
+			ConfigHelpers.SetInterceptorTimeout(interceptorTimeoutInMillis);
+		}
+
+		/// <summary>
+		///		Whether the video player should show the mute button. True by default
+		/// </summary>
+		/// <param name="showMuteButton"/>
+		public void ShowMuteButton(bool showMuteButton)
+		{
+			ConfigHelpers.ShowMuteButton(showMuteButton);
+		}
+
+		/// <summary>
+		///		If enabled, only tap gestures are allowed for inline ads. Default is false
+		/// </summary>
+		/// <param name="enableSwipeProtection"/>
+		public void EnableSwipeProtection(bool enableSwipeProtection)
+		{
+			ConfigHelpers.EnableSwipeProtection(enableSwipeProtection);
+		}
+
+		/// <summary>
+		///		Sets if SKOverlay is enabled for all ad units
+		/// </summary>
+		/// <param name="isSKOverlayEnabledForAllUnits"/>
+		public void SetIsSKOverlayEnabledForAllUnits(bool isSKOverlayEnabledForAllUnits)
+		{
+			ConfigHelpers.SetIsSKOverlayEnabledForAllUnits(isSKOverlayEnabledForAllUnits);
+		}
+
+		/// <summary>
+		///		Set IAB-defined privacy fields stored in standard IAB UserDefaults fields.
+		/// </summary>
+		/// <param name="properties"></param>
+		public void SetIABProperties(IABProperties properties)
+		{
+			ConfigHelpers.SetIABProperties(properties);
+		}
 		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>

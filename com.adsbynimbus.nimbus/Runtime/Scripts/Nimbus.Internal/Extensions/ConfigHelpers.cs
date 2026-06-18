@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Nimbus.Internal.Extensions
 {
-    internal class ConfigHelpers
+    public class ConfigHelpers
     {
         internal static void SetSessionId(string sessionId)
         {
@@ -66,8 +66,8 @@ namespace Nimbus.Internal.Extensions
         {
             
         }
-
-        internal static void SetIsSKOverlayEnabledForAllUnits(bool isSKOverlayEnabled)
+        
+        internal static void SetIsSKOverlayEnabledForAllUnits(bool isSKOverlayEnabledForAllUnits)
         {
             
         }

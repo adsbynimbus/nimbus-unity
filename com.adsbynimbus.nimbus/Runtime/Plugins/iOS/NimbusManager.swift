@@ -152,7 +152,8 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String) {
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, 
+    respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
@@ -201,7 +202,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String){
+    @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String){
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
@@ -249,7 +250,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String) {
+    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String,         requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
@@ -458,6 +459,23 @@ import NimbusMobileFuseKit
         return extensions
     }
     
+    private static func requestModifiersFromJsonString(requestModifiers: String) -> RequestModifiers? {
+        var modifiers: RequestModifiers?
+        if (requestModifiers != "" && !requestModifiers.isEmpty) {
+            do {
+                if let dataFromString = requestModifiers.data(using: .utf8) {
+                    modifiers = try JSONDecoder().decode(RequestModifiers.self, from: dataFromString)
+                }
+            } catch {
+                NimbusManager.didReceiveNimbusError(
+                    adUnitInstanceID: 0,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode request modifiers json: \(error)")
+                )
+            }
+        }
+        return modifiers
+    }
+    
     private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
         switch (adScreenPosition) {
             // Center Top
@@ -530,6 +548,25 @@ struct Extensions: Codable {
     let moloco: Moloco?
     let unityAds: UnityAds?
     let vungle: Vungle?
+}
+
+
+struct RequestModifiers: Codable {
+    let appPageCat: [String]?
+    let appSectionCat: [String]?
+    let userKeywords: String
+    let viewabilityOmidPn: String?
+    let viewabilityOmidPv: String?
+    let latitude: Double?
+    let longitude: Double?
+    let locationType: LocationType?
+    let accuracy: Int?
+}
+
+public enum LocationType: Int, Codable {
+    case gps
+    case ipLookup
+    case userProvided
 }
 
 extension Extensions {

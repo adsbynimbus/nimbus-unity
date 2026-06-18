@@ -116,9 +116,9 @@ namespace Nimbus.Internal.Extensions
     }
 #endif
     public enum LocationType : byte {
-        Gps = 0,
-        IpLookup = 1,
-        UserProvided = 2
+        gps = 0,
+        ipLookup = 1,
+        userProvided = 2
     }
 
 }
