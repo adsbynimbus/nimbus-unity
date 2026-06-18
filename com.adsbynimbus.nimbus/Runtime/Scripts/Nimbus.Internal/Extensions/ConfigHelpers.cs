@@ -2,77 +2,77 @@ using System.Collections.Generic;
 
 namespace Nimbus.Internal.Extensions
 {
-    public class ConfigHelpers
+    internal class ConfigHelpers
     {
-        public static void setSessionId(string sessionId)
+        internal static void SetSessionId(string sessionId)
         {
             
         }
         
-        public static void setCoppa(bool coppa)
+        internal static void SetCoppa(bool coppa)
         {
             
         }
 
         //universal app-wide
-        public static void setApp(App app)
+        internal static void SetApp(App app)
         {
             
         }
 
         //universal app-wide
-        public static void setUser(User user)
+        internal static void SetUser(User user)
         {
             
         }
 
-        public static void setBlockedAdvertisingDomains(string[] blockedAdvertisingDomains)
+        internal static void SetBlockedAdvertisingDomains(string[] blockedAdvertisingDomains)
         {
             
         }
 
-        public static void setRequestUrl(string requestUrl)
+        internal static void SetRequestUrl(string requestUrl)
         {
             
         }
 
-        public static void setAdditionalRequestHeaders(Dictionary<string, string> additionalRequestHeaders)
+        internal static void SetAdditionalRequestHeaders(Dictionary<string, string> additionalRequestHeaders)
         {
             
         }
 
-        public static void setInterceptorTimeout(int interceptorTimeout)
+        internal static void SetInterceptorTimeout(int interceptorTimeout)
         {
             
         }
         
-        public static void showMuteButton(bool showMuteButton)
+        internal static void ShowMuteButton(bool showMuteButton)
         {
-        }
-        
-        //very difficult, maybe say the can add it in swift/kotlin if needed?
-        public static void setVerificationProviders()
-        {
-            
-        }
-
-        public static void enableSwipeProtection(bool enableSwipeProtection)
-        {
-            
         }
         
         //very difficult, maybe say the can add it in swift/kotlin if needed?
-        public static void setIdentityProvider()
+        internal static void SetVerificationProviders()
         {
             
         }
 
-        public static void setIsSKOverlayEnabledForAllUnits(bool isSKOverlayEnabled)
+        internal static void EnableSwipeProtection(bool enableSwipeProtection)
+        {
+            
+        }
+        
+        //very difficult, maybe say the can add it in swift/kotlin if needed?
+        internal static void SetIdentityProvider()
         {
             
         }
 
-        public static void setIABProperties(IABProperties properties)
+        internal static void SetIsSKOverlayEnabledForAllUnits(bool isSKOverlayEnabled)
+        {
+            
+        }
+
+        internal static void SetIABProperties(IABProperties properties)
         {
             
         }

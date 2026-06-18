@@ -353,36 +353,51 @@ namespace Nimbus.Runtime.Scripts {
 			LoadAdinNativeSDKButDontShow(adUnit);
 			return adUnit;
 		}
+		/// <summary>
+		///		Unique session id for the current app session
+		/// </summary>
+		/// <param name="sessionId">
+		///		string for the preferred session Id
+		/// </param>
+
+		public void SetSessionId(string sessionId)
+		{
+			ConfigHelpers.SetSessionId(sessionId);
+		}
 
 		/// <summary>
 		///     If this inventory is subject to COPPA restrictions use this function to get the passed in RTB COPPA information for all Nimbus requests
 		/// </summary>
-		/// <return>
-		///		Returns if COPPA as enabled or not
-		/// </return>
-		// TODO: Add functionality for using this
-		public bool Coppa { get; set; }
-		
-		/// <summary>
-		///     Sets the Gender of the User
-		/// </summary>
-		/// <param name="gender">
-		///		enum representing the user's gender (F, M, O)
+		/// <param name="coppa">
+		///		boolean depending on whether coppa restrictions are in place
 		/// </param>
-		public void SetUserGender()
+		public void SetCoppa(bool coppa)
 		{
-			// TODO: Add functionality
+			ConfigHelpers.SetCoppa(coppa);
 		}
 		
 		/// <summary>
-		///     Sets the Age of the User
+		///     Details about the human user of the device; the advertising audience
 		/// </summary>
-		/// <param name="age">
-		///		integer greater than 0 representing user's age
+		/// <param name="user">
+		///		user object with customizable properties
 		/// </param>
-		public void SetUserAge(int age) {
-			// TODO: Add functionality
+		public void SetUser(User user)
+		{
+			ConfigHelpers.SetUser(user);
 		}
+
+		/// <summary>
+		///		Identifies the app to buyers (e.g., bundle ID, store URL, name, categories, publisher, privacy flags)
+		/// </summary>
+		/// <param name="app">
+		///		App object with customizable properties
+		/// </param>
+		public void SetApp(App app)
+		{
+			ConfigHelpers.SetApp(app);
+		}
+		
 		
 		#if NIMBUS_ENABLE_LIVERAMP
 		/// <summary>
