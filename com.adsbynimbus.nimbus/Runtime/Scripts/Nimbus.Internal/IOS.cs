@@ -36,15 +36,15 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, int refreshInterval, 
-			float bidFloor, bool respectSafeArea, int bannerPosition, bool showAd, string demand);
+			float bidFloor, bool respectSafeArea, int bannerPosition, bool showAd, string demand, string requestModifiers);
 		
 		[DllImport("__Internal")]
 		private static extern void _interstitialAd(int adUnitInstanceId, string position, 
-			float bannerFloor, float videoFloor, bool showAd, string demand);
+			float bannerFloor, float videoFloor, bool showAd, string demand, string requestModifiers);
 		
 		[DllImport("__Internal")]
 		private static extern void _rewardedAd(int adUnitInstanceId, string position, float bidFloor, bool showAd, 
-			string demand);
+			string demand, string requestModifiers);
 		
 		[DllImport("__Internal")]
 		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
@@ -121,7 +121,7 @@ namespace Nimbus.Internal {
 					#endif
 					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, 
 						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.BannerBidFloor,
-						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));
+						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions) , "");
 					break;
 				}
 				case AdType.Interstitial:
@@ -131,7 +131,7 @@ namespace Nimbus.Internal {
 					#endif
 					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
 						nimbusAdUnit.BannerBidFloor, nimbusAdUnit.VideoBidFloor,
-						showAd, JsonConvert.SerializeObject(extensions));
+						showAd, JsonConvert.SerializeObject(extensions), "");
 					break;
 				}
 				case AdType.Rewarded:
@@ -140,7 +140,7 @@ namespace Nimbus.Internal {
 						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
 					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.VideoBidFloor, 
-						showAd, JsonConvert.SerializeObject(extensions));
+						showAd, JsonConvert.SerializeObject(extensions), "");
 					break;
 				}
 			}

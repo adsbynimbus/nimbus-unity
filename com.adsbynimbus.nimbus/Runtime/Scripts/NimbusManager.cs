@@ -457,19 +457,74 @@ namespace Nimbus.Runtime.Scripts {
 		/// <summary>
 		///		Sets if SKOverlay is enabled for all ad units
 		/// </summary>
-		/// <param name="isSKOverlayEnabledForAllUnits"/>
-		public void SetIsSKOverlayEnabledForAllUnits(bool isSKOverlayEnabledForAllUnits)
+		/// <param name="isSkOverlayEnabledForAllUnits"/>
+		public void SetIsSkOverlayEnabledForAllUnits(bool isSkOverlayEnabledForAllUnits)
 		{
-			ConfigHelpers.SetIsSKOverlayEnabledForAllUnits(isSKOverlayEnabledForAllUnits);
+			ConfigHelpers.SetIsSkOverlayEnabledForAllUnits(isSkOverlayEnabledForAllUnits);
 		}
 
 		/// <summary>
-		///		Set IAB-defined privacy fields stored in standard IAB UserDefaults fields.
+		///		Set IAB-defined GDPR fields stored in standard IAB UserDefaults/SharedPreferences fields.
 		/// </summary>
-		/// <param name="properties"></param>
-		public void SetIABProperties(IABProperties properties)
+		/// <param name="gdprApplies">
+		///		Boolean that determines if GDPR Applies to the application
+		/// </param>
+		/// <param name="gdprConsentString">
+		///		GDPR Consent String
+		/// </param>
+		public void SetGdprProperties(bool gdprApplies, string gdprConsentString)
 		{
-			ConfigHelpers.SetIABProperties(properties);
+			ConfigHelpers.SetGdprProperties(gdprApplies, gdprConsentString);
+		}
+		
+		/// <summary>
+		///		Set IAB-defined GPP fields stored in standard IAB UserDefaults/SharedPreferences fields.
+		/// </summary>
+		/// <param name="gppSectionId">
+		///		GPP Section Id
+		/// </param>
+		/// <param name="gppConsentString">
+		///		GPP Consent String
+		/// </param>
+		public void SetGppProperties(string gppSectionId, string gppConsentString)
+		{
+			ConfigHelpers.SetGppProperties(gppSectionId, gppConsentString);
+		}
+		
+		/// <summary>
+		///		Set IAB-defined US Privacy String field stored in standard IAB UserDefaults/SharedPreferences fields.
+		/// </summary>
+		/// <param name="usPrivacyString">
+		///		US Privacy String
+		/// </param>
+		public void SetUsPrivacyString(string usPrivacyString)
+		{
+			ConfigHelpers.SetUsPrivacyString(usPrivacyString);
+		}
+
+		/// <summary>
+		///		Set Verification Providers for Ad Viewability Tracking
+		/// </summary>
+		/// <param name="providers">
+		///		Array of Verification Providers with callback methods
+		/// </param>
+		/*
+		 * /// Example of the methods in the Native Nimbus iOS SDK
+		   public protocol VerificationProvider : Sendable {
+		   
+		       func verificationMarkup(response: NimbusKit.NimbusResponse) -> String
+		   
+		       func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.VerificationScriptResource?
+		   }
+		   
+		   public struct VerificationScriptResource {
+		   
+		       public init?(url: URL, vendorKey: String?, parameters: String?)
+		   }
+		 */
+		public void SetVerificationProviders(VerificationProvider[] providers)
+		{
+			ConfigHelpers.SetVerificationProviders(providers);
 		}
 		
 		#if NIMBUS_ENABLE_LIVERAMP

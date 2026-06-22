@@ -528,6 +528,7 @@ import NimbusMobileFuseKit
     }
     
     @objc public func destroyExistingAd() {
+        ad?.destroy()
         ad = nil;
         removeReferenceFromManagerDictionary()
     }
