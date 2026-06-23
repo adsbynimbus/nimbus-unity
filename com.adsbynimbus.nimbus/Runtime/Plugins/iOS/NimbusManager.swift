@@ -155,6 +155,7 @@ import NimbusMobileFuseKit
     @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, 
     respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
+        let requestModifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
@@ -184,6 +185,56 @@ import NimbusMobileFuseKit
                         }
                         #endif
                     }
+                    if let perRequestApp = requestModifiers?.app {
+                        app(pagecat: perRequestApp.pageCat, sectioncat: perRequestApp.sectionCat)
+                    }
+                    if let bannerCreative = requestModifiers?.banner {
+                        var adSize: AdSize?
+                        if let width = bannerCreative.width, let height = bannerCreative.height {
+                            adSize = AdSize(width: width, height: height)
+                        }
+                        var addFormats: Set<RTB.Format> = []
+                        //this has to be done here because RTB.Format.Interstitial is @MainActor locked
+                        if let rawAddFormats = bannerCreative.rawAddFormats {
+                            addFormats = Set(rawAddFormats.compactMap { intValue in
+                                //needed because RTB.Format doesnt have an int value
+                                switch intValue {
+                                case 0:
+                                    RTB.Format.banner
+                                case 1:
+                                    RTB.Format.halfScreen
+                                case 2:
+                                    RTB.Format.interstitial
+                                case 3:
+                                    RTB.Format.interstitialLandscape
+                                case 4:
+                                    RTB.Format.interstitialPortrait
+                                case 5:
+                                    RTB.Format.leaderboard
+                                case 6:
+                                    RTB.Format.mrec
+                                default:
+                                    nil
+                                }
+                            })
+                        }
+                        banner(size: adSize, addFormats: addFormats, adPosition: bannerCreative.adPosition ?? .unknown, bidFloor: bannerCreative.bidFloor ?? bidFloor, battr: bannerCreative.battr ?? [])
+                    }
+                    if let env = requestModifiers?.environment {
+                        environment(publisherKey: env.publisherKey, apiKey: env.apiKey)
+                    }
+                    if let loc = requestModifiers?.location {
+                        location(latitude: loc.latitude, longitude: loc.longitude, type: loc.locationType, accuracy: loc.accuracy)
+                    }
+                    if let userKeywords = requestModifiers?.userKeywords {
+                        user(keywords: userKeywords)
+                    }
+                    if let vid = requestModifiers?.video {
+                        video(adPosition: vid.adPosition ?? .unknown, bidFloor: vid.bidFloor, minDuration: vid.minDuration, maxDuration: vid.maxDuration, width: vid.width, height: vid.height, placementType: vid.placementType, playbackMethod: vid.playbackMethod ?? [])
+                    }
+                    if let v = requestModifiers?.viewability {
+                        viewability(omidpn: v.omidPn, omidpv: v.omidPv)
+                    }
                 }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
@@ -204,6 +255,7 @@ import NimbusMobileFuseKit
     
     @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String){
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
+        let requestModifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson)
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
@@ -215,8 +267,6 @@ import NimbusMobileFuseKit
             }
             let instanceId = self.adUnitInstanceId
             let interstitialAd = await Nimbus.fullscreenAd(position: position){
-                banner(bidFloor: bannerFloor)
-                video(bidFloor: videoFloor)
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -228,6 +278,56 @@ import NimbusMobileFuseKit
                         aps(ads: apsAds)
                     }
                     #endif
+                }
+                if let perRequestApp = requestModifiers?.app {
+                    app(pagecat: perRequestApp.pageCat, sectioncat: perRequestApp.sectionCat)
+                }
+                if let bannerCreative = requestModifiers?.banner {
+                    var adSize: AdSize?
+                    if let width = bannerCreative.width, let height = bannerCreative.height {
+                        adSize = AdSize(width: width, height: height)
+                    }
+                    var addFormats: Set<RTB.Format> = []
+                    //this has to be done here because RTB.Format.Interstitial is @MainActor locked
+                    if let rawAddFormats = bannerCreative.rawAddFormats {
+                        addFormats = Set(rawAddFormats.compactMap { intValue in
+                            //needed because RTB.Format doesnt have an int value
+                            switch intValue {
+                            case 0:
+                                RTB.Format.banner
+                            case 1:
+                                RTB.Format.halfScreen
+                            case 2:
+                                RTB.Format.interstitial
+                            case 3:
+                                RTB.Format.interstitialLandscape
+                            case 4:
+                                RTB.Format.interstitialPortrait
+                            case 5:
+                                RTB.Format.leaderboard
+                            case 6:
+                                RTB.Format.mrec
+                            default:
+                                nil
+                            }
+                        })
+                    }
+                    banner(size: adSize, addFormats: addFormats, adPosition: bannerCreative.adPosition ?? .unknown, bidFloor: bannerCreative.bidFloor ?? bannerFloor, battr: bannerCreative.battr ?? [])
+                }
+                if let env = requestModifiers?.environment {
+                    environment(publisherKey: env.publisherKey, apiKey: env.apiKey)
+                }
+                if let loc = requestModifiers?.location {
+                    location(latitude: loc.latitude, longitude: loc.longitude, type: loc.locationType, accuracy: loc.accuracy)
+                }
+                if let userKeywords = requestModifiers?.userKeywords {
+                    user(keywords: userKeywords)
+                }
+                if let vid = requestModifiers?.video {
+                    video(adPosition: vid.adPosition ?? .unknown, bidFloor: vid.bidFloor ?? videoFloor, minDuration: vid.minDuration, maxDuration: vid.maxDuration, width: vid.width, height: vid.height, placementType: vid.placementType, playbackMethod: vid.playbackMethod ?? [])
+                }
+                if let v = requestModifiers?.viewability {
+                    viewability(omidpn: v.omidPn, omidpv: v.omidPv)
                 }
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -250,8 +350,9 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String,         requestModifiersJson: String) {
+    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
+        let requestModifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson)
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
@@ -274,6 +375,56 @@ import NimbusMobileFuseKit
                         aps(ads: apsAds)
                     }
                     #endif
+                }
+                if let perRequestApp = requestModifiers?.app {
+                    app(pagecat: perRequestApp.pageCat, sectioncat: perRequestApp.sectionCat)
+                }
+                if let bannerCreative = requestModifiers?.banner {
+                    var adSize: AdSize?
+                    if let width = bannerCreative.width, let height = bannerCreative.height {
+                        adSize = AdSize(width: width, height: height)
+                    }
+                    var addFormats: Set<RTB.Format> = []
+                    //this has to be done here because RTB.Format.Interstitial is @MainActor locked
+                    if let rawAddFormats = bannerCreative.rawAddFormats {
+                        addFormats = Set(rawAddFormats.compactMap { intValue in
+                            //needed because RTB.Format doesnt have an int value
+                            switch intValue {
+                            case 0:
+                                RTB.Format.banner
+                            case 1:
+                                RTB.Format.halfScreen
+                            case 2:
+                                RTB.Format.interstitial
+                            case 3:
+                                RTB.Format.interstitialLandscape
+                            case 4:
+                                RTB.Format.interstitialPortrait
+                            case 5:
+                                RTB.Format.leaderboard
+                            case 6:
+                                RTB.Format.mrec
+                            default:
+                                nil
+                            }
+                        })
+                    }
+                    banner(size: adSize, addFormats: addFormats, adPosition: bannerCreative.adPosition ?? .unknown, bidFloor: bannerCreative.bidFloor, battr: bannerCreative.battr ?? [])
+                }
+                if let env = requestModifiers?.environment {
+                    environment(publisherKey: env.publisherKey, apiKey: env.apiKey)
+                }
+                if let loc = requestModifiers?.location {
+                    location(latitude: loc.latitude, longitude: loc.longitude, type: loc.locationType, accuracy: loc.accuracy)
+                }
+                if let userKeywords = requestModifiers?.userKeywords {
+                    user(keywords: userKeywords)
+                }
+                if let vid = requestModifiers?.video {
+                    video(adPosition: vid.adPosition ?? .unknown, bidFloor: vid.bidFloor ?? bidFloor, minDuration: vid.minDuration, maxDuration: vid.maxDuration, width: vid.width, height: vid.height, placementType: vid.placementType, playbackMethod: vid.playbackMethod ?? [])
+                }
+                if let v = requestModifiers?.viewability {
+                    viewability(omidpn: v.omidPn, omidpv: v.omidPv)
                 }
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -552,22 +703,113 @@ struct Extensions: Codable {
 }
 
 
-struct RequestModifiers: Codable {
-    let appPageCat: [String]?
-    let appSectionCat: [String]?
-    let userKeywords: String
-    let viewabilityOmidPn: String?
-    let viewabilityOmidPv: String?
-    let latitude: Double?
-    let longitude: Double?
-    let locationType: LocationType?
-    let accuracy: Int?
+struct RequestModifiers: Codable, Sendable {
+    let app: PerRequestApp?
+    let banner: BannerCreative?
+    let environment: Env?
+    let location: Location?
+    let userKeywords: String?
+    let video: VideoCreative?
+    let viewability: Viewability?
 }
 
-public enum LocationType: Int, Codable {
-    case gps
-    case ipLookup
-    case userProvided
+struct BannerCreative: Codable {
+    let width: Int?
+    let height: Int?
+    let bidFloor: Float?
+    
+    let rawAddFormats: [Int]?
+    private let rawAdPosition: Int?
+    private let rawBattr: [Int]?
+    
+    enum CodingKeys: String, CodingKey {
+        case width, height, bidFloor
+        case rawAddFormats = "addFormats"
+        case rawAdPosition = "adPosition"
+        case rawBattr = "battr"
+    }
+    
+    //this is needed because RTB.Position's declaration is overriding swift's normal decode methods
+    var adPosition: RTB.Position? {
+        if let position = rawAdPosition {
+            return RTB.Position(rawValue: position)
+        }
+        return nil
+    }
+    
+    //this is needed because RTB.CreativeAttribute's declaration is overriding swift's normal decode methods
+    var battr: Set<RTB.CreativeAttribute>? {
+        guard let rawBattr = rawBattr else { return nil }
+        return Set(rawBattr.compactMap { intValue in
+            RTB.CreativeAttribute(rawValue: intValue)
+        })
+    }
+}
+
+struct VideoCreative: Codable {
+    let adPosition: RTB.Position?
+    let bidFloor: Float?
+    let minDuration: Int?
+    let maxDuration: Int?
+    let width: Int?
+    let height: Int?
+    let rawPlacementType: Int?
+    let rawPlaybackMethod: [Int]?
+    
+    enum CodingKeys: String, CodingKey {
+        case adPosition, bidFloor, minDuration, maxDuration, width, height
+        case rawPlacementType = "placementType"
+        case rawPlaybackMethod = "playbackMethod"
+    }
+    
+    //this is needed because RTB.VideoPlacementType's declaration is overriding swift's normal decode methods
+    var placementType: RTB.VideoPlacementType? {
+        if let placement = rawPlacementType {
+            return RTB.VideoPlacementType(rawValue: placement)
+        }
+        return nil
+    }
+    
+    //this is needed because RTB.PlaybackMethod's declaration is overriding swift's normal decode methods
+    var playbackMethod: Set<RTB.PlaybackMethod>? {
+        guard let playbackMethod = rawPlaybackMethod else { return nil }
+        return Set(playbackMethod.compactMap { intValue in
+            RTB.PlaybackMethod(rawValue: intValue)
+        })
+    }
+}
+
+struct Env: Codable {
+    let publisherKey: String
+    let apiKey: String
+}
+
+struct Viewability: Codable {
+    let omidPn: String
+    let omidPv: String
+}
+
+struct PerRequestApp: Codable {
+    let pageCat: Set<String>
+    let sectionCat: Set<String>
+}
+
+struct Location: Codable {
+    let latitude: Double
+    let longitude: Double
+    let accuracy: Int?
+    
+    private let rawlocationType: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case latitude, longitude, accuracy
+        case rawlocationType = "locationType"
+    }
+    
+    //this is needed because RTB.Geo.LocationType's declaration is overriding swift's normal decode methods
+    var locationType: RTB.Geo.LocationType {
+        return RTB.Geo.LocationType(rawValue: rawlocationType) ?? RTB.Geo.LocationType.gps
+    }
 }
 
 extension Extensions {

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Nimbus.Internal.Extensions;
 using Nimbus.Internal.Utility;
 using UnityEngine;
 
@@ -23,12 +24,13 @@ namespace Nimbus.Internal {
 		internal bool AdWasRendered;
 		public float BannerBidFloor;
 		public float VideoBidFloor;
+		public RequestModifiers? RequestModifiers;
 
 		internal Task<string> Request = Task.FromResult("");
 		
 		public NimbusAdUnit(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
 			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int bannerRefreshIntervalInSeconds = 30, float bannerBidFloor = 0f,
-			float videoBidFloor = 0f)
+			float videoBidFloor = 0f, RequestModifiers? modifiers = null)
 		{
 			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;
@@ -40,6 +42,7 @@ namespace Nimbus.Internal {
 			BannerRefreshIntervalInSeconds = bannerRefreshIntervalInSeconds;
 			BannerBidFloor = bannerBidFloor;
 			VideoBidFloor = videoBidFloor;
+			RequestModifiers = modifiers;
 		}
 
 		# region IOS specific

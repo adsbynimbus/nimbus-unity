@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AOT;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Nimbus.Internal.Extensions
@@ -78,7 +79,7 @@ namespace Nimbus.Internal.Extensions
         }
 
         //universal app-wide
-        internal static void SetApp(App app)
+        internal static void SetApp(RTBApp app)
         {
             #if UNITY_IOS
                 _setApp(JsonConvert.SerializeObject(app));
@@ -86,7 +87,7 @@ namespace Nimbus.Internal.Extensions
         }
 
         //universal app-wide
-        internal static void SetUser(User user)
+        internal static void SetUser(RTBUser user)
         {
             #if UNITY_IOS
                 _setUser(JsonConvert.SerializeObject(user));
@@ -190,9 +191,33 @@ namespace Nimbus.Internal.Extensions
             return pointer;
         }
     }
+    
+    /// <summary>
+    ///     A verification provider for ad viewability tracking
+    /// </summary>
     public class VerificationProvider
     {
+        /// <summary>
+        ///     This callback is fired once a bid response is received from Nimbus.  
+        /// </summary>
+        /// <param name="nimbusBidResponse">
+        ///     Returns the bid response in a json string format
+        /// </param>
+        /// <returns>
+        ///     A string that provides markup to be injected into a static ad.
+        /// </returns>
         public Func<string, string> VerificationMarkupCallback;
+        
+        /// <summary>
+        ///     This callback is fired once a bid response is received from Nimbus.  
+        /// </summary>
+        /// <param name="nimbusBidResponse">
+        ///     Returns the bid response in a json string format
+        /// </param>
+        /// <returns>
+        ///     A tuple of 3 strings (url, vendorKey, parameters) which are used to create a VerificationScriptResource
+        ///     that is passed to the OM SDK.
+        /// </returns>
         public Func<string, Tuple<string, string, string>> VerificationResourceCallback;
 
         public VerificationProvider(Func<string, string> verificationMarkupCallback, Func<string, Tuple<string, string, string>> verificationResourceCallback)
@@ -201,15 +226,31 @@ namespace Nimbus.Internal.Extensions
             VerificationResourceCallback = verificationResourceCallback;
         }
     }
-    public class User
+    
+    /// <summary>
+    /// This object contains information known or derived about the human user of the device (i.e., the audience for advertising).
+    /// The user id is an exchange artifact and may be subject to rotation or other privacy policies.
+    /// However, this user ID must be stable long enough to serve reasonably as the basis for frequency capping and retargeting.
+    /// OpenRTB Section 3.2.20
+    /// </summary>
+    public class RTBUser
     {
-        public int age;
-        public string buyeruid;
-        public string customData;
-        public Gender gender;
-        public string keywords;
+        // The age of the user
+        public int? age; 
+        // Buyer-specific ID for the user as mapped by the exchange for the buyer. Set to Facebook bidder token if integrating Facebook demand
+        [CanBeNull] public string buyeruid;
+        /*
+         * Optional feature to pass bidder data that was set in the exchange’s cookie.
+         * The string must be in base85 cookie safe characters and be in any format. Proper JSON encoding must be used to include “escaped” quotation marks
+         */
+        [CanBeNull] public string customData; 
+        // The gender of the user
+        public Gender? gender;
+        // Comma separated list of keywords, interests, or intent
+        [CanBeNull] public string keywords;
 
-        public User(int age, string buyeruid, string customData, Gender gender, string keywords)
+        public RTBUser(int? age = null, [CanBeNull] string buyeruid = null, [CanBeNull] string customData = null, 
+            Gender? gender = null, [CanBeNull] string keywords = null)
         {
             this.age = age;
             this.buyeruid = buyeruid;
@@ -219,28 +260,34 @@ namespace Nimbus.Internal.Extensions
         }
     }
 
-    public enum Gender
+    public enum Gender: byte
     {
         male = 0,
         female = 1,
         other = 2
     }
 
-    public class App
+    /// <summary>
+    /// This object should be included if the ad supported content is a non-browser application (typically in mobile) as opposed to a website.
+    /// OpenRTB Section 3.2.14
+    /// </summary>
+    public class RTBApp
     {
-        public string bundle;
-        public string[] cat;
-        public string domain;
-        public string name;
-        public string[] pagecat;
-        public bool paid;
-        public bool privacypolicy;
-        public Publisher publisher;
-        public string[] sectioncat;
-        public string storeurl;
-        public string ver;
+        [CanBeNull] public string bundle; // A platform-specific application identifier intended to be unique to the app and independent of the exchange. On iOS, it is typically a numeric ID. Default: nil
+        public string[] cat; // IAB content categories of the app OpenRTB Section 5.1
+        [CanBeNull] public string domain; // Domain of the app (e.g., “adsbynimbus.com”). Default: nil
+        [CanBeNull] public string name; // App name (may be aliased at the publisher’s request). Default: nil
+        public string[] pagecat; // IAB content categories that describe the current page or view of the app. OpenRTB Section 5.1
+        public bool? paid; // Whether the app is paid or not
+        public bool? privacypolicy; // Indicates if the app has a privacy policy
+        [CanBeNull] public RTBPublisher publisher; // Details about the publisher of the app
+        public string[] sectioncat; // IAB content categories that describe the current section of the app. OpenRTB Section 5.1
+        [CanBeNull] public string storeurl; // App store URL for an installed app; for IQG 2.1 compliance. Default: nil
+        [CanBeNull] public string ver; // Application version
 
-        public App(string bundle, string[] cat, string domain, string name, string[] pagecat, bool paid, bool privacypolicy, Publisher publisher, string[] sectioncat, string storeurl, string ver)
+        public RTBApp([CanBeNull] string bundle = null, string[] cat = null, [CanBeNull] string domain = null, 
+            [CanBeNull] string name = null, string[] pagecat = null, bool? paid = default, bool? privacypolicy = default, 
+            [CanBeNull] RTBPublisher publisher = null, string[] sectioncat = null, [CanBeNull] string storeurl = null, [CanBeNull] string ver = null)
         {
             this.bundle = bundle;
             this.cat = cat;
@@ -256,13 +303,17 @@ namespace Nimbus.Internal.Extensions
         }
     }
 
-    public class Publisher
+    /// <summary>
+    /// This describes the publisher of the media in which the ad will be displayed. The publisher is typically the seller in an OpenRTB transaction.
+    /// OpenRTB Section 3.2.15
+    /// </summary>
+    public class RTBPublisher
     {
-        public string[] cat;
-        public string domain;
-        public string name;
+        public string[] cat; // IAB content categories that describe the publisher. OpenRTB Section 5.1 Default: nil
+        public string domain; // Highest level domain of the publisher (e.g., “adsbynimbus.com”). Default: nil
+        public string name; // Publisher name (may be aliased at the publisher’s request). Default: nil
 
-        public Publisher(string[] cat, string domain, string name)
+        public RTBPublisher(string[] cat, string domain, string name)
         {
             this.cat = cat;
             this.domain = domain;

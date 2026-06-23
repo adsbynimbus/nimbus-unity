@@ -162,11 +162,18 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
 		public NimbusAdUnit RequestBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f,
 				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
-				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
+				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER,
+				RequestModifiers requestModifiers = new RequestModifiers()) {
 			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, 
-				respectSafeArea, adPosition, bannerBidFloor: bannerFloor);
+				respectSafeArea, adPosition, bannerBidFloor: bannerFloor, modifiers: requestModifiers);
 			LoadAdinNativeSDKAndShow(adUnit);
 			return adUnit;
 		}
@@ -189,10 +196,18 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
 		/// </param>
-		public void RequestHybridFullScreenAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, float videoFloor = 0f) {
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
+		public NimbusAdUnit RequestHybridFullScreenAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, float videoFloor = 0f,
+			RequestModifiers requestModifiers = new RequestModifiers()) {
 			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition, 
-				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor);
+				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor, modifiers: requestModifiers);
 			LoadAdinNativeSDKAndShow(adUnit);
+			return adUnit;
 		}
 
 		
@@ -209,8 +224,16 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="videoFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
-		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition, float videoFloor = 0f) {
-			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition, videoBidFloor: videoFloor);
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
+		public NimbusAdUnit RequestRewardVideoAdAndLoad(string nimbusReportingPosition, float videoFloor = 0f, 
+			RequestModifiers requestModifiers = new RequestModifiers()) {
+			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition, 
+				videoBidFloor: videoFloor, modifiers: requestModifiers);
 			LoadAdinNativeSDKAndShow(adUnit);
 			return adUnit;
 		}
@@ -240,15 +263,116 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="adPosition">
 		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
 		/// </param>
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
 		public NimbusAdUnit RequestRefreshingBannerAdAndLoad(string nimbusReportingPosition, float bannerFloor = 0f, int refreshIntervalInSeconds = 30, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
-			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
+			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER,
+			RequestModifiers requestModifiers = new RequestModifiers()) {
 			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, 
-				adPosition, refreshIntervalInSeconds, bannerBidFloor: bannerFloor);
+				adPosition, refreshIntervalInSeconds, bannerBidFloor: bannerFloor, modifiers: requestModifiers);
 			LoadAdinNativeSDKAndShow(adUnit);
 			return adUnit;
 		}
 		
+		/// <summary>
+		///     RequestHybridFullScreenAd pre constructs a Nimbus hybrid auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Note, though RTB Banner and Video objects are
+		///		being sent, creative types if of either type will only be returned if matching placements have been
+		///		set up operationally by the Demand partner and Nimbus team. 
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
+		/// </param>
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
+		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition, 
+			float bannerFloor = 0f, float videoFloor = 0f, RequestModifiers requestModifiers = new RequestModifiers()) {
+			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition, 
+				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor, modifiers: requestModifiers);
+			LoadAdinNativeSDKButDontShow(adUnit);
+			return adUnit;
+		}
 
+		
+		/// <summary>
+		///     RequestBannerAd pre constructs a Nimbus Banner auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="bannerFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="adSize">
+		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and LeaderBoard)
+		/// </param>
+		/// <param name="respectSafeArea">
+		///		Allows the publisher to choose whether the banner ads respect the safe area or not.
+		/// </param>
+		/// <param name="adPosition">
+		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
+		/// </param>
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
+		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition,  float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
+			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER,
+			RequestModifiers requestModifiers = new RequestModifiers()) {
+			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, 
+				respectSafeArea, adPosition, bannerBidFloor: bannerFloor, modifiers: requestModifiers);
+			LoadAdinNativeSDKButDontShow(adUnit);
+			return adUnit;
+		}
+
+		/// <summary>
+		///     RequestRewardVideoAd pre constructs a Nimbus Video auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
+		///		type, but rather a rendering behavior.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
+		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition, float videoFloor = 0f, 
+			RequestModifiers requestModifiers = new RequestModifiers()) {
+			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition, 
+				videoBidFloor: videoFloor, modifiers: requestModifiers);
+			LoadAdinNativeSDKButDontShow(adUnit);
+			return adUnit;
+		}
+		
 		/// <summary>
 		///     ShowLoadedAd a returned ad from Nimbus servers and attempts to render it on screen
 		/// </summary>
@@ -280,79 +404,6 @@ namespace Nimbus.Runtime.Scripts {
 			yield break;
 		}
 		
-		
-		/// <summary>
-		///     RequestHybridFullScreenAd pre constructs a Nimbus hybrid auction RTB object and communicates
-		///		data to Nimbus servers to invoke a server side auction to potentially return a
-		///		bid from one of the publishers integrated demand partners. Note, though RTB Banner and Video objects are
-		///		being sent, creative types if of either type will only be returned if matching placements have been
-		///		set up operationally by the Demand partner and Nimbus team. 
-		/// </summary>
-		/// <param name="nimbusReportingPosition">
-		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
-		///		to create custom reporting breakouts
-		/// </param>
-		/// <param name="bannerFloor">
-		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
-		/// </param>
-		/// <param name="videoFloor">
-		///		Allows the publisher to optionally set the RTB minimum bid value for VAST video creatives
-		/// </param>
-		public NimbusAdUnit RequestHybridFullScreenAd(string nimbusReportingPosition, 
-			float bannerFloor = 0f, float videoFloor = 0f) {
-			var adUnit = new NimbusAdUnit(AdType.Interstitial, NimbusEvents, nimbusReportingPosition, 
-				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor);
-			LoadAdinNativeSDKButDontShow(adUnit);
-			return adUnit;
-		}
-
-		
-		/// <summary>
-		///     RequestBannerAd pre constructs a Nimbus Banner auction RTB object and communicates
-		///		data to Nimbus servers to invoke a server side auction to potentially return a
-		///		bid from one of the publishers integrated demand partners.
-		/// </summary>
-		/// <param name="nimbusReportingPosition">
-		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
-		///		to create custom reporting breakouts
-		/// </param>
-		/// <param name="bannerFloor">
-		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
-		/// </param>
-		/// <param name="adSize">
-		///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and LeaderBoard)
-		/// </param>
-		/// <param name="respectSafeArea">
-		///		Allows the publisher to choose whether the banner ads respect the safe area or not.
-		/// </param>
-		/// <param name="adPosition">
-		///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
-		/// </param>
-		public NimbusAdUnit RequestBannerAd(string nimbusReportingPosition,  float bannerFloor = 0f, IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner,
-			bool respectSafeArea = false, NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER) {
-			var adUnit = new NimbusAdUnit(AdType.Banner, NimbusEvents, nimbusReportingPosition, adSize, respectSafeArea, adPosition, bannerBidFloor: bannerFloor);
-			LoadAdinNativeSDKButDontShow(adUnit);
-			return adUnit;
-		}
-
-		/// <summary>
-		///     RequestRewardVideoAd pre constructs a Nimbus Video auction RTB object and communicates
-		///		data to Nimbus servers to invoke a server side auction to potentially return a
-		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
-		///		type, but rather a rendering behavior.
-		/// </summary>
-		/// <param name="nimbusReportingPosition">
-		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
-		///		to create custom reporting breakouts
-		/// </param>
-		/// <param name="videoFloor">
-		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
-		/// </param>
-		public NimbusAdUnit RequestRewardVideoAd(string nimbusReportingPosition, float videoFloor = 0f) {
-			var adUnit = new NimbusAdUnit(AdType.Rewarded, NimbusEvents, nimbusReportingPosition, videoBidFloor: videoFloor);
-			LoadAdinNativeSDKButDontShow(adUnit);
-			return adUnit;
-		}
 		/// <summary>
 		///		Unique session id for the current app session
 		/// </summary>
@@ -380,9 +431,9 @@ namespace Nimbus.Runtime.Scripts {
 		///     Details about the human user of the device; the advertising audience
 		/// </summary>
 		/// <param name="user">
-		///		user object with customizable properties
+		///		RTB User object with customizable properties
 		/// </param>
-		public void SetUser(User user)
+		public void SetUser(RTBUser user)
 		{
 			ConfigHelpers.SetUser(user);
 		}
@@ -391,9 +442,9 @@ namespace Nimbus.Runtime.Scripts {
 		///		Identifies the app to buyers (e.g., bundle ID, store URL, name, categories, publisher, privacy flags)
 		/// </summary>
 		/// <param name="app">
-		///		App object with customizable properties
+		///		RTB App object with customizable properties
 		/// </param>
-		public void SetApp(App app)
+		public void SetApp(RTBApp app)
 		{
 			ConfigHelpers.SetApp(app);
 		}
@@ -503,7 +554,7 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		/// <summary>
-		///		Set Verification Providers for Ad Viewability Tracking
+		///		Set Verification Providers for Ad Viewability Tracking (OM SDK)
 		/// </summary>
 		/// <param name="providers">
 		///		Array of Verification Providers with callback methods
