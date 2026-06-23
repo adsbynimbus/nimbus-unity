@@ -52,14 +52,13 @@ namespace Nimbus.Internal.Extensions
         [DllImport("__Internal")]
         private static extern void _setUsPrivacyString(string usPrivacyString);
         
-        private delegate IntPtr VerificationMarkupMethodDelegate(string response, int index);
-        private delegate IntPtr VerificationResourceMethodDelegate(string response, int index);
         [DllImport("__Internal")]
         private static extern void _setVerificationCallbacks(IntPtr markupCallbackFunctionPtr,  
             IntPtr resourceCallbackFunctionPtr, int numCallbacks);
         
         #endif
-        
+        private delegate IntPtr VerificationMarkupMethodDelegate(string response, int index);
+        private delegate IntPtr VerificationResourceMethodDelegate(string response, int index);
         private static VerificationMarkupMethodDelegate _verificationMarkupDelegate;
         private static VerificationResourceMethodDelegate _verificationResourceDelegate;
         private static VerificationProvider[] _verificationProviders;
@@ -171,7 +170,9 @@ namespace Nimbus.Internal.Extensions
             _verificationResourceDelegate = VerificationResourceMethod;
             var markupFunctionPointer = Marshal.GetFunctionPointerForDelegate(_verificationMarkupDelegate);
             var resourceFunctionPointer = Marshal.GetFunctionPointerForDelegate(_verificationResourceDelegate);
-            _setVerificationCallbacks(markupFunctionPointer, resourceFunctionPointer, _verificationProviders.Length);
+            #if UNITY_IOS
+                _setVerificationCallbacks(markupFunctionPointer, resourceFunctionPointer, _verificationProviders.Length);
+            #endif
         }
         
         		

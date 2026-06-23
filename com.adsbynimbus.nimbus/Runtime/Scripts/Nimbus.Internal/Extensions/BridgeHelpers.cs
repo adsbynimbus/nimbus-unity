@@ -77,7 +77,7 @@ namespace Nimbus.Internal.Extensions
     {
         public String appId;
     }
-
+#endif
     /// <summary>
     ///     Modifiers Added to an Ad on a per-request basis
     /// </summary>
@@ -313,7 +313,6 @@ namespace Nimbus.Internal.Extensions
             this.omidPv = omidPv;
         }
     }
-#endif
 #if UNITY_ANDROID
     public class Extensions
     {
