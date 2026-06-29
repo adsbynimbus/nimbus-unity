@@ -164,7 +164,7 @@ import AppTrackingTransparency
         
         func verificationMarkup(response: NimbusKit.NimbusResponse) -> String {
             if let callback = verificationMarkupMethodCallback {
-                if let pointer = callback("RESPONSE AS STRING GOES HERE", index) {
+                if let pointer = callback(response.toString(), index) {
                     return String(cString: pointer)
                 }
             }
@@ -173,7 +173,7 @@ import AppTrackingTransparency
         
         func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.VerificationScriptResource? {
             if let callback = verificationResourceMethodCallback {
-                if let pointer = callback("RESPONSE AS STRING GOES HERE", index) {
+                if let pointer = callback(response.toString(), index) {
                     let resourceArray = String(cString: pointer).components(separatedBy: ",")
                     if (resourceArray.count == 3) {
                         if let url = URL(string: resourceArray[0]) {
@@ -194,5 +194,12 @@ import AppTrackingTransparency
             providers.append(VerificationProviderHelper(index: i))
         }
         Nimbus.configuration.verificationProviders = providers
+    }
+}
+
+extension NimbusResponse {
+    func toString() -> String {
+        guard let data = try? JSONEncoder().encode(self), let jsonString = String(data: data, encoding: .utf8) else { return "" }
+        return jsonString
     }
 }

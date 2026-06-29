@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using AOT;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Nimbus.Internal.Extensions
 {
@@ -56,7 +57,13 @@ namespace Nimbus.Internal.Extensions
         private static extern void _setVerificationCallbacks(IntPtr markupCallbackFunctionPtr,  
             IntPtr resourceCallbackFunctionPtr, int numCallbacks);
         
+        #elif UNITY_ANDROID
+        
+        private const string HelperClass = "com.adsbynimbus.unity.NimbusHelper";
+        private const string NimbusPackage = "com.adsbynimbus.Nimbus";
+        private static AndroidJavaObject _helper;
         #endif
+
         private delegate IntPtr VerificationMarkupMethodDelegate(string response, int index);
         private delegate IntPtr VerificationResourceMethodDelegate(string response, int index);
         private static VerificationMarkupMethodDelegate _verificationMarkupDelegate;
@@ -66,14 +73,28 @@ namespace Nimbus.Internal.Extensions
         internal static void SetSessionId(string sessionId)
         {
             #if UNITY_IOS
-                _setSessionId(sessionId);
+            _setSessionId(sessionId);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setSessionId", sessionId);
             #endif
         }
         
         internal static void SetCoppa(bool coppa)
         {
             #if UNITY_IOS
-                _setCoppa(coppa);
+            _setCoppa(coppa);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setCoppa", coppa);
             #endif
         }
 
@@ -81,97 +102,187 @@ namespace Nimbus.Internal.Extensions
         internal static void SetApp(RTBApp app)
         {
             #if UNITY_IOS
-                _setApp(JsonConvert.SerializeObject(app));
-            #endif            
+            _setApp(JsonConvert.SerializeObject(app));
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setApp", JsonConvert.SerializeObject(app));
+            #endif
         }
 
         //universal app-wide
         internal static void SetUser(RTBUser user)
         {
             #if UNITY_IOS
-                _setUser(JsonConvert.SerializeObject(user));
-            #endif                
+            _setUser(JsonConvert.SerializeObject(user));
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setUser", JsonConvert.SerializeObject(user));
+            #endif
         }
 
         internal static void SetBlockedAdvertisingDomains(string[] blockedAdvertisingDomains)
         {
             #if UNITY_IOS
-                _setBlockedAdvertisingDomains(String.Join(",", blockedAdvertisingDomains));
-            #endif  
+            _setBlockedAdvertisingDomains(String.Join(",", blockedAdvertisingDomains));
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setBlockedAdvertisingDomains", String.Join(",", blockedAdvertisingDomains));
+            #endif
         }
 
         internal static void SetRequestUrl(string requestUrl)
         {
             #if UNITY_IOS
-                _setRequestUrl(requestUrl);
-            #endif  
+            _setRequestUrl(requestUrl);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setRequestUrl", requestUrl);
+            #endif
         }
 
         internal static void SetAdditionalRequestHeaders(Dictionary<string, string> additionalRequestHeaders)
         {
             #if UNITY_IOS
-                _setAdditionalRequestHeaders(JsonConvert.SerializeObject(additionalRequestHeaders));
+            _setAdditionalRequestHeaders(JsonConvert.SerializeObject(additionalRequestHeaders));
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setAdditionalRequestHeaders", JsonConvert.SerializeObject(additionalRequestHeaders));
             #endif
         }
 
         internal static void SetInterceptorTimeout(int interceptorTimeout)
         {
             #if UNITY_IOS
-                _setInterceptorTimeout(interceptorTimeout);
+            _setInterceptorTimeout(interceptorTimeout);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setInterceptorTimeout", interceptorTimeout);
             #endif
         }
         
         internal static void ShowMuteButton(bool showMuteButton)
         {
             #if UNITY_IOS
-                _showMuteButton(showMuteButton);
+            _showMuteButton(showMuteButton);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("showMuteButton", showMuteButton);
             #endif
         }
 
         internal static void EnableSwipeProtection(bool enableSwipeProtection)
         {
             #if UNITY_IOS
-                _enableSwipeProtection(enableSwipeProtection);
+            _enableSwipeProtection(enableSwipeProtection);
             #endif
         }
         
         internal static void SetIsSkOverlayEnabledForAllUnits(bool isSkOverlayEnabledForAllUnits)
         {
             #if UNITY_IOS
-                _setIsSkOverlayEnabledForAllUnits(isSkOverlayEnabledForAllUnits);
+            _setIsSkOverlayEnabledForAllUnits(isSkOverlayEnabledForAllUnits);
             #endif
         }
 
         internal static void SetGdprProperties(bool gdprApplies, string consentString)
         {
             #if UNITY_IOS
-                _setGdprProperties(gdprApplies, consentString);
+            _setGdprProperties(gdprApplies, consentString);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setGdprProperties", gdprApplies, consentString);
             #endif
         }
 
         internal static void SetGppProperties(string gppSectionId, string gppConsentString)
         {
             #if UNITY_IOS
-                _setGppProperties(gppSectionId, gppConsentString);
+            _setGppProperties(gppSectionId, gppConsentString);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setGppProperties", gppSectionId, gppConsentString);
             #endif
         }
 
         internal static void SetUsPrivacyString(string usPrivacyString)
         {
             #if UNITY_IOS
-                _setUsPrivacyString(usPrivacyString);
+            _setUsPrivacyString(usPrivacyString);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+            }
+            _helper.CallStatic("setUsPrivacyString", usPrivacyString);
             #endif
         }
 
         internal static void SetVerificationProviders(VerificationProvider[] providers)
-        {	
+        {
             _verificationProviders = providers;
             _verificationMarkupDelegate = VerificationMarkupMethod;
             _verificationResourceDelegate = VerificationResourceMethod;
+
+            #if UNITY_IOS
             var markupFunctionPointer = Marshal.GetFunctionPointerForDelegate(_verificationMarkupDelegate);
             var resourceFunctionPointer = Marshal.GetFunctionPointerForDelegate(_verificationResourceDelegate);
-            #if UNITY_IOS
-                _setVerificationCallbacks(markupFunctionPointer, resourceFunctionPointer, _verificationProviders.Length);
+            _setVerificationCallbacks(markupFunctionPointer, resourceFunctionPointer, _verificationProviders.Length);
+            #elif UNITY_ANDROID
+            if (_helper == null)
+            {
+                var helperClass = new AndroidJavaObject(HelperClass);
+                _helper = helperClass.GetStatic<AndroidJavaObject>("INSTANCE");
+            }
+
+            var javaArrayPtr = AndroidJNIHelper.ConvertToJNIArray(providers);
+            try
+            {
+                using (AndroidJavaObject javaArray = new AndroidJavaObject(javaArrayPtr))
+                {
+                    _helper.CallStatic("setVerificationProviders", javaArray);
+                }
+            }
+            finally
+            {
+                AndroidJNI.DeleteLocalRef(javaArrayPtr);
+            }
             #endif
         }
         
@@ -196,7 +307,7 @@ namespace Nimbus.Internal.Extensions
     /// <summary>
     ///     A verification provider for ad viewability tracking
     /// </summary>
-    public class VerificationProvider
+    public class VerificationProvider: AndroidJavaProxy
     {
         /// <summary>
         ///     This callback is fired once a bid response is received from Nimbus.  
@@ -221,10 +332,25 @@ namespace Nimbus.Internal.Extensions
         /// </returns>
         public Func<string, Tuple<string, string, string>> VerificationResourceCallback;
 
-        public VerificationProvider(Func<string, string> verificationMarkupCallback, Func<string, Tuple<string, string, string>> verificationResourceCallback)
+        public VerificationProvider(Func<string, string> verificationMarkupCallback, Func<string, Tuple<string, string, string>> verificationResourceCallback):
+            base("com.adsbynimbus.unity.VerificationProviderCallbackInterface")
         {
             VerificationMarkupCallback = verificationMarkupCallback;
             VerificationResourceCallback = verificationResourceCallback;
+        }
+        
+
+        // Internal Nimbus method, do not use. Must be public for implementation.
+        public string _verificationMarkupCallback(string response) 
+        {
+            var resourceValues = VerificationResourceCallback(response);
+            return $"{resourceValues.Item1},{resourceValues.Item2},{resourceValues.Item3}";
+        }
+        
+        // Internal Nimbus method, do not use.  Must be public for implementation.
+        public string _verificationResourceCallback(string response) 
+        {
+            return VerificationMarkupCallback(response);
         }
     }
     

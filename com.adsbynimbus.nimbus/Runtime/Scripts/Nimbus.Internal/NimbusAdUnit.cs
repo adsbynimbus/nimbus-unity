@@ -58,8 +58,8 @@ namespace Nimbus.Internal {
 		/// </summary>
 		public void Destroy() {
 			#if UNITY_ANDROID
-			var helperClass = new AndroidJavaObject("com.adsbynimbus.unity.UnityHelper");
-			var instance = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+			var managerClass = new AndroidJavaObject("com.adsbynimbus.unity.NimbusManager");
+			var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
 			//if (_androidController == null || _androidHelper == null) return;
 			instance.CallStatic("destroyAd", InstanceID);
 			_androidController = null;
