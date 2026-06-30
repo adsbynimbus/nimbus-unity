@@ -83,12 +83,20 @@ namespace Nimbus.Internal.Extensions
     /// </summary>
     public struct RequestModifiers
     {
+        // Adds per-request app categories to the RTB request.
         public PerRequestApp? app;
+        // A banner creative to be attached to the ad request.
         public BannerCreative? banner;
+        // Overrides the environment for a single ad.
         public Env? environment;
+        // Adds device geolocation to the RTB request.
         public Location? location;
+        // Adds per-request user keywords to the RTB request.
+        //A comma-separated keyword string to assign to the RTB User object. 
         [CanBeNull] public String userKeywords;
+        // Attaches a video creative to the ad request.
         public VideoCreative? video;
+        // Adds viewability information to the RTB request.
         public Viewability? viewability;
 
 
@@ -195,8 +203,8 @@ namespace Nimbus.Internal.Extensions
         shakyFlashingFlickeringExtremeAnimationSmileys = 11,
         surveys = 12,
         textOnly = 13,
-        userInteractive = 13, //User Interactive (e.g., Embedded Games)
-        windowsdialogOrAlertStyle = 14
+        userInteractive = 14, //User Interactive (e.g., Embedded Games)
+        windowsdialogOrAlertStyle = 15
     }
 
     /// <summary>

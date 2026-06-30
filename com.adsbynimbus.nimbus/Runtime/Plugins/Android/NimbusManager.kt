@@ -11,7 +11,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import com.adsbynimbus.*
+import com.adsbynimbus.request.RequestBuilder
 import com.adsbynimbus.request.internal.AdUnitType
+import com.adsbynimbus.rtb.CreativeAttribute
+import com.adsbynimbus.rtb.Format
+import com.adsbynimbus.rtb.Geo
+import com.adsbynimbus.rtb.PlacementType
+import com.adsbynimbus.rtb.PlaybackMethod
+import com.adsbynimbus.rtb.Position
 import com.adsbynimbus.unity.NimbusHelper.didReceiveNimbusError
 import com.adsbynimbus.unity.NimbusHelper.sendMessageToUnity
 import kotlinx.coroutines.CoroutineScope
@@ -49,13 +56,7 @@ object NimbusManager {
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
         val requestModifiers = NimbusHelper.jsonObjFromJsonString(requestModifiersJson)
-        var adSize = AdSize.Banner
-        when (adWidth) {
-            300 -> adSize = if (adHeight == 600) AdSize.HalfScreen else AdSize.Mrec
-            320 -> adSize = if (adHeight == 480) AdSize.InterstitialPortrait else AdSize.Banner
-            480 -> adSize = AdSize.InterstitialLandscape
-            728 -> adSize = AdSize.Leaderboard
-        }
+        val adSize = getAdSizeFromDimens(adWidth, adHeight)
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val demandBlock =
@@ -69,8 +70,8 @@ object NimbusManager {
                 demand {
                     demandBlock()
                 }
-                if (!(requestModifiers?.isNull("app") ?: true)) {
-                    
+                if (requestModifiers != null) {
+                    requestModifiersBlock(obj, instanceId, requestModifiers)
                 }
             }
                 .onEvent { event ->
@@ -94,6 +95,7 @@ object NimbusManager {
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
+        val requestModifiers = NimbusHelper.jsonObjFromJsonString(requestModifiersJson)
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,AdUnitType.Interstitial, extensions)
@@ -102,6 +104,9 @@ object NimbusManager {
                 video(bidFloor = videoFloor)
                 demand {
                     demandBlock()
+                }
+                if (requestModifiers != null) {
+                    requestModifiersBlock(obj, instanceId, requestModifiers)
                 }
             }.onEvent { event ->
                 didReceiveNimbusEvent(instanceId, event)
@@ -125,12 +130,16 @@ object NimbusManager {
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
+        val requestModifiers = NimbusHelper.jsonObjFromJsonString(requestModifiersJson)
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,AdUnitType.Rewarded, extensions)
             val ad = Nimbus.rewardedAd(position, videoBidFloor = bidFloor){
                 demand {
                     demandBlock()
+                }
+                if (requestModifiers != null) {
+                    requestModifiersBlock(obj, instanceId, requestModifiers)
                 }
             }.onEvent { event ->
                 didReceiveNimbusEvent(instanceId, event)
@@ -213,6 +222,211 @@ object NimbusManager {
                 }
             }
         }
+    }
+
+    @JvmStatic
+    fun requestModifiersBlock(
+        activity: Activity,
+        adUnitInstanceId: Int,
+        requestModifiers: JSONObject?
+    ): RequestBuilder.() -> Unit {
+        if (requestModifiers == null) {
+            return {}
+        }
+        return {
+            if (!(requestModifiers.isNull("app"))) {
+                val appObj = requestModifiers.getJSONObject("app")
+                val pageCat = appObj.getJSONArray("pageCat")
+                val sectionCat = appObj.getJSONArray("sectionCat")
+                app(Array(pageCat.length()) { pageCat.getString(it) }
+                    , Array(sectionCat.length()) { sectionCat.getString(it) })
+            }
+            if (!(requestModifiers.isNull("banner"))) {
+                val bannerObj = requestModifiers.getJSONObject("banner")
+                var creativeAdSize: AdSize = AdSize.Banner
+                if (!(bannerObj.isNull("width")) && !(bannerObj.isNull("height"))) {
+                    creativeAdSize =
+                        getAdSizeFromDimens(bannerObj.getInt("width"),
+                            bannerObj.getInt("height"))
+                }
+                var addFormats: Set<Format> = emptySet()
+                if (!(bannerObj.isNull("addFormats"))) {
+                    val jsonArray = bannerObj.getJSONArray("addFormats")
+                    addFormats = Array(jsonArray.length()) {
+                            i ->
+                        when(jsonArray.getInt(i)) {
+                            1 -> Format.halfScreen
+                            2 -> {
+                                val orientation = activity.resources.configuration.orientation
+                                when (orientation) {
+                                    android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                                        -> Format.interstitialLandscape
+                                    else ->
+                                        Format.interstitialPortrait
+                                }
+                            }
+                            3 -> Format.interstitialLandscape
+                            4 -> Format.interstitialPortrait
+                            5 -> Format.leaderboard
+                            6 -> Format.mrec
+                            else -> null
+                        }
+                    }.filterNotNull().toSet()
+                }
+                var adPosition: Position = Position.Unknown
+                if (!(bannerObj.isNull("adPosition"))) {
+                    adPosition = when(bannerObj.getInt("adPosition")) {
+                        0 -> Position.AboveTheFold
+                        1 -> Position.BelowTheFold
+                        2 -> Position.Footer
+                        3 -> Position.Fullscreen
+                        4 -> Position.Header
+                        5 -> Position.Sidebar
+                        else ->
+                            Position.Unknown
+                    }
+                }
+                var bidFloor: Float = 0.0f
+                if (!(bannerObj.isNull("bidFloor"))) {
+                    bidFloor = bannerObj.getDouble("bidFloor").toFloat()
+                }
+                var battr: Set<CreativeAttribute> = emptySet()
+                if (!(bannerObj.isNull("battr"))) {
+                    val jsonArray = bannerObj.getJSONArray("battr")
+                    battr = Array(jsonArray.length()) {
+                            i ->
+                        when(jsonArray.getInt(i)) {
+                            1 -> CreativeAttribute.AdobeFlash
+                            2 -> CreativeAttribute.AudioAdAutoPlay
+                            3 -> CreativeAttribute.AudioAdUserInitiated
+                            4 -> CreativeAttribute.ExpandableAutomatic
+                            5 -> CreativeAttribute.ExpandableUserRollover
+                            6 -> CreativeAttribute.HasVolumeToggle
+                            7 -> CreativeAttribute.HasPopup
+                            8 -> CreativeAttribute.BannerVideoAutoPlay
+                            9 -> CreativeAttribute.BannerVideoUserInitiated
+                            10 -> CreativeAttribute.ProvocativeOrSuggestive
+                            11 -> CreativeAttribute.ExtremeAnimation
+                            12 -> CreativeAttribute.Surveys
+                            13 -> CreativeAttribute.TextOnly
+                            14 -> CreativeAttribute.UserInteractiveAndGames
+                            15 -> CreativeAttribute.DialogOrAlertStyle
+                            else -> null
+                        }
+                    }.filterNotNull().toSet()
+                }
+                banner(creativeAdSize, addFormats, adPosition, bidFloor, battr)
+            }
+            if (!requestModifiers.isNull("environment")) {
+                val env = requestModifiers.getJSONObject("environment")
+                if (!env.isNull("publisherKey") && !env.isNull("apiKey")) {
+                    environment(env.getString("publisherKey"),
+                        env.getString("apiKey"))
+                }
+            }
+            if (!requestModifiers.isNull("location")) {
+                val location = requestModifiers.getJSONObject("location")
+                var accuracy: Int?
+                if (!location.isNull("accuracy")) {
+                    accuracy = location.getInt("accuracy")
+                }
+                location(location.getDouble("latitude"),
+                    location.getDouble("longitude"),
+                    when (location.getInt("locationType")) {
+                        1 -> Geo.LocationType.IpLookup
+                        2 -> Geo.LocationType.UserProvided
+                        else -> Geo.LocationType.Gps
+                    }
+                )
+            }
+            if (!requestModifiers.isNull("userKeywords")) {
+                user(requestModifiers.getString("userKeywords"))
+            }
+            if (!requestModifiers.isNull("video")) {
+                val video = requestModifiers.getJSONObject("video")
+                var adPosition = Position.Unknown;
+                if (!video.isNull("adPosition")) {
+                    adPosition = when(video.getInt("adPosition"))
+                    {
+                        0 -> Position.AboveTheFold
+                        1 -> Position.BelowTheFold
+                        2 -> Position.Footer
+                        3 -> Position.Fullscreen
+                        4 -> Position.Header
+                        5 -> Position.Sidebar
+                        else ->
+                        Position.Unknown
+                    }
+                }
+                var bidFloor= 0.0f
+                if (!video.isNull("bidFloor")) {
+                    bidFloor = video.getDouble("bidFloor").toFloat()
+                }
+                var minDuration= 0
+                if (!video.isNull("minDuration")) {
+                    minDuration = video.getInt("minDuration")
+                }
+                var maxDuration = 0
+                if (!video.isNull("maxDuration")) {
+                    maxDuration = video.getInt("maxDuration")
+                }
+                var width = 0
+                if (!video.isNull("width")) {
+                    width = video.getInt("width")
+                }
+                var height = 0
+                if (!video.isNull("height")) {
+                    height = video.getInt("height")
+                }
+                var placementType: PlacementType? = null
+                if (!video.isNull("placementType")) {
+                    placementType = when(video.getInt("placementType")) {
+                        0 -> PlacementType.InArticle
+                        1 -> PlacementType.InBanner
+                        2 -> PlacementType.InFeed
+                        3 -> PlacementType.InStream
+                        4 -> PlacementType.InterstitialSliderFloating
+                        else -> null
+                    }
+                }
+                var playbackMethod: Set<PlaybackMethod> = emptySet()
+                if (!(video.isNull("playbackMethod"))) {
+                    val jsonArray = video.getJSONArray("playbackMethod")
+                    playbackMethod = Array(jsonArray.length()) {
+                            i ->
+                        when(jsonArray.getInt(i)) {
+                            0 -> PlaybackMethod.ClickSoundOn
+                            1 -> PlaybackMethod.EnterViewportSoundOff
+                            2 -> PlaybackMethod.EnterViewportSoundOn
+                            3 -> PlaybackMethod.MouseOverSoundOn
+                            4 -> PlaybackMethod.PageLoadSoundOff
+                            6 -> PlaybackMethod.PageLoadSoundOn
+                            else -> null
+                        }
+                    }.filterNotNull().toSet()
+                }
+                video(adPosition, bidFloor, false, minDuration, maxDuration, width, height,
+                    placementType, playbackMethod)
+            }
+            if (!requestModifiers.isNull("viewability")) {
+                val va = requestModifiers.getJSONObject("viewability")
+                if (!va.isNull("omidPn") && !va.isNull("omidPv")) {
+                    // TODO: needs to be added in a newer version of 3.0
+                    // viewability(va.getString("omidPn"), va.getString("omidPv"))
+                }
+            }
+        }
+    }
+
+    private fun getAdSizeFromDimens(adWidth: Int, adHeight: Int): AdSize {
+        var adSize = AdSize.Banner
+        when (adWidth) {
+            300 -> adSize = if (adHeight == 600) AdSize.HalfScreen else AdSize.Mrec
+            320 -> adSize = if (adHeight == 480) AdSize.InterstitialPortrait else AdSize.Banner
+            480 -> adSize = AdSize.InterstitialLandscape
+            728 -> adSize = AdSize.Leaderboard
+        }
+        return adSize
     }
 
     @JvmStatic
