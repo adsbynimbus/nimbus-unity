@@ -70,10 +70,12 @@ import AppTrackingTransparency
         }
     }
     
-    // TODO: Pass in json array
     @objc public class func setAdditionalRequestHeaders(headersJsonStr: String) {
         guard let jsonData = headersJsonStr.data(using: .utf8) else {
-            print("Invalid string encoding")
+            NimbusManager.didReceiveNimbusError(
+                adUnitInstanceID: 0,
+                error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON")
+            )
             return
         }
         do {
@@ -119,7 +121,6 @@ import AppTrackingTransparency
         Nimbus.IAB.usPrivacyString = usPrivacyString
     }
     
-    // TODO: Need to get Standa to change NimbusResponse to be encodable so I can return the response
     final class VerificationProviderHelper: NimbusKit.Configuration.VerificationProvider {
         let index: Int
         

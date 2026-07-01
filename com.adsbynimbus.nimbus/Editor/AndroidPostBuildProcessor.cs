@@ -58,7 +58,6 @@ namespace Nimbus.Editor {
 				                includeGroupByRegex("".*\\.adsbynimbus.*"")
 										}" + extraRepositories + "}}}";
 			WriteGradleProps(path + "/../gradle.properties");
-			WriteGradleWrapper(path + "/../gradle/wrapper/gradle-wrapper.properties");
 			var repoWriter = File.AppendText(path + "/../settings.gradle");
 			repoWriter.WriteLine(repoString);
 			repoWriter.Flush();
@@ -168,18 +167,6 @@ namespace Nimbus.Editor {
 			var gradleProps = File.ReadAllLines(gradleFile).ToList()
 				.Where(s => !s.Equals("android.enableJetifier=true"));
 			File.WriteAllLines(gradleFile, gradleProps);
-		}
-
-		private static void WriteGradleWrapper(string path)
-		{
-			if (!File.Exists(path))
-			{
-				if (Path.GetDirectoryName(path) != null)
-				{
-					Directory.CreateDirectory(Path.GetDirectoryName(path));
-				}
-			}
-			File.WriteAllText(path, @"distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-all.zip");
 		}
 
 		private static void RunEdm4uCheck(string path)
