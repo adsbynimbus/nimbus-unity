@@ -15,41 +15,6 @@ import AppTrackingTransparency
     public static var verificationMarkupMethodCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?)?
     public static var verificationResourceMethodCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?)?
     
-    @objc public class func getDeviceLanguage() -> String? {
-        guard let preferred = Locale.preferredLanguages.first else {
-            // Edge case fallback as I saw some old ObjC case where preferredLanguages
-            // returned an empty array (causing a crash) and Apple Docs don't say this array must not
-            // be empty despite not being able to delete all preferred languages on an iOS device.
-            return Locale.current.languageCode
-        }
-            
-        return Locale(identifier: preferred).languageCode
-    }
-
-    @objc public class func getAtts() -> Int {
-        if #available(iOS 14.0, *) {
-            return Int(ATTrackingManager.trackingAuthorizationStatus.rawValue)
-        } else {
-            return -1
-        }
-    }
-    
-    @objc public class func isLimitAdTrackingEnabled() -> Bool {
-        if #available(iOS 14.0, *) {
-            return ATTrackingManager.trackingAuthorizationStatus != .authorized
-        } else {
-            return !ASIdentifierManager.shared().isAdvertisingTrackingEnabled
-        }
-    }
-    
-    @objc public class func getPlistJSON() -> String? {
-    	guard let infoDict = Bundle.main.infoDictionary,
-    	let jsonData = try? JSONSerialization.data(withJSONObject: infoDict, options: []) else { 
-    		return nil
-    	}
-    	return String(data: jsonData, encoding: .ascii)
-    }
-    
     @objc public class func setSessionId(sessionId: String) {
         Nimbus.configuration.sessionId = sessionId
     }
@@ -142,7 +107,7 @@ import AppTrackingTransparency
     
     @objc public class func setGdprProperties(gdprApplies: Bool, gdprConsentString: String) {
         Nimbus.IAB.gdprApplies = gdprApplies
-        Nimbus.IAB.gdprConsentString = gdprConsentString
+        Nimbus.IAB.tcfString = gdprConsentString
     }
     
     @objc public class func setGppProperties(gppSectionId: String, gppConsentString: String) {
@@ -155,7 +120,7 @@ import AppTrackingTransparency
     }
     
     // TODO: Need to get Standa to change NimbusResponse to be encodable so I can return the response
-    final class VerificationProviderHelper: NimbusKit.VerificationProvider {
+    final class VerificationProviderHelper: NimbusKit.Configuration.VerificationProvider {
         let index: Int
         
         init(index: Int) {
@@ -164,20 +129,22 @@ import AppTrackingTransparency
         
         func verificationMarkup(response: NimbusKit.NimbusResponse) -> String {
             if let callback = verificationMarkupMethodCallback {
-                if let pointer = callback(response.toString(), index) {
+                let responseStr = response.bid.adm
+                if let pointer = callback(responseStr, index) {
                     return String(cString: pointer)
                 }
             }
             return ""
         }
         
-        func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.VerificationScriptResource? {
+        func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.Configuration.VerificationScriptResource? {
             if let callback = verificationResourceMethodCallback {
-                if let pointer = callback(response.toString(), index) {
+                let responseStr = response.bid.adm
+                if let pointer = callback(responseStr, index) {
                     let resourceArray = String(cString: pointer).components(separatedBy: ",")
                     if (resourceArray.count == 3) {
                         if let url = URL(string: resourceArray[0]) {
-                            return VerificationScriptResource(url: url, vendorKey: resourceArray[1], parameters: resourceArray[2])
+                            return NimbusKit.Configuration.VerificationScriptResource(url: url, vendorKey: resourceArray[1], parameters: resourceArray[2])
                         }
                     }
                 }
@@ -189,7 +156,7 @@ import AppTrackingTransparency
     @objc public class func setVerificationProviders(markupCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), resourceCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), numCallbacks: Int) {
         verificationMarkupMethodCallback = markupCallback
         verificationResourceMethodCallback = resourceCallback
-        var providers = [NimbusKit.VerificationProvider]()
+        var providers = [NimbusKit.Configuration.VerificationProvider]()
         for i in 0..<numCallbacks {
             providers.append(VerificationProviderHelper(index: i))
         }
@@ -197,9 +164,3 @@ import AppTrackingTransparency
     }
 }
 
-extension NimbusResponse {
-    func toString() -> String {
-        guard let data = try? JSONEncoder().encode(self), let jsonString = String(data: data, encoding: .utf8) else { return "" }
-        return jsonString
-    }
-}

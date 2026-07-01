@@ -79,22 +79,6 @@ extern "C" {
     void _destroyAd(int adUnitInstanceId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
     }
-    
-    const char* _getDeviceLanguage() {
-        return strdup([[NimbusHelper getDeviceLanguage] UTF8String]);
-    }
-
-    int _getAtts() {
-        return (int)[NimbusHelper getAtts];
-    }
-
-    bool _isLimitAdTrackingEnabled() {
-        return [NimbusHelper isLimitAdTrackingEnabled];
-    }
-    
-    const char* _getPlistJSON() {
-        return strdup([[NimbusHelper getPlistJSON] UTF8String]);
-    }
 
     void _setSessionId(const char* sessionId) {
         [NimbusHelper setSessionIdWithSessionId:GetStringParam(sessionId)];

@@ -155,7 +155,6 @@ import NimbusMobileFuseKit
     @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, 
     respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
-        let requestModifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
@@ -185,55 +184,8 @@ import NimbusMobileFuseKit
                         }
                         #endif
                     }
-                    if let perRequestApp = requestModifiers?.app {
-                        app(pagecat: perRequestApp.pageCat, sectioncat: perRequestApp.sectionCat)
-                    }
-                    if let bannerCreative = requestModifiers?.banner {
-                        var adSize: AdSize?
-                        if let width = bannerCreative.width, let height = bannerCreative.height {
-                            adSize = AdSize(width: width, height: height)
-                        }
-                        var addFormats: Set<RTB.Format> = []
-                        //this has to be done here because RTB.Format.Interstitial is @MainActor locked
-                        if let rawAddFormats = bannerCreative.rawAddFormats {
-                            addFormats = Set(rawAddFormats.compactMap { intValue in
-                                //needed because RTB.Format doesnt have an int value
-                                switch intValue {
-                                case 0:
-                                    RTB.Format.banner
-                                case 1:
-                                    RTB.Format.halfScreen
-                                case 2:
-                                    RTB.Format.interstitial
-                                case 3:
-                                    RTB.Format.interstitialLandscape
-                                case 4:
-                                    RTB.Format.interstitialPortrait
-                                case 5:
-                                    RTB.Format.leaderboard
-                                case 6:
-                                    RTB.Format.mrec
-                                default:
-                                    nil
-                                }
-                            })
-                        }
-                        banner(size: adSize, addFormats: addFormats, adPosition: bannerCreative.adPosition ?? .unknown, bidFloor: bannerCreative.bidFloor ?? bidFloor, battr: bannerCreative.battr ?? [])
-                    }
-                    if let env = requestModifiers?.environment {
-                        environment(publisherKey: env.publisherKey, apiKey: env.apiKey)
-                    }
-                    if let loc = requestModifiers?.location {
-                        location(latitude: loc.latitude, longitude: loc.longitude, type: loc.locationType, accuracy: loc.accuracy)
-                    }
-                    if let userKeywords = requestModifiers?.userKeywords {
-                        user(keywords: userKeywords)
-                    }
-                    if let vid = requestModifiers?.video {
-                        video(adPosition: vid.adPosition ?? .unknown, bidFloor: vid.bidFloor, minDuration: vid.minDuration, maxDuration: vid.maxDuration, width: vid.width, height: vid.height, placementType: vid.placementType, playbackMethod: vid.playbackMethod ?? [])
-                    }
-                    if let v = requestModifiers?.viewability {
-                        viewability(omidpn: v.omidPn, omidpv: v.omidPv)
+                    if let modifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                        modifiers.components
                     }
                 }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -255,7 +207,6 @@ import NimbusMobileFuseKit
     
     @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String){
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
-        let requestModifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson)
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
@@ -279,55 +230,8 @@ import NimbusMobileFuseKit
                     }
                     #endif
                 }
-                if let perRequestApp = requestModifiers?.app {
-                    app(pagecat: perRequestApp.pageCat, sectioncat: perRequestApp.sectionCat)
-                }
-                if let bannerCreative = requestModifiers?.banner {
-                    var adSize: AdSize?
-                    if let width = bannerCreative.width, let height = bannerCreative.height {
-                        adSize = AdSize(width: width, height: height)
-                    }
-                    var addFormats: Set<RTB.Format> = []
-                    //this has to be done here because RTB.Format.Interstitial is @MainActor locked
-                    if let rawAddFormats = bannerCreative.rawAddFormats {
-                        addFormats = Set(rawAddFormats.compactMap { intValue in
-                            //needed because RTB.Format doesnt have an int value
-                            switch intValue {
-                            case 0:
-                                RTB.Format.banner
-                            case 1:
-                                RTB.Format.halfScreen
-                            case 2:
-                                RTB.Format.interstitial
-                            case 3:
-                                RTB.Format.interstitialLandscape
-                            case 4:
-                                RTB.Format.interstitialPortrait
-                            case 5:
-                                RTB.Format.leaderboard
-                            case 6:
-                                RTB.Format.mrec
-                            default:
-                                nil
-                            }
-                        })
-                    }
-                    banner(size: adSize, addFormats: addFormats, adPosition: bannerCreative.adPosition ?? .unknown, bidFloor: bannerCreative.bidFloor ?? bannerFloor, battr: bannerCreative.battr ?? [])
-                }
-                if let env = requestModifiers?.environment {
-                    environment(publisherKey: env.publisherKey, apiKey: env.apiKey)
-                }
-                if let loc = requestModifiers?.location {
-                    location(latitude: loc.latitude, longitude: loc.longitude, type: loc.locationType, accuracy: loc.accuracy)
-                }
-                if let userKeywords = requestModifiers?.userKeywords {
-                    user(keywords: userKeywords)
-                }
-                if let vid = requestModifiers?.video {
-                    video(adPosition: vid.adPosition ?? .unknown, bidFloor: vid.bidFloor ?? videoFloor, minDuration: vid.minDuration, maxDuration: vid.maxDuration, width: vid.width, height: vid.height, placementType: vid.placementType, playbackMethod: vid.playbackMethod ?? [])
-                }
-                if let v = requestModifiers?.viewability {
-                    viewability(omidpn: v.omidPn, omidpv: v.omidPv)
+                if let modifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                    modifiers.components
                 }
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -352,7 +256,6 @@ import NimbusMobileFuseKit
     
     @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
-        let requestModifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson)
         let group = DispatchGroup()
         group.wait(for: {
             #if NIMBUS_ENABLE_APS
@@ -363,7 +266,7 @@ import NimbusMobileFuseKit
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let rewardedAd = await Nimbus.rewardedAd(position: position, videoBidFloor: bidFloor){
+            let rewardedAd = await Nimbus.rewardedAd(position: position, bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -376,55 +279,8 @@ import NimbusMobileFuseKit
                     }
                     #endif
                 }
-                if let perRequestApp = requestModifiers?.app {
-                    app(pagecat: perRequestApp.pageCat, sectioncat: perRequestApp.sectionCat)
-                }
-                if let bannerCreative = requestModifiers?.banner {
-                    var adSize: AdSize?
-                    if let width = bannerCreative.width, let height = bannerCreative.height {
-                        adSize = AdSize(width: width, height: height)
-                    }
-                    var addFormats: Set<RTB.Format> = []
-                    //this has to be done here because RTB.Format.Interstitial is @MainActor locked
-                    if let rawAddFormats = bannerCreative.rawAddFormats {
-                        addFormats = Set(rawAddFormats.compactMap { intValue in
-                            //needed because RTB.Format doesnt have an int value
-                            switch intValue {
-                            case 0:
-                                RTB.Format.banner
-                            case 1:
-                                RTB.Format.halfScreen
-                            case 2:
-                                RTB.Format.interstitial
-                            case 3:
-                                RTB.Format.interstitialLandscape
-                            case 4:
-                                RTB.Format.interstitialPortrait
-                            case 5:
-                                RTB.Format.leaderboard
-                            case 6:
-                                RTB.Format.mrec
-                            default:
-                                nil
-                            }
-                        })
-                    }
-                    banner(size: adSize, addFormats: addFormats, adPosition: bannerCreative.adPosition ?? .unknown, bidFloor: bannerCreative.bidFloor, battr: bannerCreative.battr ?? [])
-                }
-                if let env = requestModifiers?.environment {
-                    environment(publisherKey: env.publisherKey, apiKey: env.apiKey)
-                }
-                if let loc = requestModifiers?.location {
-                    location(latitude: loc.latitude, longitude: loc.longitude, type: loc.locationType, accuracy: loc.accuracy)
-                }
-                if let userKeywords = requestModifiers?.userKeywords {
-                    user(keywords: userKeywords)
-                }
-                if let vid = requestModifiers?.video {
-                    video(adPosition: vid.adPosition ?? .unknown, bidFloor: vid.bidFloor ?? bidFloor, minDuration: vid.minDuration, maxDuration: vid.maxDuration, width: vid.width, height: vid.height, placementType: vid.placementType, playbackMethod: vid.playbackMethod ?? [])
-                }
-                if let v = requestModifiers?.viewability {
-                    viewability(omidpn: v.omidPn, omidpv: v.omidPv)
+                if let modifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                    modifiers.components
                 }
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -478,7 +334,6 @@ import NimbusMobileFuseKit
             Nimbus.Log.ad.error("Attempted to show invalid ad type.")
         }
     }
-    
     #if NIMBUS_ENABLE_APS
     private func loadAPSAds(from extensions: Extensions?) async -> [APSAd] {
         var apsAds: [APSAd] = []
@@ -689,6 +544,9 @@ import NimbusMobileFuseKit
     }
 }
 
+protocol UnityRequestComponent {
+    @MainActor var requestComponent: any RequestComponent { get }
+}
 
 struct Extensions: Codable {
     let aps: Aps?
@@ -711,9 +569,36 @@ struct RequestModifiers: Codable, Sendable {
     let userKeywords: String?
     let video: VideoCreative?
     let viewability: Viewability?
+    
+    @MainActor
+    var components: [RequestComponent] {
+        var requestComponents: [RequestComponent] = []
+        if let perRequestApp = app {
+            requestComponents.append(perRequestApp.requestComponent)
+        }
+        if let bannerCreative = banner {
+            requestComponents.append(bannerCreative.requestComponent)
+        }
+        if let env = environment {
+            requestComponents.append(env.requestComponent)
+        }
+        if let loc = location {
+            requestComponents.append(loc.requestComponent)
+        }
+        if let userKeywords = userKeywords {
+            requestComponents.append(user(keywords: userKeywords))
+        }
+        if let vid = video {
+            requestComponents.append(vid.requestComponent)
+        }
+        if let v = viewability {
+            requestComponents.append(v.requestComponent)
+        }
+        return requestComponents
+    }
 }
 
-struct BannerCreative: Codable {
+struct BannerCreative: Codable, UnityRequestComponent {
     let width: Int?
     let height: Int?
     let bidFloor: Float?
@@ -744,9 +629,42 @@ struct BannerCreative: Codable {
             RTB.CreativeAttribute(rawValue: intValue)
         })
     }
+    
+    var requestComponent: any RequestComponent {
+        var adSize: AdSize? = nil
+        if let width = width, let height = height {
+            adSize = AdSize(width: width, height: height)
+        }
+        var addFormats: Set<RTB.Format> = []
+        //this has to be done here because RTB.Format.Interstitial is @MainActor locked
+        if let rawAddFormats = rawAddFormats {
+            addFormats = Set(rawAddFormats.compactMap { intValue in
+                //needed because RTB.Format doesnt have an int value
+                switch intValue {
+                case 0:
+                    RTB.Format.banner
+                case 1:
+                    RTB.Format.halfScreen
+                case 2:
+                    RTB.Format.interstitial
+                case 3:
+                    RTB.Format.interstitialLandscape
+                case 4:
+                    RTB.Format.interstitialPortrait
+                case 5:
+                    RTB.Format.leaderboard
+                case 6:
+                    RTB.Format.mrec
+                default:
+                    nil
+                }
+            })
+        }
+        return banner(size: adSize, addFormats: addFormats, adPosition: adPosition ?? .unknown, bidFloor: bidFloor, battr: battr ?? [])
+    }
 }
 
-struct VideoCreative: Codable {
+struct VideoCreative: Codable, UnityRequestComponent {
     let adPosition: RTB.Position?
     let bidFloor: Float?
     let minDuration: Int?
@@ -777,24 +695,39 @@ struct VideoCreative: Codable {
             RTB.PlaybackMethod(rawValue: intValue)
         })
     }
+    
+    var requestComponent: any NimbusKit.RequestComponent {
+        video(adPosition: adPosition ?? .unknown, bidFloor: bidFloor, minDuration: minDuration, maxDuration: maxDuration, width: width,
+              height: height, placementType: placementType, playbackMethod: playbackMethod ?? [])
+    }
 }
 
-struct Env: Codable {
+struct Env: Codable, UnityRequestComponent {
     let publisherKey: String
     let apiKey: String
+    
+    var requestComponent: any NimbusKit.RequestComponent {
+        environment(publisherKey: publisherKey, apiKey: apiKey)
+    }
 }
 
-struct Viewability: Codable {
+struct Viewability: Codable, UnityRequestComponent {
     let omidPn: String
     let omidPv: String
+    var requestComponent: any NimbusKit.RequestComponent {
+        viewability(omidpn: omidPn, omidpv: omidPv)
+    }
 }
 
-struct PerRequestApp: Codable {
+struct PerRequestApp: Codable, UnityRequestComponent {
     let pageCat: Set<String>
     let sectionCat: Set<String>
+    var requestComponent: any NimbusKit.RequestComponent {
+        app(pagecat: pageCat, sectioncat: sectionCat)
+    }
 }
 
-struct Location: Codable {
+struct Location: Codable, UnityRequestComponent {
     let latitude: Double
     let longitude: Double
     let accuracy: Int?
@@ -809,6 +742,10 @@ struct Location: Codable {
     //this is needed because RTB.Geo.LocationType's declaration is overriding swift's normal decode methods
     var locationType: RTB.Geo.LocationType {
         return RTB.Geo.LocationType(rawValue: rawlocationType) ?? RTB.Geo.LocationType.gps
+    }
+    
+    var requestComponent: any NimbusKit.RequestComponent {
+        location(latitude: latitude, longitude: longitude, type: locationType, accuracy: accuracy)
     }
 }
 

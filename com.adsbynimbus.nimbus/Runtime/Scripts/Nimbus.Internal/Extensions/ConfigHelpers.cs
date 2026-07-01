@@ -312,8 +312,8 @@ namespace Nimbus.Internal.Extensions
         /// <summary>
         ///     This callback is fired once a bid response is received from Nimbus.  
         /// </summary>
-        /// <param name="nimbusBidResponse">
-        ///     Returns the bid response in a json string format
+        /// <param name="nimbusBidResponseMarkup">
+        ///     Returns the bid response markup
         /// </param>
         /// <returns>
         ///     A string that provides markup to be injected into a static ad.
@@ -323,8 +323,8 @@ namespace Nimbus.Internal.Extensions
         /// <summary>
         ///     This callback is fired once a bid response is received from Nimbus.  
         /// </summary>
-        /// <param name="nimbusBidResponse">
-        ///     Returns the bid response in a json string format
+        /// <param name="nimbusBidResponseMarkup">
+        ///     Returns the bid response markup
         /// </param>
         /// <returns>
         ///     A tuple of 3 strings (url, vendorKey, parameters) which are used to create a VerificationScriptResource

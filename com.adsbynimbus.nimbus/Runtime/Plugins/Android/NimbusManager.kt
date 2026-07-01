@@ -32,9 +32,9 @@ object NimbusManager {
     private val adCache = LruCache<Int, Ad>(10)
 
     @JvmStatic
-    fun initNimbusAndThirdParties(obj: Any?, publisherKey: String, apiKey: String, 
-        enableSDKInTestMode: Boolean,
-        thirdPartyJson: String
+    fun initNimbusAndThirdParties(obj: Any?, publisherKey: String, apiKey: String,
+                                  enableSDKInTestMode: Boolean,
+                                  thirdPartyJson: String
     ) {
         if (obj is Activity) {
             // TODO: REMOVE BELOW URL ONCE DONE TESTING
@@ -71,7 +71,7 @@ object NimbusManager {
                     demandBlock()
                 }
                 if (requestModifiers != null) {
-                    requestModifiersBlock(obj, instanceId, requestModifiers)
+                    requestModifiersBlock(obj, instanceId, requestModifiers).invoke(this)
                 }
             }
                 .onEvent { event ->
@@ -106,7 +106,7 @@ object NimbusManager {
                     demandBlock()
                 }
                 if (requestModifiers != null) {
-                    requestModifiersBlock(obj, instanceId, requestModifiers)
+                    requestModifiersBlock(obj, instanceId, requestModifiers).invoke(this)
                 }
             }.onEvent { event ->
                 didReceiveNimbusEvent(instanceId, event)
@@ -139,7 +139,7 @@ object NimbusManager {
                     demandBlock()
                 }
                 if (requestModifiers != null) {
-                    requestModifiersBlock(obj, instanceId, requestModifiers)
+                    requestModifiersBlock(obj, instanceId, requestModifiers).invoke(this)
                 }
             }.onEvent { event ->
                 didReceiveNimbusEvent(instanceId, event)
@@ -355,7 +355,7 @@ object NimbusManager {
                         4 -> Position.Header
                         5 -> Position.Sidebar
                         else ->
-                        Position.Unknown
+                            Position.Unknown
                     }
                 }
                 var bidFloor= 0.0f
@@ -452,23 +452,23 @@ object NimbusManager {
         var eventName: String
         when (event) {
             AdEvent.Loaded ->
-            eventName = "LOADED"
+                eventName = "LOADED"
             AdEvent.Impression ->
-            eventName = "IMPRESSION"
+                eventName = "IMPRESSION"
             AdEvent.Clicked ->
-            eventName = "CLICKED"
+                eventName = "CLICKED"
             AdEvent.Paused ->
-            eventName = "PAUSED"
+                eventName = "PAUSED"
             AdEvent.Resumed ->
-            eventName = "RESUMED"
+                eventName = "RESUMED"
             AdEvent.RewardEarned ->
-            eventName = "REWARDEARNED"
+                eventName = "REWARDEARNED"
             AdEvent.Completed ->
-            eventName = "COMPLETED"
+                eventName = "COMPLETED"
             AdEvent.Destroyed ->
-            eventName = "DESTROYED"
+                eventName = "DESTROYED"
             else ->
-            return
+                return
         }
         val json = JSONObject()
         json.put("adUnitInstanceID", adUnitInstanceID)
