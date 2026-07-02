@@ -54,7 +54,7 @@ import AppTrackingTransparency
     }
     
     @objc public class func setBlockedAdvertisingDomains(domains: String) {
-        var domainArray = domains.components(separatedBy: ",")
+        let domainArray = domains.components(separatedBy: ",")
         var blockedDomains: Set<URL> = []
         for domain in domainArray {
             if let url = URL(string: domain) {
@@ -132,6 +132,7 @@ import AppTrackingTransparency
             if let callback = verificationMarkupMethodCallback {
                 let responseStr = response.bid.adm
                 if let pointer = callback(responseStr, index) {
+                    defer{free(pointer)}
                     return String(cString: pointer)
                 }
             }
@@ -142,11 +143,31 @@ import AppTrackingTransparency
             if let callback = verificationResourceMethodCallback {
                 let responseStr = response.bid.adm
                 if let pointer = callback(responseStr, index) {
-                    let resourceArray = String(cString: pointer).components(separatedBy: ",")
-                    if (resourceArray.count == 3) {
-                        if let url = URL(string: resourceArray[0]) {
-                            return NimbusKit.Configuration.VerificationScriptResource(url: url, vendorKey: resourceArray[1], parameters: resourceArray[2])
+                    do {
+                        if let dataFromString = String(cString: pointer).data(using: .utf8) {
+                            let resource: VerificationScriptResource? = try JSONDecoder().decode(VerificationScriptResource.self, from: dataFromString)
+                            if let res = resource
+                            {
+                                if let url = URL(string: res.url) {
+                                    return NimbusKit.Configuration.VerificationScriptResource(url: url, vendorKey: res.vendorKey, parameters: res.parameters)
+                                } else {
+                                    NimbusManager.didReceiveNimbusError(
+                                        adUnitInstanceID: 0,
+                                        error: .unitysdk(stage: .request, detail: "VerificationScriptResource URL was incorrectly formed, \(res.url) is not a valid URL")
+                                    )
+                                }
+                            } else {
+                                NimbusManager.didReceiveNimbusError(
+                                    adUnitInstanceID: 0,
+                                    error: .unitysdk(stage: .request, detail: "VerificationScriptResource was null")
+                                )
+                            }
                         }
+                    } catch {
+                        NimbusManager.didReceiveNimbusError(
+                            adUnitInstanceID: 0,
+                            error: .unitysdk(stage: .request, detail: "Failed to decode VerificationScriptResource JSON: \(error)")
+                        )
                     }
                 }
             }
@@ -162,6 +183,13 @@ import AppTrackingTransparency
             providers.append(VerificationProviderHelper(index: i))
         }
         Nimbus.configuration.verificationProviders = providers
+    }
+    
+    struct VerificationScriptResource: Codable
+    {
+        let url: String
+        let vendorKey: String
+        let parameters: String
     }
 }
 

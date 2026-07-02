@@ -255,8 +255,13 @@ object NimbusManager {
                     addFormats = Array(jsonArray.length()) {
                             i ->
                         when(jsonArray.getInt(i)) {
-                            1 -> Format.halfScreen
-                            2 -> {
+                            1 -> Format.banner
+                            2 -> Format.mrec
+                            3 -> Format.halfScreen
+                            4 -> Format.leaderboard
+                            5 -> Format.interstitialPortrait
+                            6 -> Format.interstitialLandscape
+                            7 -> {
                                 val orientation = activity.resources.configuration.orientation
                                 when (orientation) {
                                     android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -265,10 +270,6 @@ object NimbusManager {
                                         Format.interstitialPortrait
                                 }
                             }
-                            3 -> Format.interstitialLandscape
-                            4 -> Format.interstitialPortrait
-                            5 -> Format.leaderboard
-                            6 -> Format.mrec
                             else -> null
                         }
                     }.filterNotNull().toSet()
@@ -276,12 +277,12 @@ object NimbusManager {
                 var adPosition: Position = Position.Unknown
                 if (!(bannerObj.isNull("adPosition"))) {
                     adPosition = when(bannerObj.getInt("adPosition")) {
-                        0 -> Position.AboveTheFold
-                        1 -> Position.BelowTheFold
-                        2 -> Position.Footer
-                        3 -> Position.Fullscreen
-                        4 -> Position.Header
+                        1 -> Position.AboveTheFold
+                        2 -> Position.BelowTheFold
+                        3 -> Position.Header
+                        4 -> Position.Footer
                         5 -> Position.Sidebar
+                        6 -> Position.Fullscreen
                         else ->
                             Position.Unknown
                     }
@@ -296,21 +297,23 @@ object NimbusManager {
                     battr = Array(jsonArray.length()) {
                             i ->
                         when(jsonArray.getInt(i)) {
-                            1 -> CreativeAttribute.AdobeFlash
-                            2 -> CreativeAttribute.AudioAdAutoPlay
-                            3 -> CreativeAttribute.AudioAdUserInitiated
-                            4 -> CreativeAttribute.ExpandableAutomatic
+                            1 -> CreativeAttribute.AudioAdAutoPlay
+                            2 -> CreativeAttribute.AudioAdUserInitiated
+                            3 -> CreativeAttribute.ExpandableAutomatic
+                            4 -> CreativeAttribute.ExpandableUserClick
                             5 -> CreativeAttribute.ExpandableUserRollover
-                            6 -> CreativeAttribute.HasVolumeToggle
-                            7 -> CreativeAttribute.HasPopup
-                            8 -> CreativeAttribute.BannerVideoAutoPlay
-                            9 -> CreativeAttribute.BannerVideoUserInitiated
-                            10 -> CreativeAttribute.ProvocativeOrSuggestive
-                            11 -> CreativeAttribute.ExtremeAnimation
-                            12 -> CreativeAttribute.Surveys
-                            13 -> CreativeAttribute.TextOnly
-                            14 -> CreativeAttribute.UserInteractiveAndGames
-                            15 -> CreativeAttribute.DialogOrAlertStyle
+                            6 -> CreativeAttribute.BannerVideoAutoPlay
+                            7 -> CreativeAttribute.BannerVideoUserInitiated
+                            8 -> CreativeAttribute.HasPopup
+                            9 -> CreativeAttribute.ProvocativeOrSuggestive
+                            10 -> CreativeAttribute.ExtremeAnimation
+                            11 -> CreativeAttribute.Surveys
+                            12 -> CreativeAttribute.TextOnly
+                            13 -> CreativeAttribute.UserInteractiveAndGames
+                            14 -> CreativeAttribute.DialogOrAlertStyle
+                            15 -> CreativeAttribute.HasVolumeToggle
+                            16 -> CreativeAttribute.HasSkipButton
+                            17 -> CreativeAttribute.AdobeFlash
                             else -> null
                         }
                     }.filterNotNull().toSet()
@@ -333,8 +336,8 @@ object NimbusManager {
                 location(location.getDouble("latitude"),
                     location.getDouble("longitude"),
                     when (location.getInt("locationType")) {
-                        1 -> Geo.LocationType.IpLookup
-                        2 -> Geo.LocationType.UserProvided
+                        2 -> Geo.LocationType.IpLookup
+                        3 -> Geo.LocationType.UserProvided
                         else -> Geo.LocationType.Gps
                     }
                 )
@@ -348,12 +351,12 @@ object NimbusManager {
                 if (!video.isNull("adPosition")) {
                     adPosition = when(video.getInt("adPosition"))
                     {
-                        0 -> Position.AboveTheFold
-                        1 -> Position.BelowTheFold
-                        2 -> Position.Footer
-                        3 -> Position.Fullscreen
-                        4 -> Position.Header
+                        1 -> Position.AboveTheFold
+                        2 -> Position.BelowTheFold
+                        3 -> Position.Header
+                        4 -> Position.Footer
                         5 -> Position.Sidebar
+                        6 -> Position.Fullscreen
                         else ->
                             Position.Unknown
                     }
@@ -381,11 +384,11 @@ object NimbusManager {
                 var placementType: PlacementType? = null
                 if (!video.isNull("placementType")) {
                     placementType = when(video.getInt("placementType")) {
-                        0 -> PlacementType.InArticle
-                        1 -> PlacementType.InBanner
-                        2 -> PlacementType.InFeed
-                        3 -> PlacementType.InStream
-                        4 -> PlacementType.InterstitialSliderFloating
+                        1 -> PlacementType.InStream
+                        2 -> PlacementType.InBanner
+                        3 -> PlacementType.InArticle
+                        4 -> PlacementType.InFeed
+                        5 -> PlacementType.InterstitialSliderFloating
                         else -> null
                     }
                 }
@@ -395,12 +398,12 @@ object NimbusManager {
                     playbackMethod = Array(jsonArray.length()) {
                             i ->
                         when(jsonArray.getInt(i)) {
-                            0 -> PlaybackMethod.ClickSoundOn
-                            1 -> PlaybackMethod.EnterViewportSoundOff
-                            2 -> PlaybackMethod.EnterViewportSoundOn
-                            3 -> PlaybackMethod.MouseOverSoundOn
-                            4 -> PlaybackMethod.PageLoadSoundOff
-                            6 -> PlaybackMethod.PageLoadSoundOn
+                            1 -> PlaybackMethod.PageLoadSoundOn
+                            2 -> PlaybackMethod.PageLoadSoundOff
+                            3 -> PlaybackMethod.ClickSoundOn
+                            4 -> PlaybackMethod.MouseOverSoundOn
+                            5 -> PlaybackMethod.EnterViewportSoundOn
+                            6 -> PlaybackMethod.EnterViewportSoundOff
                             else -> null
                         }
                     }.filterNotNull().toSet()

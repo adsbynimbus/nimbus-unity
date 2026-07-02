@@ -9,7 +9,6 @@ import com.adsbynimbus.rtb.Publisher
 import com.adsbynimbus.rtb.User
 import com.iab.omid.library.adsbynimbus.adsession.VerificationScriptResource
 import com.unity3d.player.UnityPlayer
-import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
@@ -48,7 +47,7 @@ object NimbusHelper {
             app.pagecat = Array(catArray.length()) { i -> catArray.getString(i) }
         }
         if (appJson?.isNull("paid") == false) {
-            app.paid = if (appJson.getBoolean("paid")) 0 else 1
+            app.paid = if (appJson.getBoolean("paid")) 1 else 0
         }
         if (appJson?.isNull("privacypolicy") == false) {
             app.privacypolicy = if (appJson.getBoolean("privacypolicy")) 0 else 1
@@ -66,6 +65,7 @@ object NimbusHelper {
             if (!pubJson.isNull("name")) {
                 publisher.name = pubJson.getString("name")
             }
+            app.publisher = publisher
         }
         if (appJson?.isNull("sectioncat") == false) {
             val catArray = appJson.getJSONArray("sectioncat")
@@ -87,18 +87,15 @@ object NimbusHelper {
         if (userJson?.isNull("age") == false) {
             user.age = userJson.getInt("age")
         }
-        if (userJson?.isNull("buyeruid") == false) {
-            user.buyeruid = userJson.getString("buyeruid")
-        }
         if (userJson?.isNull("customData") == false) {
             user.custom_data = userJson.getString("customData")
         }
         if (userJson?.isNull("gender") == false) {
-            val genderInt = userJson.getInt("gender")
-            user.gender = when (genderInt) {
-                0 -> User.Gender.Male
-                1 -> User.Gender.Female
-                2 -> User.Gender.Other
+            val genderStr = userJson.getString("gender")
+            user.gender = when (genderStr) {
+                "M" -> User.Gender.Male
+                "F" -> User.Gender.Female
+                "O" -> User.Gender.Other
                 else -> null
             }
         }
@@ -167,9 +164,9 @@ object NimbusHelper {
                 }
 
                 override fun verificationResource(ad: NimbusResponse): VerificationScriptResource {
-                    val results = callback._verificationResourceCallback(ad.bid.adm).split(",")
-                    return VerificationScriptResource.createVerificationScriptResourceWithParameters(results[0],
-                        URL(results[1]), results[2])
+                    val results = jsonObjFromJsonString(callback._verificationResourceCallback(ad.bid.adm))
+                    return VerificationScriptResource.createVerificationScriptResourceWithParameters(results?.getString("vendorKey"),
+                        URL(results?.getString("url")), results?.getString("parameters"))
                 }
             }
             vps.add(vProvider)

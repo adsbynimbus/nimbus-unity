@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using Nimbus.Internal;
 using Nimbus.Internal.Extensions;
 using Nimbus.Internal.Extensions.AdMob;
+using Nimbus.RTB;
 using Nimbus.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -433,7 +434,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="user">
 		///		RTB User object with customizable properties
 		/// </param>
-		public void SetUser(RTBUser user)
+		public void SetUser(User user)
 		{
 			ConfigHelpers.SetUser(user);
 		}
@@ -444,7 +445,7 @@ namespace Nimbus.Runtime.Scripts {
 		/// <param name="app">
 		///		RTB App object with customizable properties
 		/// </param>
-		public void SetApp(RTBApp app)
+		public void SetApp(App app)
 		{
 			ConfigHelpers.SetApp(app);
 		}

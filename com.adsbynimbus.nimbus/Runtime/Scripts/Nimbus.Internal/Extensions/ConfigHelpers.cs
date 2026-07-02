@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using AOT;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Nimbus.RTB;
 using UnityEngine;
 
 namespace Nimbus.Internal.Extensions
@@ -62,6 +63,7 @@ namespace Nimbus.Internal.Extensions
         private const string HelperClass = "com.adsbynimbus.unity.NimbusHelper";
         private const string NimbusPackage = "com.adsbynimbus.Nimbus";
         private static AndroidJavaObject _helper;
+        private static AndroidJavaObject Helper => _helper ??= new AndroidJavaObject(HelperClass).GetStatic<AndroidJavaObject>("INSTANCE");
         #endif
 
         private delegate IntPtr VerificationMarkupMethodDelegate(string response, int index);
@@ -75,12 +77,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setSessionId(sessionId);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setSessionId", sessionId);
+            Helper.CallStatic("setSessionId", sessionId);
             #endif
         }
         
@@ -89,42 +86,27 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setCoppa(coppa);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setCoppa", coppa);
+            Helper.CallStatic("setCoppa", coppa);
             #endif
         }
 
         //universal app-wide
-        internal static void SetApp(RTBApp app)
+        internal static void SetApp(App app)
         {
             #if UNITY_IOS
             _setApp(JsonConvert.SerializeObject(app));
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setApp", JsonConvert.SerializeObject(app));
+            Helper.CallStatic("setApp", JsonConvert.SerializeObject(app));
             #endif
         }
 
         //universal app-wide
-        internal static void SetUser(RTBUser user)
+        internal static void SetUser(User user)
         {
             #if UNITY_IOS
             _setUser(JsonConvert.SerializeObject(user));
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setUser", JsonConvert.SerializeObject(user));
+            Helper.CallStatic("setUser", JsonConvert.SerializeObject(user));
             #endif
         }
 
@@ -133,12 +115,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setBlockedAdvertisingDomains(String.Join(",", blockedAdvertisingDomains));
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setBlockedAdvertisingDomains", String.Join(",", blockedAdvertisingDomains));
+            Helper.CallStatic("setBlockedAdvertisingDomains", String.Join(",", blockedAdvertisingDomains));
             #endif
         }
 
@@ -147,12 +124,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setRequestUrl(requestUrl);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setRequestUrl", requestUrl);
+            Helper.CallStatic("setRequestUrl", requestUrl);
             #endif
         }
 
@@ -161,12 +133,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setAdditionalRequestHeaders(JsonConvert.SerializeObject(additionalRequestHeaders));
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setAdditionalRequestHeaders", JsonConvert.SerializeObject(additionalRequestHeaders));
+            Helper.CallStatic("setAdditionalRequestHeaders", JsonConvert.SerializeObject(additionalRequestHeaders));
             #endif
         }
 
@@ -175,12 +142,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setInterceptorTimeout(interceptorTimeout);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setInterceptorTimeout", interceptorTimeout);
+            Helper.CallStatic("setInterceptorTimeout", interceptorTimeout);
             #endif
         }
         
@@ -189,12 +151,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _showMuteButton(showMuteButton);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("showMuteButton", showMuteButton);
+            Helper.CallStatic("showMuteButton", showMuteButton);
             #endif
         }
 
@@ -217,12 +174,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setGdprProperties(gdprApplies, consentString);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setGdprProperties", gdprApplies, consentString);
+            Helper.CallStatic("setGdprProperties", gdprApplies, consentString);
             #endif
         }
 
@@ -231,12 +183,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setGppProperties(gppSectionId, gppConsentString);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setGppProperties", gppSectionId, gppConsentString);
+            Helper.CallStatic("setGppProperties", gppSectionId, gppConsentString);
             #endif
         }
 
@@ -245,12 +192,7 @@ namespace Nimbus.Internal.Extensions
             #if UNITY_IOS
             _setUsPrivacyString(usPrivacyString);
             #elif UNITY_ANDROID
-            if (_helper == null)
-            {
-                var helperClass = new AndroidJavaObject(HelperClass);
-                _helper = helperClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-            }
-            _helper.CallStatic("setUsPrivacyString", usPrivacyString);
+            Helper.CallStatic("setUsPrivacyString", usPrivacyString);
             #endif
         }
 
@@ -276,7 +218,7 @@ namespace Nimbus.Internal.Extensions
             {
                 using (AndroidJavaObject javaArray = new AndroidJavaObject(javaArrayPtr))
                 {
-                    _helper.CallStatic("setVerificationProviders", javaArray);
+                    Helper.CallStatic("setVerificationProviders", javaArray);
                 }
             }
             finally
@@ -299,7 +241,7 @@ namespace Nimbus.Internal.Extensions
         {
             var resourceValues = _verificationProviders[index].VerificationResourceCallback(response);
             var pointer =
-                Marshal.StringToHGlobalAnsi($"{resourceValues.Item1},{resourceValues.Item2},{resourceValues.Item3}");
+                Marshal.StringToHGlobalAnsi(JsonConvert.SerializeObject(resourceValues));
             return pointer;
         }
     }
@@ -327,12 +269,11 @@ namespace Nimbus.Internal.Extensions
         ///     Returns the bid response markup
         /// </param>
         /// <returns>
-        ///     A tuple of 3 strings (url, vendorKey, parameters) which are used to create a VerificationScriptResource
-        ///     that is passed to the OM SDK.
+        ///     VerificationScriptResource that is passed to the OM SDK.
         /// </returns>
-        public Func<string, Tuple<string, string, string>> VerificationResourceCallback;
+        public Func<string, VerificationScriptResource> VerificationResourceCallback;
 
-        public VerificationProvider(Func<string, string> verificationMarkupCallback, Func<string, Tuple<string, string, string>> verificationResourceCallback):
+        public VerificationProvider(Func<string, string> verificationMarkupCallback, Func<string, VerificationScriptResource> verificationResourceCallback):
             base("com.adsbynimbus.unity.VerificationProviderCallbackInterface")
         {
             VerificationMarkupCallback = verificationMarkupCallback;
@@ -343,8 +284,7 @@ namespace Nimbus.Internal.Extensions
         // Internal Nimbus method, do not use. Must be public for implementation.
         public string _verificationMarkupCallback(string response) 
         {
-            var resourceValues = VerificationResourceCallback(response);
-            return $"{resourceValues.Item1},{resourceValues.Item2},{resourceValues.Item3}";
+            return JsonConvert.SerializeObject(VerificationResourceCallback(response));
         }
         
         // Internal Nimbus method, do not use.  Must be public for implementation.
@@ -352,99 +292,19 @@ namespace Nimbus.Internal.Extensions
         {
             return VerificationMarkupCallback(response);
         }
-    }
-    
-    /// <summary>
-    /// This object contains information known or derived about the human user of the device (i.e., the audience for advertising).
-    /// The user id is an exchange artifact and may be subject to rotation or other privacy policies.
-    /// However, this user ID must be stable long enough to serve reasonably as the basis for frequency capping and retargeting.
-    /// OpenRTB Section 3.2.20
-    /// </summary>
-    public class RTBUser
-    {
-        // The age of the user
-        public int? age; 
-        // Buyer-specific ID for the user as mapped by the exchange for the buyer. Set to Facebook bidder token if integrating Facebook demand
-        [CanBeNull] public string buyeruid;
-        /*
-         * Optional feature to pass bidder data that was set in the exchange’s cookie.
-         * The string must be in base85 cookie safe characters and be in any format. Proper JSON encoding must be used to include “escaped” quotation marks
-         */
-        [CanBeNull] public string customData; 
-        // The gender of the user
-        public Gender? gender;
-        // Comma separated list of keywords, interests, or intent
-        [CanBeNull] public string keywords;
 
-        public RTBUser(int? age = null, [CanBeNull] string buyeruid = null, [CanBeNull] string customData = null, 
-            Gender? gender = null, [CanBeNull] string keywords = null)
+        public class VerificationScriptResource
         {
-            this.age = age;
-            this.buyeruid = buyeruid;
-            this.customData = customData;
-            this.gender = gender;
-            this.keywords = keywords;
-        }
-    }
+            public string url;
+            public string vendorKey;
+            public string parameters;
 
-    public enum Gender: byte
-    {
-        male = 0,
-        female = 1,
-        other = 2
-    }
-
-    /// <summary>
-    /// This object should be included if the ad supported content is a non-browser application (typically in mobile) as opposed to a website.
-    /// OpenRTB Section 3.2.14
-    /// </summary>
-    public class RTBApp
-    {
-        [CanBeNull] public string bundle; // A platform-specific application identifier intended to be unique to the app and independent of the exchange. On iOS, it is typically a numeric ID. Default: nil
-        public string[] cat; // IAB content categories of the app OpenRTB Section 5.1
-        [CanBeNull] public string domain; // Domain of the app (e.g., “adsbynimbus.com”). Default: nil
-        [CanBeNull] public string name; // App name (may be aliased at the publisher’s request). Default: nil
-        public string[] pagecat; // IAB content categories that describe the current page or view of the app. OpenRTB Section 5.1
-        public bool? paid; // Whether the app is paid or not
-        public bool? privacypolicy; // Indicates if the app has a privacy policy
-        [CanBeNull] public RTBPublisher publisher; // Details about the publisher of the app
-        public string[] sectioncat; // IAB content categories that describe the current section of the app. OpenRTB Section 5.1
-        [CanBeNull] public string storeurl; // App store URL for an installed app; for IQG 2.1 compliance. Default: nil
-        [CanBeNull] public string ver; // Application version
-
-        public RTBApp([CanBeNull] string bundle = null, string[] cat = null, [CanBeNull] string domain = null, 
-            [CanBeNull] string name = null, string[] pagecat = null, bool? paid = default, bool? privacypolicy = default, 
-            [CanBeNull] RTBPublisher publisher = null, string[] sectioncat = null, [CanBeNull] string storeurl = null, [CanBeNull] string ver = null)
-        {
-            this.bundle = bundle;
-            this.cat = cat;
-            this.domain = domain;
-            this.name = name;
-            this.pagecat = pagecat;
-            this.paid = paid;
-            this.privacypolicy = privacypolicy;
-            this.publisher = publisher;
-            this.sectioncat = sectioncat;
-            this.storeurl = storeurl;
-            this.ver = ver;
-        }
-    }
-
-    /// <summary>
-    /// This describes the publisher of the media in which the ad will be displayed. The publisher is typically the seller in an OpenRTB transaction.
-    /// OpenRTB Section 3.2.15
-    /// </summary>
-    public class RTBPublisher
-    {
-        public string[] cat; // IAB content categories that describe the publisher. OpenRTB Section 5.1 Default: nil
-        public string domain; // Highest level domain of the publisher (e.g., “adsbynimbus.com”). Default: nil
-        public string name; // Publisher name (may be aliased at the publisher’s request). Default: nil
-
-        public RTBPublisher(string[] cat, string domain, string name)
-        {
-            this.cat = cat;
-            this.domain = domain;
-            this.name = name;
+            public VerificationScriptResource(string url, string vendorKey, string parameters)
+            {
+                this.url = url;
+                this.vendorKey = vendorKey;
+                this.parameters = parameters;
+            }
         }
     }
 }

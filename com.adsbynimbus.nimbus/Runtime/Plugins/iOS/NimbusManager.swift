@@ -641,20 +641,20 @@ struct BannerCreative: Codable, UnityRequestComponent {
             addFormats = Set(rawAddFormats.compactMap { intValue in
                 //needed because RTB.Format doesnt have an int value
                 switch intValue {
-                case 0:
-                    RTB.Format.banner
                 case 1:
-                    RTB.Format.halfScreen
+                    RTB.Format.banner
                 case 2:
-                    RTB.Format.interstitial
-                case 3:
-                    RTB.Format.interstitialLandscape
-                case 4:
-                    RTB.Format.interstitialPortrait
-                case 5:
-                    RTB.Format.leaderboard
-                case 6:
                     RTB.Format.mrec
+                case 3:
+                    RTB.Format.halfScreen
+                case 4:
+                    RTB.Format.leaderboard
+                case 5:
+                    RTB.Format.interstitialPortrait
+                case 6:
+                    RTB.Format.interstitialLandscape
+                case 7:
+                    RTB.Format.leaderboard
                 default:
                     nil
                 }
