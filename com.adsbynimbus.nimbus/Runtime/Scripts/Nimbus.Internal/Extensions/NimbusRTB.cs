@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Nimbus.Internal.Extensions;
-using Unity.Plastic.Newtonsoft.Json.Converters;
 
 namespace Nimbus.RTB
 {
@@ -17,6 +18,7 @@ namespace Nimbus.RTB
     public class User
     {
         // The age of the user
+        [JsonIgnore]
         public int? age; 
         /*
          * Optional feature to pass bidder data that was set in the exchange’s cookie.
@@ -24,6 +26,7 @@ namespace Nimbus.RTB
          */
         [CanBeNull] public string customData; 
         // The gender of the user
+        [JsonIgnore]
         public Gender? gender;
         // Comma separated list of keywords, interests, or intent
         [CanBeNull] public string keywords;
@@ -36,6 +39,31 @@ namespace Nimbus.RTB
             this.gender = gender;
             this.keywords = keywords;
         }
+        
+        [JsonProperty("data")]
+        internal Data[] userData
+        {
+            get
+            {
+                return new Data[]{NimbusUserData};
+            }
+        }
+        
+        [JsonIgnore]
+        internal Data NimbusUserData
+        {
+            get
+            {
+                var data = new Data();
+                data.name = "nimbus";
+                data.segment = new Segment[]
+                {
+                    new Segment(null, "age", age.ToString()),
+                    new Segment(null, "gender", JsonConvert.SerializeObject(gender))
+                };
+                return data;
+            }
+        }
     }
     
     [JsonConverter(typeof(StringEnumConverter))]
@@ -46,7 +74,35 @@ namespace Nimbus.RTB
         [EnumMember(Value = "F")]
         female,
         [EnumMember(Value = "O")]
-        other,
+        other
+        
+    }
+    
+    internal class Segment
+    {
+        [CanBeNull] public string id;
+        [CanBeNull] public string name;
+        [CanBeNull] public string value;
+
+        public Segment([CanBeNull] string id, [CanBeNull] string name, [CanBeNull] string value)
+        {
+            this.id = id;
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    internal class Data
+    {
+        [CanBeNull] public string id;
+        [CanBeNull] public string name;
+        internal Segment[] segment;
+
+        internal Data([CanBeNull] string id = null, [CanBeNull] string name = null)
+        {
+            this.id = id;
+            this.name = name;
+        }
     }
 
     /// <summary>
