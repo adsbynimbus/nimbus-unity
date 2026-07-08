@@ -91,6 +91,9 @@ namespace Nimbus.Internal {
 		internal void FireMobileAdEvents(AdEventTypes e) {
 			CurrentAdState = e;
 			switch (e) {
+				case AdEventTypes.LOADED:
+					_adEvents.FireOnAdLoadedEvent(this);
+					break;
 				case AdEventTypes.IMPRESSION:
 					_adEvents.FireOnAdImpressionEvent(this);
 					break;

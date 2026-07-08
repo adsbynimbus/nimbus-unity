@@ -31,7 +31,7 @@ import AppTrackingTransparency
                 }
             } catch {
                 NimbusManager.didReceiveNimbusError(
-                    adUnitInstanceID: 0,
+                    adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode App json: \(error)")
                 )
             }
@@ -46,7 +46,7 @@ import AppTrackingTransparency
                 }
             } catch {
                 NimbusManager.didReceiveNimbusError(
-                    adUnitInstanceID: 0,
+                    adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode User json: \(error)")
                 )
             }
@@ -73,7 +73,7 @@ import AppTrackingTransparency
     @objc public class func setAdditionalRequestHeaders(headersJsonStr: String) {
         guard let jsonData = headersJsonStr.data(using: .utf8) else {
             NimbusManager.didReceiveNimbusError(
-                adUnitInstanceID: 0,
+                adUnitInstanceID: -1,
                 error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON")
             )
             return
@@ -85,7 +85,7 @@ import AppTrackingTransparency
             }
         } catch {
             NimbusManager.didReceiveNimbusError(
-                adUnitInstanceID: 0,
+                adUnitInstanceID: -1,
                 error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON: \(error)")
             )
         }
@@ -152,20 +152,20 @@ import AppTrackingTransparency
                                     return NimbusKit.Configuration.VerificationScriptResource(url: url, vendorKey: res.vendorKey, parameters: res.parameters)
                                 } else {
                                     NimbusManager.didReceiveNimbusError(
-                                        adUnitInstanceID: 0,
+                                        adUnitInstanceID: -1,
                                         error: .unitysdk(stage: .request, detail: "VerificationScriptResource URL was incorrectly formed, \(res.url) is not a valid URL")
                                     )
                                 }
                             } else {
                                 NimbusManager.didReceiveNimbusError(
-                                    adUnitInstanceID: 0,
+                                    adUnitInstanceID: -1,
                                     error: .unitysdk(stage: .request, detail: "VerificationScriptResource was null")
                                 )
                             }
                         }
                     } catch {
                         NimbusManager.didReceiveNimbusError(
-                            adUnitInstanceID: 0,
+                            adUnitInstanceID: -1,
                             error: .unitysdk(stage: .request, detail: "Failed to decode VerificationScriptResource JSON: \(error)")
                         )
                     }

@@ -180,7 +180,7 @@ object NimbusHelper {
             try {
                 extensions = JSONObject(thirdPartyDemand)
             } catch(e: Exception) {
-                didReceiveNimbusError(0, e)
+                didReceiveNimbusError(-1, e)
             }
         }
         return extensions

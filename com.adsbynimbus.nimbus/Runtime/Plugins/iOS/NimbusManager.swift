@@ -457,7 +457,7 @@ import NimbusMobileFuseKit
                 }
             } catch {
                 NimbusManager.didReceiveNimbusError(
-                    adUnitInstanceID: 0,
+                    adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode third party json: \(error)")
                 )
             }
@@ -474,7 +474,7 @@ import NimbusMobileFuseKit
                 }
             } catch {
                 NimbusManager.didReceiveNimbusError(
-                    adUnitInstanceID: 0,
+                    adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode request modifiers json: \(error)")
                 )
             }
