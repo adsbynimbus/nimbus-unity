@@ -107,20 +107,6 @@ import AppTrackingTransparency
         Nimbus.configuration.isSKOverlayEnabledForAllUnits = isEnabled
     }
     
-    @objc public class func setGdprProperties(gdprApplies: Bool, gdprConsentString: String) {
-        Nimbus.IAB.gdprApplies = gdprApplies
-        Nimbus.IAB.tcfString = gdprConsentString
-    }
-    
-    @objc public class func setGppProperties(gppSectionId: String, gppConsentString: String) {
-        Nimbus.IAB.gppSectionId = gppSectionId
-        Nimbus.IAB.gppConsentString = gppConsentString
-    }
-    
-    @objc public class func setUsPrivacyString(usPrivacyString: String) {
-        Nimbus.IAB.usPrivacyString = usPrivacyString
-    }
-    
     final class VerificationProviderHelper: NimbusKit.Configuration.VerificationProvider {
         let index: Int
         

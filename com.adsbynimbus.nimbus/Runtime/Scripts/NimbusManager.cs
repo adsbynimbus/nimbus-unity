@@ -516,45 +516,6 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		/// <summary>
-		///		Set IAB-defined GDPR fields stored in standard IAB UserDefaults/SharedPreferences fields.
-		/// </summary>
-		/// <param name="gdprApplies">
-		///		Boolean that determines if GDPR Applies to the application
-		/// </param>
-		/// <param name="gdprConsentString">
-		///		GDPR Consent String
-		/// </param>
-		public void SetGdprProperties(bool gdprApplies, string gdprConsentString)
-		{
-			ConfigHelpers.SetGdprProperties(gdprApplies, gdprConsentString);
-		}
-		
-		/// <summary>
-		///		Set IAB-defined GPP fields stored in standard IAB UserDefaults/SharedPreferences fields.
-		/// </summary>
-		/// <param name="gppSectionId">
-		///		GPP Section Id
-		/// </param>
-		/// <param name="gppConsentString">
-		///		GPP Consent String
-		/// </param>
-		public void SetGppProperties(string gppSectionId, string gppConsentString)
-		{
-			ConfigHelpers.SetGppProperties(gppSectionId, gppConsentString);
-		}
-		
-		/// <summary>
-		///		Set IAB-defined US Privacy String field stored in standard IAB UserDefaults/SharedPreferences fields.
-		/// </summary>
-		/// <param name="usPrivacyString">
-		///		US Privacy String
-		/// </param>
-		public void SetUsPrivacyString(string usPrivacyString)
-		{
-			ConfigHelpers.SetUsPrivacyString(usPrivacyString);
-		}
-
-		/// <summary>
 		///		Set Verification Providers for Ad Viewability Tracking (OM SDK)
 		/// </summary>
 		/// <param name="providers">
