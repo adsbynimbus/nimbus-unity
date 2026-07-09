@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Nimbus.Internal;
+using Nimbus.Internal.Extensions;
+using Nimbus.RTB;
 using Nimbus.Runtime.Scripts;
 using TMPro;
 using UnityEngine;
@@ -16,11 +18,55 @@ namespace Example.Scripts {
 		[SerializeField] private TextMeshProUGUI _loadedLeaderboardButtonText;
 		[SerializeField] private TextMeshProUGUI _errorText;
 		[SerializeField] private List<AdController> _interactableButtons;
+		private RequestModifiers _requestModifiers;
 
 		private NimbusAdUnit _loadAndShowBannerAdUnit;
 		private NimbusAdUnit _loadAndShowLeaderboardAdUnit;
 		private bool _shouldDestroyLeaderboard;
 		private bool _shouldDestroyBanner;
+
+		private void Start()
+		{
+			NimbusManager.Instance.SetSessionId("session_test");
+			NimbusManager.Instance.SetCoppa(true);
+			var app = new App("com.test.nimbusUnity", Array.Empty<string>(), "nimbus.co", "testapp", Array.Empty<string>(),
+				true, true, new Publisher(Array.Empty<string>(), "nimbus.co", "nimbus"), 
+				Array.Empty<string>(), "www.nimbus.co", "3.0.0");
+			NimbusManager.Instance.SetApp(app);
+			var user = new User(30, "custom", Gender.male, "keywords");
+			NimbusManager.Instance.SetUser(user);
+			const string verificationUrl =
+				"https://adsbynimbus-public.s3.amazonaws.com/dev/omid_validation_verification_script_v1.js";
+			var vProvider = new VerificationProvider(response =>
+				{
+					return $"""<script src="{verificationUrl}" type="text/javascript"></script>""";
+				}, s =>
+				{
+					return new VerificationProvider.VerificationScriptResource(verificationUrl, "iabtechlab-Adsbynimbus", "iabtechlab.com-omid");
+				}
+			);
+			NimbusManager.Instance.SetBlockedAdvertisingDomains(new[] { "www.google.com", "www.reddit.com"});
+			NimbusManager.Instance.SetInterceptorTimeout(1000);
+			NimbusManager.Instance.SetGdprProperties(true, 
+				"CLcVDxRMWfGmWAVAHCENAXCkAKDAADnAABRgA5mdfCKZuYJez-NQm0TBMYA4oCAAGQYIAAAAAAEAIAEgAA.argAC0gAAAAAAAAAAAA");
+			NimbusManager.Instance.SetGppProperties("2",
+				"DBABMA~CLcVDxRMWfGmWAVAHCENAXCkAKDAADnAABRgA5mdfCKZuYJez-NQm0TBMYA4oCAAGQYIAAAAAAEAIAEgAA.argAC0gAAAAAAAAAAAA");
+			NimbusManager.Instance.SetUsPrivacyString("us_privacy_string");
+			NimbusManager.Instance.SetVerificationProviders(new [] { vProvider });
+			var requestApp = new PerRequestApp(new [] { "pagecat1","pagecat2" }, 
+				new [] { "sectioncat1","sectioncat2" });
+			var bannerCreative = new BannerCreative(320, 50, new[]
+			{
+				Format.banner, Format.leaderboard, Format.mrec
+			}, adPosition: Position.footer, bidFloor: 0.0f, 
+				new [] { CreativeAttribute.hasPopup });
+			var videoCreative = new VideoCreative(adPosition: Position.fullScreen, 0.0f, 0, 30,
+				0, 0, VideoPlacementType.inArticle,
+				new[] { PlaybackMethod.clickWithSoundOn, PlaybackMethod.mouseOverWithSoundOn });
+			_requestModifiers = new RequestModifiers(app: requestApp, banner: bannerCreative, 
+				location: new Location(0.0, 0.0, LocationType.gps, 20), userKeywords: "smart,gaming", 
+				video:videoCreative, viewability: new Viewability("omid1", "omid2"));
+		}
 
 		private void Awake() {
 			Screen.orientation = ScreenOrientation.Portrait;
@@ -72,7 +118,9 @@ namespace Example.Scripts {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
 				_loadAndShowBannerAdUnit = 
-					NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position", bannerFloor: 0.05f);
+					NimbusManager.Instance
+						.RequestBannerAdAndLoad("unity_demo_banner_position", 
+							bannerFloor: 0.05f, requestModifiers: _requestModifiers);
 				return;
 			}
 			_loadAndShowBannerAdUnit?.Destroy();
@@ -97,11 +145,12 @@ namespace Example.Scripts {
 
 		public void LoadAndShowInterstitial() {
 			NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_interstitial_position", 
-				bannerFloor: 0.05f, videoFloor: 0.03f);
+				bannerFloor: 0.05f, videoFloor: 0.03f, requestModifiers: _requestModifiers);
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position", videoFloor: 0.03f);
+			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position", videoFloor: 0.03f,
+				requestModifiers: _requestModifiers);
 		}
 
 		public void LoadAdController(int index) {
