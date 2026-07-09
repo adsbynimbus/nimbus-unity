@@ -37,8 +37,6 @@ object NimbusManager {
                                   thirdPartyJson: String
     ) {
         if (obj is Activity) {
-            // TODO: REMOVE BELOW URL ONCE DONE TESTING
-            Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
             Nimbus.configuration.testMode = enableSDKInTestMode
             val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyJson) ?: return
             NimbusUnityInternal.initNimbus(obj, enableSDKInTestMode, publisherKey, apiKey, extensions)
