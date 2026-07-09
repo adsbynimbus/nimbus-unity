@@ -124,18 +124,6 @@ extern "C" {
         [NimbusHelper setIsSKOverlayEnabledForAllUnitsWithIsEnabled:isEnabled];
     }
 
-    void _setGdprProperties(bool gdprApplies, const char* gdprConsentString) {
-        [NimbusHelper setGdprPropertiesWithGdprApplies:gdprApplies gdprConsentString:GetStringParam(gdprConsentString)];
-    }
-
-    void _setGppProperties(const char* gppSectionId, const char* gppConsentString) {
-        [NimbusHelper setGppPropertiesWithGppSectionId:GetStringParam(gppSectionId) gppConsentString:GetStringParam(gppConsentString)];
-    }
-
-    void _setUsPrivacyString(const char* usPrivacyString) {
-        [NimbusHelper setUsPrivacyStringWithUsPrivacyString:GetStringParam(usPrivacyString)];
-    }
-
     void _setVerificationCallbacks(VerificationMarkupCallback markupCallbackPtr, VerificationResourceCallback resourceCallbackPtr, int numCallbacks) {
         [NimbusHelper setVerificationProvidersWithMarkupCallback:markupCallbackPtr resourceCallback:resourceCallbackPtr numCallbacks:numCallbacks];
     }

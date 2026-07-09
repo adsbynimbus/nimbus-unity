@@ -46,15 +46,6 @@ namespace Nimbus.Internal.Extensions
         private static extern void _setIsSkOverlayEnabledForAllUnits(bool isEnabled);
         
         [DllImport("__Internal")]
-        private static extern void _setGdprProperties(bool gdprApplies, string gdprConsentString);
-        
-        [DllImport("__Internal")]
-        private static extern void _setGppProperties(string gppSectionId, string gppConsentString);
-        
-        [DllImport("__Internal")]
-        private static extern void _setUsPrivacyString(string usPrivacyString);
-        
-        [DllImport("__Internal")]
         private static extern void _setVerificationCallbacks(IntPtr markupCallbackFunctionPtr,  
             IntPtr resourceCallbackFunctionPtr, int numCallbacks);
         
@@ -166,33 +157,6 @@ namespace Nimbus.Internal.Extensions
         {
             #if UNITY_IOS
             _setIsSkOverlayEnabledForAllUnits(isSkOverlayEnabledForAllUnits);
-            #endif
-        }
-
-        internal static void SetGdprProperties(bool gdprApplies, string consentString)
-        {
-            #if UNITY_IOS
-            _setGdprProperties(gdprApplies, consentString);
-            #elif UNITY_ANDROID
-            Helper.CallStatic("setGdprProperties", gdprApplies, consentString);
-            #endif
-        }
-
-        internal static void SetGppProperties(string gppSectionId, string gppConsentString)
-        {
-            #if UNITY_IOS
-            _setGppProperties(gppSectionId, gppConsentString);
-            #elif UNITY_ANDROID
-            Helper.CallStatic("setGppProperties", gppSectionId, gppConsentString);
-            #endif
-        }
-
-        internal static void SetUsPrivacyString(string usPrivacyString)
-        {
-            #if UNITY_IOS
-            _setUsPrivacyString(usPrivacyString);
-            #elif UNITY_ANDROID
-            Helper.CallStatic("setUsPrivacyString", usPrivacyString);
             #endif
         }
 

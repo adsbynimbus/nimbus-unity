@@ -5,10 +5,10 @@ import com.adsbynimbus.Nimbus
 import com.adsbynimbus.NimbusError
 import com.adsbynimbus.NimbusResponse
 import com.adsbynimbus.rtb.App
-import com.adsbynimbus.rtb.Publisher
 import com.adsbynimbus.rtb.User
 import com.iab.omid.library.adsbynimbus.adsession.VerificationScriptResource
 import com.unity3d.player.UnityPlayer
+import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
@@ -27,82 +27,12 @@ object NimbusHelper {
 
     @JvmStatic
     fun setApp(appJsonStr: String) {
-        val appJson = jsonObjFromJsonString(appJsonStr)
-        val app = App()
-        if (appJson?.isNull("bundle") == false) {
-            app.bundle = appJson.getString("bundle")
-        }
-        if (appJson?.isNull("cat") == false) {
-            val catArray = appJson.getJSONArray("cat")
-            app.cat = Array(catArray.length()) { i -> catArray.getString(i) }
-        }
-        if (appJson?.isNull("domain") == false) {
-            app.domain = appJson.getString("domain")
-        }
-        if (appJson?.isNull("name") == false) {
-            app.name = appJson.getString("name")
-        }
-        if (appJson?.isNull("pagecat") == false) {
-            val catArray = appJson.getJSONArray("pagecat")
-            app.pagecat = Array(catArray.length()) { i -> catArray.getString(i) }
-        }
-        if (appJson?.isNull("paid") == false) {
-            app.paid = if (appJson.getBoolean("paid")) 1 else 0
-        }
-        if (appJson?.isNull("privacypolicy") == false) {
-            app.privacypolicy = if (appJson.getBoolean("privacypolicy")) 0 else 1
-        }
-        if (appJson?.isNull("publisher") == false) {
-            val pubJson = appJson.getJSONObject("publisher")
-            val publisher = Publisher()
-            if (!pubJson.isNull("cat")) {
-                val catArray = appJson.getJSONArray("cat")
-                publisher.cat = Array(catArray.length()) { i -> catArray.getString(i) }
-            }
-            if (!pubJson.isNull("domain")) {
-                publisher.domain = pubJson.getString("domain")
-            }
-            if (!pubJson.isNull("name")) {
-                publisher.name = pubJson.getString("name")
-            }
-            app.publisher = publisher
-        }
-        if (appJson?.isNull("sectioncat") == false) {
-            val catArray = appJson.getJSONArray("sectioncat")
-            app.sectioncat = Array(catArray.length()) { i -> catArray.getString(i) }
-        }
-        if (appJson?.isNull("storeurl") == false) {
-            app.storeurl = appJson.getString("storeurl")
-        }
-        if (appJson?.isNull("ver") == false) {
-            app.ver = appJson.getString("ver")
-        }
-        Nimbus.configuration.app = app
+        Nimbus.configuration.app = Json.decodeFromString(App.serializer(), appJsonStr)
     }
 
     @JvmStatic
     fun setUser(userJsonStr: String) {
-        val userJson = jsonObjFromJsonString(userJsonStr)
-        val user = User()
-        if (userJson?.isNull("age") == false) {
-            user.age = userJson.getInt("age")
-        }
-        if (userJson?.isNull("customData") == false) {
-            user.custom_data = userJson.getString("customData")
-        }
-        if (userJson?.isNull("gender") == false) {
-            val genderStr = userJson.getString("gender")
-            user.gender = when (genderStr) {
-                "M" -> User.Gender.Male
-                "F" -> User.Gender.Female
-                "O" -> User.Gender.Other
-                else -> null
-            }
-        }
-        if (userJson?.isNull("keywords") == false) {
-            user.keywords = userJson.getString("keywords")
-        }
-        Nimbus.configuration.user = user
+        Nimbus.configuration.user = Json.decodeFromString(User.serializer(), userJsonStr)
     }
 
     @JvmStatic
@@ -135,23 +65,6 @@ object NimbusHelper {
     @JvmStatic
     fun showMuteButton(showMuteButton: Boolean) {
         Nimbus.configuration.showMuteButton = showMuteButton
-    }
-
-    @JvmStatic
-    fun setGdprProperties(gdprApplies: Boolean, consentString: String) {
-        Nimbus.IAB.gdprApplies = gdprApplies
-        Nimbus.IAB.tcfString = consentString
-    }
-
-    @JvmStatic
-    fun setGppProperties(gppSectionId: String, gppConsentString: String) {
-        Nimbus.IAB.gppSID = gppSectionId
-        Nimbus.IAB.gppString = gppConsentString
-    }
-
-    @JvmStatic
-    fun setUsPrivacyString(privacyString: String) {
-        Nimbus.IAB.usPrivacyString = privacyString
     }
 
     @JvmStatic
@@ -213,6 +126,3 @@ interface VerificationProviderCallbackInterface {
     fun _verificationMarkupCallback(response: String): String
     fun _verificationResourceCallback(response: String) : String
 }
-
-
-

@@ -37,8 +37,6 @@ object NimbusManager {
                                   thirdPartyJson: String
     ) {
         if (obj is Activity) {
-            // TODO: REMOVE BELOW URL ONCE DONE TESTING
-            Nimbus.configuration.requestUrl = "https://dev-sdk.adsbynimbus.com/rta/test"
             Nimbus.configuration.testMode = enableSDKInTestMode
             val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyJson) ?: return
             NimbusUnityInternal.initNimbus(obj, enableSDKInTestMode, publisherKey, apiKey, extensions)
@@ -158,11 +156,8 @@ object NimbusManager {
 
     @JvmStatic
     fun showAd(obj: Any?, instanceId: Int, adWidth: Int, adHeight: Int, respectSafeArea: Boolean, bannerPosition: Int) {
-        val ad = adCache.get(instanceId)
+        val ad = adCache[instanceId] ?: return
         if (obj !is Activity) {
-            return
-        }
-        if (ad == null) {
             return
         }
         val scope = CoroutineScope(Dispatchers.Main)
@@ -478,5 +473,4 @@ object NimbusManager {
         json.put("eventName", eventName)
         sendMessageToUnity("OnAdEvent",json.toString())
     }
-
 }

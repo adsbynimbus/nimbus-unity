@@ -18,15 +18,22 @@ namespace Nimbus.RTB
     public class User
     {
         // The age of the user
+        #if UNITY_IOS
         [JsonIgnore]
+        #endif
         public int? age; 
         /*
          * Optional feature to pass bidder data that was set in the exchange’s cookie.
          * The string must be in base85 cookie safe characters and be in any format. Proper JSON encoding must be used to include “escaped” quotation marks
          */
+        #if UNITY_ANDROID
+        [JsonProperty("custom_data")]
+        #endif
         [CanBeNull] public string customData; 
         // The gender of the user
+        #if UNITY_IOS
         [JsonIgnore]
+        #endif
         public Gender? gender;
         // Comma separated list of keywords, interests, or intent
         [CanBeNull] public string keywords;
@@ -40,6 +47,7 @@ namespace Nimbus.RTB
             this.keywords = keywords;
         }
         
+        #if UNITY_IOS
         [JsonProperty("data")]
         internal Data[] userData
         {
@@ -64,6 +72,7 @@ namespace Nimbus.RTB
                 return data;
             }
         }
+        #endif
     }
     
     [JsonConverter(typeof(StringEnumConverter))]
@@ -116,8 +125,22 @@ namespace Nimbus.RTB
         [CanBeNull] public string domain; // Domain of the app (e.g., “adsbynimbus.com”). Default: nil
         [CanBeNull] public string name; // App name (may be aliased at the publisher’s request). Default: nil
         public string[] pagecat; // IAB content categories that describe the current page or view of the app. OpenRTB Section 5.1
+        #if UNITY_ANDROID
+        [JsonIgnore]
         public bool? paid; // Whether the app is paid or not
+        [JsonProperty("paid")]
+        internal byte? paidJson => paid == null ? null : paid.Value ? (byte)0 : (byte)1;
+        #else
+        public bool? paid; // Whether the app is paid or not
+        #endif
+        #if UNITY_ANDROID
+        [JsonIgnore]
         public bool? privacypolicy; // Indicates if the app has a privacy policy
+        [JsonProperty("privacypolicy")]
+        internal byte? privacyPolicyJson => privacypolicy == null ? null : privacypolicy.Value ? (byte)0 : (byte)1;
+        #else
+        public bool? privacypolicy; // Indicates if the app has a privacy policy
+        #endif
         [CanBeNull] public Publisher publisher; // Details about the publisher of the app
         public string[] sectioncat; // IAB content categories that describe the current section of the app. OpenRTB Section 5.1
         [CanBeNull] public string storeurl; // App store URL for an installed app; for IQG 2.1 compliance. Default: nil
