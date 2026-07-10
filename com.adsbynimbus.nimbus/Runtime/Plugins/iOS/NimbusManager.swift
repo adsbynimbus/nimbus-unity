@@ -190,7 +190,7 @@ import NimbusMobileFuseKit
                 }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
                 }                .onError { error in
-                    NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
                 if (showAd) {
                     try await bannerAd.show(in: contentView)
@@ -236,7 +236,7 @@ import NimbusMobileFuseKit
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
             }                .onError { error in
-                NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
             do {
                 if (showAd) {
@@ -248,7 +248,7 @@ import NimbusMobileFuseKit
                 self.ad = interstitialAd
             }
             catch {
-                NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
 
         })
@@ -285,7 +285,7 @@ import NimbusMobileFuseKit
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
             }                .onError { error in
-                NimbusManager.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
             do {
                 if (showAd) {
@@ -428,26 +428,6 @@ import NimbusMobileFuseKit
         )
     }
     
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
-        UnityBinding.sendMessage(
-            methodName: "OnError",
-            params: [
-                "adUnitInstanceID": adUnitInstanceID,
-                "errorMessage": error.localizedDescription
-            ]
-        )
-    }
-    
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: Error) {
-        UnityBinding.sendMessage(
-            methodName: "OnError",
-            params: [
-                "adUnitInstanceID": adUnitInstanceID,
-                "errorMessage": error.localizedDescription
-            ]
-        )
-    }
-    
     private static func extensionsFromJsonString(thirdPartyDemand: String) -> Extensions? {
         var extensions: Extensions?
         if (thirdPartyDemand != "" && !thirdPartyDemand.isEmpty) {
@@ -456,7 +436,7 @@ import NimbusMobileFuseKit
                     extensions = try JSONDecoder().decode(Extensions.self, from: dataFromString)
                 }
             } catch {
-                NimbusManager.didReceiveNimbusError(
+                NimbusHelper.didReceiveNimbusError(
                     adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode third party json: \(error)")
                 )
@@ -473,7 +453,7 @@ import NimbusMobileFuseKit
                     modifiers = try JSONDecoder().decode(RequestModifiers.self, from: dataFromString)
                 }
             } catch {
-                NimbusManager.didReceiveNimbusError(
+                NimbusHelper.didReceiveNimbusError(
                     adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode request modifiers json: \(error)")
                 )
@@ -829,15 +809,5 @@ extension DispatchGroup {
         }
         
         _ = wait(timeout: .now() + 0.5)
-    }
-}
-
-extension NimbusError.Domain {
-    static let unitysdk = Self(rawValue: "unitysdk")
-}
-
-extension NimbusError {
-    static func unitysdk(reason: Reason = .failure, stage: Stage, detail: String? = nil) -> NimbusError {
-        NimbusError(reason: reason, domain: .unitysdk, stage: stage, detail: detail)
     }
 }

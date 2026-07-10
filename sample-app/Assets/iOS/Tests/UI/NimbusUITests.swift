@@ -1,6 +1,6 @@
 import XCTest
 
-class MyFirstUITest: XCTestCase {
+class NimbusUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Stop running tests immediately if a failure happens

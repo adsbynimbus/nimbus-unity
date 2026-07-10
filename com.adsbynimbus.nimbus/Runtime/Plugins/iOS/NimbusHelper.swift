@@ -30,7 +30,7 @@ import AppTrackingTransparency
                     Nimbus.configuration.app = try JSONDecoder().decode(RTB.App.self, from: dataFromString)
                 }
             } catch {
-                NimbusManager.didReceiveNimbusError(
+                didReceiveNimbusError(
                     adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode App json: \(error)")
                 )
@@ -45,7 +45,7 @@ import AppTrackingTransparency
                     Nimbus.configuration.user = try JSONDecoder().decode(RTB.User.self, from: dataFromString)
                 }
             } catch {
-                NimbusManager.didReceiveNimbusError(
+                didReceiveNimbusError(
                     adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode User json: \(error)")
                 )
@@ -72,7 +72,7 @@ import AppTrackingTransparency
     
     @objc public class func setAdditionalRequestHeaders(headersJsonStr: String) {
         guard let jsonData = headersJsonStr.data(using: .utf8) else {
-            NimbusManager.didReceiveNimbusError(
+            didReceiveNimbusError(
                 adUnitInstanceID: -1,
                 error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON")
             )
@@ -84,7 +84,7 @@ import AppTrackingTransparency
                 Nimbus.configuration.additionalRequestHeaders = jsonObject
             }
         } catch {
-            NimbusManager.didReceiveNimbusError(
+            didReceiveNimbusError(
                 adUnitInstanceID: -1,
                 error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON: \(error)")
             )
@@ -137,20 +137,20 @@ import AppTrackingTransparency
                                 if let url = URL(string: res.url) {
                                     return NimbusKit.Configuration.VerificationScriptResource(url: url, vendorKey: res.vendorKey, parameters: res.parameters)
                                 } else {
-                                    NimbusManager.didReceiveNimbusError(
+                                    didReceiveNimbusError(
                                         adUnitInstanceID: -1,
                                         error: .unitysdk(stage: .request, detail: "VerificationScriptResource URL was incorrectly formed, \(res.url) is not a valid URL")
                                     )
                                 }
                             } else {
-                                NimbusManager.didReceiveNimbusError(
+                                didReceiveNimbusError(
                                     adUnitInstanceID: -1,
                                     error: .unitysdk(stage: .request, detail: "VerificationScriptResource was null")
                                 )
                             }
                         }
                     } catch {
-                        NimbusManager.didReceiveNimbusError(
+                        didReceiveNimbusError(
                             adUnitInstanceID: -1,
                             error: .unitysdk(stage: .request, detail: "Failed to decode VerificationScriptResource JSON: \(error)")
                         )
@@ -159,6 +159,27 @@ import AppTrackingTransparency
             }
             return nil
         }
+    }
+    
+    
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
+        UnityBinding.sendMessage(
+            methodName: "OnError",
+            params: [
+                "adUnitInstanceID": adUnitInstanceID,
+                "errorMessage": error.localizedDescription
+            ]
+        )
+    }
+    
+    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: Error) {
+        UnityBinding.sendMessage(
+            methodName: "OnError",
+            params: [
+                "adUnitInstanceID": adUnitInstanceID,
+                "errorMessage": error.localizedDescription
+            ]
+        )
     }
 
     @objc public class func setVerificationProviders(markupCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), resourceCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), numCallbacks: Int) {
@@ -179,3 +200,12 @@ import AppTrackingTransparency
     }
 }
 
+extension NimbusError.Domain {
+    static let unitysdk = Self(rawValue: "unitysdk")
+}
+
+extension NimbusError {
+    static func unitysdk(reason: Reason = .failure, stage: Stage, detail: String? = nil) -> NimbusError {
+        NimbusError(reason: reason, domain: .unitysdk, stage: stage, detail: detail)
+    }
+}

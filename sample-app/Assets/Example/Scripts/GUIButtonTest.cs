@@ -39,19 +39,14 @@ namespace Example.Scripts {
 				"https://adsbynimbus-public.s3.amazonaws.com/dev/omid_validation_verification_script_v1.js";
 			var vProvider = new VerificationProvider(response =>
 				{
-					return $"""<script src="{verificationUrl}" type="text/javascript"></script>""";
+					return $"<script src=\"{verificationUrl}\" type=\"text/javascript\"></script>";
 				}, s =>
 				{
 					return new VerificationProvider.VerificationScriptResource(verificationUrl, "iabtechlab-Adsbynimbus", "iabtechlab.com-omid");
 				}
 			);
-			NimbusManager.Instance.SetBlockedAdvertisingDomains(new[] { "www.google.com", "www.reddit.com"});
+			NimbusManager.Instance.SetBlockedAdvertisingDomains(new[] { "www.yahoo.com", "www.reddit.com"});
 			NimbusManager.Instance.SetInterceptorTimeout(1000);
-			NimbusManager.Instance.SetGdprProperties(true, 
-				"CLcVDxRMWfGmWAVAHCENAXCkAKDAADnAABRgA5mdfCKZuYJez-NQm0TBMYA4oCAAGQYIAAAAAAEAIAEgAA.argAC0gAAAAAAAAAAAA");
-			NimbusManager.Instance.SetGppProperties("2",
-				"DBABMA~CLcVDxRMWfGmWAVAHCENAXCkAKDAADnAABRgA5mdfCKZuYJez-NQm0TBMYA4oCAAGQYIAAAAAAEAIAEgAA.argAC0gAAAAAAAAAAAA");
-			NimbusManager.Instance.SetUsPrivacyString("us_privacy_string");
 			NimbusManager.Instance.SetVerificationProviders(new [] { vProvider });
 			var requestApp = new PerRequestApp(new [] { "pagecat1","pagecat2" }, 
 				new [] { "sectioncat1","sectioncat2" });
