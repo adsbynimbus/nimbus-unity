@@ -12,39 +12,170 @@ import AppTrackingTransparency
 
 @objc public class NimbusHelper: NSObject {
     
+    public static var verificationMarkupMethodCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?)?
+    public static var verificationResourceMethodCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?)?
     
-    @objc public class func getDeviceLanguage() -> String? {
-        guard let preferred = Locale.preferredLanguages.first else {
-            // Edge case fallback as I saw some old ObjC case where preferredLanguages
-            // returned an empty array (causing a crash) and Apple Docs don't say this array must not
-            // be empty despite not being able to delete all preferred languages on an iOS device.
-            return Locale.current.languageCode
+    @objc public class func setSessionId(sessionId: String) {
+        Nimbus.configuration.sessionId = sessionId
+    }
+    
+    @objc public class func setCoppa(coppa: Bool) {
+        Nimbus.configuration.coppa = coppa
+    }
+    
+    @objc public class func setApp(appJsonStr: String) {
+        if (appJsonStr != "" && !appJsonStr.isEmpty) {
+            do {
+                if let dataFromString = appJsonStr.data(using: .utf8) {
+                    Nimbus.configuration.app = try JSONDecoder().decode(RTB.App.self, from: dataFromString)
+                }
+            } catch {
+                NimbusManager.didReceiveNimbusError(
+                    adUnitInstanceID: -1,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode App json: \(error)")
+                )
+            }
         }
-            
-        return Locale(identifier: preferred).languageCode
+    }
+    
+    @objc public class func setUser(userJsonStr: String) {
+        if (userJsonStr != "" && !userJsonStr.isEmpty) {
+            do {
+                if let dataFromString = userJsonStr.data(using: .utf8) {
+                    Nimbus.configuration.user = try JSONDecoder().decode(RTB.User.self, from: dataFromString)
+                }
+            } catch {
+                NimbusManager.didReceiveNimbusError(
+                    adUnitInstanceID: -1,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode User json: \(error)")
+                )
+            }
+        }
+    }
+    
+    @objc public class func setBlockedAdvertisingDomains(domains: String) {
+        let domainArray = domains.components(separatedBy: ",")
+        var blockedDomains: Set<URL> = []
+        for domain in domainArray {
+            if let url = URL(string: domain) {
+                blockedDomains.insert(url)
+            }
+        }
+        Nimbus.configuration.blockedAdvertisingDomains = blockedDomains
+    }
+    
+    @objc public class func setRequestUrl(url: String) {
+        if let url = URL(string: url) {
+            Nimbus.configuration.requestUrl = url
+        }
+    }
+    
+    @objc public class func setAdditionalRequestHeaders(headersJsonStr: String) {
+        guard let jsonData = headersJsonStr.data(using: .utf8) else {
+            NimbusManager.didReceiveNimbusError(
+                adUnitInstanceID: -1,
+                error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON")
+            )
+            return
+        }
+        do {
+            if let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as? [String: String] {
+                // Access fields safely using downcasting
+                Nimbus.configuration.additionalRequestHeaders = jsonObject
+            }
+        } catch {
+            NimbusManager.didReceiveNimbusError(
+                adUnitInstanceID: -1,
+                error: .unitysdk(stage: .request, detail: "Failed to decode Headers JSON: \(error)")
+            )
+        }
+    }
+    
+    @objc public class func setInterceptorTimeout(timeout: Int) {
+        Nimbus.configuration.interceptorsTimeout = timeout
+    }
+    
+    @objc public class func showMuteButton(show: Bool) {
+        Nimbus.configuration.showMuteButton = show
+    }
+    
+    @objc public class func enableSwipeProtection(enable: Bool) {
+        Nimbus.configuration.enableSwipeProtection = enable
+    }
+    
+    @objc public class func setIsSKOverlayEnabledForAllUnits(isEnabled: Bool) {
+        Nimbus.configuration.isSKOverlayEnabledForAllUnits = isEnabled
+    }
+    
+    final class VerificationProviderHelper: NimbusKit.Configuration.VerificationProvider {
+        let index: Int
+        
+        init(index: Int) {
+            self.index = index
+        }
+        
+        func verificationMarkup(response: NimbusKit.NimbusResponse) -> String {
+            if let callback = verificationMarkupMethodCallback {
+                let responseStr = response.bid.adm
+                if let pointer = callback(responseStr, index) {
+                    defer{free(pointer)}
+                    return String(cString: pointer)
+                }
+            }
+            return ""
+        }
+        
+        func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.Configuration.VerificationScriptResource? {
+            if let callback = verificationResourceMethodCallback {
+                let responseStr = response.bid.adm
+                if let pointer = callback(responseStr, index) {
+                    do {
+                        if let dataFromString = String(cString: pointer).data(using: .utf8) {
+                            let resource: VerificationScriptResource? = try JSONDecoder().decode(VerificationScriptResource.self, from: dataFromString)
+                            if let res = resource
+                            {
+                                if let url = URL(string: res.url) {
+                                    return NimbusKit.Configuration.VerificationScriptResource(url: url, vendorKey: res.vendorKey, parameters: res.parameters)
+                                } else {
+                                    NimbusManager.didReceiveNimbusError(
+                                        adUnitInstanceID: -1,
+                                        error: .unitysdk(stage: .request, detail: "VerificationScriptResource URL was incorrectly formed, \(res.url) is not a valid URL")
+                                    )
+                                }
+                            } else {
+                                NimbusManager.didReceiveNimbusError(
+                                    adUnitInstanceID: -1,
+                                    error: .unitysdk(stage: .request, detail: "VerificationScriptResource was null")
+                                )
+                            }
+                        }
+                    } catch {
+                        NimbusManager.didReceiveNimbusError(
+                            adUnitInstanceID: -1,
+                            error: .unitysdk(stage: .request, detail: "Failed to decode VerificationScriptResource JSON: \(error)")
+                        )
+                    }
+                }
+            }
+            return nil
+        }
     }
 
-    @objc public class func getAtts() -> Int {
-        if #available(iOS 14.0, *) {
-            return Int(ATTrackingManager.trackingAuthorizationStatus.rawValue)
-        } else {
-            return -1
+    @objc public class func setVerificationProviders(markupCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), resourceCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), numCallbacks: Int) {
+        verificationMarkupMethodCallback = markupCallback
+        verificationResourceMethodCallback = resourceCallback
+        var providers = [NimbusKit.Configuration.VerificationProvider]()
+        for i in 0..<numCallbacks {
+            providers.append(VerificationProviderHelper(index: i))
         }
+        Nimbus.configuration.verificationProviders = providers
     }
     
-    @objc public class func isLimitAdTrackingEnabled() -> Bool {
-        if #available(iOS 14.0, *) {
-            return ATTrackingManager.trackingAuthorizationStatus != .authorized
-        } else {
-            return !ASIdentifierManager.shared().isAdvertisingTrackingEnabled
-        }
-    }
-    
-    @objc public class func getPlistJSON() -> String? {
-    	guard let infoDict = Bundle.main.infoDictionary,
-    	let jsonData = try? JSONSerialization.data(withJSONObject: infoDict, options: []) else { 
-    		return nil
-    	}
-    	return String(data: jsonData, encoding: .ascii)
+    struct VerificationScriptResource: Codable
+    {
+        let url: String
+        let vendorKey: String
+        let parameters: String
     }
 }
+

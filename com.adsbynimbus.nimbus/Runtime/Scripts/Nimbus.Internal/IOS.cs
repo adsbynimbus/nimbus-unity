@@ -36,15 +36,15 @@ namespace Nimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, int refreshInterval, 
-			bool respectSafeArea, int bannerPosition, bool showAd, string demand);
+			float bidFloor, bool respectSafeArea, int bannerPosition, bool showAd, string demand, string requestModifiers);
 		
 		[DllImport("__Internal")]
-		private static extern void _interstitialAd(int adUnitInstanceId, string position, bool showAd, 
-			string demand);
+		private static extern void _interstitialAd(int adUnitInstanceId, string position, 
+			float bannerFloor, float videoFloor, bool showAd, string demand, string requestModifiers);
 		
 		[DllImport("__Internal")]
-		private static extern void _rewardedAd(int adUnitInstanceId, string position, bool showAd, 
-			string demand);
+		private static extern void _rewardedAd(int adUnitInstanceId, string position, float bidFloor, bool showAd, 
+			string demand, string requestModifiers);
 		
 		[DllImport("__Internal")]
 		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
@@ -120,8 +120,9 @@ namespace Nimbus.Internal {
 						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
 					#endif
 					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, 
-						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, 
-						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions));
+						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.BannerBidFloor,
+						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions) 
+						, JsonConvert.SerializeObject(nimbusAdUnit.RequestModifiers));
 					break;
 				}
 				case AdType.Interstitial:
@@ -130,16 +131,19 @@ namespace Nimbus.Internal {
 						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Interstitial, 0, 0);
 					#endif
 					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
-						showAd, JsonConvert.SerializeObject(extensions));
+						nimbusAdUnit.BannerBidFloor, nimbusAdUnit.VideoBidFloor,
+						showAd, JsonConvert.SerializeObject(extensions), 
+						JsonConvert.SerializeObject(nimbusAdUnit.RequestModifiers));
 					break;
 				}
 				case AdType.Rewarded:
 				{
-					#if NIMBUS_ENABLE_APS_IOS
+					#if NIMBUS_ENABLE_APS_IOS && NIMBUS_ENABLE_IOS
 						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
-					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, showAd, 
-						JsonConvert.SerializeObject(extensions));
+					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.VideoBidFloor, 
+						showAd, JsonConvert.SerializeObject(extensions), 
+						JsonConvert.SerializeObject(nimbusAdUnit.RequestModifiers));
 					break;
 				}
 			}

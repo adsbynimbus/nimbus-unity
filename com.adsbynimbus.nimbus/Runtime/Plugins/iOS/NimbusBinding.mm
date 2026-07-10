@@ -15,6 +15,9 @@
 
 #pragma mark - C interface
 
+typedef char* (*VerificationMarkupCallback)(const char* response, NSInteger index);
+typedef char* (*VerificationResourceCallback)(const char* response, NSInteger index);
+
 extern "C" {
     void _initializeSDKWithPublisher(const char* publisher,
                                      const char* apikey,
@@ -33,29 +36,37 @@ extern "C" {
                    int width,
                    int height,                   
                    int refreshInterval,
+                   float bidFloor,
                    bool respectSafeArea,
                    int bannerPosition,
                    bool showAd,
-                   const char* thirdPartyDemand) {
+                   const char* thirdPartyDemand,
+                   const char* requestModifiers) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval respectSafeArea:respectSafeArea
-            bannerPosition:bannerPosition showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            bannerAdWithPosition:GetStringParam(position) width:width height:height refreshInterval:refreshInterval bidFloor: bidFloor respectSafeArea:respectSafeArea
+            bannerPosition:bannerPosition showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)
+        requestModifiersJson:GetStringParam(requestModifiers)];
     }
 
     void _interstitialAd(int adUnitInstanceId,
                                 const char* position,
+                                float bannerFloor,
+                                float videoFloor,
                                 bool showAd,
-                                const char* thirdPartyDemand) {
+                                const char* thirdPartyDemand,
+                                const char* requestModifiers) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            interstitialAdWithPosition:GetStringParam(position) showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            interstitialAdWithPosition:GetStringParam(position) bannerFloor:bannerFloor videoFloor:videoFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand) requestModifiersJson:GetStringParam(requestModifiers)];
     }
     
     void _rewardedAd(int adUnitInstanceId,
                             const char* position,
+                            float bidFloor,
                             bool showAd,
-                            const char* thirdPartyDemand) {
+                            const char* thirdPartyDemand,
+                            const char* requestModifiers) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-            rewardedAdWithPosition:GetStringParam(position) showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand)];
+            rewardedAdWithPosition:GetStringParam(position) bidFloor:bidFloor showAd: showAd thirdPartyDemand:GetStringParam(thirdPartyDemand) requestModifiersJson:GetStringParam(requestModifiers)];
     }
     
     void _showAd(int adUnitInstanceId,
@@ -68,22 +79,55 @@ extern "C" {
     void _destroyAd(int adUnitInstanceId) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId] destroyExistingAd];
     }
-    
-    const char* _getDeviceLanguage() {
-        return strdup([[NimbusHelper getDeviceLanguage] UTF8String]);
+
+    void _setSessionId(const char* sessionId) {
+        [NimbusHelper setSessionIdWithSessionId:GetStringParam(sessionId)];
     }
 
-    int _getAtts() {
-        return (int)[NimbusHelper getAtts];
+    void _setCoppa(bool coppa) {
+        [NimbusHelper setCoppaWithCoppa:coppa];
     }
 
-    bool _isLimitAdTrackingEnabled() {
-        return [NimbusHelper isLimitAdTrackingEnabled];
+    void _setApp(const char* appJsonStr) {
+        [NimbusHelper setAppWithAppJsonStr:GetStringParam(appJsonStr)];
     }
-    
-    const char* _getPlistJSON() {
-        return strdup([[NimbusHelper getPlistJSON] UTF8String]);
+
+    void _setUser(const char* userJsonStr) {
+        [NimbusHelper setUserWithUserJsonStr:GetStringParam(userJsonStr)];
     }
+
+    void _setBlockedAdvertisingDomains(const char* domains) {
+        [NimbusHelper setBlockedAdvertisingDomainsWithDomains:GetStringParam(domains)];
+    }
+
+    void _setRequestUrl(const char* url) {
+        [NimbusHelper setRequestUrlWithUrl:GetStringParam(url)];
+    }
+
+    void _setAdditionalRequestHeaders(const char* headers) {
+        [NimbusHelper setAdditionalRequestHeadersWithHeadersJsonStr:GetStringParam(headers)];
+    }
+
+    void _setInterceptorTimeout(int timeout) {
+        [NimbusHelper setInterceptorTimeoutWithTimeout:timeout];
+    }
+
+    void _showMuteButton(bool show) {
+        [NimbusHelper showMuteButtonWithShow:show];
+    }
+
+    void _enableSwipeProtection(bool enableSwipeProtection) {
+        [NimbusHelper enableSwipeProtectionWithEnable:enableSwipeProtection];
+    }
+
+    void _setIsSkOverlayEnabledForAllUnits(bool isEnabled) {
+        [NimbusHelper setIsSKOverlayEnabledForAllUnitsWithIsEnabled:isEnabled];
+    }
+
+    void _setVerificationCallbacks(VerificationMarkupCallback markupCallbackPtr, VerificationResourceCallback resourceCallbackPtr, int numCallbacks) {
+        [NimbusHelper setVerificationProvidersWithMarkupCallback:markupCallbackPtr resourceCallback:resourceCallbackPtr numCallbacks:numCallbacks];
+    }
+
 
 #if NIMBUS_ENABLE_LIVERAMP
     void _initializeLiveRamp(const char* configId, const char* email, bool hasConsentForNoLegislation, bool testMode) {

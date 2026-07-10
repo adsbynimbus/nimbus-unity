@@ -152,7 +152,8 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String) {
+    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, 
+    respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
@@ -170,7 +171,7 @@ import NimbusMobileFuseKit
                 if let adUnitId = extensions?.adMob?.adUnitIds?.first {
                     adMobAdUnitId = adUnitId ?? ""
                 }
-                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), refreshInterval: refreshInterval){
+                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
                         if (!adMobAdUnitId.isEmpty) {
@@ -182,6 +183,9 @@ import NimbusMobileFuseKit
                             aps(ads: apsAds)
                         }
                         #endif
+                    }
+                    if let modifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                        modifiers.components
                     }
                 }.onEvent { event in
                     NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -201,7 +205,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, showAd: Bool, thirdPartyDemand: String){
+    @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String){
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
@@ -213,7 +217,7 @@ import NimbusMobileFuseKit
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let interstitialAd = await Nimbus.interstitialAd(position: position){
+            let interstitialAd = await Nimbus.fullscreenAd(position: position){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -225,6 +229,9 @@ import NimbusMobileFuseKit
                         aps(ads: apsAds)
                     }
                     #endif
+                }
+                if let modifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                    modifiers.components
                 }
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -247,7 +254,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func rewardedAd(position: String, showAd: Bool, thirdPartyDemand: String) {
+    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
         let extensions = NimbusManager.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: {
@@ -259,7 +266,7 @@ import NimbusMobileFuseKit
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let rewardedAd = await Nimbus.rewardedAd(position: position){
+            let rewardedAd = await Nimbus.rewardedAd(position: position, bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -271,6 +278,9 @@ import NimbusMobileFuseKit
                         aps(ads: apsAds)
                     }
                     #endif
+                }
+                if let modifiers = NimbusManager.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                    modifiers.components
                 }
             }.onEvent { event in
                 NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
@@ -324,7 +334,6 @@ import NimbusMobileFuseKit
             Nimbus.Log.ad.error("Attempted to show invalid ad type.")
         }
     }
-    
     #if NIMBUS_ENABLE_APS
     private func loadAPSAds(from extensions: Extensions?) async -> [APSAd] {
         var apsAds: [APSAd] = []
@@ -448,12 +457,29 @@ import NimbusMobileFuseKit
                 }
             } catch {
                 NimbusManager.didReceiveNimbusError(
-                    adUnitInstanceID: 0,
+                    adUnitInstanceID: -1,
                     error: .unitysdk(stage: .request, detail: "Failed to decode third party json: \(error)")
                 )
             }
         }
         return extensions
+    }
+    
+    private static func requestModifiersFromJsonString(requestModifiers: String) -> RequestModifiers? {
+        var modifiers: RequestModifiers?
+        if (requestModifiers != "" && !requestModifiers.isEmpty) {
+            do {
+                if let dataFromString = requestModifiers.data(using: .utf8) {
+                    modifiers = try JSONDecoder().decode(RequestModifiers.self, from: dataFromString)
+                }
+            } catch {
+                NimbusManager.didReceiveNimbusError(
+                    adUnitInstanceID: -1,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode request modifiers json: \(error)")
+                )
+            }
+        }
+        return modifiers
     }
     
     private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
@@ -508,6 +534,7 @@ import NimbusMobileFuseKit
     }
     
     @objc public func destroyExistingAd() {
+        ad?.destroy()
         ad = nil;
         removeReferenceFromManagerDictionary()
     }
@@ -517,6 +544,9 @@ import NimbusMobileFuseKit
     }
 }
 
+protocol UnityRequestComponent {
+    @MainActor var requestComponent: any RequestComponent { get }
+}
 
 struct Extensions: Codable {
     let aps: Aps?
@@ -528,6 +558,195 @@ struct Extensions: Codable {
     let moloco: Moloco?
     let unityAds: UnityAds?
     let vungle: Vungle?
+}
+
+
+struct RequestModifiers: Codable, Sendable {
+    let app: PerRequestApp?
+    let banner: BannerCreative?
+    let environment: Env?
+    let location: Location?
+    let userKeywords: String?
+    let video: VideoCreative?
+    let viewability: Viewability?
+    
+    @MainActor
+    var components: [RequestComponent] {
+        var requestComponents: [RequestComponent] = []
+        if let perRequestApp = app {
+            requestComponents.append(perRequestApp.requestComponent)
+        }
+        if let bannerCreative = banner {
+            requestComponents.append(bannerCreative.requestComponent)
+        }
+        if let env = environment {
+            requestComponents.append(env.requestComponent)
+        }
+        if let loc = location {
+            requestComponents.append(loc.requestComponent)
+        }
+        if let userKeywords = userKeywords {
+            requestComponents.append(user(keywords: userKeywords))
+        }
+        if let vid = video {
+            requestComponents.append(vid.requestComponent)
+        }
+        if let v = viewability {
+            requestComponents.append(v.requestComponent)
+        }
+        return requestComponents
+    }
+}
+
+struct BannerCreative: Codable, UnityRequestComponent {
+    let width: Int?
+    let height: Int?
+    let bidFloor: Float?
+    
+    let rawAddFormats: [Int]?
+    private let rawAdPosition: Int?
+    private let rawBattr: [Int]?
+    
+    enum CodingKeys: String, CodingKey {
+        case width, height, bidFloor
+        case rawAddFormats = "addFormats"
+        case rawAdPosition = "adPosition"
+        case rawBattr = "battr"
+    }
+    
+    //this is needed because RTB.Position's declaration is overriding swift's normal decode methods
+    var adPosition: RTB.Position? {
+        if let position = rawAdPosition {
+            return RTB.Position(rawValue: position)
+        }
+        return nil
+    }
+    
+    //this is needed because RTB.CreativeAttribute's declaration is overriding swift's normal decode methods
+    var battr: Set<RTB.CreativeAttribute>? {
+        guard let rawBattr = rawBattr else { return nil }
+        return Set(rawBattr.compactMap { intValue in
+            RTB.CreativeAttribute(rawValue: intValue)
+        })
+    }
+    
+    var requestComponent: any RequestComponent {
+        var adSize: AdSize? = nil
+        if let width = width, let height = height {
+            adSize = AdSize(width: width, height: height)
+        }
+        var addFormats: Set<RTB.Format> = []
+        //this has to be done here because RTB.Format.Interstitial is @MainActor locked
+        if let rawAddFormats = rawAddFormats {
+            addFormats = Set(rawAddFormats.compactMap { intValue in
+                //needed because RTB.Format doesnt have an int value
+                switch intValue {
+                case 1:
+                    RTB.Format.banner
+                case 2:
+                    RTB.Format.mrec
+                case 3:
+                    RTB.Format.halfScreen
+                case 4:
+                    RTB.Format.leaderboard
+                case 5:
+                    RTB.Format.interstitialPortrait
+                case 6:
+                    RTB.Format.interstitialLandscape
+                case 7:
+                    RTB.Format.leaderboard
+                default:
+                    nil
+                }
+            })
+        }
+        return banner(size: adSize, addFormats: addFormats, adPosition: adPosition ?? .unknown, bidFloor: bidFloor, battr: battr ?? [])
+    }
+}
+
+struct VideoCreative: Codable, UnityRequestComponent {
+    let adPosition: RTB.Position?
+    let bidFloor: Float?
+    let minDuration: Int?
+    let maxDuration: Int?
+    let width: Int?
+    let height: Int?
+    let rawPlacementType: Int?
+    let rawPlaybackMethod: [Int]?
+    
+    enum CodingKeys: String, CodingKey {
+        case adPosition, bidFloor, minDuration, maxDuration, width, height
+        case rawPlacementType = "placementType"
+        case rawPlaybackMethod = "playbackMethod"
+    }
+    
+    //this is needed because RTB.VideoPlacementType's declaration is overriding swift's normal decode methods
+    var placementType: RTB.VideoPlacementType? {
+        if let placement = rawPlacementType {
+            return RTB.VideoPlacementType(rawValue: placement)
+        }
+        return nil
+    }
+    
+    //this is needed because RTB.PlaybackMethod's declaration is overriding swift's normal decode methods
+    var playbackMethod: Set<RTB.PlaybackMethod>? {
+        guard let playbackMethod = rawPlaybackMethod else { return nil }
+        return Set(playbackMethod.compactMap { intValue in
+            RTB.PlaybackMethod(rawValue: intValue)
+        })
+    }
+    
+    var requestComponent: any NimbusKit.RequestComponent {
+        video(adPosition: adPosition ?? .unknown, bidFloor: bidFloor, minDuration: minDuration, maxDuration: maxDuration, width: width,
+              height: height, placementType: placementType, playbackMethod: playbackMethod ?? [])
+    }
+}
+
+struct Env: Codable, UnityRequestComponent {
+    let publisherKey: String
+    let apiKey: String
+    
+    var requestComponent: any NimbusKit.RequestComponent {
+        environment(publisherKey: publisherKey, apiKey: apiKey)
+    }
+}
+
+struct Viewability: Codable, UnityRequestComponent {
+    let omidPn: String
+    let omidPv: String
+    var requestComponent: any NimbusKit.RequestComponent {
+        viewability(omidpn: omidPn, omidpv: omidPv)
+    }
+}
+
+struct PerRequestApp: Codable, UnityRequestComponent {
+    let pageCat: Set<String>
+    let sectionCat: Set<String>
+    var requestComponent: any NimbusKit.RequestComponent {
+        app(pagecat: pageCat, sectioncat: sectionCat)
+    }
+}
+
+struct Location: Codable, UnityRequestComponent {
+    let latitude: Double
+    let longitude: Double
+    let accuracy: Int?
+    
+    private let rawlocationType: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case latitude, longitude, accuracy
+        case rawlocationType = "locationType"
+    }
+    
+    //this is needed because RTB.Geo.LocationType's declaration is overriding swift's normal decode methods
+    var locationType: RTB.Geo.LocationType {
+        return RTB.Geo.LocationType(rawValue: rawlocationType) ?? RTB.Geo.LocationType.gps
+    }
+    
+    var requestComponent: any NimbusKit.RequestComponent {
+        location(latitude: latitude, longitude: longitude, type: locationType, accuracy: accuracy)
+    }
 }
 
 extension Extensions {
