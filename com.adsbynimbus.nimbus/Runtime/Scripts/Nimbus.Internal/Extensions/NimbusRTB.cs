@@ -18,9 +18,6 @@ namespace Nimbus.RTB
     public class User
     {
         // The age of the user
-        #if UNITY_IOS
-        [JsonIgnore]
-        #endif
         public int? age; 
         /*
          * Optional feature to pass bidder data that was set in the exchange’s cookie.
@@ -31,9 +28,7 @@ namespace Nimbus.RTB
         #endif
         [CanBeNull] public string customData; 
         // The gender of the user
-        #if UNITY_IOS
-        [JsonIgnore]
-        #endif
+
         public Gender? gender;
         // Comma separated list of keywords, interests, or intent
         [CanBeNull] public string keywords;
@@ -46,43 +41,28 @@ namespace Nimbus.RTB
             this.gender = gender;
             this.keywords = keywords;
         }
-        
-        #if UNITY_IOS
-        [JsonProperty("data")]
-        internal Data[] userData
-        {
-            get
-            {
-                return new Data[]{NimbusUserData};
-            }
-        }
-        
-        [JsonIgnore]
-        internal Data NimbusUserData
-        {
-            get
-            {
-                var data = new Data();
-                data.name = "nimbus";
-                data.segment = new Segment[]
-                {
-                    new Segment(null, "age", age.ToString()),
-                    new Segment(null, "gender", JsonConvert.SerializeObject(gender))
-                };
-                return data;
-            }
-        }
-        #endif
     }
     
     [JsonConverter(typeof(StringEnumConverter))]
     public enum Gender
     {
+        #if UNITY_IOS
+        [EnumMember(Value = "male")]
+        #else
         [EnumMember(Value = "M")]
+        #endif
         male,
+        #if UNITY_IOS
+        [EnumMember(Value = "female")]
+        #else
         [EnumMember(Value = "F")]
+        #endif
         female,
+        #if UNITY_IOS
+        [EnumMember(Value = "other")]
+        #else
         [EnumMember(Value = "O")]
+        #endif
         other
         
     }
@@ -125,22 +105,14 @@ namespace Nimbus.RTB
         [CanBeNull] public string domain; // Domain of the app (e.g., “adsbynimbus.com”). Default: nil
         [CanBeNull] public string name; // App name (may be aliased at the publisher’s request). Default: nil
         public string[] pagecat; // IAB content categories that describe the current page or view of the app. OpenRTB Section 5.1
-        #if UNITY_ANDROID
         [JsonIgnore]
         public bool? paid; // Whether the app is paid or not
         [JsonProperty("paid")]
-        internal byte? paidJson => paid == null ? null : paid.Value ? (byte)0 : (byte)1;
-        #else
-        public bool? paid; // Whether the app is paid or not
-        #endif
-        #if UNITY_ANDROID
+        internal byte? paidJson => paid == null ? null : paid.Value ? (byte)1 : (byte)0;
         [JsonIgnore]
         public bool? privacypolicy; // Indicates if the app has a privacy policy
         [JsonProperty("privacypolicy")]
-        internal byte? privacyPolicyJson => privacypolicy == null ? null : privacypolicy.Value ? (byte)0 : (byte)1;
-        #else
-        public bool? privacypolicy; // Indicates if the app has a privacy policy
-        #endif
+        internal byte? privacyPolicyJson => privacypolicy == null ? null : privacypolicy.Value ? (byte)1 : (byte)0;
         [CanBeNull] public Publisher publisher; // Details about the publisher of the app
         public string[] sectioncat; // IAB content categories that describe the current section of the app. OpenRTB Section 5.1
         [CanBeNull] public string storeurl; // App store URL for an installed app; for IQG 2.1 compliance. Default: nil

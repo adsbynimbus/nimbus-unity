@@ -4,6 +4,7 @@ using UnityEditor.Callbacks;
 using System.IO;
 using System.Xml;
 using System.Collections.Generic;
+using System.Linq;
 
 #if UNITY_IOS
 using UnityEditor.iOS.Xcode;
@@ -74,9 +75,11 @@ public class AddiOSNativeTests
         }
 
         // Gather plugin source code files to bypass dynamic linking barriers
+        // Skip NimbusManager because it uses UIKit
         if (Directory.Exists(productionSourcePath))
         {
-            allFilesToCompile.AddRange(Directory.GetFiles(productionSourcePath, "*.swift", SearchOption.AllDirectories));
+            allFilesToCompile.AddRange(Directory.GetFiles(productionSourcePath, "*.swift", 
+                SearchOption.AllDirectories).Where(f => !f.Contains("NimbusManager")));
         }
         
         // Process file injection operations
@@ -98,7 +101,6 @@ public class AddiOSNativeTests
 
         // Save modifications to the Xcode project structures
         File.WriteAllText(projPath, proj.WriteToString());
-        Debug.Log("Successfully built Xcode structural configurations and targets.");
 
         // ====================================================================
         // 4. AUTOMATIC SCHEME INJECTION PASS
@@ -144,7 +146,6 @@ public class AddiOSNativeTests
                 testablesNode.AppendChild(testableRef);
                 
                 doc.Save(schemePath);
-                Debug.Log($"Successfully injected '{testTargetName}' into the Unity-iPhone Xcode Scheme.");
             }
         }
     }
