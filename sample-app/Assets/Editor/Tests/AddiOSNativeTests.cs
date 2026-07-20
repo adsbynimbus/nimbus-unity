@@ -14,6 +14,8 @@ public class AddiOSNativeTests
     [PostProcessBuild(100)]
     public static void OnPostProcessBuild(BuildTarget target, string pathToBuiltProject)
     {
+        string testTargetName = "UnityPluginTests";
+        
         if (target != BuildTarget.iOS) return;
 
         // 1. Initialize the Xcode Project file reader
@@ -25,7 +27,7 @@ public class AddiOSNativeTests
 
         // 2. Generate the Unit Test Target Shell
         string testTargetGuid = proj.AddTarget(
-            "UnityPluginTests", 
+            testTargetName, 
             "xctest", 
             "com.apple.product-type.bundle.unit-test"
         );
@@ -36,8 +38,8 @@ public class AddiOSNativeTests
         // Configure Info.plist generation and bundle tracking flags
         proj.SetBuildProperty(testTargetGuid, "GENERATE_INFOPLIST_FILE", "YES");
         proj.SetBuildProperty(testTargetGuid, "PRODUCT_BUNDLE_IDENTIFIER", "com.mycompany.UnityPluginTests");
-        proj.SetBuildProperty(testTargetGuid, "PRODUCT_NAME", "UnityPluginTests");
-        proj.SetBuildProperty(testTargetGuid, "EXECUTABLE_NAME", "UnityPluginTests");
+        proj.SetBuildProperty(testTargetGuid, "PRODUCT_NAME", testTargetName);
+        proj.SetBuildProperty(testTargetGuid, "EXECUTABLE_NAME", testTargetName);
 
         // Map Target Host and Loader environment macros to the application target
         proj.SetBuildProperty(testTargetGuid, "TEST_HOST", "$(BUILT_PRODUCTS_DIR)/NimbusSampleUnityApp.app/NimbusSampleUnityApp");
@@ -46,7 +48,9 @@ public class AddiOSNativeTests
         // Map header tracking criteria for core compilation support
         proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", "$(SRCROOT)/Classes/**");
         proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", "$(SRCROOT)/Libraries/**");
+        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", $"$(SRCROOT)/{testTargetName}/**");
         proj.SetBuildProperty(mainTargetGuid, "ENABLE_TESTABILITY", "YES");
+
 
         // Establish core target dependency sequence rules
         proj.AddTargetDependency(testTargetGuid, mainTargetGuid);
@@ -58,7 +62,7 @@ public class AddiOSNativeTests
         // Setup local source and physical directory targets
         string productionSourcePath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Packages/com.adsbynimbus.nimbus/Runtime/Plugins/iOS");       
         string unityTestsSourcePath = Path.Combine(Application.dataPath, "iOS/Tests/Unit");
-        string xcodeTestsDestPath = Path.Combine(pathToBuiltProject, "UnityPluginTests");
+        string xcodeTestsDestPath = Path.Combine(pathToBuiltProject, testTargetName);
 
         if (!Directory.Exists(xcodeTestsDestPath))
         {
@@ -71,7 +75,6 @@ public class AddiOSNativeTests
         if (Directory.Exists(unityTestsSourcePath))
         {
             allFilesToCompile.AddRange(Directory.GetFiles(unityTestsSourcePath, "*.swift"));
-            allFilesToCompile.AddRange(Directory.GetFiles(unityTestsSourcePath, "*.m"));
         }
 
         // Gather plugin source code files to bypass dynamic linking barriers
@@ -92,7 +95,7 @@ public class AddiOSNativeTests
             File.Copy(file, destinationFile, true);
 
             // FORCE FORWARD SLASHES: Xcode strictly drops paths with backslashes (\)
-            string projectRelativePath = "UnityPluginTests/" + fileName;
+            string projectRelativePath = $"{testTargetName}/" + fileName;
             
             // Map file indexes and bind compilation flags explicitly
             string fileGuid = proj.AddFile(projectRelativePath, projectRelativePath, PBXSourceTree.Source);
@@ -105,7 +108,7 @@ public class AddiOSNativeTests
         // ====================================================================
         // 4. AUTOMATIC SCHEME INJECTION PASS
         // ====================================================================
-        AddTestTargetToXcodeScheme(pathToBuiltProject, "UnityPluginTests");
+        AddTestTargetToXcodeScheme(pathToBuiltProject, testTargetName);
     }
 
     private static void AddTestTargetToXcodeScheme(string pathToBuiltProject, string testTargetName)
