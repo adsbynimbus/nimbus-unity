@@ -125,8 +125,19 @@ jobs:
       - name: Run Android Unit Tests (JUnit)
         run: |
           cd builds/Android/Android-Build
-          chmod +x ./gradlew
-          ./gradlew testDebugUnitTest
+          echo "Contents of the exported project:"
+          ls -la
+          
+          # 3. Check for the wrapper and run the tests
+          if [ -f "./gradlew" ]; then
+            echo "Found gradlew. Making executable and running..."
+            chmod +x gradlew
+            ./gradlew testDebugUnitTest
+          else
+            echo "gradlew not found. Falling back to system Gradle..."
+            # GitHub's ubuntu-latest runners come with Gradle pre-installed
+            gradle testDebugUnitTest
+          fi
 
       - name: Run Android Instrumented Tests (Espresso)
         # Booting an emulator is required for connected UI tests
@@ -137,5 +148,16 @@ jobs:
           arch: x86_64
           script: |
             cd builds/Android
-            chmod +x ./gradlew
-            ./gradlew connectedAndroidTest
+            echo "Contents of the exported project:"
+            ls -la
+            
+            # 3. Check for the wrapper and run the tests
+            if [ -f "./gradlew" ]; then
+              echo "Found gradlew. Making executable and running..."
+              chmod +x gradlew
+              ./gradlew connectedAndroidTest
+            else
+              echo "gradlew not found. Falling back to system Gradle..."
+              # GitHub's ubuntu-latest runners come with Gradle pre-installed
+              gradle connectedAndroidTest
+            fi
