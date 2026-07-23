@@ -44,6 +44,9 @@ jobs:
           targetPlatform: iOS
           buildName: iOS-Build
           buildsPath: builds
+          unityVersion: auto
+          projectPath: sample-app
+          allowDirtyBuild: true
           # Unity natively exports to an Xcode project for iOS, so no extra flags are needed.
       - name: Run iOS Native Tests (XCTest/XCUITest)
         run: |
@@ -95,6 +98,9 @@ jobs:
           androidExportType: 'androidStudioProject'
           buildName: Android-Build
           buildsPath: builds
+          unityVersion: auto
+          projectPath: sample-app
+          allowDirtyBuild: true
 
       - name: Setup Java
         uses: actions/setup-java@v3
