@@ -60,7 +60,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           projectPath: ${{ matrix.projectPath }}
           targetPlatform: ${{ matrix.targetPlatform }}
-          allowDirtyBuild: trueaq
+          allowDirtyBuild: true
   export-and-test-ios:
     name: Export & Test iOS
     # Must use macOS to run xcodebuild and iOS simulators
