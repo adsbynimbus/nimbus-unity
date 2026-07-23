@@ -24,7 +24,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: sample-app/Library
-          key: Library-iOS
+          key: Library-iOS-auto-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-iOS-auto-
+            Library-iOS-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
           
       # Rename file so build picks it up
       - name: Rename nimbus.rsp to csc.rsp
@@ -67,8 +72,13 @@ jobs:
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-Android
+          path: sample-app/Library
+          key: Library-Android-auto-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-Android-auto-
+            Library-Android-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
           
       # Rename file so build picks it up
       - name: Rename nimbus.rsp to csc.rsp
