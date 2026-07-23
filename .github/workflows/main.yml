@@ -119,7 +119,7 @@ jobs:
           buildsPath: builds
           unityVersion: auto
           projectPath: sample-app
-          exportModulesToAndroidProject: true  # Exports an editable Gradle project instead of an .apk/.aab
+          androidExportType: 'androidStudioProject'
           allowDirtyBuild: true
 
       - name: Run Android Unit Tests (JUnit)
