@@ -6,10 +6,9 @@ on:
       - main
   pull_request:
 jobs:
-  export-and-test-ios:
-    name: Export & Test iOS
-    # Must use macOS to run xcodebuild and iOS simulators
-    runs-on: macos-latest
+  build-unity:
+    name: Export Xcode Project
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -46,29 +45,49 @@ jobs:
           projectPath: sample-app
           allowDirtyBuild: true
           # Unity natively exports to an Xcode project for iOS, so no extra flags are needed.
-      - name: Run iOS Native Tests (XCTest/XCUITest)
-        run: |
-          # 1. Navigate to the exported project folder
-          cd builds/iOS
+      - name: Upload Xcode Project Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Xcode-Project
+          path: builds/iOS-Build
+          retention-days: 1
           
-          # 2. Install the CocoaPod dependencies 
-          pod install
-          
-          # 3. Build and test using the .xcworkspace
-          xcodebuild test \
-            -workspace Unity-iPhone.xcworkspace \
-            -scheme Unity-iPhone \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
-            clean test
-
+  test-ios:
+      name: Run iOS Native Tests
+      needs: build-unity
+      runs-on: macos-latest
+      steps:
+        - name: Download Xcode Project
+          uses: actions/download-artifact@v4
+          with:
+            name: Xcode-Project
+            path: builds/iOS-Build
+  
+        - name: Run iOS Native Tests (XCTest/XCUITest)
+          run: |
+            cd builds/iOS-Build
+            
+            # Force pod repo to update so dependencies resolve correctly
+            pod install --repo-update
+            
+            # Run tests (Requires a custom Unity PostProcess script to create the test target)
+            xcodebuild test \
+              -workspace Unity-iPhone.xcworkspace \
+              -scheme UnityPluginTests \
+              -destination 'platform=iOS Simulator,name=iPhone 16' \
+              clean test
   export-and-test-android:
-    name: Export & Test Android
-    # macOS runners are strongly recommended for Android emulators in CI because they support hardware acceleration.
-    # Linux runners will be unbearably slow or fail when booting the emulator.
-    runs-on: macos-latest
+    name: Build & Test Android
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
 
       - name: Cache Unity Library
         uses: actions/cache@v4
@@ -96,25 +115,18 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: Android
-          # This flag tells GameCI to export a Gradle project instead of building an APK/AAB
-          androidExportType: 'androidStudioProject'
           buildName: Android-Build
           buildsPath: builds
           unityVersion: auto
           projectPath: sample-app
+          exportModulesToAndroidProject: true  # Exports an editable Gradle project instead of an .apk/.aab
           allowDirtyBuild: true
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '11' # Ensure this matches the JDK version your Unity Editor expects
 
       - name: Run Android Unit Tests (JUnit)
         run: |
-          cd builds/Android
+          cd builds/Android-Build/Android-Build
           chmod +x ./gradlew
-          ./gradlew test
+          ./gradlew testDebugUnitTest
 
       - name: Run Android Instrumented Tests (Espresso)
         # Booting an emulator is required for connected UI tests
