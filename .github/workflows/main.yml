@@ -124,7 +124,7 @@ jobs:
 
       - name: Run Android Unit Tests (JUnit)
         run: |
-          cd builds/Android-Build/Android-Build
+          cd builds/Android/Android-Build
           chmod +x ./gradlew
           ./gradlew testDebugUnitTest
 
