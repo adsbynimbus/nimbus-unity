@@ -5,62 +5,7 @@ on:
     branches:
       - main
   pull_request:
-
-env:
-  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
 jobs:
-  buildPlatforms:
-    name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - sample-app
-        targetPlatform:
-          - Android # Build an Android player.
-          - iOS # Build an iOS player.
-        unityVersion:
-          - 6000.5.0f1
-          - auto
-    steps:
-      # Checkout
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      # Cache
-      - uses: actions/cache@v4
-        with:
-          path: sample-app/Library
-          key: Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
-          restore-keys: |
-            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
-            Library-${{ matrix.targetPlatform }}-
-            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
-            Library-
-      # Rename file so build picks it up
-      - name: Rename nimbus.rsp to csc.rsp
-        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
-      # Apply Pre Processor Symbols (Compiler options)
-      - name: Apply csc.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
-      - name: Ensure plugin directory exist
-        run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
-      # Build
-      - name: Build project
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          unityVersion: ${{ matrix.unityVersion }}
-          projectPath: ${{ matrix.projectPath }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          allowDirtyBuild: true
   export-and-test-ios:
     name: Export & Test iOS
     # Must use macOS to run xcodebuild and iOS simulators
@@ -72,8 +17,13 @@ jobs:
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-iOS
+          path: sample-app/Library
+          key: Library-iOS-auto-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-iOS-auto-
+            Library-iOS-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
           
       # Rename file so build picks it up
       - name: Rename nimbus.rsp to csc.rsp
@@ -84,12 +34,18 @@ jobs:
 
       - name: Export iOS Xcode Project
         uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: iOS
           buildName: iOS-Build
           buildsPath: builds
+          unityVersion: auto
+          projectPath: sample-app
+          allowDirtyBuild: true
           # Unity natively exports to an Xcode project for iOS, so no extra flags are needed.
-
       - name: Run iOS Native Tests (XCTest/XCUITest)
         run: |
           # 1. Navigate to the exported project folder
@@ -117,8 +73,13 @@ jobs:
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-Android
+          path: sample-app/Library
+          key: Library-Android-auto-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-Android-auto-
+            Library-Android-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
           
       # Rename file so build picks it up
       - name: Rename nimbus.rsp to csc.rsp
@@ -129,12 +90,19 @@ jobs:
 
       - name: Export Android Gradle Project
         uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: Android
           # This flag tells GameCI to export a Gradle project instead of building an APK/AAB
           androidExportType: 'androidStudioProject'
           buildName: Android-Build
           buildsPath: builds
+          unityVersion: auto
+          projectPath: sample-app
+          allowDirtyBuild: true
 
       - name: Setup Java
         uses: actions/setup-java@v3
