@@ -5,12 +5,6 @@ on:
     branches:
       - main
   pull_request:
-
-env:
-  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
 jobs:
   export-and-test-ios:
     name: Export & Test iOS
@@ -40,6 +34,10 @@ jobs:
 
       - name: Export iOS Xcode Project
         uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: iOS
           buildName: iOS-Build
@@ -92,6 +90,10 @@ jobs:
 
       - name: Export Android Gradle Project
         uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: Android
           # This flag tells GameCI to export a Gradle project instead of building an APK/AAB
