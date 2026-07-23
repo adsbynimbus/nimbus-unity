@@ -40,7 +40,6 @@ jobs:
           buildName: iOS-Build
           buildsPath: builds
           # Unity natively exports to an Xcode project for iOS, so no extra flags are needed.
-
       - name: Run iOS Native Tests (XCTest/XCUITest)
         run: |
           # 1. Navigate to the exported project folder
