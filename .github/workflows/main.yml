@@ -1,44 +1,17 @@
-name: GameCI 🎮
+name: Build and Test Native Projects
 
-on: [pull_request]
-  
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
 jobs:
-  test:
-    name: Run Unit Tests 🧪
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      # Cache
-      - uses: actions/cache@v4
-        with:
-          path: sample-app/Library
-          key: Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
-          restore-keys: |
-            Library-test-
-            Library-
-      # Rename file so build picks it up
-      - name: Rename nimbus.rsp to csc.rsp
-        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
-      # Apply Pre Processor Symbols (Compiler options)
-      - name: Apply csc.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
-      # Test
-      - name: Run tests
-        uses: game-ci/unity-test-runner@v4
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: sample-app
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-
   buildPlatforms:
     name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
     needs: test
@@ -72,7 +45,7 @@ jobs:
       # Rename file so build picks it up
       - name: Rename nimbus.rsp to csc.rsp
         run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
-      # Apply Pre Processor Symbols (Compiler options)      
+      # Apply Pre Processor Symbols (Compiler options)
       - name: Apply csc.rsp (pre-processor symbols)
         run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
       - name: Ensure plugin directory exist
@@ -88,5 +61,102 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           projectPath: ${{ matrix.projectPath }}
           targetPlatform: ${{ matrix.targetPlatform }}
-          allowDirtyBuild: true
+          allowDirtyBuild: trueaq
+  export-and-test-ios:
+    name: Export & Test iOS
+    # Must use macOS to run xcodebuild and iOS simulators
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-iOS
           
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+
+      - name: Export iOS Xcode Project
+        uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: iOS
+          buildName: iOS-Build
+          buildsPath: builds
+          # Unity natively exports to an Xcode project for iOS, so no extra flags are needed.
+
+      - name: Run iOS Native Tests (XCTest/XCUITest)
+        run: |
+          # 1. Navigate to the exported project folder
+          cd builds/iOS
+          
+          # 2. Install the CocoaPod dependencies 
+          pod install
+          
+          # 3. Build and test using the .xcworkspace
+          xcodebuild test \
+            -workspace Unity-iPhone.xcworkspace \
+            -scheme Unity-iPhone \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            clean test
+
+  export-and-test-android:
+    name: Export & Test Android
+    # macOS runners are strongly recommended for Android emulators in CI because they support hardware acceleration.
+    # Linux runners will be unbearably slow or fail when booting the emulator.
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Android
+          
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+
+      - name: Export Android Gradle Project
+        uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: Android
+          # This flag tells GameCI to export a Gradle project instead of building an APK/AAB
+          androidExportType: 'androidStudioProject'
+          buildName: Android-Build
+          buildsPath: builds
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11' # Ensure this matches the JDK version your Unity Editor expects
+
+      - name: Run Android Unit Tests (JUnit)
+        run: |
+          cd builds/Android
+          chmod +x ./gradlew
+          ./gradlew test
+
+      - name: Run Android Instrumented Tests (Espresso)
+        # Booting an emulator is required for connected UI tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: default
+          arch: x86_64
+          script: |
+            cd builds/Android
+            chmod +x ./gradlew
+            ./gradlew connectedAndroidTest
