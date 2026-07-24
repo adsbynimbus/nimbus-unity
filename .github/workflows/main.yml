@@ -168,4 +168,4 @@ jobs:
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
             
             # 3. Run Espresso tests, but EXCLUDE (-x) the IL2CPP compilation task
-            gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp
+            gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info
