@@ -129,7 +129,7 @@ jobs:
 
       - name: Patch AGP Version for Gradle 8
         run: |
-          cd builds/Android-Build
+          cd builds/Android/Android-Build
           
           # Take ownership of the files back from Docker's root user
           sudo chown -R $USER:$USER .
