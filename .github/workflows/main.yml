@@ -86,8 +86,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '11'
+          distribution: 'tumerin'
+          java-version: '17'
 
       - name: Cache Unity Library
         uses: actions/cache@v4
