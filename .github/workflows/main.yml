@@ -129,11 +129,14 @@ jobs:
 
       - name: Patch AGP Version for Gradle 8
         run: |
-          cd builds/Android/Android-Build
+          cd builds/Android-Build
           
-          # Find the build.gradle file and replace the old AGP version with 8.1.0
+          # Take ownership of the files back from Docker's root user
+          sudo chown -R $USER:$USER .
+          
+          # Now sed has permission to create temporary files and modify the build.gradle
           find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
-
+      
       - name: Run Android Unit Tests (JUnit)
         run: |
           cd builds/Android/Android-Build
