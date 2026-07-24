@@ -169,3 +169,11 @@ jobs:
             
             # 3. Run Espresso tests, but EXCLUDE (-x) the IL2CPP compilation task
             gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info
+            
+      - name: Upload Espresso Test Reports
+        if: always() 
+        uses: actions/upload-artifact@v4
+        with:
+          name: Espresso-Reports
+          path: builds/Android/Android-Build/**/build/reports/androidTests/connected/
+          retention-days: 3
