@@ -86,7 +86,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'tumerin'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Cache Unity Library
