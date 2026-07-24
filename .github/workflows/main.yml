@@ -89,6 +89,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # 2. Use a Gradle version that natively supports Java 17
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '7.6.4' # Supports Java 17. Use '8.4' if the build complains about AGP 8.0+
+
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
