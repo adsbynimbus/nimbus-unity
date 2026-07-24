@@ -161,14 +161,8 @@ jobs:
           target: default
           arch: x86_64
           script: |
-            # 1. Force the script to stop immediately if any command fails
-            set -e
+            # 1. Take ownership using the direct path
+            sudo chown -R $USER:$USER builds/Android/Android-Build
             
-            # 2. Set the EXACT path that worked in your unit test step earlier
-            PROJECT_DIR="uilds/Android/Android-Build"
-            
-            # 3. Take ownership of the folder
-            sudo chown -R $USER:$USER $PROJECT_DIR
-            
-            # 4. Tell Gradle exactly where the project is using --project-dir
-            gradle connectedAndroidTest --project-dir $PROJECT_DIR
+            # 2. Run Gradle using the direct path
+            gradle connectedAndroidTest --project-dir builds/Android/Android-Build
