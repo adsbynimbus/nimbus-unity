@@ -161,10 +161,14 @@ jobs:
           target: default
           arch: x86_64
           script: |
-            cd builds/Android/Android-Build
+            # 1. Force the script to stop immediately if any command fails
+            set -e
             
-            # Take ownership so the emulator can write test report files without permission errors
-            sudo chown -R $USER:$USER .
+            # 2. Set the EXACT path that worked in your unit test step earlier
+            PROJECT_DIR="uilds/Android/Android-Build"
             
-            # Run Espresso tests using the Gradle 8.13 version we installed globally
-            gradle connectedAndroidTest
+            # 3. Take ownership of the folder
+            sudo chown -R $USER:$USER $PROJECT_DIR
+            
+            # 4. Tell Gradle exactly where the project is using --project-dir
+            gradle connectedAndroidTest --project-dir $PROJECT_DIR
