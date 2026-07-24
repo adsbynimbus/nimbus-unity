@@ -155,7 +155,6 @@ jobs:
           fi
 
       - name: Run Android Instrumented Tests (Espresso)
-        # Booting an emulator is required for connected UI tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -163,16 +162,9 @@ jobs:
           arch: x86_64
           script: |
             cd builds/Android/Android-Build
-            echo "Contents of the exported project:"
-            ls -la
             
-            # 3. Check for the wrapper and run the tests
-            if [ -f "./gradlew" ]; then
-              echo "Found gradlew. Making executable and running..."
-              chmod +x gradlew
-              ./gradlew connectedAndroidTest
-            else
-              echo "gradlew not found. Falling back to system Gradle..."
-              # GitHub's ubuntu-latest runners come with Gradle pre-installed
-              gradle connectedAndroidTest
-            fi
+            # Take ownership so the emulator can write test report files without permission errors
+            sudo chown -R $USER:$USER .
+            
+            # Run Espresso tests using the Gradle 8.13 version we installed globally
+            gradle connectedAndroidTest
