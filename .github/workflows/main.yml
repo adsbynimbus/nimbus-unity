@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Xcode-Project
-          path: builds/iOS-Build
+          path: builds/iOS/iOS-Build
           retention-days: 1
           
   test-ios:
@@ -86,8 +86,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Cache Unity Library
         uses: actions/cache@v4
@@ -119,14 +119,25 @@ jobs:
           buildsPath: builds
           unityVersion: auto
           projectPath: sample-app
-          exportModulesToAndroidProject: true  # Exports an editable Gradle project instead of an .apk/.aab
+          androidExportType: 'androidStudioProject'
           allowDirtyBuild: true
 
       - name: Run Android Unit Tests (JUnit)
         run: |
-          cd builds/Android-Build/Android-Build
-          chmod +x ./gradlew
-          ./gradlew testDebugUnitTest
+          cd builds/Android/Android-Build
+          echo "Contents of the exported project:"
+          ls -la
+          
+          # 3. Check for the wrapper and run the tests
+          if [ -f "./gradlew" ]; then
+            echo "Found gradlew. Making executable and running..."
+            chmod +x gradlew
+            ./gradlew testDebugUnitTest
+          else
+            echo "gradlew not found. Falling back to system Gradle..."
+            # GitHub's ubuntu-latest runners come with Gradle pre-installed
+            gradle testDebugUnitTest
+          fi
 
       - name: Run Android Instrumented Tests (Espresso)
         # Booting an emulator is required for connected UI tests
@@ -137,5 +148,16 @@ jobs:
           arch: x86_64
           script: |
             cd builds/Android
-            chmod +x ./gradlew
-            ./gradlew connectedAndroidTest
+            echo "Contents of the exported project:"
+            ls -la
+            
+            # 3. Check for the wrapper and run the tests
+            if [ -f "./gradlew" ]; then
+              echo "Found gradlew. Making executable and running..."
+              chmod +x gradlew
+              ./gradlew connectedAndroidTest
+            else
+              echo "gradlew not found. Falling back to system Gradle..."
+              # GitHub's ubuntu-latest runners come with Gradle pre-installed
+              gradle connectedAndroidTest
+            fi
