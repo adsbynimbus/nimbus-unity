@@ -164,5 +164,9 @@ jobs:
             # 1. Take ownership using the direct path
             sudo chown -R $USER:$USER builds/Android/Android-Build
             
-            # 2. Run Gradle using the direct path
+            # 2. Tell Unity's Gradle where the SDK and NDK live on this runner
+            echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
+            echo "ndk.dir=$ANDROID_NDK_HOME" >> builds/Android/Android-Build/local.properties
+            
+            # 3. Run Gradle using the direct path
             gradle connectedAndroidTest --project-dir builds/Android/Android-Build
