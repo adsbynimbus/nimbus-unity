@@ -20,12 +20,12 @@ public class AddAndroidNativeTests : IPostprocessBuildWithReport
         string unityLibraryPath = Path.Combine(exportPath, "unityLibrary");
 
         // Paths to your test files inside Unity
-        string sourceTest = Path.Combine(Application.dataPath, "AndroidTests/test");
-        string sourceAndroidTest = Path.Combine(Application.dataPath, "AndroidTests/androidTest");
+        string sourceTest = Path.Combine(Application.dataPath, "AndroidTests~/Unit");
+        string sourceAndroidTest = Path.Combine(Application.dataPath, "AndroidTests~/Espresso");
 
         // Paths where Android Studio expects tests to be
-        string destTest = Path.Combine(unityLibraryPath, "src/test");
-        string destAndroidTest = Path.Combine(unityLibraryPath, "src/androidTest");
+        string destTest = Path.Combine(unityLibraryPath, "src/test/java/com/adsbynimbus/unity");
+        string destAndroidTest = Path.Combine(unityLibraryPath, "src/androidTest/java/com/adsbynimbus/unity");
 
         CopyDirectory(sourceTest, destTest);
         CopyDirectory(sourceAndroidTest, destAndroidTest);

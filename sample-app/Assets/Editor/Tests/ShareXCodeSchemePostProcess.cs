@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
+#if UNITY_IOS
 public class ShareXcodeSchemePostProcess
 {
     // A high execution order (999) ensures this runs after other build scripts
@@ -36,3 +37,4 @@ public class ShareXcodeSchemePostProcess
         }
     }
 }
+#endif
