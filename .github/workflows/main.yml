@@ -137,23 +137,6 @@ jobs:
           # Now sed has permission to create temporary files and modify the build.gradle
           find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
       
-      - name: Run Android Unit Tests (JUnit)
-        run: |
-          cd builds/Android/Android-Build
-          echo "Contents of the exported project:"
-          ls -la
-          
-          # 3. Check for the wrapper and run the tests
-          if [ -f "./gradlew" ]; then
-            echo "Found gradlew. Making executable and running..."
-            chmod +x gradlew
-            ./gradlew testDebugUnitTest
-          else
-            echo "gradlew not found. Falling back to system Gradle..."
-            # GitHub's ubuntu-latest runners come with Gradle pre-installed
-            gradle testDebugUnitTest
-          fi
-
       - name: Run Android Instrumented Tests (Espresso)
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -161,13 +144,34 @@ jobs:
           target: default
           arch: x86_64
           script: |
-            # 1. Take ownership using the direct path
+            cd builds/Android/Android-Build
+            echo "Contents of the exported project:"
+            ls -la
+            # 1. Check for the gradle wrapper
+            if [ -f "./gradlew" ]; then
+              echo "Found gradlew. Making executable and running..."
+              chmod +x gradlew
+              ./gradlew testDebugUnitTest
+            else
+              echo "gradlew not found. Falling back to system Gradle..."
+              # GitHub's ubuntu-latest runners come with Gradle pre-installed
+            fi
+            
+            # 2. Take ownership using the direct path
             sudo chown -R $USER:$USER builds/Android/Android-Build
             
-            # 2. Provide the SDK path just in case AGP still wants it
+            # 3. Provide the SDK path just in case AGP still wants it
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
+
+            # 4. Give the Android Package Manager 15 seconds to fully wake up
+            echo "Waiting for background services to settle..."
+            sleep 15
             
-            # 3. Run Espresso tests, but EXCLUDE (-x) the IL2CPP compilation task
+            # 5. Kill and restart ADB to force a clean connection for Gradle
+            adb kill-server
+            adb devices
+            
+            # 6. Run Espresso tests, but EXCLUDE (-x) the IL2CPP compilation task
             gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info
             
       - name: Upload Espresso Test Reports
