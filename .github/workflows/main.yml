@@ -78,7 +78,7 @@ jobs:
               clean test
   export-and-test-android:
     name: Build & Test Android
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -156,10 +156,14 @@ jobs:
 
       - name: Run Android Instrumented Tests (Espresso)
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ADB_INSTALL_TIMEOUT: 10 # Gives ADB 10 minutes to push the heavy Unity APK
         with:
           api-level: 33
           target: default
-          arch: x86_64
+          arch: arm64-v8a
+          ram-size: 2048M
+          disk-size: 2048M
           script: |
             # 1. Take ownership using the direct path
             sudo chown -R $USER:$USER builds/Android/Android-Build
