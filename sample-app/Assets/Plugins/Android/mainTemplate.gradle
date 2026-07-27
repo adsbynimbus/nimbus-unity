@@ -8,9 +8,10 @@ dependencies {
     implementation 'com.adsbynimbus.android:nimbus:3.0.0-rc.1' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:7
     implementation 'com.google.android.material:material:1.12.0' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:9
     // Local Unit Tests (Run on JVM)
-        testImplementation 'junit:junit:4.13.2'
+        androidTestImplementation 'junit:junit:4.13.2' 
     
         // Instrumented Tests (Run on Android Device/Emulator)
+        androidTestImplementation 'junit:junit:4.13.2' 
         androidTestImplementation 'androidx.test.ext:junit:1.1.5'
         androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 // Android Resolver Dependencies End
