@@ -137,6 +137,23 @@ jobs:
           # Now sed has permission to create temporary files and modify the build.gradle
           find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
       
+      - name: Run Android Unit Tests (JUnit)
+        run: |
+          cd builds/Android/Android-Build
+          echo "Contents of the exported project:"
+          ls -la
+          
+          # 3. Check for the wrapper and run the tests
+          if [ -f "./gradlew" ]; then
+            echo "Found gradlew. Making executable and running..."
+            chmod +x gradlew
+            ./gradlew testDebugUnitTest
+          else
+            echo "gradlew not found. Falling back to system Gradle..."
+            # GitHub's ubuntu-latest runners come with Gradle pre-installed
+            gradle testDebugUnitTest
+          fi
+
       - name: Run Android Instrumented Tests (Espresso)
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -144,27 +161,21 @@ jobs:
           target: default
           arch: x86_64
           script: |
-            # 1. Setup ownership and SDK
+            # 1. Take ownership using the direct path
             sudo chown -R $USER:$USER builds/Android/Android-Build
+            
+            # 2. Provide the SDK path just in case AGP still wants it
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
-            
-            # 2. Move into the directory
-            cd builds/Android/Android-Build
-            
+
             # 3. Wait for emulator and reset ADB
             echo "Waiting for background services to settle..."
             sleep 15
             adb kill-server
             adb devices
             
-            # 4. Make Wrapper executable (fails silently if it doesn't exist)
-            chmod +x gradlew 2>/dev/null || true
+            # 4. Run Espresso tests, but EXCLUDE (-x) the IL2CPP compilation task
+            gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info
             
-            # 5. Run Unit Tests (Tries wrapper, OR falls back to system gradle)
-            ./gradlew testDebugUnitTest -x buildIl2Cpp --info || gradle testDebugUnitTest -x buildIl2Cpp --info
-            
-            # 6. Run Espresso Tests (Tries wrapper, OR falls back to system gradle)
-            ./gradlew connectedAndroidTest -x buildIl2Cpp --info || gradle connectedAndroidTest -x buildIl2Cpp --info
       - name: Upload Espresso Test Reports
         if: always() 
         uses: actions/upload-artifact@v4
