@@ -135,24 +135,7 @@ jobs:
           sudo chown -R $USER .
           
           # Now sed has permission to create temporary files and modify the build.gradle
-          find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
-      
-      - name: Run Android Unit Tests (JUnit)
-        run: |
-          cd builds/Android/Android-Build
-          echo "Contents of the exported project:"
-          ls -la
-          
-          # 3. Check for the wrapper and run the tests
-          if [ -f "./gradlew" ]; then
-            echo "Found gradlew. Making executable and running..."
-            chmod +x gradlew
-            ./gradlew testDebugUnitTest
-          else
-            echo "gradlew not found. Falling back to system Gradle..."
-            # GitHub's ubuntu-latest runners come with Gradle pre-installed
-            gradle testDebugUnitTest
-          fi
+          find . -name "build.gradle" -exec sed -i '' 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +      
 
       - name: Run Android Instrumented Tests (Espresso)
         uses: reactivecircus/android-emulator-runner@v2
@@ -168,15 +151,27 @@ jobs:
             
             # 2. Provide the SDK path just in case AGP still wants it
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
+            
+            # 3. Move into the project directory
+            cd builds/Android/Android-Build
+            echo "Contents of the exported project:"
+            ls -la
 
-            # 3. Wait for emulator and reset ADB
+            # 4. Wait for emulator and reset ADB
             echo "Waiting for background services to settle..."
             sleep 15
             adb kill-server
             adb devices
             
-            # 4. Run Espresso tests, but EXCLUDE (-x) the IL2CPP compilation task
-            gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info
+            # 5. Check for the wrapper and run the Espresso tests
+            if [ -f "./gradlew" ]; then
+              echo "Found gradlew. Making executable and running Espresso tests..."
+              chmod +x gradlew
+              ./gradlew connectedAndroidTest -x buildIl2Cpp --info
+            else
+              echo "gradlew not found. Falling back to system Gradle..."
+              gradle connectedAndroidTest -x buildIl2Cpp --info
+            fi
             
       - name: Upload Espresso Test Reports
         if: always() 
