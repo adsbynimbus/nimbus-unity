@@ -154,6 +154,18 @@ jobs:
             # 1. Take ownership and set SDK path directly
             sudo chown -R $USER:$USER builds/Android/Android-Build #
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties #
+
+            # This forcefully disables Unity's hidden split APK settings across all modules
+            cat << 'EOF' >> builds/Android/Android-Build/build.gradle
+            
+            subprojects {
+                afterEvaluate { project ->
+                    if (project.hasProperty('android')) {
+                        project.android.splits.abi.enable = false
+                    }
+                }
+            }
+            EOF
             
             # 2. Buffer for Android background services
             echo "Waiting for background services to settle..." #
