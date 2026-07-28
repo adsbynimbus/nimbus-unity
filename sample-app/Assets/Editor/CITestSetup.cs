@@ -1,5 +1,3 @@
-namespace Editor
-{
 #if UNITY_EDITOR
     using UnityEditor;
     using UnityEngine;
@@ -21,4 +19,3 @@ namespace Editor
         }
     }
 #endif
-}
