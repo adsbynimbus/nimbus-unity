@@ -183,33 +183,7 @@ namespace Nimbus.Runtime.Scripts {
 			return new InlineAd(NimbusEvents, nimbusReportingPosition, adPosition, modifiers: requestModifiers, adSize, respectSafeArea,  
 				refreshIntervalInSeconds, bannerBidFloor: bannerFloor);
 		}
-
-		
-		/// <summary>
-		///     RewardedAd pre constructs a Nimbus Video auction RTB object and communicates
-		///		data to Nimbus servers to invoke a server side auction to potentially return a
-		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
-		///		type, but rather a rendering behavior.  Attempts the render the returned ad immediately.
-		/// </summary>
-		/// <param name="nimbusReportingPosition">
-		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
-		///		to create custom reporting breakouts
-		/// </param>
-		/// <param name="videoFloor">
-		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
-		/// </param>
-		/// <param name="requestModifiers">
-		///		Object that allows the publisher to add modifiers on a per-request basis
-		/// </param>
-		/// <returns>
-		///		NimbusAdUnit that correlates to the Requested Ad
-		/// </returns>
-		public RewardedAd RewardedAd(string nimbusReportingPosition, float videoFloor = 0f, 
-			RequestModifiers requestModifiers = new RequestModifiers()) {
-			return new RewardedAd(NimbusEvents, nimbusReportingPosition, 
-				videoBidFloor: videoFloor, modifiers: requestModifiers);
-		}
-		
+				
 		/// <summary>
 		///     FullscreenAd pre constructs a Nimbus hybrid auction RTB object.  The InlineAd's methods
 		///		Load() and/or Show() can then be called to communicate to Nimbus servers and invoke a server side auction
@@ -239,6 +213,31 @@ namespace Nimbus.Runtime.Scripts {
 			float bannerFloor = 0f, float videoFloor = 0f, RequestModifiers requestModifiers = new RequestModifiers()) {
 			return new FullscreenAd(NimbusEvents, nimbusReportingPosition, 
 				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor, modifiers: requestModifiers);
+		}
+		
+		/// <summary>
+		///     RewardedAd pre constructs a Nimbus Video auction RTB object and communicates
+		///		data to Nimbus servers to invoke a server side auction to potentially return a
+		///		bid from one of the publishers integrated demand partners. Reward in RTB is not defined as a creative
+		///		type, but rather a rendering behavior.  Attempts the render the returned ad immediately.
+		/// </summary>
+		/// <param name="nimbusReportingPosition">
+		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
+		///		to create custom reporting breakouts
+		/// </param>
+		/// <param name="videoFloor">
+		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
+		/// </param>
+		/// <param name="requestModifiers">
+		///		Object that allows the publisher to add modifiers on a per-request basis
+		/// </param>
+		/// <returns>
+		///		NimbusAdUnit that correlates to the Requested Ad
+		/// </returns>
+		public RewardedAd RewardedAd(string nimbusReportingPosition, float videoFloor = 0f, 
+			RequestModifiers requestModifiers = new RequestModifiers()) {
+			return new RewardedAd(NimbusEvents, nimbusReportingPosition, 
+				videoBidFloor: videoFloor, modifiers: requestModifiers);
 		}
 		
 		/// <summary>
