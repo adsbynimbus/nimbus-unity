@@ -115,8 +115,6 @@ jobs:
           projectPath: sample-app
           androidExportType: 'androidStudioProject'
           allowDirtyBuild: true
-          exportAsGoogleAndroidProject: true
-          customParameters: -executeMethod CITestSetup.EnableX86_64
           
       - name: Setup Java
         uses: actions/setup-java@v4
