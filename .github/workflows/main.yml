@@ -151,32 +151,26 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
-            # 1. Define the exact absolute path to the exported project
-            PROJECT_PATH="$GITHUB_WORKSPACE/builds/Android/Android-Build"
+            # 1. Enter directory and use # to absorb the invisible \r
+            cd "$GITHUB_WORKSPACE/builds/Android/Android-Build" #
             
-            # 2. SAFETY CHECK: CRLF-safe version (No if/then/fi blocks)
-            [ -d "$PROJECT_PATH" ] || echo "❌ ERROR: The directory $PROJECT_PATH does not exist!"
-            [ -d "$PROJECT_PATH" ] || ls -R $GITHUB_WORKSPACE/builds || ls -la $GITHUB_WORKSPACE
-            [ -d "$PROJECT_PATH" ] || exit 1
+            # 2. Take ownership and set SDK in the CURRENT directory
+            sudo chown -R $USER:$USER . #
+            echo "sdk.dir=$ANDROID_HOME" > local.properties #
             
-            # 3. Take ownership and set SDK using the absolute path
-            sudo chown -R $USER:$USER "$PROJECT_PATH"
-            echo "sdk.dir=$ANDROID_HOME" > "$PROJECT_PATH/local.properties"
+            echo "Successfully entered directory. Contents:" #
+            ls -la #
             
-            # 4. Move into the directory
-            cd "$PROJECT_PATH"
-            echo "Successfully entered directory. Contents:"
-            ls -la
+            # 3. Buffer for Android background services
+            echo "Waiting for background services to settle..." #
+            sleep 15 #
             
-            # 5. Buffer for Android background services
-            echo "Waiting for background services to settle..."
-            sleep 15
+            # 4. Make Wrapper executable
+            chmod +x gradlew 2>/dev/null || true #
             
-            # 6. Make Wrapper executable
-            chmod +x gradlew 2>/dev/null || true
+            # 5. Run Espresso Tests
+            ./gradlew connectedAndroidTest -x buildIl2Cpp --info || gradle connectedAndroidTest -x buildIl2Cpp --info #
             
-            # 7. Run Espresso Tests using --project-dir to absolutely force the path
-            ./gradlew connectedAndroidTest --project-dir "$PROJECT_PATH" -x buildIl2Cpp --info || gradle connectedAndroidTest --project-dir "$PROJECT_PATH" -x buildIl2Cpp --info
       - name: Upload Espresso Test Reports
         if: always() 
         uses: actions/upload-artifact@v4
