@@ -163,6 +163,9 @@ jobs:
             echo "Contents of the exported project:"
             ls -la
             
+            echo "Waiting for background services to settle..."
+            sleep 15
+            
             if [ -f "./gradlew" ]; then
               echo "Found gradlew. Making executable and running Espresso tests..."
               chmod +x gradlew
