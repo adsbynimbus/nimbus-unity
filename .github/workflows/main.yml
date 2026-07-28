@@ -156,24 +156,24 @@ jobs:
           # 4. swiftshader_indirect prevents headless GPU crashes on Linux
           emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
+            # 1. Take ownership and set SDK path
             sudo chown -R $USER:$USER builds/Android/Android-Build
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
             
+            # 2. Enter project directory
             cd builds/Android/Android-Build
             echo "Contents of the exported project:"
             ls -la
-            
+
+            # 3. Buffer for Android background services
             echo "Waiting for background services to settle..."
             sleep 15
             
-            if [ -f "./gradlew" ]; then
-              echo "Found gradlew. Making executable and running Espresso tests..."
-              chmod +x gradlew
-              ./gradlew connectedAndroidTest -x buildIl2Cpp --info
-            else
-              echo "gradlew not found. Falling back to system Gradle..."
-              gradle connectedAndroidTest -x buildIl2Cpp --info
-            fi
+            # 4. Make Wrapper executable (fails silently if it doesn't exist)
+            chmod +x gradlew 2>/dev/null || true
+            
+            # 5. Run Espresso Tests (Tries wrapper, OR falls back to system gradle)
+            ./gradlew connectedAndroidTest -x buildIl2Cpp --info || gradle connectedAndroidTest -x buildIl2Cpp --info
             
       - name: Upload Espresso Test Reports
         if: always() 
