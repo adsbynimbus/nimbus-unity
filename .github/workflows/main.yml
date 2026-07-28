@@ -141,7 +141,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
-          target: google_atd
+          target: google_apis
           arch: arm64-v8a
           ram-size: 2048M
           disk-size: 2048M
@@ -149,7 +149,7 @@ jobs:
           disable-animations: true
           
           # 3. Force the emulator to boot entirely headless to prevent UI hanging
-          emulator-options: -no-window -noaudio -no-boot-anim -camera-back none
+          emulator-options: -noaudio -no-boot-anim -camera-back none
           script: |
             # 1. Take ownership using the direct path
             sudo chown -R $USER builds/Android/Android-Build
