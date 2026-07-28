@@ -154,13 +154,10 @@ jobs:
             # 1. Define the exact absolute path to the exported project
             PROJECT_PATH="$GITHUB_WORKSPACE/builds/Android/Android-Build"
             
-            # 2. SAFETY CHECK: Ensure the directory actually exists before continuing
-            if [ ! -d "$PROJECT_PATH" ]; then
-              echo "❌ ERROR: The directory $PROJECT_PATH does not exist!"
-              echo "Here is what is actually in your workspace:"
-              ls -R $GITHUB_WORKSPACE/builds || ls -la $GITHUB_WORKSPACE
-              exit 1
-            fi
+            # 2. SAFETY CHECK: CRLF-safe version (No if/then/fi blocks)
+            [ -d "$PROJECT_PATH" ] || echo "❌ ERROR: The directory $PROJECT_PATH does not exist!"
+            [ -d "$PROJECT_PATH" ] || ls -R $GITHUB_WORKSPACE/builds || ls -la $GITHUB_WORKSPACE
+            [ -d "$PROJECT_PATH" ] || exit 1
             
             # 3. Take ownership and set SDK using the absolute path
             sudo chown -R $USER:$USER "$PROJECT_PATH"
@@ -180,7 +177,6 @@ jobs:
             
             # 7. Run Espresso Tests using --project-dir to absolutely force the path
             ./gradlew connectedAndroidTest --project-dir "$PROJECT_PATH" -x buildIl2Cpp --info || gradle connectedAndroidTest --project-dir "$PROJECT_PATH" -x buildIl2Cpp --info
-            
       - name: Upload Espresso Test Reports
         if: always() 
         uses: actions/upload-artifact@v4
