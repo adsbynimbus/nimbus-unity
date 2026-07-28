@@ -162,11 +162,6 @@ jobs:
             cd builds/Android/Android-Build
             echo "Contents of the exported project:"
             ls -la
-
-            echo "Waiting for background services to settle..."
-            sleep 15
-            adb kill-server
-            adb devices
             
             if [ -f "./gradlew" ]; then
               echo "Found gradlew. Making executable and running Espresso tests..."
