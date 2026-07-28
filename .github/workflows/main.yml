@@ -78,7 +78,7 @@ jobs:
               clean test
   export-and-test-android:
     name: Build & Test Android
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -132,43 +132,42 @@ jobs:
           cd builds/Android/Android-Build
           
           # Take ownership of the files back from Docker's root user
-          sudo chown -R $USER .
+          sudo chown -R $USER:$USER .
           
           # Now sed has permission to create temporary files and modify the build.gradle
-          find . -name "build.gradle" -exec sed -i '' 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +      
+          find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
 
       - name: Run Android Instrumented Tests (Espresso)
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ADB_INSTALL_TIMEOUT: 10
         with:
           api-level: 33
-          target: google_apis
-          arch: arm64-v8a
+          # 2. google_apis is the most stable for x86_64
+          target: google_apis 
+          
+          # 3. Match the architecture you just checked in Unity
+          arch: x86_64 
+          
           ram-size: 2048M
           disk-size: 2048M
-          # 2. Shut off UI animations to speed up tests
           disable-animations: true
           
-          # 3. Force the emulator to boot entirely headless to prevent UI hanging
-          emulator-options: -noaudio -no-boot-anim -camera-back none
+          # 4. swiftshader_indirect prevents headless GPU crashes on Linux
+          emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
-            # 1. Take ownership using the direct path
-            sudo chown -R $USER builds/Android/Android-Build
-            
-            # 2. Provide the SDK path just in case AGP still wants it
+            sudo chown -R $USER:$USER builds/Android/Android-Build
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
             
-            # 3. Move into the project directory
             cd builds/Android/Android-Build
             echo "Contents of the exported project:"
             ls -la
 
-            # 4. Wait for emulator and reset ADB
             echo "Waiting for background services to settle..."
             sleep 15
             adb kill-server
             adb devices
             
-            # 5. Check for the wrapper and run the Espresso tests
             if [ -f "./gradlew" ]; then
               echo "Found gradlew. Making executable and running Espresso tests..."
               chmod +x gradlew
