@@ -69,7 +69,7 @@ namespace Nimbus.Internal {
 			var data = NimbusCallbackParser.ParseMessage<NimbusErrorData>(jsonParams);
 			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
 
-			if (adUnit == null  && data.adUnitInstanceID != -1) {
+			if (adUnit == null && data.adUnitInstanceID != -1) {
 				Debug.unityLogger.LogError("NimbusError", $"AdUnit not found: {data.adUnitInstanceID}");
 				return;
 			}

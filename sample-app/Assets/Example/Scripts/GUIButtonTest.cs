@@ -115,6 +115,7 @@ namespace Example.Scripts {
 				_loadAndShowBannerAdUnit = 
 					NimbusManager.Instance.BannerAd("unity_demo_banner_position", 
 							bannerFloor: 0.05f, requestModifiers: _requestModifiers);
+				_loadAndShowBannerAdUnit.Show();
 				return;
 			}
 			_loadAndShowBannerAdUnit?.Destroy();
@@ -129,7 +130,7 @@ namespace Example.Scripts {
 				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
 				_loadAndShowLeaderboardAdUnit = 
 					NimbusManager.Instance.BannerAd("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
-				_loadAndShowBannerAdUnit.Show();
+				_loadAndShowLeaderboardAdUnit.Show();
 				return;
 			}
 

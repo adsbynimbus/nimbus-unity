@@ -41,7 +41,7 @@ namespace Nimbus.Internal {
 		public void Load()
 		{
 			_adWasLoaded = true;
-			NimbusManager.Instance.StartCoroutine(LoadAd());
+			NimbusManager.Instance.StartCoroutine(LoadAd(false));
 		}
 		
 		/// <summary>
@@ -56,7 +56,7 @@ namespace Nimbus.Internal {
 			}
 			else
 			{
-				NimbusManager.Instance.StartCoroutine(LoadAd());
+				NimbusManager.Instance.StartCoroutine(LoadAd(true));
 			}
 		}
 
@@ -162,9 +162,9 @@ namespace Nimbus.Internal {
 
 		#endregion
 		
-		private IEnumerator LoadAd()
+		private IEnumerator LoadAd(bool showAd)
 		{
-			NimbusManager.Instance.NimbusPlatformAPI.GetAd(this, false);
+			NimbusManager.Instance.NimbusPlatformAPI.GetAd(this, showAd);
 			yield break;
 		}
 		
