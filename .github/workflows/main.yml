@@ -151,25 +151,18 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
-            # 1. Enter directory and use # to absorb the invisible \r
-            cd "$GITHUB_WORKSPACE/builds/Android/Android-Build" #
+            sudo chown -R $USER:$USER builds/Android/Android-Build
+            echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
             
-            # 2. Take ownership and set SDK in the CURRENT directory
-            sudo chown -R $USER:$USER . #
-            echo "sdk.dir=$ANDROID_HOME" > local.properties #
+            cd builds/Android/Android-Build
             
-            echo "Successfully entered directory. Contents:" #
-            ls -la #
+            echo "Waiting for background services to settle..."
+            sleep 15
             
-            # 3. Buffer for Android background services
-            echo "Waiting for background services to settle..." #
-            sleep 15 #
+            chmod +x gradlew 2>/dev/null || true
             
-            # 4. Make Wrapper executable
-            chmod +x gradlew 2>/dev/null || true #
-            
-            # 5. Run Espresso Tests
-            ./gradlew connectedAndroidTest -x buildIl2Cpp --info || gradle connectedAndroidTest -x buildIl2Cpp --info #
+            ./gradlew testDebugUnitTest -x buildIl2Cpp --info || gradle testDebugUnitTest -x buildIl2Cpp --info
+            ./gradlew connectedAndroidTest -x buildIl2Cpp --info || gradle connectedAndroidTest -x buildIl2Cpp --info
             
       - name: Upload Espresso Test Reports
         if: always() 
