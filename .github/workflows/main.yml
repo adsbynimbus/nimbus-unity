@@ -142,18 +142,13 @@ jobs:
         env:
           ADB_INSTALL_TIMEOUT: 10
         with:
-          api-level: 33
-          # 2. google_apis is the most stable for x86_64
-          target: google_apis 
-          
-          # 3. Match the architecture you just checked in Unity
-          arch: x86_64 
-          
+          api-level: 30
+          target: google_atd
+          arch: x86_64
           ram-size: 2048M
           disk-size: 2048M
+          emulator-boot-timeout: 1200
           disable-animations: true
-          
-          # 4. swiftshader_indirect prevents headless GPU crashes on Linux
           emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
             # 1. Take ownership and set SDK path
