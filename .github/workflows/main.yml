@@ -151,18 +151,22 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
+            # 1. Take ownership and set SDK path directly
             sudo chown -R $USER:$USER builds/Android/Android-Build #
             echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties #
             
-            cd builds/Android/Android-Build #
-            
+            # 2. Buffer for Android background services
             echo "Waiting for background services to settle..." #
             sleep 15 #
             
-            chmod +x gradlew 2>/dev/null || true #
+            # 3. Make Wrapper executable directly
+            chmod +x builds/Android/Android-Build/gradlew 2>/dev/null || true #
             
-            ./gradlew testDebugUnitTest -x buildIl2Cpp --info || gradle testDebugUnitTest -x buildIl2Cpp --info #
-            ./gradlew connectedAndroidTest -x buildIl2Cpp --info || gradle connectedAndroidTest -x buildIl2Cpp --info #
+            # 4. Run Unit Tests (Forces Gradle to target the specific folder)
+            builds/Android/Android-Build/gradlew testDebugUnitTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info || gradle testDebugUnitTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info #
+            
+            # 5. Run Espresso Tests (Forces Gradle to target the specific folder)
+            builds/Android/Android-Build/gradlew connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info || gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info #
       - name: Upload Espresso Test Reports
         if: always() 
         uses: actions/upload-artifact@v4
