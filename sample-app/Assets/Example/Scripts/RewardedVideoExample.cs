@@ -14,7 +14,7 @@ namespace Example.Scripts {
 		public GameObject cloud;
 
 		// keep a reference of the returned ad so that it can be safely cleaned up
-		private NimbusAdUnit _ad;
+		private RewardedAd _ad;
 		private bool _alreadyTriggered;
 
 		private void Awake() {
@@ -28,48 +28,48 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_rewarded_video_position");
+			NimbusManager.Instance.RewardedAd("unity_demo_rewarded_video_position").Show();
 			_alreadyTriggered = true;
 		}
 
-		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdLoaded(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
 				$"RewardedVideoExample Ad was returned and loaded into memory");
 		}
 
-		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdWasRendered(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
 				"RewardedVideoExample Ad was rendered");
 		}
 
-		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdImpression(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
 				"RewardedVideoExample Ad impression was fired");
 		}
 
-		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdClicked(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
 				"RewardedVideoExample Ad was clicked");
 		}
 
-		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdDestroyed(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
 				"RewardedVideoExample Ad was destroyed/removed from the scene");
 		}
 
-		public void OnAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
+		public void OnAdCompleted(Ad nimbusAdUnit, bool skipped) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			if (skipped) return;
 			Debug.unityLogger.Log(
 				"RewardedVideoExample Ad was completed");
 		}
 
-		public void OnAdRewardEarned(NimbusAdUnit nimbusAdUnit)
+		public void OnAdRewardEarned(Ad nimbusAdUnit)
 		{
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
@@ -77,7 +77,7 @@ namespace Example.Scripts {
 			UnityThread.ExecuteInUpdate(RewardUser);
 		}
 		
-		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdError(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log($"RewardedVideoExample Error");
 		}

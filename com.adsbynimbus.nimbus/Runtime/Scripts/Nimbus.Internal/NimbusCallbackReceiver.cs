@@ -6,7 +6,7 @@ namespace Nimbus.Internal {
 	internal class NimbusCallbackReceiver : MonoBehaviour {
 		private static NimbusCallbackReceiver _instance;
 
-		private readonly Dictionary<int, NimbusAdUnit> _adUnitDictionary = new Dictionary<int, NimbusAdUnit>();
+		private readonly Dictionary<int, Ad> _adUnitDictionary = new Dictionary<int, Ad>();
 
 		internal static NimbusCallbackReceiver Instance {
 			get {
@@ -26,11 +26,11 @@ namespace Nimbus.Internal {
 			DontDestroyOnLoad(gameObject);
 		}
 
-		internal void AddAdUnit(NimbusAdUnit adUnit) { 
+		internal void AddAdUnit(Ad adUnit) { 
 			_adUnitDictionary.Add(adUnit.InstanceID, adUnit);
 		}
 		
-		internal NimbusAdUnit AdUnitForInstanceID(int instanceID) {
+		internal Ad AdUnitForInstanceID(int instanceID) {
 			_adUnitDictionary.TryGetValue(instanceID, out var adUnit);
 			return adUnit;
 		}

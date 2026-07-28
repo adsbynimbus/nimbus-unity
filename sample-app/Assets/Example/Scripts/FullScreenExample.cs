@@ -10,7 +10,7 @@ namespace Example.Scripts {
 	/// </summary>
 	public class FullScreenExample : MonoBehaviour {
 		public GameObject cloud;
-		private NimbusAdUnit _ad;
+		private RewardedAd _ad;
 		private bool _alreadyTriggered;
 
 		private void Awake() {
@@ -32,7 +32,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_rewarded_fullscreen_position");
+			NimbusManager.Instance.RewardedAd("unity_demo_rewarded_fullscreen_position");
 			_alreadyTriggered = true;
 		}
 
@@ -42,7 +42,7 @@ namespace Example.Scripts {
 			ScoreUI.Instance.UpdateScore(100);
 		}
 
-		private void RewardUser(NimbusAdUnit ad, bool skipped) {
+		private void RewardUser(Ad ad, bool skipped) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
 			if (skipped) return;
 			/*Debug.unityLogger.Log(
@@ -56,7 +56,7 @@ namespace Example.Scripts {
 			UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
 		}
 
-		private void LogError(NimbusAdUnit ad) {
+		private void LogError(Ad ad) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
 			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +

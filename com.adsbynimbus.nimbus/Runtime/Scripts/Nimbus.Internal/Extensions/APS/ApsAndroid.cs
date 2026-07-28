@@ -35,7 +35,7 @@ namespace Nimbus.Internal.Extensions.APS {
 			var slotData = new List<ApsSlotData>();
 			foreach (ApsSlotData slot in _slotData)
 			{
-				if (type == AdType.Banner)
+				if (type == AdType.Inline)
 				{
 					switch (slot.adUnitType)
 					{
@@ -65,7 +65,7 @@ namespace Nimbus.Internal.Extensions.APS {
 						}
 					}
 				} 
-				else if (type == AdType.Interstitial)
+				else if (type == AdType.Fullscreen)
 				{
 					switch (slot.adUnitType)
 					{

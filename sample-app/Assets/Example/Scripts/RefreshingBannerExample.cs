@@ -10,12 +10,12 @@ namespace Example.Scripts {
 	/// </summary>
 	public class RefreshingBannerExample : MonoBehaviour {
 		private bool _alreadyTriggered;
-		private NimbusAdUnit _adUnit;
+		private InlineAd _adUnit;
 
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_adUnit = NimbusManager.Instance.RequestRefreshingBannerAdAndLoad("unity_demo_banner_position2");
+			_adUnit = NimbusManager.Instance.BannerAd("unity_demo_banner_position2");
 			_alreadyTriggered = true;
 		}
 
