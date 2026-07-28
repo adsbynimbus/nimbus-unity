@@ -103,7 +103,7 @@ namespace Nimbus.Internal {
 				configuration.enableUnityLogs, configuration.enableSDKInTestMode, JsonConvert.SerializeObject(extensions));
 		}
 
-		internal override void GetAd(NimbusAdUnit nimbusAdUnit, bool showAd) {
+		internal override void GetAd(Ad nimbusAdUnit, bool showAd) {
 			var extensions = new Nimbus.Internal.Extensions.Extensions();
 			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
 			nimbusAdUnit.OnDestroyIOSAd += OnDestroyIOSAd;
@@ -113,45 +113,61 @@ namespace Nimbus.Internal {
 
 			switch (nimbusAdUnit.AdType)
 			{
-				case AdType.Banner:
+				case AdType.Inline:
 				{
-					var size = nimbusAdUnit.BannerSize.ToWidthAndHeight();
-					#if NIMBUS_ENABLE_APS_IOS
-						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Banner, size.Item1, size.Item2);
-					#endif
-					_bannerAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, size.Item1, 
-						size.Item2, nimbusAdUnit.BannerRefreshIntervalInSeconds, nimbusAdUnit.BannerBidFloor,
-						nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition, showAd, JsonConvert.SerializeObject(extensions) 
-						, JsonConvert.SerializeObject(nimbusAdUnit.RequestModifiers));
+					if (nimbusAdUnit is InlineAd inlineAd)
+					{
+						var size = inlineAd.BannerSize.ToWidthAndHeight();
+						#if NIMBUS_ENABLE_APS_IOS
+						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Inline, size.Item1, size.Item2);
+						#endif
+						_bannerAd(inlineAd.InstanceID, inlineAd.NimbusReportingPosition, size.Item1,
+							size.Item2, inlineAd.BannerRefreshIntervalInSeconds, inlineAd.BannerBidFloor,
+							inlineAd.RespectSafeArea, (int)inlineAd.AdPosition, showAd,
+							JsonConvert.SerializeObject(extensions)
+							, JsonConvert.SerializeObject(inlineAd.RequestModifiers));
+					}
 					break;
 				}
-				case AdType.Interstitial:
+				case AdType.Fullscreen:
 				{
-					#if NIMBUS_ENABLE_APS_IOS
-						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Interstitial, 0, 0);
-					#endif
-					_interstitialAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, 
-						nimbusAdUnit.BannerBidFloor, nimbusAdUnit.VideoBidFloor,
-						showAd, JsonConvert.SerializeObject(extensions), 
-						JsonConvert.SerializeObject(nimbusAdUnit.RequestModifiers));
+					if (nimbusAdUnit is FullscreenAd fullscreenAd)
+					{
+						#if NIMBUS_ENABLE_APS_IOS
+						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Fullscreen, 0, 0);
+						#endif
+						_interstitialAd(fullscreenAd.InstanceID, fullscreenAd.NimbusReportingPosition, 
+							fullscreenAd.BannerBidFloor, fullscreenAd.VideoBidFloor,
+							showAd, JsonConvert.SerializeObject(extensions), 
+							JsonConvert.SerializeObject(fullscreenAd.RequestModifiers));
+					}
 					break;
 				}
 				case AdType.Rewarded:
 				{
-					#if NIMBUS_ENABLE_APS_IOS && NIMBUS_ENABLE_IOS
+					if (nimbusAdUnit is RewardedAd rewardedAd)
+					{
+						#if NIMBUS_ENABLE_APS_IOS && NIMBUS_ENABLE_IOS
 						extensions.aps.slotData = _apsIOS.GetAdUnitId(AdType.Rewarded, 0, 0);
-					#endif
-					_rewardedAd(nimbusAdUnit.InstanceID, nimbusAdUnit.NimbusReportingPosition, nimbusAdUnit.VideoBidFloor, 
-						showAd, JsonConvert.SerializeObject(extensions), 
-						JsonConvert.SerializeObject(nimbusAdUnit.RequestModifiers));
+						#endif
+						_rewardedAd(rewardedAd.InstanceID, rewardedAd.NimbusReportingPosition, rewardedAd.VideoBidFloor, 
+							showAd, JsonConvert.SerializeObject(extensions), 
+							JsonConvert.SerializeObject(rewardedAd.RequestModifiers));
+					}
+
 					break;
 				}
 			}
 		}
 
-		internal override void ShowAd(NimbusAdUnit nimbusAdUnit)
+		internal override void ShowAd(Ad nimbusAdUnit)
 		{
-			_showAd(nimbusAdUnit.InstanceID, nimbusAdUnit.RespectSafeArea, (int) nimbusAdUnit.AdPosition);
+			var respectSafeArea = false;
+			if (nimbusAdUnit is InlineAd inlineAd)
+			{
+				respectSafeArea = inlineAd.RespectSafeArea;
+			}
+			_showAd(nimbusAdUnit.InstanceID, respectSafeArea, (int) nimbusAdUnit.AdPosition);
 		}
 	}
 #endif

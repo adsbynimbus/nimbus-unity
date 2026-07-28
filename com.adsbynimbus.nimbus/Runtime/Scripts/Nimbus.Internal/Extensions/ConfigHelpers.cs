@@ -248,13 +248,13 @@ namespace Nimbus.Internal.Extensions
         // Internal Nimbus method, do not use. Must be public for implementation.
         public string _verificationMarkupCallback(string response) 
         {
-            return JsonConvert.SerializeObject(VerificationResourceCallback(response));
+            return VerificationMarkupCallback(response);
         }
         
         // Internal Nimbus method, do not use.  Must be public for implementation.
         public string _verificationResourceCallback(string response) 
         {
-            return VerificationMarkupCallback(response);
+            return JsonConvert.SerializeObject(VerificationResourceCallback(response));
         }
 
         public class VerificationScriptResource
