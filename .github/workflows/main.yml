@@ -67,6 +67,18 @@ jobs:
           run: |
             cd builds/iOS-Build
             
+            # 2. Write your temporary line into a new temp file
+            echo "source 'git@github.com:adsbynimbus/Specs.git'" > Podfile.temp
+          
+            # 3. Append the entire original Podfile exactly as it was underneath your new line
+            cat Podfile >> Podfile.temp
+          
+            # 4. Replace the original Podfile with your newly patched version
+            mv Podfile.temp Podfile
+          
+            # 5. Verify it looks correct in the GitHub Actions logs
+            echo "Patched Podfile contents:"
+            head -n 5 Podfile
             # Force pod repo to update so dependencies resolve correctly
             pod install --repo-update
             

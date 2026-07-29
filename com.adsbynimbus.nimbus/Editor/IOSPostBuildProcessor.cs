@@ -21,43 +21,43 @@ namespace Nimbus.Editor {
 			if (target != BuildTarget.iOS) return;
 			
 			#if NIMBUS_ENABLE_LIVERAMP
-				Dependencies.Add("pod 'NimbusLiveRampKit'");
+				Dependencies.Add("pod 'NimbusLiveRampKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_APS
-				Dependencies.Add("pod 'NimbusAPSKit'");
+				Dependencies.Add("pod 'NimbusAPSKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				Dependencies.Add("pod 'NimbusVungleKit'");
+				Dependencies.Add("pod 'NimbusVungleKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_ADMOB
-                Dependencies.Add("pod 'NimbusAdMobKit'");
+                Dependencies.Add("pod 'NimbusAdMobKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_META
-			    Dependencies.Add("pod 'NimbusMetaKit'");
+			    Dependencies.Add("pod 'NimbusMetaKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
-				Dependencies.Add("pod 'NimbusMintegralKit'");
+				Dependencies.Add("pod 'NimbusMintegralKit', '3.0.0-internal.23'");
 			#endif
 
 			#if NIMBUS_ENABLE_UNITY_ADS
-				Dependencies.Add("pod 'NimbusUnityKit'");
+				Dependencies.Add("pod 'NimbusUnityKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOBILEFUSE
-				Dependencies.Add("pod 'NimbusMobileFuseKit'");
+				Dependencies.Add("pod 'NimbusMobileFuseKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOLOCO
-				Dependencies.Add("pod 'NimbusMolocoKit'");
+				Dependencies.Add("pod 'NimbusMolocoKit', '3.0.0-internal.23'");
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
-				Dependencies.Add("pod 'NimbusInMobiKit'");
+				Dependencies.Add("pod 'NimbusInMobiKit', '3.0.0-internal.23'");
 			#endif
 			
 			var path = buildPath + "/Podfile";
