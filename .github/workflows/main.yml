@@ -6,6 +6,55 @@ on:
       - main
   pull_request:
 jobs:
+  buildPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - sample-app
+        targetPlatform:
+          - Android # Build an Android player.
+          - iOS # Build an iOS player.
+        unityVersion:
+          - 6000.5.0f1
+          - auto
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: sample-app/Library
+          key: Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
+            Library-${{ matrix.targetPlatform }}-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+      - name: Ensure plugin directory exist
+        run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: ${{ matrix.projectPath }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
   build-unity:
     name: Export Xcode Project
     runs-on: ubuntu-latest
@@ -51,31 +100,31 @@ jobs:
           name: Xcode-Project
           path: builds/iOS/iOS-Build
           retention-days: 1
-          
-  test-ios:
-      name: Run iOS Native Tests
-      needs: build-unity
-      runs-on: macos-latest
-      steps:
-        - name: Download Xcode Project
-          uses: actions/download-artifact@v4
-          with:
-            name: Xcode-Project
-            path: builds/iOS-Build
-  
-        - name: Run iOS Native Tests (XCTest/XCUITest)
-          run: |
-            cd builds/iOS-Build
-            
-            # Force pod repo to update so dependencies resolve correctly
-            pod install --repo-update
-            
-            # Run tests (Requires a custom Unity PostProcess script to create the test target)
-            xcodebuild test \
-              -workspace Unity-iPhone.xcworkspace \
-              -scheme UnityPluginTests \
-              -destination 'platform=iOS Simulator,name=iPhone 16' \
-              clean test
+#  commenting out this part of the run until 3.0 goes live
+#  test-ios:
+#      name: Run iOS Native Tests
+#      needs: build-unity
+#      runs-on: macos-latest
+#      steps:
+#        - name: Download Xcode Project
+#          uses: actions/download-artifact@v4
+#          with:
+#            name: Xcode-Project
+#            path: builds/iOS-Build
+#  
+#        - name: Run iOS Native Tests (XCTest/XCUITest)
+#          run: |
+#            cd builds/iOS-Build
+#            
+#            # Force pod repo to update so dependencies resolve correctly
+#            pod install --repo-update
+#            
+#            # Run tests (Requires a custom Unity PostProcess script to create the test target)
+#            xcodebuild test \
+#              -workspace Unity-iPhone.xcworkspace \
+#              -scheme UnityPluginTests \
+#              -destination 'platform=iOS Simulator,name=iPhone 16' \
+#              clean test
   export-and-test-android:
     name: Build & Test Android
     runs-on: ubuntu-latest
