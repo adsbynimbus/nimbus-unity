@@ -25,7 +25,6 @@ android {
       exclude ('/lib/mips/*' + '*')
       exclude ('/lib/mips64/*' + '*')
       exclude ('/lib/x86/*' + '*')
-      exclude ('/lib/x86_64/*' + '*')
   }
 }
 // Android Resolver Exclusions End

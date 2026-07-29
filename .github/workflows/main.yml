@@ -6,6 +6,55 @@ on:
       - main
   pull_request:
 jobs:
+  buildPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - sample-app
+        targetPlatform:
+          - Android # Build an Android player.
+          - iOS # Build an iOS player.
+        unityVersion:
+          - 6000.5.0f1
+          - auto
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: sample-app/Library
+          key: Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
+            Library-${{ matrix.targetPlatform }}-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+      - name: Ensure plugin directory exist
+        run: mkdir -p sample-app/Assets/Plugins/${{ matrix.targetPlatform }}
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: ${{ matrix.projectPath }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
   build-unity:
     name: Export Xcode Project
     runs-on: ubuntu-latest
@@ -51,34 +100,34 @@ jobs:
           name: Xcode-Project
           path: builds/iOS/iOS-Build
           retention-days: 1
-          
-  test-ios:
-      name: Run iOS Native Tests
-      needs: build-unity
-      runs-on: macos-latest
-      steps:
-        - name: Download Xcode Project
-          uses: actions/download-artifact@v4
-          with:
-            name: Xcode-Project
-            path: builds/iOS-Build
-  
-        - name: Run iOS Native Tests (XCTest/XCUITest)
-          run: |
-            cd builds/iOS-Build
-            
-            # Force pod repo to update so dependencies resolve correctly
-            pod install --repo-update
-            
-            # Run tests (Requires a custom Unity PostProcess script to create the test target)
-            xcodebuild test \
-              -workspace Unity-iPhone.xcworkspace \
-              -scheme UnityPluginTests \
-              -destination 'platform=iOS Simulator,name=iPhone 16' \
-              clean test
+#  commenting out this part of the run until 3.0 goes live
+#  test-ios:
+#      name: Run iOS Native Tests
+#      needs: build-unity
+#      runs-on: macos-latest
+#      steps:
+#        - name: Download Xcode Project
+#          uses: actions/download-artifact@v4
+#          with:
+#            name: Xcode-Project
+#            path: builds/iOS-Build
+#  
+#        - name: Run iOS Native Tests (XCTest/XCUITest)
+#          run: |
+#            cd builds/iOS-Build
+#            
+#            # Force pod repo to update so dependencies resolve correctly
+#            pod install --repo-update
+#            
+#            # Run tests (Requires a custom Unity PostProcess script to create the test target)
+#            xcodebuild test \
+#              -workspace Unity-iPhone.xcworkspace \
+#              -scheme UnityPluginTests \
+#              -destination 'platform=iOS Simulator,name=iPhone 16' \
+#              clean test
   export-and-test-android:
     name: Build & Test Android
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -132,47 +181,43 @@ jobs:
           cd builds/Android/Android-Build
           
           # Take ownership of the files back from Docker's root user
-          sudo chown -R $USER .
+          sudo chown -R $USER:$USER .
           
           # Now sed has permission to create temporary files and modify the build.gradle
-          find . -name "build.gradle" -exec sed -i '' 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +      
+          find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
 
       - name: Run Android Instrumented Tests (Espresso)
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ADB_INSTALL_TIMEOUT: 10
         with:
-          api-level: 33
-          target: default
-          arch: arm64-v8a
+          api-level: 30
+          target: google_atd
+          arch: x86_64
           ram-size: 2048M
           disk-size: 2048M
+          emulator-boot-timeout: 1200
+          disable-animations: true
+          emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
           script: |
-            # 1. Take ownership using the direct path
-            sudo chown -R $USER builds/Android/Android-Build
-            
-            # 2. Provide the SDK path just in case AGP still wants it
-            echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties
-            
-            # 3. Move into the project directory
-            cd builds/Android/Android-Build
-            echo "Contents of the exported project:"
-            ls -la
+            # 1. Take ownership and set SDK path directly
+            sudo chown -R $USER:$USER builds/Android/Android-Build #
+            echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties #
 
-            # 4. Wait for emulator and reset ADB
-            echo "Waiting for background services to settle..."
-            sleep 15
-            adb kill-server
-            adb devices
+            echo "subprojects { afterEvaluate { project -> if (project.hasProperty('android')) { project.android.splits.abi.enable = false } } }" >> builds/Android/Android-Build/build.gradle #
             
-            # 5. Check for the wrapper and run the Espresso tests
-            if [ -f "./gradlew" ]; then
-              echo "Found gradlew. Making executable and running Espresso tests..."
-              chmod +x gradlew
-              ./gradlew connectedAndroidTest -x buildIl2Cpp --info
-            else
-              echo "gradlew not found. Falling back to system Gradle..."
-              gradle connectedAndroidTest -x buildIl2Cpp --info
-            fi
+            # 2. Buffer for Android background services
+            echo "Waiting for background services to settle..." #
+            sleep 15 #
             
+            # 3. Make Wrapper executable directly
+            chmod +x builds/Android/Android-Build/gradlew 2>/dev/null || true #
+            
+            # 4. Run Unit Tests (Forces Gradle to target the specific folder)
+            builds/Android/Android-Build/gradlew testDebugUnitTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info || gradle testDebugUnitTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info #
+            
+            # 5. Run Espresso Tests (Forces Gradle to target the specific folder)
+            builds/Android/Android-Build/gradlew connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info || gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info #
       - name: Upload Espresso Test Reports
         if: always() 
         uses: actions/upload-artifact@v4

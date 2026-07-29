@@ -217,6 +217,16 @@ import AppTrackingTransparency
         }
         return extensions
     }
+
+    @objc public class func setVerificationProviders(markupCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), resourceCallback: (@convention(c) (UnsafePointer<CChar>, Int) -> UnsafeMutablePointer<CChar>?), numCallbacks: Int) {
+        verificationMarkupMethodCallback = markupCallback
+        verificationResourceMethodCallback = resourceCallback
+        var providers = [NimbusKit.Configuration.VerificationProvider]()
+        for i in 0..<numCallbacks {
+            providers.append(VerificationProviderHelper(index: i))
+        }
+        Nimbus.configuration.verificationProviders = providers
+    }
     
     public static func requestModifiersFromJsonString(requestModifiers: String) -> RequestModifiers? {
         var modifiers: RequestModifiers?
