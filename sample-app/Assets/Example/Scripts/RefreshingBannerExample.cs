@@ -1,7 +1,7 @@
 using System.Threading;
-using AdsByNimbus.Public;
 using Example.Scripts.NotAdRelated;
 using Internal.AdObjects;
+using NimbusPublic;
 using UnityEngine;
 
 namespace Example.Scripts {

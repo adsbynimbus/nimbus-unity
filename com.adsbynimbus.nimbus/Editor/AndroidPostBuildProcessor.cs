@@ -5,7 +5,7 @@ using System.Text;
 using UnityEditor.Android;
 using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class AndroidPostBuildProcessor : IPostGenerateGradleAndroidProject {
 
 		private const string KeepRules = @"

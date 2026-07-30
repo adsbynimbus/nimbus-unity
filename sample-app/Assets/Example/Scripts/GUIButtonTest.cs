@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using AdsByNimbus.Public;
 using Internal;
 using Internal.AdObjects;
 using Internal.Extensions;
+using NimbusPublic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,14 +27,14 @@ namespace Example.Scripts {
 
 		private void Start()
 		{
-			Nimbus.Instance.SetSessionId("session_test");
-			Nimbus.Instance.SetCoppa(true);
+			Nimbus.Instance.Configuration.SessionId = ("session_test");
+			Nimbus.Instance.Configuration.Coppa = true;
 			var app = new App("com.test.nimbusUnity", Array.Empty<string>(), "nimbus.co", "testapp", Array.Empty<string>(),
 				true, true, new Publisher(Array.Empty<string>(), "nimbus.co", "nimbus"), 
 				Array.Empty<string>(), "www.nimbus.co", "3.0.0");
-			Nimbus.Instance.SetApp(app);
+			Nimbus.Instance.Configuration.App = app;
 			var user = new User(30, "custom", Gender.male, "keywords");
-			Nimbus.Instance.SetUser(user);
+			Nimbus.Instance.Configuration.User = user;
 			const string verificationUrl =
 				"https://adsbynimbus-public.s3.amazonaws.com/dev/omid_validation_verification_script_v1.js";
 			var vProvider = new VerificationProvider(response =>
@@ -45,9 +45,9 @@ namespace Example.Scripts {
 					return new VerificationProvider.VerificationScriptResource(verificationUrl, "iabtechlab-Adsbynimbus", "iabtechlab.com-omid");
 				}
 			);
-			Nimbus.Instance.SetBlockedAdvertisingDomains(new[] { "www.yahoo.com", "www.reddit.com"});
-			Nimbus.Instance.SetInterceptorTimeout(1000);
-			Nimbus.Instance.SetVerificationProviders(new [] { vProvider });
+			Nimbus.Instance.Configuration.BlockedAdvertisingDomains = new[] { "www.yahoo.com", "www.reddit.com"};
+			Nimbus.Instance.Configuration.InterceptorTimeout = 1000;
+			Nimbus.Instance.Configuration.VerificationProviders = new [] { vProvider };
 			var requestApp = new PerRequestApp(new [] { "pagecat1","pagecat2" }, 
 				new [] { "sectioncat1","sectioncat2" });
 			var bannerCreative = new BannerCreative(320, 50, new[]

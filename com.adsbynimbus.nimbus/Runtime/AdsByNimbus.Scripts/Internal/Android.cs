@@ -1,11 +1,13 @@
 using System;
+using Internal.AdObjects;
 using Newtonsoft.Json;
+using ScriptableObjects;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 #if UNITY_ANDROID
-namespace Nimbus.Internal {
+namespace Internal {
 	public class Android : NimbusAPI {
 		// ThirdParty Providers
 		#if NIMBUS_ENABLE_ADMOB
@@ -34,7 +36,7 @@ namespace Nimbus.Internal {
 			_currentActivity = _unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 			var managerClass = new AndroidJavaObject(ManagerClass);
 			_manager = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-			var extensions = new Nimbus.Internal.Extensions.Extensions();
+			var extensions = new Internal.Extensions.Extensions();
 			
 			#if NIMBUS_ENABLE_APS
 				var (apsAppID, slots) = configuration.GetApsData();
@@ -74,7 +76,7 @@ namespace Nimbus.Internal {
 
 
 		internal override void GetAd(Ad nimbusAdUnit, bool showAd) {
-			var extensions = new Nimbus.Internal.Extensions.Extensions();
+			var extensions = new Internal.Extensions.Extensions();
 			NimbusCallbackReceiver.Instance.AddAdUnit(nimbusAdUnit);
 			#if NIMBUS_ENABLE_ADMOB_ANDROID && UNITY_ANDROID
 				extensions.adMobAdUnitIds = _adMobAndroid.GetAdUnitId(nimbusAdUnit.AdType);

@@ -645,7 +645,7 @@ namespace AdsByNimbus.Editor {
 				var go = new GameObject {
 					name = "NimbusAdsManager"
 				};
-				var manager = go.AddComponent<Public.Nimbus>();
+				var manager = go.AddComponent<NimbusPublic.Nimbus>();
 				manager.SetNimbusSDKConfiguration(_asset);
 
 				Undo.RegisterCreatedObjectUndo(go, "NimbusManager created");

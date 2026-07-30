@@ -1,6 +1,7 @@
 using System;
 using Internal.Extensions.APS;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Internal.Extensions
 {

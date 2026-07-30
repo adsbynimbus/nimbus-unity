@@ -13,7 +13,7 @@ using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace AdsByNimbus.Public
+namespace NimbusPublic
 {
 	[DisallowMultipleComponent]
 	public class Nimbus : MonoBehaviour
@@ -26,6 +26,7 @@ namespace AdsByNimbus.Public
 		public AdEvents NimbusEvents;
 		public static Nimbus Instance;
 		private bool _coppa;
+		public Configuration Configuration;
 
 		private void Awake()
 		{
@@ -57,6 +58,8 @@ namespace AdsByNimbus.Public
 			{
 				Destroy(gameObject);
 			}
+
+			Configuration = new Configuration();
 		}
 
 		private IEnumerator Start()
@@ -259,160 +262,25 @@ namespace AdsByNimbus.Public
 			return new RewardedAd(NimbusEvents, nimbusReportingPosition,
 				videoBidFloor: videoFloor, modifiers: requestModifiers);
 		}
-
-		/// <summary>
-		///		Unique session id for the current app session
-		/// </summary>
-		/// <param name="sessionId">
-		///		string for the preferred session Id
-		/// </param>
-
-		public void SetSessionId(string sessionId)
-		{
-			ConfigHelpers.SetSessionId(sessionId);
-		}
-
-		/// <summary>
-		///     If this inventory is subject to COPPA restrictions use this function to get the passed in RTB COPPA information for all Nimbus requests
-		/// </summary>
-		/// <param name="coppa">
-		///		boolean depending on whether coppa restrictions are in place
-		/// </param>
-		public void SetCoppa(bool coppa)
-		{
-			ConfigHelpers.SetCoppa(coppa);
-		}
-
-		/// <summary>
-		///     Details about the human user of the device; the advertising audience
-		/// </summary>
-		/// <param name="user">
-		///		RTB User object with customizable properties
-		/// </param>
-		public void SetUser(User user)
-		{
-			ConfigHelpers.SetUser(user);
-		}
-
-		/// <summary>
-		///		Identifies the app to buyers (e.g., bundle ID, store URL, name, categories, publisher, privacy flags)
-		/// </summary>
-		/// <param name="app">
-		///		RTB App object with customizable properties
-		/// </param>
-		public void SetApp(App app)
-		{
-			ConfigHelpers.SetApp(app);
-		}
-
-		/// <summary>
-		///		Block list of advertisers by their domains (e.g., “ford.com”)
-		/// </summary>
-		/// <param name="blockedAdvertisingDomains">
-		///		string array of blocked domains
-		/// </param>
-		public void SetBlockedAdvertisingDomains(string[] blockedAdvertisingDomains)
-		{
-			ConfigHelpers.SetBlockedAdvertisingDomains(blockedAdvertisingDomains);
-		}
-
-		/// <summary>
-		///		Set Request URL for bid requests
-		/// </summary>
-		/// <param name="requestUrl"/>
-		public void SetRequestUrl(string requestUrl)
-		{
-			ConfigHelpers.SetRequestUrl(requestUrl);
-		}
-
-		/// <summary>
-		///		Set additional request headers
-		/// </summary>
-		/// <param name="additionalRequestHeaders"/>
-		public void SetAdditionalRequestHeaders(Dictionary<string, string> additionalRequestHeaders)
-		{
-			ConfigHelpers.SetAdditionalRequestHeaders(additionalRequestHeaders);
-		}
-
-		/// <summary>
-		///		Maximum time (in milliseconds) interceptors have to modify the request before it fires. Default is 500 milliseconds.
-		/// </summary>
-		/// <param name="interceptorTimeoutInMillis"></param>
-		public void SetInterceptorTimeout(int interceptorTimeoutInMillis)
-		{
-			ConfigHelpers.SetInterceptorTimeout(interceptorTimeoutInMillis);
-		}
-
-		/// <summary>
-		///		Whether the video player should show the mute button. True by default
-		/// </summary>
-		/// <param name="showMuteButton"/>
-		public void ShowMuteButton(bool showMuteButton)
-		{
-			ConfigHelpers.ShowMuteButton(showMuteButton);
-		}
-
-		/// <summary>
-		///		If enabled, only tap gestures are allowed for inline ads. Default is false
-		///		(iOS only setting)
-		/// </summary>
-		/// <param name="enableSwipeProtection"/>
-		public void EnableSwipeProtection(bool enableSwipeProtection)
-		{
-			ConfigHelpers.EnableSwipeProtection(enableSwipeProtection);
-		}
-
-		/// <summary>
-		///		Sets if SKOverlay is enabled for all ad units (iOS only setting)
-		/// </summary>
-		/// <param name="isSkOverlayEnabledForAllUnits"/>
-		public void SetIsSkOverlayEnabledForAllUnits(bool isSkOverlayEnabledForAllUnits)
-		{
-			ConfigHelpers.SetIsSkOverlayEnabledForAllUnits(isSkOverlayEnabledForAllUnits);
-		}
-
-		/// <summary>
-		///		Set Verification Providers for Ad Viewability Tracking (OM SDK)
-		/// </summary>
-		/// <param name="providers">
-		///		Array of Verification Providers with callback methods
-		/// </param>
-		/*
-		 * /// Example of the methods in the Native Nimbus iOS SDK
-		   public protocol VerificationProvider : Sendable {
-
-		       func verificationMarkup(response: NimbusKit.NimbusResponse) -> String
-
-		       func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.VerificationScriptResource?
-		   }
-
-		   public struct VerificationScriptResource {
-
-		       public init?(url: URL, vendorKey: String?, parameters: String?)
-		   }
-		 */
-		public void SetVerificationProviders(VerificationProvider[] providers)
-		{
-			ConfigHelpers.SetVerificationProviders(providers);
-		}
-
+		
+		
 #if NIMBUS_ENABLE_LIVERAMP
-	/// <summary>
-	///     This method will initialize the LiveRamp Identity SDK
-	/// </summary>
-	/// <param name="configId">
-	///		Config ID provided by LiveRamp
-	/// </param>
-	/// <param name="email">
-	///		Email is the preferred method for identifying a user
-	/// </param>
-	/// <param name="hasConsentForNoLegislation">
-	///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
-	///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
-	/// </param>
-	/// <param name="isTestMode">
-	///		Set to true if wishing to use test mode.
-	/// </param>
+		/// <summary>
+		///     This method will initialize the LiveRamp Identity SDK
+		/// </summary>
+		/// <param name="configId">
+		///		Config ID provided by LiveRamp
+		/// </param>
+		/// <param name="email">
+		///		Email is the preferred method for identifying a user
+		/// </param>
+		/// <param name="hasConsentForNoLegislation">
+		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
+		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
+		/// </param>
+		/// <param name="isTestMode">
+		///		Set to true if wishing to use test mode.
+		/// </param>
 		public static void initializeLiveRamp(String configId, String email,
 			Boolean hasConsentForNoLegislation, Boolean isTestMode)
 		{

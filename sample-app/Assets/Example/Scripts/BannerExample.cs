@@ -1,6 +1,6 @@
-using AdsByNimbus.Public;
 using Example.Scripts.NotAdRelated;
 using Internal.AdObjects;
+using NimbusPublic;
 using Unity.Mathematics;
 using UnityEngine;
 

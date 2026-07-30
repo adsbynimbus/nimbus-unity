@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Threading.Tasks;
-using AdsByNimbus.Public;
 using Internal.Extensions;
+using NimbusPublic;
+using Public;
 using UnityEngine;
 
 namespace Internal.AdObjects {

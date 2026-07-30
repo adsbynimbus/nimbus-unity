@@ -618,7 +618,7 @@ namespace AdsByNimbus.Editor {
 		}
 
 		private static void FocusOnGameManager(string partner) {
-			var manager = FindObjectOfType<Public.Nimbus>();
+			var manager = FindObjectOfType<NimbusPublic.Nimbus>();
 			if (manager != null) {
 				Selection.activeGameObject = manager.gameObject;
 			}

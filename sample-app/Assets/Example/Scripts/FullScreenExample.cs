@@ -1,8 +1,9 @@
 using System.Collections;
-using AdsByNimbus.Public;
 using Example.Scripts.NotAdRelated;
 using Internal;
 using Internal.AdObjects;
+using NimbusPublic;
+using Public;
 using UnityEngine;
 
 namespace Example.Scripts {
