@@ -1,41 +1,28 @@
 #if UNITY_EDITOR
-using Internal.AdObjects;
-using Internal.Extensions.AdMob;
+using System.Collections.Generic;
 using Internal.Extensions.APS;
-using Internal.Utility;
-using Nimbus.Runtime.Scripts;
-using ScriptableObjects;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
-#region ThirdPartySDKImports
-
-using System.Collections.Generic;
-
-#endregion
-
-
-namespace Nimbus.Editor {
-	public class NimbusManagerCreator : EditorWindow {
-		private string _apiKey;
-		private string _publisherKey;
-		private bool _enableUnityLogs = true;
-		private bool _enableSDKInTestMode;
-		private bool _enableManualInitialization = false;
-		private NimbusSDKConfiguration _asset = null;
-
+namespace ScriptableObjects {
+	[CustomEditor(typeof(NimbusSDKConfiguration))]
+	public class NimbusSDKConfigurationPropertiesEditor : Editor {
+		// Initialization
+		private SerializedProperty _publisherKey;
+		private SerializedProperty _apiKey;
+		private SerializedProperty _enableSDKInTestMode;
+		private SerializedProperty _enableUnityLogs;
+		private SerializedProperty _enableManualInitialization;
+		
 		// APS
 		private SerializedProperty _androidAppId;
 		private ReorderableList _androidApsSlotIdList = null;
 		private SerializedProperty _androidApsSlots = null;
-		private SerializedProperty _androidApsTimeoutInMilliseconds;
-
+		
 		private SerializedProperty _iosAppId;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
-		private SerializedProperty _iosApsTimeoutInMilliseconds;
 		
 		// Vungle
 		private SerializedProperty _androidVungleAppId;
@@ -44,11 +31,11 @@ namespace Nimbus.Editor {
 		
 		// Meta
 		private SerializedProperty _androidMetaAppId;
-		
+
 		private SerializedProperty _iosMetaAppId;
 		
 		// AdMob
-		private bool _adMobAutoInit;
+		
 		private SerializedProperty _androidAdMobAppId;
 		private ReorderableList _androidAdMobAdUnitDataList = null;
 		private SerializedProperty _androidAdMobAdUnitData = null;
@@ -63,9 +50,10 @@ namespace Nimbus.Editor {
 		
 		private SerializedProperty _iosMintegralAppId;
 		private SerializedProperty _iosMintegralAppKey;
-		
+
 		// Unity Ads
 		private SerializedProperty _androidUnityAdsGameId;
+
 		private SerializedProperty _iosUnityAdsGameId;
 		
 		// Moloco
@@ -73,26 +61,24 @@ namespace Nimbus.Editor {
 		
 		private SerializedProperty _iosMolocoAppKey;
 		
-		//InMobi
+		// InMobi
 		private SerializedProperty _androidInMobiAccountId;
 		
 		private SerializedProperty _iosInMobiAccountId;
+
+		// Needed so error messages aren't spammed
+		private bool _errorLogged;
 		
-		[MenuItem("Nimbus/Create New NimbusAdsManager")]
-		public static void CreateNewNimbusGameManager() {
-			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
-		}
-
 		private void OnEnable() {
-			_asset = CreateInstance<NimbusSDKConfiguration>();
-			var serializedObject = new SerializedObject(_asset);
-
+			_publisherKey = serializedObject.FindProperty("publisherKey");
+			_apiKey = serializedObject.FindProperty("apiKey");
+			_enableSDKInTestMode = serializedObject.FindProperty("enableSDKInTestMode");
+			_enableUnityLogs = serializedObject.FindProperty("enableUnityLogs");
+			_enableManualInitialization = serializedObject.FindProperty("enableManualInitialization");
+			
 			// APS
 			// Android APS UI
 			_androidAppId = serializedObject.FindProperty("androidAppID");
-			_androidApsTimeoutInMilliseconds = serializedObject.FindProperty("androidApsTimeoutInMilliseconds");
-			_androidApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue 
-			                                            == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue;
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
@@ -105,12 +91,9 @@ namespace Nimbus.Editor {
 			_androidApsSlotIdList.elementHeight = 10 * EditorGUIUtility.singleLineHeight;
 			_androidApsSlotIdList.headerHeight = 0f;
 			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsAndroidSlotData;
-
+			
 			// IOS APS UI
 			_iosAppId = serializedObject.FindProperty("iosAppID");
-			_iosApsTimeoutInMilliseconds = serializedObject.FindProperty("iosApsTimeoutInMilliseconds");
-			_iosApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue 
-			                                        == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue;
 			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
 			_iosApsSlotIdList = new ReorderableList(
 				serializedObject, _iosApsSlots,
@@ -169,7 +152,7 @@ namespace Nimbus.Editor {
 			_iosAdMobAdUnitDataList.headerHeight = 0f;
 			_iosAdMobAdUnitDataList.drawElementCallback += OnDrawElementAdMobIOSAdUnitData;
 			
-			//Mintegral
+			// Mintegral
 			// Android Mintegral UI
 			_androidMintegralAppId = serializedObject.FindProperty("androidMintegralAppID");
 			_androidMintegralAppKey = serializedObject.FindProperty("androidMintegralAppKey");
@@ -185,7 +168,7 @@ namespace Nimbus.Editor {
 			// IOS Unity Ads UI
 			_iosUnityAdsGameId = serializedObject.FindProperty("iosUnityAdsGameID");
 			
-			//Moloco
+			// Moloco
 			// Android Moloco UI
 			_androidMolocoAppKey = serializedObject.FindProperty("androidMolocoAppKey");
 			
@@ -200,13 +183,19 @@ namespace Nimbus.Editor {
 			_iosInMobiAccountId = serializedObject.FindProperty("iosInMobiAccountId");
 		}
 
-
 		private void OnDisable() {
 			_androidApsSlotIdList.drawElementCallback -= OnDrawElementApsAndroidSlotData;
 			_iosApsSlotIdList.drawElementCallback -= OnDrawElementApsIOSSlotData;
 			_androidAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobAndroidAdUnitData;
 			_iosAdMobAdUnitDataList.drawElementCallback -= OnDrawElementAdMobIOSAdUnitData;
+			var config = target as NimbusSDKConfiguration;
+			if (config == null) return;
+			config.Sanitize();
+
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
 		}
+
 
 		private void OnDrawElementApsAndroidSlotData(Rect rect, int index, bool isActive, bool isFocused) {
 			var fieldRect = rect;
@@ -281,25 +270,43 @@ namespace Nimbus.Editor {
 				fieldRect.y += fieldRect.height;
 			}
 		}
-		
-		private void OnGUI() {
+
+		public override void OnInspectorGUI() {
+			serializedObject.Update();
+			var config = target as NimbusSDKConfiguration;
+			if (config == null) return;
+			EditorUtility.SetDirty(target);
+
+			var headerStyle = EditorStyles.largeLabel;
+			headerStyle.fontStyle = FontStyle.Bold;
+
+			EditorDrawUtility.DrawScriptableObjectField((NimbusSDKConfiguration)target);
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
-			_publisherKey = EditorGUILayout.TextField("Publisher Key", _publisherKey);
-			_apiKey = EditorGUILayout.TextField("ApiKey", _apiKey);
-			_enableUnityLogs = EditorGUILayout.Toggle("Enable Unity Logger", _enableUnityLogs);
-			_enableSDKInTestMode = EditorGUILayout.Toggle("Enable SDK In Test Mode", _enableSDKInTestMode);
+
+			EditorGUILayout.LabelField("Publisher Credentials", headerStyle);
+			EditorGUILayout.PropertyField(_publisherKey, true);
+			EditorGUILayout.PropertyField(_apiKey, true);
+			EditorGUILayout.Space();
+
+			EditorGUILayout.LabelField("SDK Flags", headerStyle);
+			EditorGUILayout.PropertyField(_enableSDKInTestMode);
 			#if NIMBUS_ENABLE_KOTLIN_UPGRADE
 				EditorGUILayout.LabelField("Android Kotlin Version upgraded to 2.2", EditorStyles.label);
 			#endif
 			#if NIMBUS_ENABLE_GRADLE_UPGRADE
 				EditorGUILayout.LabelField("Android Gradle Version upgraded to 8.14.5", EditorStyles.label);
 			#endif
-			_enableManualInitialization = EditorGUILayout.Toggle("Enable Manual Initialization", _enableManualInitialization);
+			EditorGUILayout.Space();
+
+			EditorGUILayout.LabelField("Enable Unity Logs", headerStyle);
+			EditorGUILayout.PropertyField((_enableUnityLogs));
+			GUILayout.Space(10);
+			
+			EditorGUILayout.LabelField("Enable Manual Initialization", headerStyle);
+			EditorGUILayout.PropertyField(_enableManualInitialization);
+			GUILayout.Space(10);
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
-			EditorGUIUtility.labelWidth = 200.0f; 
-			var headerStyle = EditorStyles.largeLabel;
-			headerStyle.fontStyle = FontStyle.Bold;
 			
 			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
@@ -313,36 +320,38 @@ namespace Nimbus.Editor {
 					GUILayout.Space(10);
 					EditorGUILayout.LabelField("LiveRamp is Enabled for Android", EditorStyles.label);
 				#endif
-							
+				
 				#if NIMBUS_ENABLE_LIVERAMP_IOS
 					GUILayout.Space(10);
 					EditorGUILayout.LabelField("LiveRamp is Enabled for iOS", EditorStyles.label);
 				#endif
 			#endif
-
+			
 			#if NIMBUS_ENABLE_APS_ANDROID || NIMBUS_ENABLE_APS_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
 				GUILayout.Space(10);
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
 				#if NIMBUS_ENABLE_APS_ANDROID
+					ValidateApsSlots("Android", _androidApsSlots);
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidAppId));
-					_androidApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", value: _androidApsTimeoutInMilliseconds.intValue);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
+			
 				#if NIMBUS_ENABLE_APS_IOS
+					ValidateApsSlots("iOS", _androidApsSlots);
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_iosAppId));
-					_iosApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", _iosApsTimeoutInMilliseconds.intValue);
+					EditorGUILayout.PropertyField(_iosAppId);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
-				#endif
+				#endif	
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter APS data", MessageType.Warning);
 				#endif
-			#endif	
+				GUILayout.Space(10);
+			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE_ANDROID || NIMBUS_ENABLE_VUNGLE_IOS
 				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
@@ -352,7 +361,7 @@ namespace Nimbus.Editor {
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidVungleAppId));
 				#endif
-				#if NIMBUS_ENABLE_VUNGLE_IOS
+				#if NIMBUS_ENABLE_VUNGLE_IOS 
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosVungleAppId));
 				#endif
@@ -360,6 +369,7 @@ namespace Nimbus.Editor {
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Vungle data", MessageType.Warning);
 				#endif
+				GUILayout.Space(10);
 			#endif
 			
 			#if NIMBUS_ENABLE_META_ANDROID || NIMBUS_ENABLE_META_IOS
@@ -375,6 +385,7 @@ namespace Nimbus.Editor {
 					EditorGUILayout.PropertyField((_iosMetaAppId));
 				#endif
 				GUILayout.Space(10);
+
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Meta data", MessageType.Warning);
 				#endif
@@ -391,7 +402,6 @@ namespace Nimbus.Editor {
 					EditorDrawUtility.DrawArray(_androidAdMobAdUnitData, "AdMob Android Ad Unit Id Data");
 				#endif
 				#if NIMBUS_ENABLE_ADMOB_IOS
-					_adMobAutoInit = EditorGUILayout.Toggle("Auto Initialize", _adMobAutoInit);
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosAdMobAppId));
 					GUILayout.Space(10);
@@ -411,7 +421,7 @@ namespace Nimbus.Editor {
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidMintegralAppId));
 					EditorGUILayout.PropertyField((_androidMintegralAppKey));
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					GUILayout.Space(10);
 				#endif
 				#if NIMBUS_ENABLE_MINTEGRAL_IOS
 					GUILayout.Space(10);
@@ -419,7 +429,6 @@ namespace Nimbus.Editor {
 					EditorGUILayout.PropertyField((_iosMintegralAppKey));
 					GUILayout.Space(10);
 				#endif
-
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Mintegral data", MessageType.Warning);
 				#endif
@@ -437,7 +446,6 @@ namespace Nimbus.Editor {
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField(_iosUnityAdsGameId);
 				#endif
-				GUILayout.Space(10);
 
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Unity Ads data", MessageType.Warning);
@@ -466,14 +474,13 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_MOLOCO_ANDROID
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidMolocoAppKey));
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					GUILayout.Space(10);
 				#endif
-					#if NIMBUS_ENABLE_MOLOCO_IOS
+				#if NIMBUS_ENABLE_MOLOCO_IOS
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosMolocoAppKey));
 					GUILayout.Space(10);
 				#endif
-
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Moloco data", MessageType.Warning);
 				#endif
@@ -486,179 +493,21 @@ namespace Nimbus.Editor {
 				#if NIMBUS_ENABLE_INMOBI_ANDROID
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_androidInMobiAccountId));
-					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+					GUILayout.Space(10);
 				#endif
-					#if NIMBUS_ENABLE_INMOBI_IOS
+				#if NIMBUS_ENABLE_INMOBI_IOS
 					GUILayout.Space(10);
 					EditorGUILayout.PropertyField((_iosInMobiAccountId));
 					GUILayout.Space(10);
 				#endif
-
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter InMobi data", MessageType.Warning);
 				#endif
 			#endif
 			
-			// ReSharper disable InvertIf
-			if (GUILayout.Button("Create")) {
-				_asset.publisherKey = _publisherKey;
-				_asset.apiKey = _apiKey;
-				_asset.enableUnityLogs = _enableUnityLogs;
-				_asset.enableSDKInTestMode = _enableSDKInTestMode;
-				_asset.enableManualInitialization = _enableManualInitialization;
-
-				#if NIMBUS_ENABLE_APS_ANDROID
-					HandleApsSlots(_androidApsSlots, out _asset.androidApsSlotData);
-				#endif
-				#if NIMBUS_ENABLE_APS_IOS
-					HandleApsSlots(_iosApsSlots, out _asset.iosApsSlotData);
-				#endif
-				
-				#if NIMBUS_ENABLE_ADMOB_ANDROID
-					HandleAdMobAdUnitData(_androidAdMobAdUnitData, out _asset.androidAdMobAdUnitData);
-				#endif
-				#if NIMBUS_ENABLE_ADMOB_IOS
-					HandleAdMobAdUnitData(_iosAdMobAdUnitData, out _asset.iosAdMobAdUnitData);
-				#endif
-				
-				_asset.Sanitize();
-				if (_asset.apiKey.IsNullOrEmpty()) {
-					Debug.unityLogger.LogError("Nimbus", 
-						"Apikey cannot be empty, object NimbusAdsManager not created");
-					return;
-				}
-
-				if (_asset.publisherKey.IsNullOrEmpty()) {
-					Debug.unityLogger.LogError("Nimbus", 
-						"Publisher cannot be empty, object NimbusAdsManager not created");
-					return;
-				}
-
-				#if NIMBUS_ENABLE_APS_ANDROID
-					if (!ValidateApsData("Android", _androidAppId, _asset.androidApsSlotData)) {
-						return;
-					}
-					_asset.androidAppID = _androidAppId.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_APS_IOS
-					if (!ValidateApsData("iOS", _iosAppId, _asset.iosApsSlotData)) {
-						return;
-					}
-					_asset.iosAppID = _iosAppId.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_VUNGLE_ANDROID
-					if (!ValidateVungleData("Android", _androidVungleAppId)) {
-						return;
-					}
-					_asset.androidVungleAppID = _androidVungleAppId.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_VUNGLE_IOS
-					if (!ValidateVungleData("iOS", _iosVungleAppId)) {
-						return;
-					}
-					_asset.iosVungleAppID = _iosVungleAppId.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_META_ANDROID
-					if (!ValidateMetaData("Android", _androidMetaAppId)) {
-						return;
-					}
-					_asset.androidMetaAppID = _androidMetaAppId.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_META_IOS
-					if (!ValidateMetaData("iOS", _iosMetaAppId)) {
-						return;
-					}
-					_asset.iosMetaAppID = _iosMetaAppId.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_ADMOB_ANDROID
-					if (!ValidateAdMobData("Android", _androidAdMobAppId, _asset.androidAdMobAdUnitData)) {
-						return;
-					}
-					_asset.androidAdMobAppID = _androidAdMobAppId.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_ADMOB_IOS
-					if (!ValidateAdMobData("iOS", _iosAdMobAppId, _asset.iosAdMobAdUnitData)) {
-						return;
-					}
-					_asset.iosAdMobAppID = _iosAdMobAppId.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_MINTEGRAL_ANDROID
-					if (!ValidateMintegralData("Android", _androidMintegralAppId, _androidMintegralAppKey)) {
-						return;
-					}
-					_asset.androidMintegralAppID = _androidMintegralAppId.stringValue;
-					_asset.androidMintegralAppKey = _androidMintegralAppKey.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_MINTEGRAL_IOS
-					if (!ValidateMintegralData("iOS", _iosMintegralAppId, _iosMintegralAppKey)) {
-						return;
-					}
-					_asset.iosMintegralAppID = _iosMintegralAppId.stringValue;
-					_asset.iosMintegralAppKey = _iosMintegralAppKey.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_UNITY_ADS_ANDROID
-					if (!ValidateUnityAdsData("Android", _androidUnityAdsGameId)) {
-						return;
-					}
-					_asset.androidUnityAdsGameID = _androidUnityAdsGameId.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_UNITY_ADS_IOS
-					if (!ValidateUnityAdsData("iOS", _iosUnityAdsGameId)) {
-						return;
-					}
-					_asset.iosUnityAdsGameID = _iosUnityAdsGameId.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_MOLOCO_ANDROID
-					if (!ValidateMolocoData("Android", _androidMolocoAppKey)) {
-						return;
-					}
-					_asset.androidMolocoAppKey = _androidMolocoAppKey.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_MOLOCO_IOS
-					if (!ValidateMolocoData("iOS", _iosMolocoAppKey)) {
-						return;
-					}
-					_asset.iosMolocoAppKey = _iosMolocoAppKey.stringValue;
-				#endif
-				
-				#if NIMBUS_ENABLE_INMOBI_ANDROID
-					if (!ValidateInMobiData("Android", _androidInMobiAccountId)) {
-						return;
-					}
-					_asset.androidInMobiAccountId = _androidInMobiAccountId.stringValue;
-				#endif
-				#if NIMBUS_ENABLE_INMOBI_IOS
-					if (!ValidateInMobiData("iOS", _iosInMobiAccountId)) {
-						return;
-					}
-					_asset.iosInMobiAccountId = _iosInMobiAccountId.stringValue;
-				#endif
-
-				AssetDatabase.CreateAsset(_asset,
-					"Packages/com.adsbynimbus.nimbus/Runtime/Scripts/Nimbus.ScriptableObjects/NimbusSDKConfiguration.asset");
-				AssetDatabase.SaveAssets();
-
-				var go = new GameObject {
-					name = "NimbusAdsManager"
-				};
-				var manager = go.AddComponent<NimbusManager>();
-				manager.SetNimbusSDKConfiguration(_asset);
-
-				Undo.RegisterCreatedObjectUndo(go, "NimbusManager created");
-				Selection.activeObject = go;
-				EditorUtility.FocusProjectWindow();
-				Close();
-			}
+			serializedObject.ApplyModifiedProperties();
 		}
-
-
-		private void HandleApsSlots(SerializedProperty slotData, out ApsSlotData[] platformSlots) {
+		private void ValidateApsSlots(string platform, SerializedProperty slotData) {
 			var apsSlotData = new List<ApsSlotData>();
 			for (var i = 0; i < slotData.arraySize; i++) {
 				var item = slotData.GetArrayElementAtIndex(i);
@@ -675,157 +524,23 @@ namespace Nimbus.Editor {
 
 				apsSlotData.Add(apsData);
 			}
-			platformSlots = apsSlotData.ToArray();
-		}	
-
-		private bool ValidateApsData(string platform, SerializedProperty appId, ApsSlotData[] slotData) {
-			if (appId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					"APS SDK has been included, the APS App ID cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			
-			if (slotData == null || slotData.Length == 0) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"APS SDK has been included, APS placement slots for {platform} need to be entered, object NimbusAdsManager not created");
-				return false;
-			}
-
+			var platformSlots = apsSlotData.ToArray();
 			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
-			foreach (var apsSlot in slotData) {
-				if (apsSlot.slotId.IsNullOrEmpty()) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, the APS slot id for {platform} cannot be empty, object NimbusAdsManager not created");
-					return false;
-				}
-
+			foreach (var apsSlot in platformSlots) {
 				if (!seenAdTypes.ContainsKey(apsSlot.adUnitType)) {
 					seenAdTypes.Add(apsSlot.adUnitType, true);
 				}
 				else {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.adUnitType} for {platform}, object NimbusAdsManager not created");
-					return false;
+					if (!_errorLogged)
+					{
+						Debug.unityLogger.LogError("Nimbus", 
+							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.adUnitType} for {platform}, object NimbusAdsManager not created");
+						_errorLogged = true;
+					}
+					return;
 				}
 			}
-			return true;
-		}
-		
-		private bool ValidateVungleData(string platform, SerializedProperty appId) { 
-			if (appId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"Vungle SDK has been included, the {platform} Vungle App ID cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			return true;
-		}
-		
-		private bool ValidateMetaData(string platform, SerializedProperty appId) {
-			if (appId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"Meta SDK has been included, the {platform} Meta App ID cannot be empty, object NimbusAdsManager not created");
-				return false; 
-			}
-			return true;
-		}
-
-		private void HandleAdMobAdUnitData(SerializedProperty adUnitData, out AdMobAdUnit[] adUnits)
-		{
-			var adUnitList = new List<AdMobAdUnit>();
-			for (var i = 0; i < adUnitData.arraySize; i++) {
-				var item = adUnitData.GetArrayElementAtIndex(i);
-				var adUnitId = item.FindPropertyRelative("AdUnitId");
-
-				var adMobData  = new AdMobAdUnit() {
-					AdUnitId = adUnitId?.stringValue
-				};
-
-				var adUnitType = item.FindPropertyRelative("AdUnitType");
-				if (adUnitType != null) {
-					adMobData.AdUnitType = (AdType)adUnitType.enumValueIndex;
-				}
-
-				adUnitList.Add(adMobData);
-			}
-			adUnits = adUnitList.ToArray();
-		}
-		
-		private bool ValidateAdMobData(string platform, SerializedProperty appId, AdMobAdUnit[] adUnitData) {
-			
-			if (appId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"AdMob SDK has been included, the {platform} AdMob App ID cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			
-			if (adUnitData == null || adUnitData.Length == 0) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"AdMob SDK has been included, AdMob Ad Unit ids for {platform} need to be entered, object NimbusAdsManager not created");
-				return false;
-			}
-
-			var seenAdTypes = new Dictionary<AdType, bool>();
-			foreach (var adUnit in adUnitData) {
-				if (adUnit.AdUnitId.IsNullOrEmpty()) {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"AdMob SDK has been included, the Ad Unit id for {platform} cannot be empty, object NimbusAdsManager not created");
-					return false;
-				}
-
-				if (!seenAdTypes.ContainsKey(adUnit.AdUnitType)) {
-					seenAdTypes.Add(adUnit.AdUnitType, true);
-				}
-				else {
-					Debug.unityLogger.LogError("Nimbus", 
-						$"AdMob SDK has been included, AdMob cannot contain duplicate ad type {adUnit.AdUnitType} for {platform}, object NimbusAdsManager not created");
-					return false;
-				}
-			}
-			return true;
-		}
-		
-		private bool ValidateMintegralData(string platform, SerializedProperty appId, SerializedProperty appKey) {
-			
-			if (appId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"Mintegral SDK has been included, the {platform} Mintegral App ID cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			if (appKey.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"Mintegral SDK has been included, the {platform} Mintegral App Key cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			return true;
-		}
-		
-		private bool ValidateUnityAdsData(string platform, SerializedProperty gameId) {
-			if (gameId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"Unity Ads SDK has been included, the {platform} Unity Ads Game ID cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			return true;
-		}
-		
-		
-		private bool ValidateMolocoData(string platform, SerializedProperty appKey) {
-			if (appKey.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"Moloco SDK has been included, the {platform} Moloco App Key cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			return true;
-		}
-		
-		
-		private bool ValidateInMobiData(string platform, SerializedProperty accountId) {
-			if (accountId.stringValue.IsNullOrEmpty()) {
-				Debug.unityLogger.LogError("Nimbus", 
-					$"InMobi SDK has been included, the {platform} InMobi Account Id cannot be empty, object NimbusAdsManager not created");
-				return false;
-			}
-			return true;
+			_errorLogged = false;
 		}
 	}
 }

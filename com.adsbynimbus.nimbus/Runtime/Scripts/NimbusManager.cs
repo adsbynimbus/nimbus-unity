@@ -5,12 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Internal;
+using Internal.AdObjects;
+using Internal.Extensions;
 using Newtonsoft.Json.Linq;
-using Nimbus.Internal;
-using Nimbus.Internal.Extensions;
-using Nimbus.Internal.Extensions.AdMob;
-using Nimbus.RTB;
-using Nimbus.ScriptableObjects;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

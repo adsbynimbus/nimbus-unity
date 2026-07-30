@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nimbus.Internal;
-using Nimbus.Internal.Extensions;
-using Nimbus.RTB;
+using Internal;
+using Internal.AdObjects;
+using Internal.Extensions;
 using Nimbus.Runtime.Scripts;
 using TMPro;
 using UnityEngine;

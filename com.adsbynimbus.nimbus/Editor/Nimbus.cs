@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using Nimbus.ScriptableObjects;
+using ScriptableObjects;
 using UnityEditor;
 
 namespace Nimbus.Editor {

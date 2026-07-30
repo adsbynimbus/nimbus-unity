@@ -1,6 +1,6 @@
 using System.Threading;
 using Example.Scripts.NotAdRelated;
-using Nimbus.Internal;
+using Internal.AdObjects;
 using Nimbus.Runtime.Scripts;
 using UnityEngine;
 

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using Nimbus.Internal.Utility;
-using Nimbus.ScriptableObjects;
+using Internal.Utility;
+using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
