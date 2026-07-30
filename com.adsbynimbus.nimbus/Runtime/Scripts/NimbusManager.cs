@@ -499,6 +499,7 @@ namespace Nimbus.Runtime.Scripts {
 
 		/// <summary>
 		///		If enabled, only tap gestures are allowed for inline ads. Default is false
+		///		(iOS only setting)
 		/// </summary>
 		/// <param name="enableSwipeProtection"/>
 		public void EnableSwipeProtection(bool enableSwipeProtection)
@@ -507,7 +508,7 @@ namespace Nimbus.Runtime.Scripts {
 		}
 
 		/// <summary>
-		///		Sets if SKOverlay is enabled for all ad units
+		///		Sets if SKOverlay is enabled for all ad units (iOS only setting)
 		/// </summary>
 		/// <param name="isSkOverlayEnabledForAllUnits"/>
 		public void SetIsSkOverlayEnabledForAllUnits(bool isSkOverlayEnabledForAllUnits)

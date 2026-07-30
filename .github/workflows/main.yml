@@ -1,47 +1,13 @@
-name: GameCI 🎮
+name: Build and Test Native Projects
 
-on: [pull_request]
-  
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 jobs:
-  test:
-    name: Run Unit Tests 🧪
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      # Cache
-      - uses: actions/cache@v4
-        with:
-          path: sample-app/Library
-          key: Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
-          restore-keys: |
-            Library-test-
-            Library-
-      # Rename file so build picks it up
-      - name: Rename nimbus.rsp to csc.rsp
-        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
-      # Apply Pre Processor Symbols (Compiler options)
-      - name: Apply csc.rsp (pre-processor symbols)
-        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
-      # Test
-      - name: Run tests
-        uses: game-ci/unity-test-runner@v4
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: sample-app
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-
   buildPlatforms:
     name: Build for ${{ matrix.targetPlatform }} with Unity Version ${{ matrix.unityVersion }}✨
-    needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -72,7 +38,7 @@ jobs:
       # Rename file so build picks it up
       - name: Rename nimbus.rsp to csc.rsp
         run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
-      # Apply Pre Processor Symbols (Compiler options)      
+      # Apply Pre Processor Symbols (Compiler options)
       - name: Apply csc.rsp (pre-processor symbols)
         run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
       - name: Ensure plugin directory exist
@@ -89,4 +55,173 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
+  build-unity:
+    name: Export Xcode Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: sample-app/Library
+          key: Library-iOS-auto-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-iOS-auto-
+            Library-iOS-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
           
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+
+      - name: Export iOS Xcode Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: iOS
+          buildName: iOS-Build
+          buildsPath: builds
+          unityVersion: auto
+          projectPath: sample-app
+          allowDirtyBuild: true
+          # Unity natively exports to an Xcode project for iOS, so no extra flags are needed.
+      - name: Upload Xcode Project Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Xcode-Project
+          path: builds/iOS/iOS-Build
+          retention-days: 1
+#  commenting out this part of the run until 3.0 goes live
+#  test-ios:
+#      name: Run iOS Native Tests
+#      needs: build-unity
+#      runs-on: macos-latest
+#      steps:
+#        - name: Download Xcode Project
+#          uses: actions/download-artifact@v4
+#          with:
+#            name: Xcode-Project
+#            path: builds/iOS-Build
+#  
+#        - name: Run iOS Native Tests (XCTest/XCUITest)
+#          run: |
+#            cd builds/iOS-Build
+#            
+#            # Force pod repo to update so dependencies resolve correctly
+#            pod install --repo-update
+#            
+#            # Run tests (Requires a custom Unity PostProcess script to create the test target)
+#            xcodebuild test \
+#              -workspace Unity-iPhone.xcworkspace \
+#              -scheme UnityPluginTests \
+#              -destination 'platform=iOS Simulator,name=iPhone 16' \
+#              clean test
+  export-and-test-android:
+    name: Build & Test Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: sample-app/Library
+          key: Library-Android-auto-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+          restore-keys: |
+            Library-Android-auto-
+            Library-Android-
+            Library-test-${{ hashFiles('sample-app/Assets/**', 'sample-app/Packages/**', 'sample-app/ProjectSettings/**') }}
+            Library-
+          
+      # Rename file so build picks it up
+      - name: Rename nimbus.rsp to csc.rsp
+        run: cp -f sample-app/Assets/nimbus.rsp sample-app/Assets/csc.rsp
+      # Apply Pre Processor Symbols (Compiler options)
+      - name: Apply csc.rsp (pre-processor symbols)
+        run: echo -define:MY_SYMBOL >> sample-app/Assets/csc.rsp
+
+      - name: Export Android Gradle Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: Android
+          buildName: Android-Build
+          buildsPath: builds
+          unityVersion: auto
+          projectPath: sample-app
+          androidExportType: 'androidStudioProject'
+          allowDirtyBuild: true
+          
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.13' 
+
+      - name: Patch AGP Version for Gradle 8
+        run: |
+          cd builds/Android/Android-Build
+          
+          # Take ownership of the files back from Docker's root user
+          sudo chown -R $USER:$USER .
+          
+          # Now sed has permission to create temporary files and modify the build.gradle
+          find . -name "build.gradle" -exec sed -i 's/com.android.tools.build:gradle:[0-9]\.[0-9]\.[0-9]/com.android.tools.build:gradle:8.1.0/g' {} +
+
+      - name: Run Android Instrumented Tests (Espresso)
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ADB_INSTALL_TIMEOUT: 10
+        with:
+          api-level: 30
+          target: google_atd
+          arch: x86_64
+          ram-size: 2048M
+          disk-size: 2048M
+          emulator-boot-timeout: 1200
+          disable-animations: true
+          emulator-options: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
+          script: |
+            # 1. Take ownership and set SDK path directly
+            sudo chown -R $USER:$USER builds/Android/Android-Build #
+            echo "sdk.dir=$ANDROID_HOME" > builds/Android/Android-Build/local.properties #
+
+            echo "subprojects { afterEvaluate { project -> if (project.hasProperty('android')) { project.android.splits.abi.enable = false } } }" >> builds/Android/Android-Build/build.gradle #
+            
+            # 2. Buffer for Android background services
+            echo "Waiting for background services to settle..." #
+            sleep 15 #
+            
+            # 3. Make Wrapper executable directly
+            chmod +x builds/Android/Android-Build/gradlew 2>/dev/null || true #
+            
+            # 4. Run Unit Tests (Forces Gradle to target the specific folder)
+            builds/Android/Android-Build/gradlew testDebugUnitTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info || gradle testDebugUnitTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info #
+            
+            # 5. Run Espresso Tests (Forces Gradle to target the specific folder)
+            builds/Android/Android-Build/gradlew connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info || gradle connectedAndroidTest --project-dir builds/Android/Android-Build -x buildIl2Cpp --info #
+      - name: Upload Espresso Test Reports
+        if: always() 
+        uses: actions/upload-artifact@v4
+        with:
+          name: Espresso-Reports
+          path: builds/Android/Android-Build/**/build/reports/androidTests/connected/
+          retention-days: 3

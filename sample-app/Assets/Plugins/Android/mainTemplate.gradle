@@ -1,0 +1,83 @@
+apply plugin: 'com.android.library'
+apply from: '../shared/keepUnitySymbols.gradle'
+**APPLY_PLUGINS**
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+// Android Resolver Dependencies Start
+    implementation 'com.adsbynimbus.android:nimbus:3.0.0-rc.1' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:7
+    implementation 'com.google.android.material:material:1.12.0' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:9
+// Android Resolver Dependencies End
+    // Local Unit Tests (Run on JVM)
+    androidTestImplementation 'junit:junit:4.13.2' 
+    
+    // Instrumented Tests (Run on Android Device/Emulator)
+    androidTestImplementation 'junit:junit:4.13.2' 
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+**DEPS**}
+
+// Android Resolver Exclusions Start
+android {
+  packaging {
+      exclude ('/lib/armeabi/*' + '*')
+      exclude ('/lib/armeabi-v7a/*' + '*')
+      exclude ('/lib/mips/*' + '*')
+      exclude ('/lib/mips64/*' + '*')
+      exclude ('/lib/x86/*' + '*')
+  }
+}
+// Android Resolver Exclusions End
+android {
+    namespace "com.unity3d.player"
+    ndkPath "**NDKPATH**"
+    ndkVersion "**NDKVERSION**"
+
+    compileSdk **APIVERSION**
+    buildToolsVersion = "**BUILDTOOLS**"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    
+    sourceSets {
+        // 1. Local Unit Tests
+        test {
+            java.srcDirs = ['src/test/java', '${project.rootDir}/../Assets/Plugins/Android/Tests/Unit']
+            kotlin.srcDirs = ['src/test/kotlin', '${project.rootDir}/../Assets/Plugins/Android/Tests/Unit']
+        }
+        
+        // 2. Instrumented UI Tests
+        androidTest {
+            java.srcDirs = ['src/androidTest/java', '${project.rootDir}/../Assets/Plugins/Android/Tests/UI']
+            kotlin.srcDirs = ['src/androidTest/kotlin', '${project.rootDir}/../Assets/Plugins/Android/Tests/UI']
+        }
+    }
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk **MINSDK**
+        targetSdk **TARGETSDK**
+        ndk {
+            abiFilters **ABIFILTERS**
+            debugSymbolLevel **DEBUGSYMBOLLEVEL**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+        consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
+**DEFAULT_CONFIG_SETUP**
+    }
+
+    lint {
+        abortOnError false
+    }
+
+    androidResources {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }**PACKAGING**
+}
+**IL_CPP_BUILD_SETUP**
+**SOURCE_BUILD_SETUP**
+**EXTERNAL_SOURCES**
