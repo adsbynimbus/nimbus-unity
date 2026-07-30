@@ -196,7 +196,7 @@ import NimbusMobileFuseKit
                     try await bannerAd.show(in: contentView)
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } else {
-                    try await bannerAd.fetch()
+                    try await bannerAd.load()
                 }
                 self.ad = bannerAd
             } catch {

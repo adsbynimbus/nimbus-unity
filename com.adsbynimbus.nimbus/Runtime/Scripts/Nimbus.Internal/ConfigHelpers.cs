@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 using Nimbus.RTB;
 using UnityEngine;
 
-namespace Nimbus.Internal.Extensions
+namespace Nimbus.Internal
 {
-    public class ConfigHelpers
+    public static class ConfigHelpers
     {
         #if UNITY_IOS
         [DllImport("__Internal")]

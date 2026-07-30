@@ -80,6 +80,8 @@ object NimbusManager {
             if (showAd) {
                 showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                 sendRenderNimbusEvent(instanceId)
+            } else {
+                ad.load()
             }
             adCache.put(instanceId, ad)
         }
