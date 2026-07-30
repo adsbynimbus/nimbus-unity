@@ -13,31 +13,35 @@ using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Nimbus.Runtime.Scripts {
+namespace AdsByNimbus.Public
+{
 	[DisallowMultipleComponent]
-	public class NimbusManager : MonoBehaviour {
+	public class Nimbus : MonoBehaviour
+	{
 		[field: SerializeField] private NimbusSDKConfiguration _configuration;
-		
+
 		private bool _isTheApplicationBackgrounded;
 		public NimbusAPI NimbusPlatformAPI;
 		private CancellationTokenSource _ctx;
 		public AdEvents NimbusEvents;
-		public static NimbusManager Instance;
+		public static Nimbus Instance;
 		private bool _coppa;
 
-		private void Awake() {
+		private void Awake()
+		{
 			if (_configuration == null) throw new Exception("The configuration object cannot be null");
 
-			if (Instance == null) {
+			if (Instance == null)
+			{
 				Debug.unityLogger.logEnabled = _configuration.enableUnityLogs;
 				NimbusPlatformAPI = NimbusPlatformAPI ?? new
-				#if UNITY_EDITOR
+#if UNITY_EDITOR
 					Editor
-				#elif UNITY_ANDROID
-					Android
-				#else
-					IOS
-				#endif
+#elif UNITY_ANDROID
+				Android
+#else
+				IOS
+#endif
 					();
 				NimbusEvents = new AdEvents();
 				_ctx = new CancellationTokenSource();
@@ -46,12 +50,15 @@ namespace Nimbus.Runtime.Scripts {
 				{
 					InitializeNimbusSDK();
 				}
+
 				DontDestroyOnLoad(gameObject);
 			}
-			else if (Instance != this) {
+			else if (Instance != this)
+			{
 				Destroy(gameObject);
 			}
 		}
+
 		private IEnumerator Start()
 		{
 			yield return new WaitForEndOfFrame();
@@ -63,7 +70,7 @@ namespace Nimbus.Runtime.Scripts {
 			SceneManager.sceneLoaded += OnSceneLoaded;
 			yield return null;
 		}
-		
+
 		// Listener for sceneLoaded
 		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
@@ -71,34 +78,40 @@ namespace Nimbus.Runtime.Scripts {
 			AutoSubscribe();
 		}
 
-		private void OnDisable() {
+		private void OnDisable()
+		{
 			_ctx?.Cancel();
 			AutoUnsubscribe();
 		}
 
-		private void OnApplicationPause(bool isPaused) {
+		private void OnApplicationPause(bool isPaused)
+		{
 			_isTheApplicationBackgrounded = isPaused;
 		}
 
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
 		[SuppressMessage("ReSharper", "InvertIf")]
-		private static void AutoSubscribe() {
+		private static void AutoSubscribe()
+		{
 			if (Instance == null) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
-			foreach (var iAdEvent in iAdEvents) {
+			foreach (var iAdEvent in iAdEvents)
+			{
 				Instance.NimbusEvents.OnAdLoaded += iAdEvent.OnAdLoaded;
 				Instance.NimbusEvents.OnAdRendered += iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError += iAdEvent.OnAdError;
 				Instance.NimbusEvents.OnAdClicked += iAdEvent.OnAdClicked;
 				Instance.NimbusEvents.OnAdCompleted += iAdEvent.OnAdCompleted;
 
-				if (iAdEvent is IAdEventsExtended iAdEventExt) {
+				if (iAdEvent is IAdEventsExtended iAdEventExt)
+				{
 					Instance.NimbusEvents.OnAdImpression += iAdEventExt.OnAdImpression;
 					Instance.NimbusEvents.OnAdDestroyed += iAdEventExt.OnAdDestroyed;
 					Instance.NimbusEvents.OnAdRewardEarned += iAdEventExt.OnAdRewardEarned;
 				}
 
-				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt) {
+				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt)
+				{
 					Instance.NimbusEvents.OnVideoAdPaused += iAdEventVideoExt.OnVideoAdPaused;
 					Instance.NimbusEvents.OnVideoAdResume += iAdEventVideoExt.OnVideoAdResume;
 				}
@@ -107,22 +120,26 @@ namespace Nimbus.Runtime.Scripts {
 
 		[SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
 		[SuppressMessage("ReSharper", "InvertIf")]
-		private static void AutoUnsubscribe() {
+		private static void AutoUnsubscribe()
+		{
 			if (Instance == null) return;
 			var iAdEvents = FindObjectsOfType<MonoBehaviour>().OfType<IAdEvents>();
-			foreach (var iAdEvent in iAdEvents) {
+			foreach (var iAdEvent in iAdEvents)
+			{
 				Instance.NimbusEvents.OnAdLoaded -= iAdEvent.OnAdLoaded;
 				Instance.NimbusEvents.OnAdRendered -= iAdEvent.OnAdWasRendered;
 				Instance.NimbusEvents.OnAdError -= iAdEvent.OnAdError;
 				Instance.NimbusEvents.OnAdClicked -= iAdEvent.OnAdClicked;
 				Instance.NimbusEvents.OnAdCompleted -= iAdEvent.OnAdCompleted;
 
-				if (iAdEvent is IAdEventsExtended iAdEventExt) {
+				if (iAdEvent is IAdEventsExtended iAdEventExt)
+				{
 					Instance.NimbusEvents.OnAdImpression -= iAdEventExt.OnAdImpression;
 					Instance.NimbusEvents.OnAdDestroyed -= iAdEventExt.OnAdDestroyed;
 				}
 
-				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt) {
+				if (iAdEvent is IAdEventsVideoExtended iAdEventVideoExt)
+				{
 					Instance.NimbusEvents.OnVideoAdPaused -= iAdEventVideoExt.OnVideoAdPaused;
 					Instance.NimbusEvents.OnVideoAdResume -= iAdEventVideoExt.OnVideoAdResume;
 				}
@@ -140,8 +157,8 @@ namespace Nimbus.Runtime.Scripts {
 				NimbusPlatformAPI.InitializeSDK(_configuration);
 			}
 		}
-		
-		
+
+
 		/// <summary>
 		///     BannerAd uses the RTB object data and creates an InlineAd object.  The InlineAd's methods
 		///		Load() and/or Show() can then be called to communicate to Nimbus servers and invoke a server side auction
@@ -176,13 +193,15 @@ namespace Nimbus.Runtime.Scripts {
 		///		InlineAd object that correlates to the Requested Ad
 		/// </returns>
 		public InlineAd BannerAd(string nimbusReportingPosition, float bannerFloor = 0f,
-				IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false, 
-				NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int refreshIntervalInSeconds = 30,
-				RequestModifiers requestModifiers = new RequestModifiers()) {
-			return new InlineAd(NimbusEvents, nimbusReportingPosition, adPosition, modifiers: requestModifiers, adSize, respectSafeArea,  
+			IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false,
+			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int refreshIntervalInSeconds = 30,
+			RequestModifiers requestModifiers = new RequestModifiers())
+		{
+			return new InlineAd(NimbusEvents, nimbusReportingPosition, adPosition, modifiers: requestModifiers, adSize,
+				respectSafeArea,
 				refreshIntervalInSeconds, bannerBidFloor: bannerFloor);
 		}
-				
+
 		/// <summary>
 		///     FullscreenAd pre constructs a Nimbus hybrid auction RTB object.  The InlineAd's methods
 		///		Load() and/or Show() can then be called to communicate to Nimbus servers and invoke a server side auction
@@ -208,12 +227,13 @@ namespace Nimbus.Runtime.Scripts {
 		/// <returns>
 		///		NimbusAdUnit that correlates to the Requested Ad
 		/// </returns>
-		public FullscreenAd FullscreenAd(string nimbusReportingPosition, 
-			float bannerFloor = 0f, float videoFloor = 0f, RequestModifiers requestModifiers = new RequestModifiers()) {
-			return new FullscreenAd(NimbusEvents, nimbusReportingPosition, 
+		public FullscreenAd FullscreenAd(string nimbusReportingPosition,
+			float bannerFloor = 0f, float videoFloor = 0f, RequestModifiers requestModifiers = new RequestModifiers())
+		{
+			return new FullscreenAd(NimbusEvents, nimbusReportingPosition,
 				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor, modifiers: requestModifiers);
 		}
-		
+
 		/// <summary>
 		///     RewardedAd pre constructs a Nimbus Video auction RTB object and communicates
 		///		data to Nimbus servers to invoke a server side auction to potentially return a
@@ -233,12 +253,13 @@ namespace Nimbus.Runtime.Scripts {
 		/// <returns>
 		///		NimbusAdUnit that correlates to the Requested Ad
 		/// </returns>
-		public RewardedAd RewardedAd(string nimbusReportingPosition, float videoFloor = 0f, 
-			RequestModifiers requestModifiers = new RequestModifiers()) {
-			return new RewardedAd(NimbusEvents, nimbusReportingPosition, 
+		public RewardedAd RewardedAd(string nimbusReportingPosition, float videoFloor = 0f,
+			RequestModifiers requestModifiers = new RequestModifiers())
+		{
+			return new RewardedAd(NimbusEvents, nimbusReportingPosition,
 				videoBidFloor: videoFloor, modifiers: requestModifiers);
 		}
-		
+
 		/// <summary>
 		///		Unique session id for the current app session
 		/// </summary>
@@ -261,7 +282,7 @@ namespace Nimbus.Runtime.Scripts {
 		{
 			ConfigHelpers.SetCoppa(coppa);
 		}
-		
+
 		/// <summary>
 		///     Details about the human user of the device; the advertising audience
 		/// </summary>
@@ -359,14 +380,14 @@ namespace Nimbus.Runtime.Scripts {
 		/*
 		 * /// Example of the methods in the Native Nimbus iOS SDK
 		   public protocol VerificationProvider : Sendable {
-		   
+
 		       func verificationMarkup(response: NimbusKit.NimbusResponse) -> String
-		   
+
 		       func verificationResource(response: NimbusKit.NimbusResponse) -> NimbusKit.VerificationScriptResource?
 		   }
-		   
+
 		   public struct VerificationScriptResource {
-		   
+
 		       public init?(url: URL, vendorKey: String?, parameters: String?)
 		   }
 		 */
@@ -374,40 +395,41 @@ namespace Nimbus.Runtime.Scripts {
 		{
 			ConfigHelpers.SetVerificationProviders(providers);
 		}
-		
-		#if NIMBUS_ENABLE_LIVERAMP
-		/// <summary>
-		///     This method will initialize the LiveRamp Identity SDK
-		/// </summary>
-		/// <param name="configId">
-		///		Config ID provided by LiveRamp
-		/// </param>
-		/// <param name="email">
-		///		Email is the preferred method for identifying a user
-		/// </param>
-		/// <param name="hasConsentForNoLegislation">
-		///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
-		///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
-		/// </param>
-		/// <param name="isTestMode">
-		///		Set to true if wishing to use test mode.
-		/// </param>
-			public static void initializeLiveRamp(String configId, String email,
-				Boolean hasConsentForNoLegislation, Boolean isTestMode)
-			{
-					// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
-					NimbusLiveRampHelpers.initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
-			}
-		#endif
-		
-		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration) {
+
+#if NIMBUS_ENABLE_LIVERAMP
+	/// <summary>
+	///     This method will initialize the LiveRamp Identity SDK
+	/// </summary>
+	/// <param name="configId">
+	///		Config ID provided by LiveRamp
+	/// </param>
+	/// <param name="email">
+	///		Email is the preferred method for identifying a user
+	/// </param>
+	/// <param name="hasConsentForNoLegislation">
+	///		Set to true if the user is not governed by consent laws (i.e CCPA/GDPR)
+	///		Refer to https://developers.liveramp.com/authenticatedtraffic-api/docs/init-best-practices#consent-requirements
+	/// </param>
+	/// <param name="isTestMode">
+	///		Set to true if wishing to use test mode.
+	/// </param>
+		public static void initializeLiveRamp(String configId, String email,
+			Boolean hasConsentForNoLegislation, Boolean isTestMode)
+		{
+				// if Nimbus SDK hasn't been initialized yet, wait for SDK initialization
+				NimbusLiveRampHelpers.initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
+		}
+#endif
+
+		public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration)
+		{
 			_configuration = configuration;
 		}
-		
-		public NimbusSDKConfiguration GetNimbusConfiguration() {
+
+		public NimbusSDKConfiguration GetNimbusConfiguration()
+		{
 			return _configuration;
 		}
 
 	}
-
 }

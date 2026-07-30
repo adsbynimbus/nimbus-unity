@@ -1,9 +1,9 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using Internal.AdObjects;
 using Internal.Extensions.AdMob;
 using Internal.Extensions.APS;
 using Internal.Utility;
-using Nimbus.Runtime.Scripts;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEditorInternal;
@@ -12,12 +12,10 @@ using Debug = UnityEngine.Debug;
 
 #region ThirdPartySDKImports
 
-using System.Collections.Generic;
-
 #endregion
 
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class NimbusManagerCreator : EditorWindow {
 		private string _apiKey;
 		private string _publisherKey;
@@ -647,7 +645,7 @@ namespace Nimbus.Editor {
 				var go = new GameObject {
 					name = "NimbusAdsManager"
 				};
-				var manager = go.AddComponent<NimbusManager>();
+				var manager = go.AddComponent<Public.Nimbus>();
 				manager.SetNimbusSDKConfiguration(_asset);
 
 				Undo.RegisterCreatedObjectUndo(go, "NimbusManager created");

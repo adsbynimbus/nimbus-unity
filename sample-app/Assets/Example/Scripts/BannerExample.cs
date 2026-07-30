@@ -1,6 +1,6 @@
+using AdsByNimbus.Public;
 using Example.Scripts.NotAdRelated;
 using Internal.AdObjects;
-using Nimbus.Runtime.Scripts;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -46,7 +46,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.BannerAd("unity_demo_banner_position");
+			_ad = Nimbus.Instance.BannerAd("unity_demo_banner_position");
 			_alreadyTriggered = true;
 		}
 

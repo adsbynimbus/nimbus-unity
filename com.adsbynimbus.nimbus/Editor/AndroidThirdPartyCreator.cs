@@ -1,8 +1,7 @@
-using System;
 using System.IO;
 using System.Text;
 
-namespace Nimbus.Editor
+namespace AdsByNimbus.Editor
 {
     internal class AndroidThirdPartyCreator
     {
@@ -47,7 +46,7 @@ namespace Nimbus.Editor
                 builder.AppendLine(@"try {
                     InMobiExtension(extensions.getString(""inMobiAccountId""))
                 } catch (e: JSONException) {
-                    NimbusManager.didReceiveNimbusError(0, e)
+                    Nimbus.didReceiveNimbusError(0, e)
                 }");
             #endif
             #if NIMBUS_ENABLE_META_ANDROID
@@ -55,7 +54,7 @@ namespace Nimbus.Editor
                     MetaExtension.forceTestAd = extensions.getBoolean(""metaForceTestAd"")
                     MetaExtension(extensions.getString(""metaAppId""))
                 } catch (e: JSONException) {
-                    NimbusManager.didReceiveNimbusError(0, e)
+                    Nimbus.didReceiveNimbusError(0, e)
                 }");
             #endif
             #if NIMBUS_ENABLE_MINTEGRAL_ANDROID
@@ -63,7 +62,7 @@ namespace Nimbus.Editor
                     MintegralExtension(extensions.getString(""mintegralAppId""), 
                         extensions.getString(""mintegralAppKey""))
                 } catch (e: JSONException) {
-                    NimbusManager.didReceiveNimbusError(0, e)
+                    Nimbus.didReceiveNimbusError(0, e)
                 }");
             #endif
             #if NIMBUS_ENABLE_MOBILEFUSE_ANDROID
@@ -73,21 +72,21 @@ namespace Nimbus.Editor
                 builder.AppendLine(@"try {
                     MolocoExtension(extensions.getString(""molocoAppKey""))
                 } catch (e: JSONException) {
-                    NimbusManager.didReceiveNimbusError(0, e)
+                    Nimbus.didReceiveNimbusError(0, e)
                 }");
             #endif
             #if NIMBUS_ENABLE_UNITY_ADS_ANDROID
                 builder.AppendLine(@"try {
                     UnityExtension(extensions.getString(""unityAdsGameId""))
                 } catch (e: JSONException) {
-                    NimbusManager.didReceiveNimbusError(0, e)
+                    Nimbus.didReceiveNimbusError(0, e)
                 }"); 
             #endif
             #if NIMBUS_ENABLE_VUNGLE_ANDROID
                 builder.AppendLine(@"try {
                     VungleExtension(extensions.getString(""vungleAppId""))
                 } catch (e: JSONException) {
-                    NimbusManager.didReceiveNimbusError(0, e)
+                    Nimbus.didReceiveNimbusError(0, e)
                 }");
             #endif
             builder.AppendLine(@"}");
@@ -96,7 +95,7 @@ namespace Nimbus.Editor
                 builder.AppendLine(@"try {
                 initAPS(activity, extensions.getString(""apsAppKey""), testMode)
             } catch (e: JSONException) {
-                NimbusManager.didReceiveNimbusError(0, e)
+                Nimbus.didReceiveNimbusError(0, e)
             }");
             #endif
             builder.AppendLine(@"}");
@@ -193,7 +192,7 @@ namespace Nimbus.Editor
                         }
                     }
                 } catch (e: Exception) {
-                    NimbusManager.didReceiveNimbusError(adUnitInstanceId, e)
+                    Nimbus.didReceiveNimbusError(adUnitInstanceId, e)
                 }
                 return {}
             }");
@@ -234,7 +233,7 @@ namespace Nimbus.Editor
                         }
                     }
                 } catch (e: Exception) {
-                    NimbusManager.didReceiveNimbusError(adUnitInstanceId, e)
+                    Nimbus.didReceiveNimbusError(adUnitInstanceId, e)
                 }
                 return {}
             }");

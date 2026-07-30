@@ -1,10 +1,9 @@
 #if UNITY_EDITOR
-using Nimbus.Runtime.Scripts;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class ThirdPartyMacros : EditorWindow
 	{
 		private bool _androidLiveRampIsEnabled;
@@ -619,7 +618,7 @@ namespace Nimbus.Editor {
 		}
 
 		private static void FocusOnGameManager(string partner) {
-			var manager = FindObjectOfType<NimbusManager>();
+			var manager = FindObjectOfType<Public.Nimbus>();
 			if (manager != null) {
 				Selection.activeGameObject = manager.gameObject;
 			}

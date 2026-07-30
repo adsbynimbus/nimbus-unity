@@ -1,15 +1,15 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using Internal.Utility;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class SkaAdNetworkEditor : EditorWindow {
 		public const string SkaAdSavePath = "Assets/Editor/SKAdNetworks";
 		public const string SkaKey = "SKAdNetworkItems";

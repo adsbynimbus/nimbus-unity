@@ -2,8 +2,8 @@
 using ScriptableObjects;
 using UnityEditor;
 
-namespace Nimbus.Editor {
-	public class Nimbus : EditorWindow {
+namespace AdsByNimbus.Editor {
+	public class NimbusSDKConfigCreator : EditorWindow {
 		[MenuItem("Nimbus/Create Empty SDK Configuration")]
 		public static void CreateSDKConfiguration() {
 			var asset = CreateInstance<NimbusSDKConfiguration>();

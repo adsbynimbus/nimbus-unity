@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor.Android;
 
-namespace Nimbus.Editor
+namespace AdsByNimbus.Editor
 {
     public class AndroidConfigurablePostBuildProcessor : IPostGenerateGradleAndroidProject {
 		

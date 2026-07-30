@@ -1,10 +1,11 @@
 using System.IO;
 using System.Xml;
+using Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace Nimbus.Tests
+namespace Tests
 {
     public class VersionTests
     {

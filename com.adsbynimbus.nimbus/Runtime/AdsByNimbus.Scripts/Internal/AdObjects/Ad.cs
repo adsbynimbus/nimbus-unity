@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Threading.Tasks;
+using AdsByNimbus.Public;
 using Internal.Extensions;
-using Nimbus.Runtime.Scripts;
 using UnityEngine;
 
 namespace Internal.AdObjects {
@@ -41,7 +41,7 @@ namespace Internal.AdObjects {
 		public void Load()
 		{
 			_adWasLoaded = true;
-			NimbusManager.Instance.StartCoroutine(LoadAd(false));
+			Nimbus.Instance.StartCoroutine(LoadAd(false));
 		}
 		
 		/// <summary>
@@ -52,11 +52,11 @@ namespace Internal.AdObjects {
 		{
 			if (_adWasLoaded)
 			{
-				NimbusManager.Instance.StartCoroutine(ShowAd());
+				Nimbus.Instance.StartCoroutine(ShowAd());
 			}
 			else
 			{
-				NimbusManager.Instance.StartCoroutine(LoadAd(true));
+				Nimbus.Instance.StartCoroutine(LoadAd(true));
 			}
 		}
 
@@ -164,13 +164,13 @@ namespace Internal.AdObjects {
 		
 		private IEnumerator LoadAd(bool showAd)
 		{
-			NimbusManager.Instance.NimbusPlatformAPI.GetAd(this, showAd);
+			Nimbus.Instance.NimbusPlatformAPI.GetAd(this, showAd);
 			yield break;
 		}
 		
 		private IEnumerator ShowAd()
 		{
-			NimbusManager.Instance.NimbusPlatformAPI.ShowAd(this);
+			Nimbus.Instance.NimbusPlatformAPI.ShowAd(this);
 			yield break;
 		}
 	}

@@ -1,11 +1,9 @@
 #if UNITY_EDITOR
-using System.Linq;
-using Nimbus.Runtime.Scripts;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class AndroidSpecificSettings : EditorWindow
 	{
 		private bool _kotlinUpgradeEnabled;

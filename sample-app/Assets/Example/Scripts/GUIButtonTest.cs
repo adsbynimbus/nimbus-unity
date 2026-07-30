@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AdsByNimbus.Public;
 using Internal;
 using Internal.AdObjects;
 using Internal.Extensions;
-using Nimbus.Runtime.Scripts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,14 +27,14 @@ namespace Example.Scripts {
 
 		private void Start()
 		{
-			NimbusManager.Instance.SetSessionId("session_test");
-			NimbusManager.Instance.SetCoppa(true);
+			Nimbus.Instance.SetSessionId("session_test");
+			Nimbus.Instance.SetCoppa(true);
 			var app = new App("com.test.nimbusUnity", Array.Empty<string>(), "nimbus.co", "testapp", Array.Empty<string>(),
 				true, true, new Publisher(Array.Empty<string>(), "nimbus.co", "nimbus"), 
 				Array.Empty<string>(), "www.nimbus.co", "3.0.0");
-			NimbusManager.Instance.SetApp(app);
+			Nimbus.Instance.SetApp(app);
 			var user = new User(30, "custom", Gender.male, "keywords");
-			NimbusManager.Instance.SetUser(user);
+			Nimbus.Instance.SetUser(user);
 			const string verificationUrl =
 				"https://adsbynimbus-public.s3.amazonaws.com/dev/omid_validation_verification_script_v1.js";
 			var vProvider = new VerificationProvider(response =>
@@ -45,9 +45,9 @@ namespace Example.Scripts {
 					return new VerificationProvider.VerificationScriptResource(verificationUrl, "iabtechlab-Adsbynimbus", "iabtechlab.com-omid");
 				}
 			);
-			NimbusManager.Instance.SetBlockedAdvertisingDomains(new[] { "www.yahoo.com", "www.reddit.com"});
-			NimbusManager.Instance.SetInterceptorTimeout(1000);
-			NimbusManager.Instance.SetVerificationProviders(new [] { vProvider });
+			Nimbus.Instance.SetBlockedAdvertisingDomains(new[] { "www.yahoo.com", "www.reddit.com"});
+			Nimbus.Instance.SetInterceptorTimeout(1000);
+			Nimbus.Instance.SetVerificationProviders(new [] { vProvider });
 			var requestApp = new PerRequestApp(new [] { "pagecat1","pagecat2" }, 
 				new [] { "sectioncat1","sectioncat2" });
 			var bannerCreative = new BannerCreative(320, 50, new[]
@@ -113,7 +113,7 @@ namespace Example.Scripts {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
 				_loadAndShowBannerAdUnit = 
-					NimbusManager.Instance.BannerAd("unity_demo_banner_position", 
+					Nimbus.Instance.BannerAd("unity_demo_banner_position", 
 							bannerFloor: 0.05f, requestModifiers: _requestModifiers);
 				_loadAndShowBannerAdUnit.Show();
 				return;
@@ -129,7 +129,7 @@ namespace Example.Scripts {
 				_shouldDestroyLeaderboard = true;
 				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
 				_loadAndShowLeaderboardAdUnit = 
-					NimbusManager.Instance.BannerAd("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
+					Nimbus.Instance.BannerAd("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
 				_loadAndShowLeaderboardAdUnit.Show();
 				return;
 			}
@@ -141,12 +141,12 @@ namespace Example.Scripts {
 		}
 
 		public void LoadAndShowInterstitial() {
-			NimbusManager.Instance.FullscreenAd("unity_demo_interstitial_position", 
+			Nimbus.Instance.FullscreenAd("unity_demo_interstitial_position", 
 				bannerFloor: 0.05f, videoFloor: 0.03f, requestModifiers: _requestModifiers).Show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			NimbusManager.Instance.RewardedAd("unity_demo_video_position", videoFloor: 0.03f,
+			Nimbus.Instance.RewardedAd("unity_demo_video_position", videoFloor: 0.03f,
 				requestModifiers: _requestModifiers).Show();
 		}
 
@@ -172,10 +172,10 @@ namespace Example.Scripts {
 		private void RequestForAd(int index) {
 			var adType = _interactableButtons[index].adUnitType;
 			_interactableButtons[index].CurrentAd = adType switch {
-				AdType.Inline => NimbusManager.Instance.BannerAd("unity_demo_banner_position"),
-				AdType.Fullscreen => NimbusManager.Instance.FullscreenAd(
+				AdType.Inline => Nimbus.Instance.BannerAd("unity_demo_banner_position"),
+				AdType.Fullscreen => Nimbus.Instance.FullscreenAd(
 					"unity_demo_interstitial_position"),
-				AdType.Rewarded => NimbusManager.Instance.RewardedAd("unity_demo_video_position"),
+				AdType.Rewarded => Nimbus.Instance.RewardedAd("unity_demo_video_position"),
 				_ => _interactableButtons[index].CurrentAd
 			};
 		}

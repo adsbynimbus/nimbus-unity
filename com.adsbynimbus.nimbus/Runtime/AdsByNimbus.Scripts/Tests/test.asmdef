@@ -1,10 +1,11 @@
 {
-  "name": "nimbus.test",
-  "rootNamespace": "",
+  "name": "test",
+  "rootNamespace": "Test",
   "references": [
     "Unity.nimbus",
     "UnityEditor.TestRunner",
-    "UnityEngine.TestRunner"
+    "UnityEngine.TestRunner",
+    "Unity"
   ],
   "includePlatforms": [
     "Editor"

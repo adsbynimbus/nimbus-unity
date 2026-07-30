@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
+using AdsByNimbus.Public;
 using Example.Scripts.NotAdRelated;
 using Internal;
 using Internal.AdObjects;
-using Nimbus.Runtime.Scripts;
 using UnityEngine;
 
 namespace Example.Scripts {
@@ -29,7 +29,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			NimbusManager.Instance.RewardedAd("unity_demo_rewarded_video_position").Show();
+			Nimbus.Instance.RewardedAd("unity_demo_rewarded_video_position").Show();
 			_alreadyTriggered = true;
 		}
 

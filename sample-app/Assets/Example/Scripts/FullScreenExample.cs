@@ -1,7 +1,8 @@
 using System.Collections;
+using AdsByNimbus.Public;
 using Example.Scripts.NotAdRelated;
+using Internal;
 using Internal.AdObjects;
-using Nimbus.Runtime.Scripts;
 using UnityEngine;
 
 namespace Example.Scripts {
@@ -18,21 +19,21 @@ namespace Example.Scripts {
 		}
 
 		private void Start() {
-			NimbusManager.Instance.NimbusEvents.OnAdCompleted += RewardUser;
-			NimbusManager.Instance.NimbusEvents.OnAdError += LogError;
+			Nimbus.Instance.NimbusEvents.OnAdCompleted += RewardUser;
+			Nimbus.Instance.NimbusEvents.OnAdError += LogError;
 		}
 
 		// called as for extra safety. Ensures all resources are released
 		private void OnDestroy() {
-			NimbusManager.Instance.NimbusEvents.OnAdCompleted -= RewardUser;
-			NimbusManager.Instance.NimbusEvents.OnAdError -= LogError;
+			Nimbus.Instance.NimbusEvents.OnAdCompleted -= RewardUser;
+			Nimbus.Instance.NimbusEvents.OnAdError -= LogError;
 			_ad?.Destroy();
 		}
 
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			NimbusManager.Instance.RewardedAd("unity_demo_rewarded_fullscreen_position");
+			Nimbus.Instance.RewardedAd("unity_demo_rewarded_fullscreen_position");
 			_alreadyTriggered = true;
 		}
 

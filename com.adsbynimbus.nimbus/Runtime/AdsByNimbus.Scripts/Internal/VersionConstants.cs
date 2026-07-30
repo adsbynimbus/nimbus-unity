@@ -1,5 +1,5 @@
 
-namespace Nimbus
+namespace Internal
 {
     public static class VersionConstants
     {
