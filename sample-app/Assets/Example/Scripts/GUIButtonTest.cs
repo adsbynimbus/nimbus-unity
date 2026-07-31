@@ -142,7 +142,7 @@ namespace Example.Scripts {
 
 		public void LoadAndShowInterstitial() {
 			Nimbus.Instance.FullscreenAd("unity_demo_interstitial_position", 
-				bannerFloor: 0.05f, videoFloor: 0.03f, requestModifiers: _requestModifiers).Show();
+				staticFloor: 0.05f, videoFloor: 0.03f, requestModifiers: _requestModifiers).Show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {

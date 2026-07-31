@@ -218,7 +218,7 @@ namespace NimbusPublic
 		///     Allows you to see ad revenue attributed to the string value in the Nimbus UI. Useful for publishers
 		///		to create custom reporting breakouts
 		/// </param>
-		/// <param name="bannerFloor">
+		/// <param name="staticFloor">
 		///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 		/// </param>
 		/// <param name="videoFloor">
@@ -231,10 +231,10 @@ namespace NimbusPublic
 		///		NimbusAdUnit that correlates to the Requested Ad
 		/// </returns>
 		public FullscreenAd FullscreenAd(string nimbusReportingPosition,
-			float bannerFloor = 0f, float videoFloor = 0f, RequestModifiers requestModifiers = new RequestModifiers())
+			float staticFloor = 0f, float videoFloor = 0f, RequestModifiers requestModifiers = new RequestModifiers())
 		{
 			return new FullscreenAd(NimbusEvents, nimbusReportingPosition,
-				bannerBidFloor: bannerFloor, videoBidFloor: videoFloor, modifiers: requestModifiers);
+				bannerBidFloor: staticFloor, videoBidFloor: videoFloor, modifiers: requestModifiers);
 		}
 
 		/// <summary>
