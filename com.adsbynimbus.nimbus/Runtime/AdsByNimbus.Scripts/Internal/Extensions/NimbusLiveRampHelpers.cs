@@ -1,3 +1,7 @@
+using System;
+using System.Runtime.InteropServices;
+using UnityEngine;
+
 namespace Internal.Extensions
 {
     #if NIMBUS_ENABLE_LIVERAMP

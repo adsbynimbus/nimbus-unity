@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Internal.AdObjects;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace Internal.Extensions.APS {
@@ -26,7 +28,7 @@ namespace Internal.Extensions.APS {
 			var slotData = new List<ApsSlotData>();
 			foreach (ApsSlotData slot in _slotData)
 			{
-				if (type == AdType.Banner)
+				if (type == AdType.Inline)
 				{
 					switch (slot.adUnitType)
 					{
@@ -56,7 +58,7 @@ namespace Internal.Extensions.APS {
 						}
 					}
 				} 
-				else if (type == AdType.Interstitial)
+				else if (type == AdType.Fullscreen)
 				{
 					switch (slot.adUnitType)
 					{
