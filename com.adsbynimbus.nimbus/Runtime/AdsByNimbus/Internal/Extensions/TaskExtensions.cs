@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Internal.Extensions
+namespace AdsByNimbus.Internal.Extensions
 {
     public static class TaskExtensions
     {

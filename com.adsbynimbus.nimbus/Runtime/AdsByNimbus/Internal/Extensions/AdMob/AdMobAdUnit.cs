@@ -1,7 +1,7 @@
 using System;
 using AdsByNimbus;
 
-namespace Internal.Extensions.AdMob
+namespace AdsByNimbus.Internal.Extensions.AdMob
 {
     [Serializable]
     public class AdMobAdUnit

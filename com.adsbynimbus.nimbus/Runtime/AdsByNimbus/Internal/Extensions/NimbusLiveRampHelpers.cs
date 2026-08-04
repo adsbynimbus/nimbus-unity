@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace Internal.Extensions
+namespace AdsByNimbus.Internal.Extensions
 {
     #if NIMBUS_ENABLE_LIVERAMP
     public class NimbusLiveRampHelpers

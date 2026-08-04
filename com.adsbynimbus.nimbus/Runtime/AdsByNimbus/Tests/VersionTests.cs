@@ -1,6 +1,6 @@
 using System.IO;
 using System.Xml;
-using Internal;
+using AdsByNimbus.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

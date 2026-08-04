@@ -1,9 +1,9 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using AdsByNimbus;
-using Internal.Extensions.AdMob;
-using Internal.Extensions.APS;
-using Internal.Utility;
+using AdsByNimbus.Internal;
+using AdsByNimbus.Internal.Extensions.AdMob;
+using AdsByNimbus.Internal.Extensions.APS;
+using AdsByNimbus.Internal.Utility;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEditorInternal;

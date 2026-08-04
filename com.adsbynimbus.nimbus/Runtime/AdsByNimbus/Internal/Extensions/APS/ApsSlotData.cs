@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Internal.Extensions.APS {
+namespace AdsByNimbus.Internal.Extensions.APS {
 	[Serializable]
 	public class ApsSlotData {
 		public string slotId;

@@ -1,5 +1,5 @@
 using AdsByNimbus;
-using Internal;
+using AdsByNimbus.Internal;
 
 public class FullscreenAd: Ad
 {

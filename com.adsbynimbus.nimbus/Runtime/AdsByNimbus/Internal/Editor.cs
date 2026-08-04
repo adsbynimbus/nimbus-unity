@@ -2,7 +2,7 @@ using AdsByNimbus;
 using ScriptableObjects;
 using UnityEngine;
 
-namespace Internal {
+namespace AdsByNimbus.Internal {
 	public class Editor : NimbusAPI {
 		internal override void InitializeSDK(NimbusSDKConfiguration configuration) {
 			Debug.unityLogger.Log("Mock SDK initialized for editor");

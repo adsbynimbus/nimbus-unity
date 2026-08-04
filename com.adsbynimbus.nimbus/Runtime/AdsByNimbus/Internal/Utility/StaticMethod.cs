@@ -1,4 +1,4 @@
-namespace Internal.Utility {
+namespace AdsByNimbus.Internal.Utility {
 	public static class StaticMethod {
 		public static bool InitializeInterceptor() {
 #if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI

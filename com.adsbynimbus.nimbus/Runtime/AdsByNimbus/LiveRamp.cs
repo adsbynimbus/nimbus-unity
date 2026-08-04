@@ -1,5 +1,5 @@
 using System;
-using Internal.Extensions;
+using AdsByNimbus.Internal.Extensions;
 
 #if NIMBUS_ENABLE_LIVERAMP
 

@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AOT;
-using Internal.Extensions;
+using AdsByNimbus.Internal.Extensions;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Internal
+namespace AdsByNimbus.Internal
 {
     public static class ConfigHelpers
     {

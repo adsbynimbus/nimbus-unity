@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using AdsByNimbus;
 using Example.Scripts.NotAdRelated;
-using Internal;
+using AdsByNimbus.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Threading.Tasks;
-using Internal;
-using Internal.Extensions;
+using AdsByNimbus.Internal;
+using AdsByNimbus.Internal.Extensions;
 using UnityEngine;
 
 namespace AdsByNimbus {

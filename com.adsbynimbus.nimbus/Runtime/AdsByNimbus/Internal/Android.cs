@@ -1,7 +1,7 @@
 using System;
 using AdsByNimbus;
-using Internal.Extensions.AdMob;
-using Internal.Extensions.APS;
+using AdsByNimbus.Internal.Extensions.AdMob;
+using AdsByNimbus.Internal.Extensions.APS;
 using Newtonsoft.Json;
 using ScriptableObjects;
 using UnityEngine;
@@ -9,7 +9,7 @@ using UnityEngine;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 #if UNITY_ANDROID
-namespace Internal {
+namespace AdsByNimbus.Internal {
 	public class Android : NimbusAPI {
 		// ThirdParty Providers
 		#if NIMBUS_ENABLE_ADMOB

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using AdsByNimbus;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
-namespace Internal.Extensions.APS {
+namespace AdsByNimbus.Internal.Extensions.APS {
 	#if UNITY_IOS && NIMBUS_ENABLE_APS
 	internal class ApsIOS {
 		private readonly string _appID;

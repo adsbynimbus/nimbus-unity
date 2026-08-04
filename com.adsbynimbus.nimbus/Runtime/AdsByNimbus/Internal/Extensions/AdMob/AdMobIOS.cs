@@ -4,7 +4,7 @@ using AdsByNimbus;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 
-namespace Internal.Extensions.AdMob {
+namespace AdsByNimbus.Internal.Extensions.AdMob {
 	#if UNITY_IOS && NIMBUS_ENABLE_ADMOB
 	
 	internal class AdMobIOS {

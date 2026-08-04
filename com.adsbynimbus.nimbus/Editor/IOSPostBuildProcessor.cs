@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Internal;
-using Internal.Utility;
+using AdsByNimbus.Internal;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
@@ -268,7 +267,7 @@ end";
 
 			foreach (var id in File.ReadLines(SkaAdNetworkEditor.SkaAdSavePath)) {
 				var trimmedID = id.Trim();
-				if (trimmedID.IsNullOrEmpty()) continue;
+				if (string.IsNullOrEmpty(trimmedID)) continue;
 
 				var found = array.values
 					.Select(element => element.AsDict())

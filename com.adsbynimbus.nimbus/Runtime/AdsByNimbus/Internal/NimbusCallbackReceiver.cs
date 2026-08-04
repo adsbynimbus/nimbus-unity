@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using AdsByNimbus;
 using UnityEngine;
 
-namespace Internal {
+namespace AdsByNimbus.Internal {
 	internal class NimbusCallbackReceiver : MonoBehaviour {
 		private static NimbusCallbackReceiver _instance;
 

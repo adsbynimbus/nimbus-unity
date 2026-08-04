@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Internal {
+namespace AdsByNimbus.Internal {
 	internal static class NimbusCallbackParser {
 		internal static T ParseMessage<T>(string jsonParams) {
 			return JsonUtility.FromJson<T>(jsonParams);

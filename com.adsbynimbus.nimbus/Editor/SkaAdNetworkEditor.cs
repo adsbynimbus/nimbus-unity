@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Internal.Utility;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
@@ -34,7 +33,7 @@ namespace AdsByNimbus.Editor {
 			EditorGUILayout.LabelField("Enter SkaAdNetwork Below", headerStyle);
 
 			// Ska Text Field Input
-			var data = !_textInputData.IsNullOrEmpty() ? _textInputData : DisplayMessage;
+			var data = !string.IsNullOrEmpty(_textInputData) ? _textInputData : DisplayMessage;
 			_scroll = EditorGUILayout.BeginScrollView(_scroll, GUILayout.Height(position.height * .75f));
 			var tempData = EditorGUILayout.TextArea(data, GUILayout.ExpandHeight(true));
 			if (tempData != DisplayMessage) {
@@ -45,7 +44,7 @@ namespace AdsByNimbus.Editor {
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create File")) {
 				string[] skaIds;
-				if (_textInputData.IsNullOrEmpty()) {
+				if (string.IsNullOrEmpty(_textInputData)) {
 					_helpBoxDataContainer = new EditorUtil.HelpBoxDataContainer("No SKAdNetwork was entered", MessageType.Error);
 					return;
 				}
@@ -105,7 +104,7 @@ namespace AdsByNimbus.Editor {
 
 		private static string[] SanitizeNetworkIds(IEnumerable<string> networkIds) {
 			return networkIds.
-				Where(s => !s.IsNullOrEmpty()).
+				Where(s => !string.IsNullOrEmpty(s)).
 				Select(s => s.Trim()).
 				ToArray();
 		}

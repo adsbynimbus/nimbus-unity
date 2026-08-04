@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Internal;
+using AdsByNimbus.Internal;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -10,7 +10,7 @@ public static class Nimbus
 	/// <summary>
 	///    Method to manually initialize the Nimbus SDK instead of initialization happening on Awake()
 	/// </summary>
-	public static void initialize(string publisherKey, string apiKey)
+	public static void initialize(string publisherKey, string apiKey, Action extensions)
 	{
 		NimbusManager.Instance.InitializeNimbusSDK();
 	}

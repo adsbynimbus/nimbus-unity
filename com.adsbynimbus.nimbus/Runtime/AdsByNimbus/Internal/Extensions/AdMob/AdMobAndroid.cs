@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using AdsByNimbus;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
-namespace Internal.Extensions.AdMob {
+namespace AdsByNimbus.Internal.Extensions.AdMob {
    internal class AdMobAndroid
    {
       private readonly AdMobAdUnit[] _adUnitIds;

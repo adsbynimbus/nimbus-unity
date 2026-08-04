@@ -4,7 +4,7 @@ using AdsByNimbus;
 using UnityEngine;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
-namespace Internal.Extensions.APS {
+namespace AdsByNimbus.Internal.Extensions.APS {
 	internal class ApsAndroid {
 		private const string AndroidApsPackage = "com.adsbynimbus.request.ApsDemandProvider";
 

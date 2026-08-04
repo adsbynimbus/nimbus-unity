@@ -1,13 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
 using AdsByNimbus;
-using Internal.Extensions.AdMob;
-using Internal.Extensions.APS;
+using AdsByNimbus.Internal.Extensions.AdMob;
+using AdsByNimbus.Internal.Extensions.APS;
 using Newtonsoft.Json;
 using ScriptableObjects;
 using UnityEngine;
 
-namespace Internal {
+namespace AdsByNimbus.Internal {
 	#if UNITY_IOS
 	public class IOS : NimbusAPI {
 		// ThirdParty Providers

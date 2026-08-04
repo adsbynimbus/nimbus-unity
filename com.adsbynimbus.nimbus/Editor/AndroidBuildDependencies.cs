@@ -1,5 +1,5 @@
 using System.Text;
-using Internal;
+using AdsByNimbus.Internal;
 
 namespace AdsByNimbus.Editor {
 	public static class AndroidBuildDependencies {

@@ -1,9 +1,9 @@
 using System;
-using Internal.Extensions.APS;
+using AdsByNimbus.Internal.Extensions.APS;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Internal.Extensions
+namespace AdsByNimbus.Internal.Extensions
 {
     public class BridgeHelpers
     {

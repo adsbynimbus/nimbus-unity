@@ -1,5 +1,5 @@
 
-namespace Internal
+namespace AdsByNimbus.Internal
 {
     public static class VersionConstants
     {

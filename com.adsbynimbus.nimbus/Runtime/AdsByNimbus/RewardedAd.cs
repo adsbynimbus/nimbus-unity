@@ -1,6 +1,6 @@
 using AdsByNimbus;
-using Internal;
-using Internal.Extensions;
+using AdsByNimbus.Internal;
+using AdsByNimbus.Internal.Extensions;
 
 public class RewardedAd: Ad
 {
