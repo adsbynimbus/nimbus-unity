@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class PlistDictionary : Dictionary<string, object> {
 		private PlistDictionary() { }
 

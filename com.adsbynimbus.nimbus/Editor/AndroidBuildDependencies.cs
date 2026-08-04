@@ -1,6 +1,7 @@
 using System.Text;
+using AdsByNimbus.Internal;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public static class AndroidBuildDependencies {
 		
 		//used if EDM4U is not implemented

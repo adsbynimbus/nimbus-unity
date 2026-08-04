@@ -1,9 +1,10 @@
 #if UNITY_EDITOR
-using Nimbus.Internal.Extensions;
-using Nimbus.Internal.Extensions.APS;
-using Nimbus.Runtime.Scripts;
-using Nimbus.Internal.Utility;
-using Nimbus.ScriptableObjects;
+using System.Collections.Generic;
+using AdsByNimbus.Internal;
+using AdsByNimbus.Internal.Extensions.AdMob;
+using AdsByNimbus.Internal.Extensions.APS;
+using AdsByNimbus.Internal.Utility;
+using ScriptableObjects;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -11,13 +12,10 @@ using Debug = UnityEngine.Debug;
 
 #region ThirdPartySDKImports
 
-using System.Collections.Generic;
-using Nimbus.Internal;
-
 #endregion
 
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class NimbusManagerCreator : EditorWindow {
 		private string _apiKey;
 		private string _publisherKey;

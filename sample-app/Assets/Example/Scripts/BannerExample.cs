@@ -1,6 +1,4 @@
 using Example.Scripts.NotAdRelated;
-using Nimbus.Internal;
-using Nimbus.Runtime.Scripts;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -11,7 +9,7 @@ namespace Example.Scripts {
 	public class BannerExample : MonoBehaviour {
 		public GameObject fire;
 		public float fadeSpeed = .01f;
-		private NimbusAdUnit _ad;
+		private InlineAd _ad;
 		private bool _alreadyTriggered;
 		private SpriteRenderer _renderer;
 		private bool _shouldDestroyAd;
@@ -46,7 +44,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position");
+			_ad = Nimbus.bannerAd("unity_demo_banner_position");
 			_alreadyTriggered = true;
 		}
 

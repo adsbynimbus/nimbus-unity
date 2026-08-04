@@ -1,10 +1,9 @@
 #if UNITY_EDITOR
-using Nimbus.Runtime.Scripts;
-using Nimbus.ScriptableObjects;
+using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class ThirdPartyMacros : EditorWindow
 	{
 		private bool _androidLiveRampIsEnabled;

@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 485368386d18468b8de233661999ecf7, type: 3}
+  m_Name: NimbusSDKDevExample
+  m_EditorClassIdentifier: 
+  publisherKey: dev-sdk
+  apiKey: DEV-cae2-4774-97ba-4e15c6276be0
+  enableSDKInTestMode: 1
+  enableUnityLogs: 1
+  enableManualInitialization: 0
+  sdkInitialized: 0
+  androidAppID: a9_onboarding_app_id
+  androidApsSlotData:
+  - slotId: 
+    adUnitType: 0
+  - slotId: 
+    adUnitType: 0
+  - slotId: 
+    adUnitType: 0
+  androidApsTimeoutInMilliseconds: 3000
+  iosAppID: a9_onboarding_app_id
+  iosApsSlotData:
+  - slotId: 
+    adUnitType: 0
+  - slotId: 
+    adUnitType: 0
+  - slotId: 
+    adUnitType: 0
+  androidVungleAppID: 
+  iosVungleAppID: 
+  androidMetaAppID: 
+  iosMetaAppID: 
+  androidAdMobAppID: ca-app-pub-1368919009399326~9625312345
+  androidAdMobAdUnitData: []
+  iosAdMobAppID: 
+  iosAdMobAdUnitData: []
+  androidMintegralAppID: 
+  androidMintegralAppKey: 
+  androidMintegralAdUnitData: []
+  iosMintegralAppID: 
+  iosMintegralAppKey: 
+  iosMintegralAdUnitData: []
+  androidUnityAdsGameID: 
+  iosUnityAdsGameID: 
+  androidMolocoAppKey: 
+  androidMolocoAdUnitData: []
+  iosMolocoAppKey: 
+  iosMolocoAdUnitData: []
+  androidInMobiAccountId: 
+  androidInMobiAdUnitData: []
+  iosInMobiAccountId: 
+  iosInMobiAdUnitData: []

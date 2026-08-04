@@ -77,11 +77,14 @@ object NimbusManager {
                 }.onError { error ->
                     didReceiveNimbusError(instanceId, error)
                 }
+            adCache.put(instanceId, ad)
             if (showAd) {
                 showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                 sendRenderNimbusEvent(instanceId)
+            } else {
+                // TODO: Uncomment line below when bannerAd.load() method has been added to SDK
+                // ad.load()
             }
-            adCache.put(instanceId, ad)
         }
 
     }
@@ -111,13 +114,13 @@ object NimbusManager {
             }.onError { error ->
                 didReceiveNimbusError(instanceId, error)
             }
+            adCache.put(instanceId, ad)
             if (showAd) {
                 ad.show(obj)
                 sendRenderNimbusEvent(instanceId)
             } else {
                 ad.load(obj)
             }
-            adCache.put(instanceId, ad)
         }
     }
 
@@ -132,7 +135,7 @@ object NimbusManager {
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,AdUnitType.Rewarded, extensions)
-            val ad = Nimbus.rewardedAd(position, videoBidFloor = bidFloor){
+            val ad = Nimbus.rewardedAd(position, bidFloor = bidFloor){
                 demand {
                     demandBlock()
                 }
@@ -144,13 +147,13 @@ object NimbusManager {
             }.onError { error ->
                 didReceiveNimbusError(instanceId, error)
             }
+            adCache.put(instanceId, ad)
             if (showAd) {
                 ad.show(obj)
                 sendRenderNimbusEvent(instanceId)
             } else {
                 ad.load(obj)
             }
-            adCache.put(instanceId, ad)
         }
     }
 
@@ -409,8 +412,7 @@ object NimbusManager {
             if (!requestModifiers.isNull("viewability")) {
                 val va = requestModifiers.getJSONObject("viewability")
                 if (!va.isNull("omidPn") && !va.isNull("omidPv")) {
-                    // TODO: needs to be added in a newer version of 3.0
-                    // viewability(va.getString("omidPn"), va.getString("omidPv"))
+                    viewability(va.getString("omidPn"), va.getString("omidPv"))
                 }
             }
         }
