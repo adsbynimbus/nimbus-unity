@@ -192,13 +192,13 @@ import NimbusMobileFuseKit
                 }                .onError { error in
                     NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
+                self.ad = bannerAd
                 if (showAd) {
                     try await bannerAd.show(in: contentView)
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } else {
                     try await bannerAd.load()
                 }
-                self.ad = bannerAd
             } catch {
                 Nimbus.Log.request.error(error.localizedDescription)
             }
@@ -238,6 +238,7 @@ import NimbusMobileFuseKit
             }                .onError { error in
                 NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
+            self.ad = interstitialAd
             do {
                 if (showAd) {
                     try await interstitialAd.show(from: self.unityViewController())
@@ -245,7 +246,6 @@ import NimbusMobileFuseKit
                 } else {
                     try await interstitialAd.load()
                 }
-                self.ad = interstitialAd
             }
             catch {
                 NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
@@ -287,6 +287,7 @@ import NimbusMobileFuseKit
             }                .onError { error in
                 NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
+            self.ad = rewardedAd
             do {
                 if (showAd) {
                     try await rewardedAd.show(from: self.unityViewController())
@@ -294,7 +295,6 @@ import NimbusMobileFuseKit
                 } else {
                     try await rewardedAd.load()
                 }
-                self.ad = rewardedAd
             } catch {
                 Nimbus.Log.ad.error(error.localizedDescription)
             }

@@ -77,14 +77,14 @@ object NimbusManager {
                 }.onError { error ->
                     didReceiveNimbusError(instanceId, error)
                 }
+            adCache.put(instanceId, ad)
             if (showAd) {
                 showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                 sendRenderNimbusEvent(instanceId)
             } else {
                 // TODO: Uncomment line below when bannerAd.load() method has been added to SDK
-                // ad.load() 
+                // ad.load()
             }
-            adCache.put(instanceId, ad)
         }
 
     }
@@ -114,13 +114,13 @@ object NimbusManager {
             }.onError { error ->
                 didReceiveNimbusError(instanceId, error)
             }
+            adCache.put(instanceId, ad)
             if (showAd) {
                 ad.show(obj)
                 sendRenderNimbusEvent(instanceId)
             } else {
                 ad.load(obj)
             }
-            adCache.put(instanceId, ad)
         }
     }
 
@@ -147,13 +147,13 @@ object NimbusManager {
             }.onError { error ->
                 didReceiveNimbusError(instanceId, error)
             }
+            adCache.put(instanceId, ad)
             if (showAd) {
                 ad.show(obj)
                 sendRenderNimbusEvent(instanceId)
             } else {
                 ad.load(obj)
             }
-            adCache.put(instanceId, ad)
         }
     }
 

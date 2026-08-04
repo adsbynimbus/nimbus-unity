@@ -17,7 +17,8 @@ namespace Internal.AdObjects {
 		public readonly int InstanceID;
 		private bool _adCompleted;
 		private bool _adWasReturned;
-		private bool _adWasLoaded;
+		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
+		private bool _adPassedToNative;
 		private readonly AdEvents _adEvents;
 		internal bool AdWasRendered;
 		public RequestModifiers? RequestModifiers;
@@ -41,7 +42,7 @@ namespace Internal.AdObjects {
 		/// </summary>
 		public void Load()
 		{
-			_adWasLoaded = true;
+			_adPassedToNative = true;
 			Nimbus.Instance.StartCoroutine(LoadAd(false));
 		}
 		
@@ -51,12 +52,13 @@ namespace Internal.AdObjects {
 		/// </summary>
 		public void Show()
 		{
-			if (_adWasLoaded)
+			if (_adPassedToNative)
 			{
 				Nimbus.Instance.StartCoroutine(ShowAd());
 			}
 			else
 			{
+				// Ad needs to be passed over the bridge before show() is called
 				Nimbus.Instance.StartCoroutine(LoadAd(true));
 			}
 		}
@@ -76,7 +78,6 @@ namespace Internal.AdObjects {
 			#if UNITY_ANDROID
 			var managerClass = new AndroidJavaObject("com.adsbynimbus.unity.NimbusManager");
 			var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-			//if (_androidController == null || _androidHelper == null) return;
 			instance.CallStatic("destroyAd", InstanceID);
 			_androidController = null;
 			_androidHelper = null;
