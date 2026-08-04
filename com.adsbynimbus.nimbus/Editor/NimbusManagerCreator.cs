@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using Internal.AdObjects;
+using AdsByNimbus.Scripts;
 using Internal.Extensions.AdMob;
 using Internal.Extensions.APS;
 using Internal.Utility;
@@ -645,7 +645,7 @@ namespace AdsByNimbus.Editor {
 				var go = new GameObject {
 					name = "NimbusAdsManager"
 				};
-				var manager = go.AddComponent<NimbusPublic.Nimbus>();
+				var manager = go.AddComponent<NimbusManager>();
 				manager.SetNimbusSDKConfiguration(_asset);
 
 				Undo.RegisterCreatedObjectUndo(go, "NimbusManager created");

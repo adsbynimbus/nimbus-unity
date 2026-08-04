@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Internal.AdObjects;
+using AdsByNimbus.Scripts;
 using Internal.Extensions.AdMob;
 using Internal.Extensions.APS;
 using Newtonsoft.Json;

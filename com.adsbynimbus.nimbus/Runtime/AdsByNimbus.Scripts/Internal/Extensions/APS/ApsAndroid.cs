@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Internal.AdObjects;
+using AdsByNimbus.Scripts;
 using UnityEngine;
 
 [assembly:InternalsVisibleTo("nimbus.test")]

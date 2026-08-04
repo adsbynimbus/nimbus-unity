@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Threading.Tasks;
+using Internal;
 using Internal.Extensions;
-using NimbusPublic;
-using Public;
 using UnityEngine;
 
-namespace Internal.AdObjects {
+namespace AdsByNimbus.Scripts {
 	internal delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public class Ad {
@@ -43,7 +42,7 @@ namespace Internal.AdObjects {
 		public void Load()
 		{
 			_adPassedToNative = true;
-			Nimbus.Instance.StartCoroutine(LoadAd(false));
+			NimbusManager.Instance.StartCoroutine(LoadAd(false));
 		}
 		
 		/// <summary>
@@ -54,12 +53,12 @@ namespace Internal.AdObjects {
 		{
 			if (_adPassedToNative)
 			{
-				Nimbus.Instance.StartCoroutine(ShowAd());
+				NimbusManager.Instance.StartCoroutine(ShowAd());
 			}
 			else
 			{
 				// Ad needs to be passed over the bridge before show() is called
-				Nimbus.Instance.StartCoroutine(LoadAd(true));
+				NimbusManager.Instance.StartCoroutine(LoadAd(true));
 			}
 		}
 
@@ -166,13 +165,13 @@ namespace Internal.AdObjects {
 		
 		private IEnumerator LoadAd(bool showAd)
 		{
-			Nimbus.Instance.NimbusPlatformAPI.GetAd(this, showAd);
+			NimbusManager.Instance.NimbusPlatformAPI.GetAd(this, showAd);
 			yield break;
 		}
 		
 		private IEnumerator ShowAd()
 		{
-			Nimbus.Instance.NimbusPlatformAPI.ShowAd(this);
+			NimbusManager.Instance.NimbusPlatformAPI.ShowAd(this);
 			yield break;
 		}
 	}

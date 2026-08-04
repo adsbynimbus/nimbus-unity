@@ -1,5 +1,4 @@
 using System;
-using Internal.AdObjects;
 using NUnit.Framework;
 
 namespace Tests {

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Internal.AdObjects;
+using AdsByNimbus.Scripts;
 using UnityEngine;
 
 namespace Internal {

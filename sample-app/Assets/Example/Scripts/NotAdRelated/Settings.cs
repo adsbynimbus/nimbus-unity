@@ -1,4 +1,3 @@
-using NimbusPublic;
 using UnityEngine;
 
 namespace Example.Scripts.NotAdRelated {
@@ -17,7 +16,7 @@ namespace Example.Scripts.NotAdRelated {
 		}
 
 		public void ToggleCoppa(bool value) {
-			Nimbus.Instance.Configuration.Coppa = value;
+			Nimbus.configuration.coppa = value;
 		}
 	}
 
