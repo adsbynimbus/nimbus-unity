@@ -1,4 +1,4 @@
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 
 public interface IAdEvents {
 	void OnAdLoaded(Ad nimbusAdUnit);

@@ -1,5 +1,5 @@
 using System;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 
 public class AdEvents {
 	public event Action<Ad> OnAdLoaded;
@@ -58,7 +58,7 @@ public class AdEvents {
 
 // ReSharper disable InconsistentNaming
 // Events as named by the Nimbus Android SDK
-public enum AdEventTypes {
+public enum AdEvent {
 	NOT_LOADED,
 
 	LOADED,

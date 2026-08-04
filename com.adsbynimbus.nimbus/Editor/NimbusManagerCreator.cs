@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 using Internal.Extensions.AdMob;
 using Internal.Extensions.APS;
 using Internal.Utility;

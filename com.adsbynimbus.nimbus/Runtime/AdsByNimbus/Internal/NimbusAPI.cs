@@ -1,4 +1,4 @@
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 using ScriptableObjects;
 
 namespace Internal {

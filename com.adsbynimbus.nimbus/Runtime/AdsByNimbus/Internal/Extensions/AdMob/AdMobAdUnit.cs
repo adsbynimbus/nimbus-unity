@@ -1,5 +1,5 @@
 using System;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 
 namespace Internal.Extensions.AdMob
 {

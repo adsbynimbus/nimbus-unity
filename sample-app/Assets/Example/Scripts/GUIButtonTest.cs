@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -186,8 +186,8 @@ namespace Example.Scripts {
 		
 		private static IEnumerator ResetState(AdController controller, Ad adUnit) {
 			if (adUnit.AdType != AdType.Fullscreen && adUnit.AdType != AdType.Rewarded) yield break;
-			while (adUnit.CurrentAdState != AdEventTypes.COMPLETED ||
-			       adUnit.CurrentAdState != AdEventTypes.DESTROYED) {
+			while (adUnit.CurrentAdState != AdEvent.COMPLETED ||
+			       adUnit.CurrentAdState != AdEvent.DESTROYED) {
 				yield return null;
 			}
 			controller.ResetState();

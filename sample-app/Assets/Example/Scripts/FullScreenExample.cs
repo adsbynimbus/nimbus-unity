@@ -1,5 +1,5 @@
 using System.Collections;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 using Example.Scripts.NotAdRelated;
 using UnityEngine;
 

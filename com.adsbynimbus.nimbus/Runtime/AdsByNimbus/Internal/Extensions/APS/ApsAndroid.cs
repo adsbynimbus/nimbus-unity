@@ -1,23 +1,26 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
+using UnityEngine;
 
-[assembly: InternalsVisibleTo("nimbus.test")]
+[assembly:InternalsVisibleTo("nimbus.test")]
 namespace Internal.Extensions.APS {
-	#if UNITY_IOS && NIMBUS_ENABLE_APS
-	internal class ApsIOS {
+	internal class ApsAndroid {
+		private const string AndroidApsPackage = "com.adsbynimbus.request.ApsDemandProvider";
+
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
 		private readonly ApsSlotData[] _slotData;
-
-
-		public ApsIOS(string appID, ApsSlotData[] slotData) {
+		private readonly AndroidJavaObject _currentActivity;
+		private AndroidJavaClass _aps;
+		
+		public ApsAndroid(string appID, ApsSlotData[] slotData) {
 			_appID = appID;
 			_slotData = slotData;
 		}
-
-
-		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode) {
+		
+		public ApsAndroid(AndroidJavaObject currentActivity, string appID, ApsSlotData[] slotData, bool enableTestMode, int timeoutInMilliseconds) {
+			_currentActivity = currentActivity;
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
@@ -86,5 +89,4 @@ namespace Internal.Extensions.APS {
 			return slotData.ToArray();
 		}
 	}
-#endif
 }

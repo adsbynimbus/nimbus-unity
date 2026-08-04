@@ -10,7 +10,7 @@ public static class Nimbus
 	/// <summary>
 	///    Method to manually initialize the Nimbus SDK instead of initialization happening on Awake()
 	/// </summary>
-	public static void initialize()
+	public static void initialize(string publisherKey, string apiKey)
 	{
 		NimbusManager.Instance.InitializeNimbusSDK();
 	}

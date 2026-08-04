@@ -4,7 +4,7 @@ using Internal;
 using Internal.Extensions;
 using UnityEngine;
 
-namespace AdsByNimbus.Scripts {
+namespace AdsByNimbus {
 	internal delegate void DestroyAdDelegate(int adUnityInstanceId);
 
 	public class Ad {
@@ -12,7 +12,7 @@ namespace AdsByNimbus.Scripts {
 		public string ErrResponse;
 		public string NimbusReportingPosition;
 		public NimbusAdUnitPosition AdPosition;
-		public AdEventTypes CurrentAdState { get; private set; } = AdEventTypes.NOT_LOADED; 
+		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOT_LOADED; 
 		public readonly int InstanceID;
 		private bool _adCompleted;
 		private bool _adWasReturned;
@@ -100,35 +100,35 @@ namespace AdsByNimbus.Scripts {
 			_adEvents.FireOnAdErrorEvent(this);
 		}
 		
-		internal void FireMobileAdEvents(AdEventTypes e) {
+		internal void FireMobileAdEvents(AdEvent e) {
 			CurrentAdState = e;
 			switch (e) {
-				case AdEventTypes.LOADED:
+				case AdEvent.LOADED:
 					_adEvents.FireOnAdLoadedEvent(this);
 					break;
-				case AdEventTypes.IMPRESSION:
+				case AdEvent.IMPRESSION:
 					_adEvents.FireOnAdImpressionEvent(this);
 					break;
-				case AdEventTypes.CLICKED:
+				case AdEvent.CLICKED:
 					_adEvents.FireOnAdClickedEvent(this);
 					break;
-				case AdEventTypes.PAUSED:
+				case AdEvent.PAUSED:
 					_adEvents.FireOnVideoAdPausedEvent(this);
 					break;
-				case AdEventTypes.RESUMED:
+				case AdEvent.RESUMED:
 					_adEvents.FireOnVideoAdResumeEvent(this);
 					break;
-				case AdEventTypes.REWARDEARNED:
+				case AdEvent.REWARDEARNED:
 					_adEvents.FireOnAdRewardEarnedEvent(this);
 					break;
-				case AdEventTypes.COMPLETED:
+				case AdEvent.COMPLETED:
 					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
 					if (AdType == AdType.Fullscreen) {
 						Destroy();
 					}
 					break;
-				case AdEventTypes.DESTROYED:
+				case AdEvent.DESTROYED:
 					// ReSharper disable once ConvertIfStatementToSwitchStatement
 					if (AdType == AdType.Rewarded) {
 						_adEvents.FireOnAdCompletedEvent(this, !_adCompleted);

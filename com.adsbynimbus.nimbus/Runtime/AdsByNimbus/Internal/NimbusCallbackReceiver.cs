@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 using UnityEngine;
 
 namespace Internal {
@@ -58,10 +58,10 @@ namespace Internal {
 				return;
 			}
 
-			if (!Enum.TryParse(data.eventName, out AdEventTypes state)) return;
+			if (!Enum.TryParse(data.eventName, out AdEvent state)) return;
 			adUnit.FireMobileAdEvents(state);
 			// clean up internal map
-			if (state == AdEventTypes.DESTROYED) {
+			if (state == AdEvent.DESTROYED) {
 				_adUnitDictionary.Remove(data.adUnitInstanceID);
 			}
 		}

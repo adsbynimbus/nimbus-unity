@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using AdsByNimbus.Scripts;
+using AdsByNimbus;
 
 [assembly:InternalsVisibleTo("nimbus.test")]
 namespace Internal.Extensions.AdMob {
