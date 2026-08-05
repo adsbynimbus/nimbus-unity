@@ -25,15 +25,13 @@ namespace AdsByNimbus.Editor {
 		private NimbusSDKConfiguration _asset = null;
 
 		// APS
-		private SerializedProperty _androidAppId;
+		private SerializedProperty _androidApsAppKey;
 		private ReorderableList _androidApsSlotIdList = null;
 		private SerializedProperty _androidApsSlots = null;
-		private SerializedProperty _androidApsTimeoutInMilliseconds;
 
-		private SerializedProperty _iosAppId;
+		private SerializedProperty _iosApsAppKey;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
-		private SerializedProperty _iosApsTimeoutInMilliseconds;
 		
 		// Vungle
 		private SerializedProperty _androidVungleAppId;
@@ -87,10 +85,7 @@ namespace AdsByNimbus.Editor {
 
 			// APS
 			// Android APS UI
-			_androidAppId = serializedObject.FindProperty("androidAppID");
-			_androidApsTimeoutInMilliseconds = serializedObject.FindProperty("androidApsTimeoutInMilliseconds");
-			_androidApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue 
-			                                            == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("androidApsTimeoutInMilliseconds").intValue;
+			_androidApsAppKey = serializedObject.FindProperty("androidAppID");
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
@@ -105,10 +100,7 @@ namespace AdsByNimbus.Editor {
 			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsAndroidSlotData;
 
 			// IOS APS UI
-			_iosAppId = serializedObject.FindProperty("iosAppID");
-			_iosApsTimeoutInMilliseconds = serializedObject.FindProperty("iosApsTimeoutInMilliseconds");
-			_iosApsTimeoutInMilliseconds.intValue = serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue 
-			                                        == 0 ? NimbusSDKConfiguration.ApsDefaultTimeout : serializedObject.FindProperty("iosApsTimeoutInMilliseconds").intValue;
+			_iosApsAppKey = serializedObject.FindProperty("iosAppID");
 			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
 			_iosApsSlotIdList = new ReorderableList(
 				serializedObject, _iosApsSlots,
@@ -324,15 +316,13 @@ namespace AdsByNimbus.Editor {
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
 				#if NIMBUS_ENABLE_APS_ANDROID
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_androidAppId));
-					_androidApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", value: _androidApsTimeoutInMilliseconds.intValue);
+					EditorGUILayout.PropertyField((_androidAppKey));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
 				#if NIMBUS_ENABLE_APS_IOS
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_iosAppId));
-					_iosApsTimeoutInMilliseconds.intValue = EditorGUILayout.IntField("Timeout in Milliseconds", _iosApsTimeoutInMilliseconds.intValue);
+					EditorGUILayout.PropertyField(_iosApsAppKey);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
 				#endif
@@ -533,16 +523,16 @@ namespace AdsByNimbus.Editor {
 				}
 
 				#if NIMBUS_ENABLE_APS_ANDROID
-					if (!ValidateApsData("Android", _androidAppId, _asset.androidApsSlotData)) {
+					if (!ValidateApsData("Android", _androidApsAppKey, _asset.androidApsSlotData)) {
 						return;
 					}
-					_asset.androidAppID = _androidAppId.stringValue;
+					_asset.androidApsAppKey = _androidApsAppKey.stringValue;
 				#endif
 				#if NIMBUS_ENABLE_APS_IOS
-					if (!ValidateApsData("iOS", _iosAppId, _asset.iosApsSlotData)) {
+					if (!ValidateApsData("iOS", _iosApsAppKey, _asset.iosApsSlotData)) {
 						return;
 					}
-					_asset.iosAppID = _iosAppId.stringValue;
+					_asset.iosApsAppKey = _iosApsAppKey.stringValue;
 				#endif
 				
 				#if NIMBUS_ENABLE_VUNGLE_ANDROID

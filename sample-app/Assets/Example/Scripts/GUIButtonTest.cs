@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AdsByNimbus;
+using AdsByNimbus.RTB;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -47,12 +48,12 @@ namespace Example.Scripts {
 			Nimbus.configuration.verificationProviders = new [] { vProvider };
 			var requestApp = new PerRequestApp(new [] { "pagecat1","pagecat2" }, 
 				new [] { "sectioncat1","sectioncat2" });
-			var bannerCreative = new BannerCreative(320, 50, new[]
+			var bannerCreative = new Banner(320, 50, new[]
 			{
 				Format.banner, Format.leaderboard, Format.mrec
 			}, adPosition: Position.footer, bidFloor: 0.0f, 
 				new [] { CreativeAttribute.hasPopup });
-			var videoCreative = new VideoCreative(adPosition: Position.fullScreen, 0.0f, 0, 30,
+			var videoCreative = new Video(adPosition: Position.fullScreen, 0.0f, 0, 30,
 				0, 0, VideoPlacementType.inArticle,
 				new[] { PlaybackMethod.clickWithSoundOn, PlaybackMethod.mouseOverWithSoundOn });
 			_requestModifiers = new RequestModifiers(app: requestApp, banner: bannerCreative, 
@@ -126,7 +127,7 @@ namespace Example.Scripts {
 				_shouldDestroyLeaderboard = true;
 				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
 				_loadAndShowLeaderboardAdUnit = 
-					Nimbus.bannerAd("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
+					Nimbus.bannerAd("unity_demo_leaderboard_position", adSize: AdSize.leaderboard);
 				_loadAndShowLeaderboardAdUnit.Show();
 				return;
 			}

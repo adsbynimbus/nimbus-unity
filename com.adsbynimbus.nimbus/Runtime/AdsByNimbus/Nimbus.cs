@@ -1,18 +1,35 @@
 using System;
 using System.Collections.Generic;
 using AdsByNimbus.Internal;
+using AdsByNimbus.RTB;
+using AdsByNimbus.RTB.Request;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using NUnit;
 using UnityEngine;
+using Environment = AdsByNimbus.RTB.Environment;
 
 public static class Nimbus
 {
 	/// <summary>
 	///    Method to manually initialize the Nimbus SDK instead of initialization happening on Awake()
 	/// </summary>
-	public static void initialize(string publisherKey, string apiKey, Action extensions)
+	/// <param name="publisherKey">
+	///	   Publisher Key
+	/// </param>
+	/// <param name="apiKey">
+	///	   API Key
+	/// </param>
+	/// <param name="extensions">
+	///	   Optionally Install Extensions
+	/// </param>
+	public static void initialize(string publisherKey, string apiKey, [CanBeNull] Action extensions = null)
 	{
-		NimbusManager.Instance.InitializeNimbusSDK();
+		if (extensions != null)
+		{
+			extensions.Invoke();
+		}
+		NimbusManager.Instance.InitializeNimbusSDK(publisherKey, apiKey);
 	}
 	
 	/// <summary>
@@ -30,7 +47,7 @@ public static class Nimbus
 	///		Allows the publisher to optionally set the RTB minimum bid value for HTML/Static creatives
 	/// </param>
 	/// <param name="adSize">
-	///		Allows the publisher to optionally set the Banner Size (only supports Banner320x50 and Leaderboard)
+	///		Allows the publisher to optionally set the Banner Size
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Allows the publisher to choose whether the banner ads respect the safe area or not.
@@ -49,8 +66,8 @@ public static class Nimbus
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
 	public static InlineAd bannerAd(string nimbusReportingPosition, float bannerFloor = 0f,
-		IabSupportedAdSizes adSize = IabSupportedAdSizes.Banner, bool respectSafeArea = false,
-		NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, int refreshIntervalInSeconds = 30,
+		AdSize adSize = AdSize.banner, bool respectSafeArea = false,
+		NimbusUnityPosition adPosition = NimbusUnityPosition.BOTTOM_CENTER, int refreshIntervalInSeconds = 30,
 		RequestModifiers requestModifiers = new RequestModifiers())
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, nimbusReportingPosition, adPosition, modifiers: requestModifiers, adSize,
@@ -239,43 +256,7 @@ public static class Nimbus
 	}
 }
 
-/// <summary>
-///     Modifiers Added to an Ad on a per-request basis
-/// </summary>
-public struct RequestModifiers
-{
-	// Adds per-request app categories to the RTB request.
-	public PerRequestApp? app;
-	// A banner creative to be attached to the ad request.
-	public BannerCreative? banner;
-	// Overrides the environment for a single ad.
-	public Env? environment;
-	// Adds device geolocation to the RTB request.
-	public Location? location;
-	// Adds per-request user keywords to the RTB request.
-	//A comma-separated keyword string to assign to the RTB User object. 
-	[CanBeNull] public String userKeywords;
-	// Attaches a video creative to the ad request.
-	public VideoCreative? video;
-	// Adds viewability information to the RTB request.
-	public Viewability? viewability;
-
-
-	public RequestModifiers(PerRequestApp? app = null, BannerCreative? banner = null, 
-		Env? environment = null, Location? location = null, [CanBeNull] string userKeywords = null, 
-		VideoCreative? video = null, Viewability? viewability = null)
-	{
-		this.app = app;
-		this.banner = banner;
-		this.environment = environment;
-		this.location = location;
-		this.userKeywords = userKeywords;
-		this.video = video;
-		this.viewability = viewability;
-	}
-}
-
-/// <summary>
+	/// <summary>
     ///     A verification provider for ad viewability tracking
     /// </summary>
     public class VerificationProvider: AndroidJavaProxy

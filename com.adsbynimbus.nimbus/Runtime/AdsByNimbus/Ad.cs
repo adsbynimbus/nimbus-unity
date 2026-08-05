@@ -1,7 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdsByNimbus.Internal;
 using AdsByNimbus.Internal.Extensions;
+using AdsByNimbus.Internal.Utility;
 using UnityEngine;
 
 namespace AdsByNimbus {
@@ -9,9 +11,8 @@ namespace AdsByNimbus {
 
 	public class Ad {
 		public readonly AdType AdType;
-		public string ErrResponse;
 		public string NimbusReportingPosition;
-		public NimbusAdUnitPosition AdPosition;
+		public NimbusUnityPosition AdPosition;
 		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOT_LOADED; 
 		public readonly int InstanceID;
 		private bool _adCompleted;
@@ -20,12 +21,11 @@ namespace AdsByNimbus {
 		private bool _adPassedToNative;
 		private readonly AdEvents _adEvents;
 		internal bool AdWasRendered;
-		public RequestModifiers? RequestModifiers;
-
-		internal Task<string> Request = Task.FromResult("");
+		private RequestModifiers? RequestModifiers;
+		public List<RequestComponent> requestComponents { get; } = new List<RequestComponent>();
 		
 		public Ad(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, RequestModifiers? modifiers = null)
+			NimbusUnityPosition adPosition = NimbusUnityPosition.BOTTOM_CENTER, RequestModifiers? modifiers = null)
 		{
 			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;

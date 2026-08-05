@@ -16,13 +16,10 @@ namespace ScriptableObjects {
 		[HideInInspector] public bool sdkInitialized = false;
 
 		// APS data
-		[HideInInspector] public string androidAppID;
+		[HideInInspector] public string androidApsAppKey;
 		[HideInInspector] public ApsSlotData[] androidApsSlotData;
-		[HideInInspector] public int androidApsTimeoutInMilliseconds = 3000;
 		
-		public const int ApsDefaultTimeout = 3000;
-		
-		[HideInInspector] public string iosAppID;
+		[HideInInspector] public string iosApsAppKey;
 		[HideInInspector] public ApsSlotData[] iosApsSlotData;
 
 		// Vungle Data
@@ -42,10 +39,8 @@ namespace ScriptableObjects {
 		// Mintegral Data
 		[HideInInspector] public string androidMintegralAppID;
 		[HideInInspector] public string androidMintegralAppKey;
-		[HideInInspector] public AdMobAdUnit[] androidMintegralAdUnitData;
 		[HideInInspector] public string iosMintegralAppID;
 		[HideInInspector] public string iosMintegralAppKey;
-		[HideInInspector] public AdMobAdUnit[] iosMintegralAdUnitData;
 		
 		//Unity Ads Data
 		[HideInInspector] public string androidUnityAdsGameID;
@@ -53,15 +48,11 @@ namespace ScriptableObjects {
 		
 		//Moloco Data
 		[HideInInspector] public string androidMolocoAppKey;
-		[HideInInspector] public AdMobAdUnit[] androidMolocoAdUnitData;
 		[HideInInspector] public string iosMolocoAppKey;
-		[HideInInspector] public AdMobAdUnit[] iosMolocoAdUnitData;
 		
 		//InMobi Data
 		[HideInInspector] public string androidInMobiAccountId;
-		[HideInInspector] public AdMobAdUnit[] androidInMobiAdUnitData;
 		[HideInInspector] public string iosInMobiAccountId;
-		[HideInInspector] public AdMobAdUnit[] iosInMobiAdUnitData;
 		
 		private void OnValidate() {
 			Sanitize();
@@ -71,8 +62,8 @@ namespace ScriptableObjects {
 			publisherKey = publisherKey?.Trim();
 			apiKey = apiKey?.Trim();
 			#if NIMBUS_ENABLE_APS 
-				androidAppID = androidAppID?.Trim();
-				iosAppID = iosAppID?.Trim();
+				androidApsAppKey = androidApsAppKey?.Trim();
+				iosApsAppKey = iosApsAppKey?.Trim();
 
 				// ReSharper disable ForCanBeConvertedToForeach
 				// ReSharper disable InvertIf
@@ -126,17 +117,6 @@ namespace ScriptableObjects {
 				androidMintegralAppKey = androidMintegralAppKey?.Trim();
 				iosMintegralAppID = iosMintegralAppID?.Trim();
 				iosMintegralAppKey = iosMintegralAppKey?.Trim();
-				if (androidMintegralAdUnitData != null) {
-					for (var i = 0; i < androidMintegralAdUnitData.Length; i++) {
-						androidMintegralAdUnitData[i].AdUnitId = androidMintegralAdUnitData[i].AdUnitId?.Trim();
-					}
-				}
-					
-				if (iosMintegralAdUnitData != null) {
-					for (var i = 0; i < iosMintegralAdUnitData.Length; i++) {
-						iosMintegralAdUnitData[i].AdUnitId = iosMintegralAdUnitData[i].AdUnitId?.Trim();
-					}
-				}
 			#endif
 			
 			#if NIMBUS_ENABLE_UNITY_ADS
@@ -147,46 +127,24 @@ namespace ScriptableObjects {
 			#if NIMBUS_ENABLE_MOLOCO
 			androidMolocoAppKey = androidMolocoAppKey?.Trim();
 			iosMolocoAppKey = iosMolocoAppKey?.Trim();
-			if (androidMolocoAdUnitData != null) {
-				for (var i = 0; i < androidMolocoAdUnitData.Length; i++) {
-					androidMolocoAdUnitData[i].AdUnitId = androidMolocoAdUnitData[i].AdUnitId?.Trim();
-				}
-			}
-					
-			if (iosMolocoAdUnitData != null) {
-				for (var i = 0; i < iosMolocoAdUnitData.Length; i++) {
-					iosMolocoAdUnitData[i].AdUnitId = iosMolocoAdUnitData[i].AdUnitId?.Trim();
-				}
-			}
 			#endif
 			
 		#if NIMBUS_ENABLE_INMOBI
 			androidInMobiAccountId = androidInMobiAccountId?.Trim();
 			iosInMobiAccountId = iosInMobiAccountId?.Trim();
-			if (androidInMobiAdUnitData != null) {
-				for (var i = 0; i < androidInMobiAdUnitData.Length; i++) {
-					androidInMobiAdUnitData[i].AdUnitId = androidInMobiAdUnitData[i].AdUnitId?.Trim();
-				}
-			}
-					
-			if (iosInMobiAdUnitData != null) {
-				for (var i = 0; i < iosInMobiAdUnitData.Length; i++) {
-					iosInMobiAdUnitData[i].AdUnitId = iosInMobiAdUnitData[i].AdUnitId?.Trim();
-				}
-			}
 			#endif
 		}
 		
 
 
 		public Tuple<string, ApsSlotData[]> GetApsData() {
-			var appID = androidAppID;
+			var appKey = androidApsAppKey;
 			var slots = androidApsSlotData;
 			#if UNITY_IOS
-				appID = iosAppID;
+				appKey = iosApsAppKey;
 				slots =  iosApsSlotData;
 			#endif
-			return new Tuple<string, ApsSlotData[]>(appID, slots);
+			return new Tuple<string, ApsSlotData[]>(appKey, slots);
 		}
 
 		public string GetVungleData()
