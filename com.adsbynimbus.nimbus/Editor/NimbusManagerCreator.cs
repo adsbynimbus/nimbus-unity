@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using AdsByNimbus.Extensions;
 using AdsByNimbus.Internal;
 using AdsByNimbus.Internal.Extensions.AdMob;
 using AdsByNimbus.Internal.Extensions.APS;
@@ -85,7 +86,7 @@ namespace AdsByNimbus.Editor {
 
 			// APS
 			// Android APS UI
-			_androidApsAppKey = serializedObject.FindProperty("androidAppID");
+			_androidApsAppKey = serializedObject.FindProperty("androidApsAppKey");
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
@@ -100,7 +101,7 @@ namespace AdsByNimbus.Editor {
 			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsAndroidSlotData;
 
 			// IOS APS UI
-			_iosApsAppKey = serializedObject.FindProperty("iosAppID");
+			_iosApsAppKey = serializedObject.FindProperty("iosApsAppKey");
 			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
 			_iosApsSlotIdList = new ReorderableList(
 				serializedObject, _iosApsSlots,
@@ -646,27 +647,26 @@ namespace AdsByNimbus.Editor {
 		}
 
 
-		private void HandleApsSlots(SerializedProperty slotData, out ApsSlotData[] platformSlots) {
-			var apsSlotData = new List<ApsSlotData>();
+		private void HandleApsSlots(SerializedProperty slotData, out apsAd[] platformSlots) {
+			var apsSlotData = new List<apsAd>();
 			for (var i = 0; i < slotData.arraySize; i++) {
 				var item = slotData.GetArrayElementAtIndex(i);
 				var slotId = item.FindPropertyRelative("SlotId");
 
-				var apsData = new ApsSlotData {
-					slotId = slotId?.stringValue
-				};
-
 				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
+				var apsAdUnitType = APSAdFormat.Display300X250;
 				if (adUnitType != null) {
-					apsData.adUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
+					apsAdUnitType = (APSAdFormat)adUnitType.enumValueIndex;
 				}
+
+				var apsData = new apsAd(slotId?.stringValue, apsAdUnitType);
 
 				apsSlotData.Add(apsData);
 			}
 			platformSlots = apsSlotData.ToArray();
 		}	
 
-		private bool ValidateApsData(string platform, SerializedProperty appId, ApsSlotData[] slotData) {
+		private bool ValidateApsData(string platform, SerializedProperty appId, apsAd[] slotData) {
 			if (appId.stringValue.IsNullOrEmpty()) {
 				Debug.unityLogger.LogError("Nimbus", 
 					"APS SDK has been included, the APS App ID cannot be empty, object NimbusAdsManager not created");
@@ -679,7 +679,7 @@ namespace AdsByNimbus.Editor {
 				return false;
 			}
 
-			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
+			var seenAdTypes = new Dictionary<APSAdFormat, bool>();
 			foreach (var apsSlot in slotData) {
 				if (apsSlot.slotId.IsNullOrEmpty()) {
 					Debug.unityLogger.LogError("Nimbus", 
@@ -687,12 +687,12 @@ namespace AdsByNimbus.Editor {
 					return false;
 				}
 
-				if (!seenAdTypes.ContainsKey(apsSlot.adUnitType)) {
-					seenAdTypes.Add(apsSlot.adUnitType, true);
+				if (!seenAdTypes.ContainsKey(apsSlot.AdFormat)) {
+					seenAdTypes.Add(apsSlot.AdFormat, true);
 				}
 				else {
 					Debug.unityLogger.LogError("Nimbus", 
-						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.adUnitType} for {platform}, object NimbusAdsManager not created");
+						$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdFormat} for {platform}, object NimbusAdsManager not created");
 					return false;
 				}
 			}

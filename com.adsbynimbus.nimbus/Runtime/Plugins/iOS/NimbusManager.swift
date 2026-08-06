@@ -67,12 +67,12 @@ import NimbusMobileFuseKit
         }
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
-            NimbusManager.initAPS(appKey: extensions.aps?.appKey ?? "")
+            //NimbusManager.initAPS(appKey: extensions.aps?.appKey ?? "")
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
             #if NIMBUS_ENABLE_ADMOB
-            AdMobExtension()
+            //AdMobExtension()
             #endif
             #if NIMBUS_ENABLE_INMOBI
             InMobiExtension(accountId: extensions.inMobi?.accountId ?? "")
@@ -152,8 +152,8 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, refreshInterval: Int, bidFloor: Float, 
-    respectSafeArea: Bool, bannerPosition: Int, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
+    @objc public func bannerAd(position: String, width: Int, height: Int, addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
+                               screenPosition: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool, ) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
@@ -161,17 +161,19 @@ import NimbusMobileFuseKit
                 #if NIMBUS_ENABLE_APS
                     let apsAds = await self.loadAPSAds(from: extensions)
                 #endif
+                let additionalFormats = self.getAddFormatsFromString(addFormatStr: addFormats)
+                let adPos = NimbusKit.RTB.Position(rawValue: adPosition) ?? .unknown
                 let contentView = UIView()
                 let viewController = self.unityViewController() ?? UIViewController()
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
-                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition))
                 let instanceId = self.adUnitInstanceId
                 var adMobAdUnitId: String = ""
                 if let adUnitId = extensions?.adMob?.adUnitIds?.first {
                     adMobAdUnitId = adUnitId ?? ""
                 }
-                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), bidFloor: bidFloor, refreshInterval: refreshInterval){
+                let bannerAd = Nimbus.bannerAd(position: position, size: AdSize(width: width, height: height), addFormats: additionalFormats, adPosition: adPos, bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
                         if (!adMobAdUnitId.isEmpty) {
@@ -205,19 +207,126 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func interstitialAd(position: String, bannerFloor: Float, videoFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String){
+    @objc public func dynamicUnit(position: String, addFormats: String, orientation: Int, adPosition: Int, bidFloor: Float, refreshInterval: Int,
+                               screenPosition: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
-        group.wait(for: {
+        group.wait(for: { @MainActor in
+            do {
+                #if NIMBUS_ENABLE_APS
+                    let apsAds = await self.loadAPSAds(from: extensions)
+                #endif
+                let additionalFormats = self.getAddFormatsFromString(addFormatStr: addFormats)
+                let adPos = NimbusKit.RTB.Position(rawValue: adPosition) ?? .unknown
+                let contentView = UIView()
+                let viewController = self.unityViewController() ?? UIViewController()
+                contentView.translatesAutoresizingMaskIntoConstraints = false
+                viewController.view.addSubview(contentView)
+                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition))
+                let instanceId = self.adUnitInstanceId
+                var adMobAdUnitId: String = ""
+                if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                    adMobAdUnitId = adUnitId ?? ""
+                }
+                let dynamicUnit = Nimbus.dynamicUnit(position: position, addFormats: additionalFormats, adPosition: adPos, bidFloor: bidFloor, refreshInterval: refreshInterval){
+                    demand {
+                        #if NIMBUS_ENABLE_ADMOB
+                        if (!adMobAdUnitId.isEmpty) {
+                            admob(bannerAdUnitId: adMobAdUnitId)
+                        }
+                        #endif
+                        #if NIMBUS_ENABLE_APS
+                        if (!apsAds.isEmpty) {
+                            aps(ads: apsAds)
+                        }
+                        #endif
+                    }
+                    if let modifiers = NimbusHelper.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                        modifiers.components
+                    }
+                }.onEvent { event in
+                    NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
+                }                .onError { error in
+                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                }
+                self.ad = dynamicUnit
+                if (showAd) {
+                    try await dynamicUnit.show(in: contentView)
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                } else {
+                    try await dynamicUnit.load()
+                }
+            } catch {
+                Nimbus.Log.request.error(error.localizedDescription)
+            }
+        })
+    }
+    
+    @objc public func fullscreenAd(position: String, orientation: Int, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool){
+        let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
+        let group = DispatchGroup()
+        group.wait(for: { @MainActor in
             #if NIMBUS_ENABLE_APS
-                var apsAds = await self.loadAPSAds(from: extensions)
+                let apsAds = await self.loadAPSAds(from: extensions)
             #endif
             var adMobAdUnitId: String = ""
             if let adUnitId = extensions?.adMob?.adUnitIds?.first {
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let interstitialAd = await Nimbus.fullscreenAd(position: position){
+            
+            let fullscreenAd = Nimbus.fullscreenAd(position: position, orientation: self.getOrientationFromInt(orientation: orientation)){
+                demand {
+                    #if NIMBUS_ENABLE_ADMOB
+                    if (!adMobAdUnitId.isEmpty) {
+                        admob(interstitialAdUnitId: adMobAdUnitId)
+                    }
+                    #endif
+                    #if NIMBUS_ENABLE_APS
+                    if (!apsAds.isEmpty) {
+                        aps(ads: apsAds)
+                    }
+                    #endif
+                }
+                if let modifiers = NimbusHelper.requestModifiersFromJsonString(requestModifiers: requestModifiersJson) {
+                    modifiers.components
+                }
+            }.onEvent { event in
+                NimbusManager.didReceiveNimbusEvent(adUnitInstanceID: instanceId, event: event)
+            }                .onError { error in
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+            }
+            self.ad = fullscreenAd
+            do {
+                if (showAd) {
+                    try await fullscreenAd.show(from: self.unityViewController())
+                    UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
+                } else {
+                    try await fullscreenAd.load()
+                }
+            }
+            catch {
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+            }
+        })
+    }
+    
+    
+    @objc public func interstitialAd(position: String, addFormats: String, orientation: Int, bidFloor: Float, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool){
+        let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
+        let group = DispatchGroup()
+        group.wait(for: { @MainActor in
+            #if NIMBUS_ENABLE_APS
+                let apsAds = await self.loadAPSAds(from: extensions)
+            #endif
+            var adMobAdUnitId: String = ""
+            if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                adMobAdUnitId = adUnitId ?? ""
+            }
+            let additionalFormats = self.getAddFormatsFromString(addFormatStr: addFormats)
+            let instanceId = self.adUnitInstanceId
+            
+            let interstitialAd = Nimbus.interstitialAd(position: position, addFormats: additionalFormats, orientation: self.getOrientationFromInt(orientation: orientation), bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -250,14 +359,13 @@ import NimbusMobileFuseKit
             catch {
                 NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
-
         })
     }
     
-    @objc public func rewardedAd(position: String, bidFloor: Float, showAd: Bool, thirdPartyDemand: String, requestModifiersJson: String) {
+    @objc public func rewardedAd(position: String, orientation: Int, bidFloor: Float, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
-        group.wait(for: {
+        group.wait(for: { @MainActor in
             #if NIMBUS_ENABLE_APS
                 let apsAds = await self.loadAPSAds(from: extensions)
             #endif
@@ -266,7 +374,7 @@ import NimbusMobileFuseKit
                 adMobAdUnitId = adUnitId ?? ""
             }
             let instanceId = self.adUnitInstanceId
-            let rewardedAd = await Nimbus.rewardedAd(position: position, bidFloor: bidFloor){
+            let rewardedAd = Nimbus.rewardedAd(position: position, bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
                     if (!adMobAdUnitId.isEmpty) {
@@ -397,6 +505,54 @@ import NimbusMobileFuseKit
         return apsAds
     }
     #endif
+    
+    @MainActor
+    private func getAddFormatsFromString(addFormatStr: String) -> Set<NimbusKit.RTB.Format> {
+        var additionalFormats: Set<NimbusKit.RTB.Format> = [];
+        if (!addFormatStr.isEmpty) {
+            additionalFormats = Set(
+                addFormatStr.split(separator: ",").compactMap { substring -> NimbusKit.RTB.Format? in
+                    let trimmed = String(substring).trimmingCharacters(in: CharacterSet.whitespaces)
+                    if let intValue = Int(trimmed) {
+                        switch intValue {
+                        case 1:
+                            return NimbusKit.RTB.Format.banner
+                        case 2:
+                            return NimbusKit.RTB.Format.mrec
+                        case 3:
+                            return NimbusKit.RTB.Format.halfScreen
+                        case 4:
+                            return NimbusKit.RTB.Format.leaderboard
+                        case 5:
+                            return NimbusKit.RTB.Format.interstitialPortrait
+                        case 6:
+                            return NimbusKit.RTB.Format.interstitialLandscape
+                        case 7:
+                            return NimbusKit.RTB.Format.interstitial
+                        default:
+                            return nil
+                        }
+                    }
+                    return nil
+                }
+            )
+        }
+        return additionalFormats
+    }
+    
+    private func getOrientationFromInt(orientation: Int) -> NimbusKit.AdOrientation {
+        switch orientation {
+            case 0:
+                return NimbusKit.AdOrientation.portrait
+            case 1:
+                return NimbusKit.AdOrientation.landscape
+            case 2:
+                return NimbusKit.AdOrientation.deviceOrientation
+            default:
+                return NimbusKit.AdOrientation.deviceOrientation
+        }
+    }
+
     
     public static func didReceiveNimbusEvent(adUnitInstanceID: Int, event: AdEvent) {
         let eventName: String

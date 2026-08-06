@@ -1,48 +1,37 @@
 using System;
+using System.Collections.Generic;
 using AdsByNimbus;
-using AdsByNimbus.Internal;
-using AdsByNimbus.Internal.Extensions;
+using AdsByNimbus.RTB;
 
 public class InlineAd: Ad
 {
-    public AdSize BannerSize;
+    public AdSize AdSize;
+    public Position AdPosition;
+    public int RefreshInterval;
+    public AdScreenPosition AdScreenPosition;
     public bool RespectSafeArea;
-    public float BannerBidFloor;
-    public int BannerRefreshIntervalInSeconds;
+    internal bool DynamicUnit;
+    
 
-    public InlineAd(in AdEvents adEvents, string nimbusReportingPosition,
-        NimbusUnityPosition adPosition = NimbusUnityPosition.BOTTOM_CENTER, RequestModifiers? modifiers = null,
-        AdSize adSize = AdSize.banner, bool respectSafeArea = false,
-        int bannerRefreshIntervalInSeconds = 30, float bannerBidFloor = 0f): 
-        base(AdType.Inline, adEvents, nimbusReportingPosition, adPosition, modifiers)
+    internal InlineAd(in AdEvents adEvents, string position, AdSize adSize = AdSize.banner, Format[] addFormats = null,
+        Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, AdScreenPosition adScreenPosition = AdScreenPosition.BOTTOM_CENTER, 
+        bool respectSafeArea = false, AdOrientation orientation = AdOrientation.deviceOrientation, bool dynamicUnit = false,
+        List<RequestComponent> components = null, List<DemandComponent> demand = null): 
+        base(AdType.Inline, adEvents, position, addFormats, bidFloor, orientation,  components, demand)
     {
-        BannerSize = adSize;
-        RespectSafeArea = respectSafeArea;
-        BannerRefreshIntervalInSeconds = bannerRefreshIntervalInSeconds;
-        BannerBidFloor = bannerBidFloor;
-    }
-}
-public static class AdSizesExtension {
-    public static Tuple<int, int> ToWidthAndHeight(this AdSize isa) {
-        switch (isa) {
-            case AdSize.banner:
-                return new Tuple<int, int>(320, 50);
-            case AdSize.mrec:
-                return new Tuple<int, int>(300, 250);
-            case AdSize.halfScreen:
-                return new Tuple<int, int>(300, 600);
-            case AdSize.leaderboard:
-                return new Tuple<int, int>(728, 90);
-            case AdSize.interstitialPortrait:
-                return new Tuple<int, int>(320, 480);
-            case AdSize.interstitialLandscape:
-                return new Tuple<int, int>(480, 320);
-            default:
-                return new Tuple<int, int>(0, 0);
+        AdSize = adSize;
+        if (DynamicUnit)
+        {
+            AddFormats ??= new[] { Format.mrec, Format.halfScreen };
         }
+        AdPosition = adPosition;
+        RespectSafeArea = respectSafeArea;
+        RefreshInterval = refreshInterval;
+        AdScreenPosition = adScreenPosition;
+        DynamicUnit = dynamicUnit;
     }
 }
-public enum NimbusUnityPosition
+public enum AdScreenPosition
 {
     BOTTOM_CENTER = 0,
     TOP_CENTER = 1,
@@ -66,4 +55,25 @@ public enum AdSize : byte {
     interstitialPortrait,
     // Interstitial landscape format (480×320)
     interstitialLandscape,
+}
+
+public static class AdSizesExtension {
+    public static Tuple<int, int> ToWidthAndHeight(this AdSize isa) {
+        switch (isa) {
+            case AdSize.banner:
+                return new Tuple<int, int>(320, 50);
+            case AdSize.mrec:
+                return new Tuple<int, int>(300, 250);
+            case AdSize.halfScreen:
+                return new Tuple<int, int>(300, 600);
+            case AdSize.leaderboard:
+                return new Tuple<int, int>(728, 90);
+            case AdSize.interstitialPortrait:
+                return new Tuple<int, int>(320, 480);
+            case AdSize.interstitialLandscape:
+                return new Tuple<int, int>(480, 320);
+            default:
+                return new Tuple<int, int>(0, 0);
+        }
+    }
 }

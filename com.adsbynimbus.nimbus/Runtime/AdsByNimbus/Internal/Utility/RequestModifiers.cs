@@ -1,3 +1,9 @@
+using System;
+using AdsByNimbus.RTB;
+using AdsByNimbus.RTB.Request;
+using JetBrains.Annotations;
+using UnityEditor;
+
 namespace AdsByNimbus.Internal.Utility
 {
     /// <summary>
@@ -10,29 +16,15 @@ namespace AdsByNimbus.Internal.Utility
         // A banner creative to be attached to the ad request.
         public banner? banner;
         // Overrides the environment for a single ad.
-        public Environment? environment;
+        public environment? environment;
         // Adds device geolocation to the RTB request.
-        public Location? location;
+        public location? location;
         // Adds per-request user keywords to the RTB request.
-        //A comma-separated keyword string to assign to the RTB User object. 
-        [CanBeNull] public String userKeywords;
+        [CanBeNull] public user user;
         // Attaches a video creative to the ad request.
         public video? video;
         // Adds viewability information to the RTB request.
-        public Viewability? viewability;
-
-
-        public RequestModifiers(app? app = null, banner? banner = null, 
-            Environment? environment = null, Location? location = null, [CanBeNull] string userKeywords = null, 
-            video? video = null, Viewability? viewability = null)
-        {
-            this.app = app;
-            this.banner = banner;
-            this.environment = environment;
-            this.location = location;
-            this.userKeywords = userKeywords;
-            this.video = video;
-            this.viewability = viewability;
-        }
+        public viewability? viewability;
+        
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using AdsByNimbus.Extensions;
 using AdsByNimbus.Internal.Extensions.AdMob;
 using AdsByNimbus.Internal.Extensions.APS;
 using UnityEngine;
@@ -17,10 +18,10 @@ namespace ScriptableObjects {
 
 		// APS data
 		[HideInInspector] public string androidApsAppKey;
-		[HideInInspector] public ApsSlotData[] androidApsSlotData;
+		[HideInInspector] public apsAd[] androidApsSlotData;
 		
 		[HideInInspector] public string iosApsAppKey;
-		[HideInInspector] public ApsSlotData[] iosApsSlotData;
+		[HideInInspector] public apsAd[] iosApsSlotData;
 
 		// Vungle Data
 		[HideInInspector] public string androidVungleAppID;
@@ -137,14 +138,14 @@ namespace ScriptableObjects {
 		
 
 
-		public Tuple<string, ApsSlotData[]> GetApsData() {
+		public Tuple<string, apsAd[]> GetApsData() {
 			var appKey = androidApsAppKey;
 			var slots = androidApsSlotData;
 			#if UNITY_IOS
 				appKey = iosApsAppKey;
 				slots =  iosApsSlotData;
 			#endif
-			return new Tuple<string, ApsSlotData[]>(appKey, slots);
+			return new Tuple<string, apsAd[]>(appKey, slots);
 		}
 
 		public string GetVungleData()

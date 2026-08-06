@@ -15,12 +15,13 @@ namespace AdsByNimbus.Extensions
         }
     }
 
-    public class AdMob
+    public class adMob: DemandComponent
     {
-        // Use this constructor in the request blocks in Nimbus.bannerAd(), Nimbus.fullscreenAd(), or Nimbus.rewardedAd()
-        public AdMob(string adUnitId)
+        public string adUnitId;
+        // Use this constructor in the request blocks in Nimbus.bannerAd(), Nimbus.fullscreenAd(), etc.
+        public adMob(string adUnitId)
         {
-            
+            this.adUnitId = adUnitId;
         }
     }
     #endif

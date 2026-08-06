@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace AdsByNimbus.RTB.Request
@@ -24,35 +25,6 @@ namespace AdsByNimbus.RTB.Request
             this.bidFloor = bidFloor;
             this.battr = battr;
         }
-    }
-    /// <summary>
-    ///     Supported ad format with a width and height
-    /// </summary>
-    public enum Format: byte
-    {
-        banner = 1, //Standard banner format (320×50).
-        mrec = 2, // Medium rectangle (MREC) format (300×250).
-        halfScreen = 3, // Half-screen format (300×600).
-        leaderboard = 4, // Leaderboard format (728×90).
-        interstitialPortrait = 5, // Interstitial portrait format (320×480).
-        interstitialLandscape = 6, // Interstitial landscape format (480×320).
-        interstitial = 7, // Interstitial format chosen for the current device orientation.
-    }
-    
-    /// <summary>
-    ///     Describes the position of the ad as a relative measure of visibility or prominence.
-    ///     This OpenRTB table has values derived from the Inventory Quality Guidelines (IQG). Values 4 - 7 apply to apps.
-    ///     OpenRTB Section 5.4
-    /// </summary>
-    public enum Position: byte
-    {
-        unknown = 0,
-        aboveTheFold = 1,
-        belowTheFold = 2,
-        header = 3,
-        footer = 4,
-        sidebar = 5,
-        fullScreen = 6,
     }
 
     /// <summary>

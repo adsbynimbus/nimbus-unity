@@ -3,7 +3,7 @@ namespace AdsByNimbus.RTB
     /// <summary>
     ///     Adds device geolocation to the RTB request.
     /// </summary>
-    public struct location
+    public struct location: RequestComponent
     {
         public double latitude; // The latitude in decimal degrees. Valid range is -90...90.
         public double longitude; // The longitude in decimal degrees. Valid range is -180...180.

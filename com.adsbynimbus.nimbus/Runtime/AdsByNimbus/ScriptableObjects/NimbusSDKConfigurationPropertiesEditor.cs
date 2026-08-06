@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using AdsByNimbus.Extensions;
 using AdsByNimbus.Internal.Extensions.APS;
 using UnityEditor;
 using UnityEditorInternal;
@@ -16,11 +17,11 @@ namespace ScriptableObjects {
 		private SerializedProperty _enableManualInitialization;
 		
 		// APS
-		private SerializedProperty _androidAppId;
+		private SerializedProperty _androidApsAppKey;
 		private ReorderableList _androidApsSlotIdList = null;
 		private SerializedProperty _androidApsSlots = null;
 		
-		private SerializedProperty _iosAppId;
+		private SerializedProperty _iosApsAppKey;
 		private ReorderableList _iosApsSlotIdList = null;
 		private SerializedProperty _iosApsSlots = null;
 		
@@ -78,7 +79,7 @@ namespace ScriptableObjects {
 			
 			// APS
 			// Android APS UI
-			_androidAppId = serializedObject.FindProperty("androidAppID");
+			_androidApsAppKey = serializedObject.FindProperty("androidApsAppID");
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
@@ -93,7 +94,7 @@ namespace ScriptableObjects {
 			_androidApsSlotIdList.drawElementCallback += OnDrawElementApsAndroidSlotData;
 			
 			// IOS APS UI
-			_iosAppId = serializedObject.FindProperty("iosAppID");
+			_iosApsAppKey = serializedObject.FindProperty("iosApsAppKey");
 			_iosApsSlots = serializedObject.FindProperty("iosApsSlotData");
 			_iosApsSlotIdList = new ReorderableList(
 				serializedObject, _iosApsSlots,
@@ -334,15 +335,15 @@ namespace ScriptableObjects {
 				#if NIMBUS_ENABLE_APS_ANDROID
 					ValidateApsSlots("Android", _androidApsSlots);
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_androidAppId));
+					EditorGUILayout.PropertyField((_AndroidApsAppKey));
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
 			
 				#if NIMBUS_ENABLE_APS_IOS
-					ValidateApsSlots("iOS", _androidApsSlots);
+					ValidateApsSlots("iOS", _iosApsSlots);
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField(_iosAppId);
+					EditorGUILayout.PropertyField(_iosApsAppKey);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_iosApsSlots, "APS iOS Slot Id Data");
 				#endif	
@@ -508,33 +509,37 @@ namespace ScriptableObjects {
 			serializedObject.ApplyModifiedProperties();
 		}
 		private void ValidateApsSlots(string platform, SerializedProperty slotData) {
-			var apsSlotData = new List<ApsSlotData>();
+			var apsSlotData = new List<apsAd>();
 			for (var i = 0; i < slotData.arraySize; i++) {
 				var item = slotData.GetArrayElementAtIndex(i);
 				var slotId = item.FindPropertyRelative("SlotId");
 
-				var apsData = new ApsSlotData {
-					slotId = slotId?.stringValue
-				};
+
 
 				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
+				var format = APSAdFormat.Display300X250;
 				if (adUnitType != null) {
-					apsData.adUnitType = (APSAdUnitType)adUnitType.enumValueIndex;
+					format = (APSAdFormat) adUnitType.enumValueIndex;
 				}
+				
+				var apsData = new apsAd(
+					slotId?.stringValue,
+					format)
+				;
 
 				apsSlotData.Add(apsData);
 			}
 			var platformSlots = apsSlotData.ToArray();
-			var seenAdTypes = new Dictionary<APSAdUnitType, bool>();
+			var seenAdTypes = new Dictionary<APSAdFormat, bool>();
 			foreach (var apsSlot in platformSlots) {
-				if (!seenAdTypes.ContainsKey(apsSlot.adUnitType)) {
-					seenAdTypes.Add(apsSlot.adUnitType, true);
+				if (!seenAdTypes.ContainsKey(apsSlot.AdFormat)) {
+					seenAdTypes.Add(apsSlot.AdFormat, true);
 				}
 				else {
 					if (!_errorLogged)
 					{
 						Debug.unityLogger.LogError("Nimbus", 
-							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.adUnitType} for {platform}, object NimbusAdsManager not created");
+							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdFormat} for {platform}, object NimbusAdsManager not created");
 						_errorLogged = true;
 					}
 					return;

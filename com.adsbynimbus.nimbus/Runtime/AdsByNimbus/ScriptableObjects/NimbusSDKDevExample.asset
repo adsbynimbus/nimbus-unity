@@ -18,44 +18,43 @@ MonoBehaviour:
   enableUnityLogs: 1
   enableManualInitialization: 0
   sdkInitialized: 0
-  androidAppID: a9_onboarding_app_id
+  androidApsAppKey: 
   androidApsSlotData:
   - slotId: 
-    adUnitType: 0
+    AdFormat: 0
   - slotId: 
-    adUnitType: 0
+    AdFormat: 0
   - slotId: 
-    adUnitType: 0
-  androidApsTimeoutInMilliseconds: 3000
-  iosAppID: a9_onboarding_app_id
+    AdFormat: 0
+  iosApsAppKey: c5f20fe6e37146b08749d09bb2b6a4dd
   iosApsSlotData:
-  - slotId: 
-    adUnitType: 0
-  - slotId: 
-    adUnitType: 0
-  - slotId: 
-    adUnitType: 0
+  - slotId: 88e6293b-0bf0-43fc-947b-925babe7bf3f
+    AdFormat: 0
+  - slotId: 424c37b6-38e0-4076-94e6-0933a6213496
+    AdFormat: 3
+  - slotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
+    AdFormat: 5
   androidVungleAppID: 
   iosVungleAppID: 
   androidMetaAppID: 
   iosMetaAppID: 
   androidAdMobAppID: ca-app-pub-1368919009399326~9625312345
   androidAdMobAdUnitData: []
-  iosAdMobAppID: 
-  iosAdMobAdUnitData: []
+  iosAdMobAppID: ca-app-pub-1368919009399326~6999149154
+  iosAdMobAdUnitData:
+  - AdUnitId: ca-app-pub-3940256099942544/5666886961
+    AdUnitType: 0
+  - AdUnitId: ca-app-pub-3940256099942544/7468135367
+    AdUnitType: 1
+  - AdUnitId: ca-app-pub-3940256099942544/6407740107
+    AdUnitType: 2
   androidMintegralAppID: 
   androidMintegralAppKey: 
-  androidMintegralAdUnitData: []
   iosMintegralAppID: 
   iosMintegralAppKey: 
-  iosMintegralAdUnitData: []
   androidUnityAdsGameID: 
   iosUnityAdsGameID: 
   androidMolocoAppKey: 
-  androidMolocoAdUnitData: []
   iosMolocoAppKey: 
-  iosMolocoAdUnitData: []
   androidInMobiAccountId: 
-  androidInMobiAdUnitData: []
   iosInMobiAccountId: 
-  iosInMobiAdUnitData: []
