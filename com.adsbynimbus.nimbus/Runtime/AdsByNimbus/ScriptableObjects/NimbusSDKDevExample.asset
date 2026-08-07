@@ -21,19 +21,19 @@ MonoBehaviour:
   androidApsAppKey: 
   androidApsSlotData:
   - slotId: 
-    AdFormat: 0
+    adUnitType: 0
   - slotId: 
-    AdFormat: 0
+    adUnitType: 0
   - slotId: 
-    AdFormat: 0
+    adUnitType: 0
   iosApsAppKey: c5f20fe6e37146b08749d09bb2b6a4dd
   iosApsSlotData:
   - slotId: 88e6293b-0bf0-43fc-947b-925babe7bf3f
-    AdFormat: 0
+    adUnitType: 0
   - slotId: 424c37b6-38e0-4076-94e6-0933a6213496
-    AdFormat: 3
+    adUnitType: 3
   - slotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
-    AdFormat: 5
+    adUnitType: 5
   androidVungleAppID: 
   iosVungleAppID: 
   androidMetaAppID: 

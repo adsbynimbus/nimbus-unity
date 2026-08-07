@@ -33,12 +33,12 @@ namespace AdsByNimbus.Extensions
     public class apsAd
     {
         public string slotId;
-        public APSAdFormat AdFormat;
+        public APSAdFormat adUnitType;
         
         public apsAd(string slotId, APSAdFormat adFormat)
         {
             this.slotId = slotId;
-            this.AdFormat = adFormat;
+            this.adUnitType = adFormat;
         }
     }
     

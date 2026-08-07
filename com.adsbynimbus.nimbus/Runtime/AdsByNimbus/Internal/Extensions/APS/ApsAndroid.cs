@@ -33,7 +33,7 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 			{
 				if (type == AdType.Inline)
 				{
-					switch (slot.AdFormat)
+					switch (slot.adUnitType)
 					{
 						case APSAdFormat.Display320X50:
 						{
@@ -63,7 +63,7 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 				} 
 				else if (type == AdType.Fullscreen)
 				{
-					switch (slot.AdFormat)
+					switch (slot.adUnitType)
 					{
 						case APSAdFormat.InterstitialDisplay:
 						{
@@ -79,7 +79,7 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 				}
 				else
 				{
-					if (slot.AdFormat == APSAdFormat.RewardedVideo)
+					if (slot.adUnitType == APSAdFormat.RewardedVideo)
 					{
 						slotData.Add(slot);
 					}

@@ -122,11 +122,12 @@ namespace Example.Scripts {
 		}
 
 		public void LoadAndShowInterstitial() {
-			Nimbus.interstitialAd("unity_demo_interstitial_position").Show();
+			Nimbus.interstitialAd("unity_demo_interstitial_position", new Format[] { Format.halfScreen }, 
+				AdOrientation.portrait, 0.10f).Show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			Nimbus.rewardedAd("unity_demo_video_position").Show();
+			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait, 0.05f).Show();
 		}
 
 		public void LoadAdController(int index) {

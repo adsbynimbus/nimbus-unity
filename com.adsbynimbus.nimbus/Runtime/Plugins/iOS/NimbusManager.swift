@@ -67,12 +67,12 @@ import NimbusMobileFuseKit
         }
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
-            //NimbusManager.initAPS(appKey: extensions.aps?.appKey ?? "")
+            NimbusManager.initAPS(appKey: extensions.aps?.appKey ?? "")
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
             #if NIMBUS_ENABLE_ADMOB
-            //AdMobExtension()
+            AdMobExtension()
             #endif
             #if NIMBUS_ENABLE_INMOBI
             InMobiExtension(accountId: extensions.inMobi?.accountId ?? "")

@@ -532,14 +532,14 @@ namespace ScriptableObjects {
 			var platformSlots = apsSlotData.ToArray();
 			var seenAdTypes = new Dictionary<APSAdFormat, bool>();
 			foreach (var apsSlot in platformSlots) {
-				if (!seenAdTypes.ContainsKey(apsSlot.AdFormat)) {
-					seenAdTypes.Add(apsSlot.AdFormat, true);
+				if (!seenAdTypes.ContainsKey(apsSlot.adUnitType)) {
+					seenAdTypes.Add(apsSlot.adUnitType, true);
 				}
 				else {
 					if (!_errorLogged)
 					{
 						Debug.unityLogger.LogError("Nimbus", 
-							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.AdFormat} for {platform}, object NimbusAdsManager not created");
+							$"APS SDK has been included, APS cannot contain duplicate ad type {apsSlot.adUnitType} for {platform}, object NimbusAdsManager not created");
 						_errorLogged = true;
 					}
 					return;
