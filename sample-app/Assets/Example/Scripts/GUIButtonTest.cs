@@ -16,13 +16,13 @@ namespace Example.Scripts {
 	/// </summary>
 	public class GUIButtonTest : MonoBehaviour, IAdEventsExtended {
 		[SerializeField] private TextMeshProUGUI _loadedBannerButtonText;
-		[SerializeField] private TextMeshProUGUI _loadedLeaderboardButtonText;
+		[SerializeField] private TextMeshProUGUI _loadedDynamicUnitButtonText;
 		[SerializeField] private TextMeshProUGUI _errorText;
 		[SerializeField] private List<AdController> _interactableButtons;
 
 		private InlineAd _loadAndShowBannerAdUnit;
-		private InlineAd _loadAndShowLeaderboardAdUnit;
-		private bool _shouldDestroyLeaderboard;
+		private InlineAd _loadAndShowDynamicUnitAdUnit;
+		private bool _shouldDestroyDynamicUnit;
 		private bool _shouldDestroyBanner;
 
 		private void Start()
@@ -105,20 +105,20 @@ namespace Example.Scripts {
 			_loadedBannerButtonText.text = "Load And Show Banner";
 		}
 		
-		public void LoadAndShowLeaderboard() {
-			if (!_shouldDestroyLeaderboard) {
-				_shouldDestroyLeaderboard = true;
-				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
-				_loadAndShowLeaderboardAdUnit = 
-					Nimbus.bannerAd("unity_demo_leaderboard_position", AdSize.leaderboard);
-				_loadAndShowLeaderboardAdUnit.Show();
+		public void LoadAndShowDynamicUnit() {
+			if (!_shouldDestroyDynamicUnit) {
+				_shouldDestroyDynamicUnit = true;
+				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
+				_loadAndShowDynamicUnitAdUnit = 
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position");
+				_loadAndShowDynamicUnitAdUnit.Show();
 				return;
 			}
 
-			_loadAndShowLeaderboardAdUnit?.Destroy();
-			_loadAndShowLeaderboardAdUnit = null;
-			_shouldDestroyLeaderboard = false;
-			_loadedLeaderboardButtonText.text = "Load And Show Leaderboard";
+			_loadAndShowDynamicUnitAdUnit?.Destroy();
+			_loadAndShowDynamicUnitAdUnit = null;
+			_shouldDestroyDynamicUnit = false;
+			_loadedDynamicUnitButtonText.text = "Load And Show Dynamic Unit";
 		}
 
 		public void LoadAndShowInterstitial() {

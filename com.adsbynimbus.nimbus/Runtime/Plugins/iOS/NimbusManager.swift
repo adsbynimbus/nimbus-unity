@@ -222,7 +222,7 @@ import NimbusMobileFuseKit
                 let viewController = self.unityViewController() ?? UIViewController()
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
-                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition))
+                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition, isDynamicAdUnit: true))
                 let instanceId = self.adUnitInstanceId
                 var adMobAdUnitId: String = ""
                 if let adUnitId = extensions?.adMob?.adUnitIds?.first {
@@ -584,7 +584,7 @@ import NimbusMobileFuseKit
         )
     }
     
-    private func constraints(to contentView: UIView, viewController: UIViewController,respectSafeArea: Bool, adScreenPosition: Int) -> [NSLayoutConstraint] {
+    private func constraints(to contentView: UIView, viewController: UIViewController, respectSafeArea: Bool, adScreenPosition: Int, isDynamicAdUnit: Bool = false) -> [NSLayoutConstraint] {
         switch (adScreenPosition) {
             // Center Top
             case 1:
@@ -626,12 +626,25 @@ import NimbusMobileFuseKit
                 ]
             // Center Bottom (Case 0)
             default:
-                return [
-                    contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
-                ]
+                if (isDynamicAdUnit)
+                {
+                    // For DynamicAdUnit the constraints have no height set so it doesnt know how big the video should be (which breaks the video view)
+                    return [
+                        contentView.heightAnchor.constraint(equalToConstant: 480),
+                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                        contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
+                        contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
+                    ]
+                }
+                else {
+                    return [
+                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                        contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
+                        contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
+                    ]
+                }
         }
     }
     

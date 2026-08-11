@@ -317,7 +317,7 @@ namespace AdsByNimbus.Editor {
 				EditorGUILayout.LabelField("APS Configuration", headerStyle);
 				#if NIMBUS_ENABLE_APS_ANDROID
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_androidAppKey));
+					EditorGUILayout.PropertyField(_androidApsAppKey);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif
@@ -784,7 +784,7 @@ namespace AdsByNimbus.Editor {
 					$"Mintegral SDK has been included, the {platform} Mintegral App Key cannot be empty, object NimbusAdsManager not created");
 				return false;
 			}
-			return true;
+			return true; 
 		}
 		
 		private bool ValidateUnityAdsData(string platform, SerializedProperty gameId) {

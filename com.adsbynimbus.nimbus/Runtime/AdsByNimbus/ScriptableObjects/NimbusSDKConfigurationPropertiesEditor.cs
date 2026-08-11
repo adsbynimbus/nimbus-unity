@@ -79,7 +79,7 @@ namespace ScriptableObjects {
 			
 			// APS
 			// Android APS UI
-			_androidApsAppKey = serializedObject.FindProperty("androidApsAppID");
+			_androidApsAppKey = serializedObject.FindProperty("androidApsAppKey");
 			_androidApsSlots = serializedObject.FindProperty("androidApsSlotData");
 			_androidApsSlotIdList = new ReorderableList(
 				serializedObject, _androidApsSlots,
@@ -335,7 +335,7 @@ namespace ScriptableObjects {
 				#if NIMBUS_ENABLE_APS_ANDROID
 					ValidateApsSlots("Android", _androidApsSlots);
 					GUILayout.Space(10);
-					EditorGUILayout.PropertyField((_AndroidApsAppKey));
+					EditorGUILayout.PropertyField(_androidApsAppKey);
 					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
 					EditorDrawUtility.DrawArray(_androidApsSlots, "APS Android Slot Id Data");
 				#endif

@@ -8,7 +8,7 @@ namespace AdsByNimbus.Extensions
         public AdMobExtension(string appId)
         {
 #if UNITY_ANDROID
-            NimbusManager.Instance._configuration.androidAdMobAppId = appId;
+            NimbusManager.Instance._configuration.androidAdMobAppID = appId;
 #elif UNITY_IOS
             NimbusManager.Instance._configuration.iosAdMobAppID = appId;
 #endif
