@@ -59,7 +59,7 @@ namespace AdsByNimbus {
 		public void Load()
 		{
 			_adPassedToNative = true;
-			NimbusManager.Instance.StartCoroutine(LoadAd(false));
+			NimbusManager.Instance.StartCoroutine(LoadAd(showAd: false));
 		}
 		
 		/// <summary>
@@ -75,7 +75,7 @@ namespace AdsByNimbus {
 			else
 			{
 				// Ad needs to be passed over the bridge before show() is called
-				NimbusManager.Instance.StartCoroutine(LoadAd(true));
+				NimbusManager.Instance.StartCoroutine(LoadAd(showAd: true));
 			}
 		}
 		

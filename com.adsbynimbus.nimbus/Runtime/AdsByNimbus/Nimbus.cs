@@ -23,9 +23,9 @@ public static class Nimbus
 	/// </param>
 	/// <param name="extensions">
 	///	   Optionally Install Extensions
-	///		example: Nimbus.initialize("publisherKey", "apiKey", {
-	///					APSExtension("appKey")
-	///					AdMobExtension("appId")
+	///		example: Nimbus.initialize("publisherKey", "apiKey", () => {
+	///					new APSExtension("appKey")
+	///					new AdMobExtension("appId")
 	///					etc.
 	///				});
 	/// </param>

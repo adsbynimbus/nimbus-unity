@@ -17,7 +17,7 @@ namespace AdsByNimbus.Internal.Extensions
         public static void initializeLiveRamp(String configId, 
             String email = "", Boolean hasConsentForNoLegislation = false)
         {
-            var isTestMode = NimbusManager.Instance.GetNimbusConfiguration().enableSDKInTestMode;
+            var isTestMode = NimbusManager.Instance._configuration.enableSDKInTestMode;
             #if UNITY_IOS
                 _initializeLiveRamp(configId, email, hasConsentForNoLegislation, isTestMode);
             #endif

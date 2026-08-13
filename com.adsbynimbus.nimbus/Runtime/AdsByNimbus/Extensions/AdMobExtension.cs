@@ -3,8 +3,11 @@ namespace AdsByNimbus.Extensions
     #if NIMBUS_ENABLE_ADMOB
     public class AdMobExtension
     {
-        // Use this constructor in the Nimbus.initialize() block to setup the AdMob extension
-        // This method adds the GADApplicationIdentifier to the Info.plist and Android manifest files
+        /**
+        *   Use this constructor in the Nimbus.initialize() block to setup the AdMob extension
+        *   Please make sure to set the app ID inside the Unity editor in order to ensure the
+        *   GADApplicationIdentifier will be added to the Info.plist and Android manifest files
+        */
         public AdMobExtension(string appId)
         {
 #if UNITY_ANDROID
