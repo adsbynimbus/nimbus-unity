@@ -651,9 +651,9 @@ namespace AdsByNimbus.Editor {
 			var apsSlotData = new List<apsAd>();
 			for (var i = 0; i < slotData.arraySize; i++) {
 				var item = slotData.GetArrayElementAtIndex(i);
-				var slotId = item.FindPropertyRelative("SlotId");
+				var slotId = item.FindPropertyRelative("slotId");
 
-				var adUnitType = item.FindPropertyRelative("APSAdUnitType");
+				var adUnitType = item.FindPropertyRelative("adUnitType");
 				var apsAdUnitType = APSAdFormat.Display300X250;
 				if (adUnitType != null) {
 					apsAdUnitType = (APSAdFormat)adUnitType.enumValueIndex;

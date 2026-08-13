@@ -1,6 +1,6 @@
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.adsbynimbus.android:nimbus:3.0.0-rc.2">
+    <androidPackage spec="com.adsbynimbus.android:nimbus:3.0.0-rc.3">
       <repositories>
         <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
       </repositories>

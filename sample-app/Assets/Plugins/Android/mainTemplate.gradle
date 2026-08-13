@@ -5,7 +5,7 @@ apply from: '../shared/keepUnitySymbols.gradle'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 // Android Resolver Dependencies Start
-    implementation 'com.adsbynimbus.android:nimbus:3.0.0-rc.2' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:7
+    implementation 'com.adsbynimbus.android:nimbus:3.0.0-rc.3' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:7
     implementation 'com.google.android.material:material:1.12.0' // Packages/com.adsbynimbus.nimbus/Editor/NimbusSDKDependencies.xml:9
 // Android Resolver Dependencies End
     // Local Unit Tests (Run on JVM)

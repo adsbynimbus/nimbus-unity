@@ -45,9 +45,10 @@ object NimbusManager {
 
 
     @JvmStatic
-    fun bannerAd(obj: Any?, instanceId: Int, position: String, adWidth: Int, adHeight: Int, refreshInterval: Int,
-                 bidFloor: Float, respectSafeArea: Boolean, bannerPosition: Int, showAd: Boolean,
-                 thirdPartyDemand: String, requestModifiersJson: String) {
+    fun bannerAd(obj: Any?, instanceId: Int, position: String, adWidth: Int, adHeight: Int,
+                 addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
+                 bannerPosition: Int, respectSafeArea: Boolean, thirdPartyDemand: String,
+                 requestModifiersJson: String, showAd: Boolean) {
         var ad: Ad
         if (obj !is Activity) {
             return
@@ -62,6 +63,8 @@ object NimbusManager {
             ad = Nimbus.bannerAd(
                 position = position,
                 size = adSize,
+                addFormats = getAddFormatsFromString(obj, addFormats),
+                adPosition = getAdPositionFromInt(adPosition),
                 refreshInterval = refreshInterval,
                 bidFloor = bidFloor
             ) {
@@ -82,16 +85,17 @@ object NimbusManager {
                 showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
                 sendRenderNimbusEvent(instanceId)
             } else {
-                // TODO: Uncomment line below when bannerAd.load() method has been added to SDK
-                // ad.load()
+                ad.load()
             }
         }
-
     }
 
     @JvmStatic
-    fun interstitialAd(obj: Any?, instanceId: Int, position: String, bannerFloor: Float,
-                       videoFloor: Float, showAd: Boolean, thirdPartyDemand: String, requestModifiersJson: String) {
+    fun dynamicUnit(obj: Any?, instanceId: Int, position: String,
+                 addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
+                 bannerPosition: Int, respectSafeArea: Boolean, thirdPartyDemand: String,
+                 requestModifiersJson: String, showAd: Boolean) {
+        var ad: Ad
         if (obj !is Activity) {
             return
         }
@@ -99,10 +103,56 @@ object NimbusManager {
         val requestModifiers = NimbusHelper.jsonObjFromJsonString(requestModifiersJson)
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
-            val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,AdUnitType.Interstitial, extensions)
-            val ad = Nimbus.fullscreenAd(position) {
-                banner(AdSize.interstitial, bidFloor = bannerFloor)
-                video(bidFloor = videoFloor)
+            val demandBlock =
+                NimbusUnityInternal.demandBlock(obj, instanceId,AdUnitType.Inline, extensions)
+            ad = Nimbus.dynamicUnit(
+                position = position,
+                addFormats = getAddFormatsFromString(obj, addFormats),
+                adPosition = getAdPositionFromInt(adPosition),
+                refreshInterval = refreshInterval,
+                bidFloor = bidFloor
+            ) {
+                demand {
+                    demandBlock()
+                }
+                if (requestModifiers != null) {
+                    requestModifiersBlock(obj, instanceId, requestModifiers).invoke(this)
+                }
+            }
+                .onEvent { event ->
+                    didReceiveNimbusEvent(instanceId, event)
+                }.onError { error ->
+                    didReceiveNimbusError(instanceId, error)
+                }
+            adCache.put(instanceId, ad)
+            if (showAd) {
+                showBannerAd(obj, ad, 0, 480, respectSafeArea, bannerPosition, true)
+                sendRenderNimbusEvent(instanceId)
+            } else {
+                ad.load()
+            }
+        }
+    }
+
+    @JvmStatic
+    fun interstitialAd(obj: Any?, instanceId: Int, position: String, addFormats: String,
+                       orientation: Int, bidFloor: Float, thirdPartyDemand: String,
+                       requestModifiersJson: String, showAd: Boolean) {
+        if (obj !is Activity) {
+            return
+        }
+        val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
+        val requestModifiers = NimbusHelper.jsonObjFromJsonString(requestModifiersJson)
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
+            val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,
+                AdUnitType.Interstitial, extensions)
+            val ad = Nimbus.interstitialAd(
+                position = position,
+                addFormats = getAddFormatsFromString(obj, addFormats),
+                orientation = getOrientationFromInt(orientation),
+                bidFloor = bidFloor
+                ) {
                 demand {
                     demandBlock()
                 }
@@ -125,8 +175,46 @@ object NimbusManager {
     }
 
     @JvmStatic
-    fun rewardedAd(obj: Any?, instanceId: Int, position: String, bidFloor: Float, showAd: Boolean,
-                   thirdPartyDemand: String, requestModifiersJson: String) {
+    fun fullScreenAd(obj: Any?, instanceId: Int, position: String,
+                       orientation: Int, thirdPartyDemand: String,
+                       requestModifiersJson: String, showAd: Boolean) {
+        if (obj !is Activity) {
+            return
+        }
+        val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
+        val requestModifiers = NimbusHelper.jsonObjFromJsonString(requestModifiersJson)
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
+            val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,
+                AdUnitType.Interstitial, extensions)
+            val ad = Nimbus.fullscreenAd(
+                position = position,
+                orientation = getOrientationFromInt(orientation),
+            ) {
+                demand {
+                    demandBlock()
+                }
+                if (requestModifiers != null) {
+                    requestModifiersBlock(obj, instanceId, requestModifiers).invoke(this)
+                }
+            }.onEvent { event ->
+                didReceiveNimbusEvent(instanceId, event)
+            }.onError { error ->
+                didReceiveNimbusError(instanceId, error)
+            }
+            adCache.put(instanceId, ad)
+            if (showAd) {
+                ad.show(obj)
+                sendRenderNimbusEvent(instanceId)
+            } else {
+                ad.load(obj)
+            }
+        }
+    }
+
+    @JvmStatic
+    fun rewardedAd(obj: Any?, instanceId: Int, position: String, orientation: Int, bidFloor: Float,
+                   thirdPartyDemand: String, requestModifiersJson: String, showAd: Boolean) {
         if (obj !is Activity) {
             return
         }
@@ -135,7 +223,10 @@ object NimbusManager {
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val demandBlock = NimbusUnityInternal.demandBlock(obj, instanceId,AdUnitType.Rewarded, extensions)
-            val ad = Nimbus.rewardedAd(position, bidFloor = bidFloor){
+            val ad = Nimbus.rewardedAd(
+                position = position,
+                bidFloor = bidFloor,
+                orientation = getOrientationFromInt(orientation)){
                 demand {
                     demandBlock()
                 }
@@ -187,12 +278,15 @@ object NimbusManager {
     }
 
     @JvmStatic
-    suspend fun showBannerAd(obj: Activity, ad: InlineAd, adWidth: Int, adHeight: Int, respectSafeArea: Boolean, bannerPosition: Int) {
+    suspend fun showBannerAd(obj: Activity, ad: InlineAd, adWidth: Int, adHeight: Int,
+                             respectSafeArea: Boolean, bannerPosition: Int, dynamicUnit: Boolean = false) {
         val adFrame = FrameLayout(obj)
+        val width = if (adWidth == 0)  obj.resources.displayMetrics.widthPixels else dpToPx(adWidth, obj)
+        val height = if (adHeight == 0) obj.resources.displayMetrics.heightPixels else dpToPx(adHeight, obj)
         obj.addContentView(
             adFrame, FrameLayout.LayoutParams(
-                dpToPx(adWidth, obj),
-                dpToPx(adHeight, obj)))
+                width,
+                height))
         var bannerGravity = 0
         when (bannerPosition) {
             0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
@@ -427,6 +521,57 @@ object NimbusManager {
             728 -> adSize = AdSize.Leaderboard
         }
         return adSize
+    }
+
+    private fun getAddFormatsFromString(activity: Activity, addFormatsStr: String): Set<Format> {
+        if (addFormatsStr.isBlank()) return emptySet()
+
+        return addFormatsStr
+            .split(",")                         // 1. Split by comma
+            .mapNotNull { it.trim().toIntOrNull() } // 2. Trim spaces and safely convert to Int
+            .mapNotNull {
+                when(it) {
+                    1 -> Format.banner
+                    2 -> Format.mrec
+                    3 -> Format.halfScreen
+                    4 -> Format.leaderboard
+                    5 -> Format.interstitialPortrait
+                    6 -> Format.interstitialLandscape
+                    7 -> {
+                        val orientation = activity.resources.configuration.orientation
+                        when (orientation) {
+                            android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                                -> Format.interstitialLandscape
+                            else ->
+                                Format.interstitialPortrait
+                        }
+                    }
+                    else -> null
+                }
+            }     // 3. Look up Enum, ignore if not found
+            .toSet()
+    }
+
+    private fun getAdPositionFromInt(adPosition: Int): Position{
+        return when(adPosition) {
+            1 -> Position.AboveTheFold
+            2 -> Position.BelowTheFold
+            3 -> Position.Header
+            4 -> Position.Footer
+            5 -> Position.Sidebar
+            6 -> Position.Fullscreen
+            else ->
+                Position.Unknown
+        }
+    }
+
+    private fun getOrientationFromInt(orientation: Int): AdOrientation {
+        return when(orientation) {
+            0 -> AdOrientation.Portrait
+            1 -> AdOrientation.Landscape
+            else ->
+                AdOrientation.DeviceOrientation
+        }
     }
 
     @JvmStatic

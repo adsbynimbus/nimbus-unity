@@ -96,17 +96,17 @@ namespace AdsByNimbus.Internal {
 						if (inlineAd.DynamicUnit)
 						{
 							_manager.CallStatic("dynamicUnit", _currentActivity, 
-								inlineAd.InstanceID, inlineAd.position, string.Join(",", inlineAd.AddFormats.Cast<byte>()), inlineAd.AdPosition, 
-								inlineAd.BidFloor, inlineAd.RefreshInterval, 
-								(int) inlineAd.AdPosition, inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
+								inlineAd.InstanceID, inlineAd.position, string.Join(",", inlineAd.AddFormats.Cast<byte>()), 
+								(int) inlineAd.AdPosition, inlineAd.BidFloor, inlineAd.RefreshInterval, 
+								(int) inlineAd.AdScreenPosition, inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
 								JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
 						else
 						{
 							_manager.CallStatic("bannerAd", _currentActivity, 
 								inlineAd.InstanceID, inlineAd.position, size.Item1,
-								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), inlineAd.AdPosition, 
-								inlineAd.BidFloor, inlineAd.RefreshInterval, (int) inlineAd.AdPosition, 
+								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition, 
+								inlineAd.BidFloor, inlineAd.RefreshInterval, (int) inlineAd.AdScreenPosition, 
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
 								JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
