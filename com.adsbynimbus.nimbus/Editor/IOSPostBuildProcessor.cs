@@ -25,39 +25,39 @@ namespace AdsByNimbus.Editor {
 			#endif
 			
 			#if NIMBUS_ENABLE_APS
-				Dependencies.Add("pod 'NimbusAPSKit', '{iOSExtensionVersionConstants.Aps}'");
+				Dependencies.Add($"pod 'NimbusAPSKit', '{iOSExtensionVersionConstants.Aps}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				Dependencies.Add("pod 'NimbusVungleKit', '{iOSExtensionVersionConstants.Vungle}'");
+				Dependencies.Add($"pod 'NimbusVungleKit', '{iOSExtensionVersionConstants.Vungle}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_ADMOB
-                Dependencies.Add("pod 'NimbusAdMobKit', '{iOSExtensionVersionConstants.AdMob}'");
+                Dependencies.Add($"pod 'NimbusAdMobKit', '{iOSExtensionVersionConstants.AdMob}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_META
-			    Dependencies.Add("pod 'NimbusMetaKit', '{iOSExtensionVersionConstants.Meta}'");
+			    Dependencies.Add($"pod 'NimbusMetaKit', '{iOSExtensionVersionConstants.Meta}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
-				Dependencies.Add("pod 'NimbusMintegralKit', '{iOSExtensionVersionConstants.Mintegral}'");
+				Dependencies.Add($"pod 'NimbusMintegralKit', '{iOSExtensionVersionConstants.Mintegral}'");
 			#endif
 
 			#if NIMBUS_ENABLE_UNITY_ADS
-				Dependencies.Add("pod 'NimbusUnityKit', '{iOSExtensionVersionConstants.UnityAds}'");
+				Dependencies.Add($"pod 'NimbusUnityKit', '{iOSExtensionVersionConstants.UnityAds}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOBILEFUSE
-				Dependencies.Add("pod 'NimbusMobileFuseKit', '{iOSExtensionVersionConstants.MobileFuse}'");
+				Dependencies.Add($"pod 'NimbusMobileFuseKit', '{iOSExtensionVersionConstants.MobileFuse}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOLOCO
-				Dependencies.Add("pod 'NimbusMolocoKit', '{iOSExtensionVersionConstants.Moloco}'");
+				Dependencies.Add($"pod 'NimbusMolocoKit', '{iOSExtensionVersionConstants.Moloco}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
-				Dependencies.Add("pod 'NimbusInMobiKit', '{iOSExtensionVersionConstants.InMobi}'");
+				Dependencies.Add($"pod 'NimbusInMobiKit', '{iOSExtensionVersionConstants.InMobi}'");
 			#endif
 			
 			var path = buildPath + "/Podfile";
