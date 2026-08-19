@@ -50,13 +50,11 @@ namespace AdsByNimbus.Internal
             IntPtr resourceCallbackFunctionPtr, int numCallbacks);
                 
         [DllImport("__Internal")]
-        private static extern void _setExtendedIds(string source, string ids);
+        private static extern void _setExtendedIds(string extendedIdObj);
         
         [DllImport("__Internal")]
-        private static extern void _clearExtendedIds();
+        private static extern void _clearExtendedIds(string source);
 
-        
-        
         #elif UNITY_ANDROID
         
         private const string HelperClass = "com.adsbynimbus.unity.NimbusHelper";
@@ -168,21 +166,22 @@ namespace AdsByNimbus.Internal
             #endif
         }
         
-        internal static void addExtendedIds(string source, string[] ids)
+        internal static void addExtendedIds(string source, UID[] ids)
         {
+            var extendedId = new EID(source, ids);
 #if UNITY_IOS
-_setExtendedIds(source, String.Join(",", ids));
+            _setExtendedIds(JsonConvert.SerializeObject(extendedId));
 #elif UNITY_ANDROID
-            Helper.CallStatic("setExtendedIds", source, String.Join(",", ids));
+            Helper.CallStatic("setExtendedIds", JsonConvert.SerializeObject(extendedId));
 #endif
         }
         
-        internal static void clearExtendedIds()
+        internal static void clearExtendedIds(string source)
         {
 #if UNITY_IOS
-_clearExtendedIds();
+            _clearExtendedIds(source);
 #elif UNITY_ANDROID
-            Helper.CallStatic("clearExtendedIds");
+            Helper.CallStatic("clearExtendedIds", source);
 #endif
         }
         

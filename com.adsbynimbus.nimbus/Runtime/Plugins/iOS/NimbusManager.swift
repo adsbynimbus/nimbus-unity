@@ -156,6 +156,7 @@ import NimbusMobileFuseKit
                                screenPosition: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool, ) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
+        let instanceId = self.adUnitInstanceId
         group.wait(for: { @MainActor in
             do {
                 #if NIMBUS_ENABLE_APS
@@ -168,7 +169,6 @@ import NimbusMobileFuseKit
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition))
-                let instanceId = self.adUnitInstanceId
                 var adMobAdUnitId: String = ""
                 if let adUnitId = extensions?.adMob?.adUnitIds?.first {
                     adMobAdUnitId = adUnitId ?? ""
@@ -202,7 +202,7 @@ import NimbusMobileFuseKit
                     try await bannerAd.load()
                 }
             } catch {
-                Nimbus.Log.request.error(error.localizedDescription)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
         })
     }
@@ -211,6 +211,7 @@ import NimbusMobileFuseKit
                                screenPosition: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
+        let instanceId = self.adUnitInstanceId
         group.wait(for: { @MainActor in
             do {
                 #if NIMBUS_ENABLE_APS
@@ -223,7 +224,6 @@ import NimbusMobileFuseKit
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition, isDynamicAdUnit: true))
-                let instanceId = self.adUnitInstanceId
                 let dynamicUnit = Nimbus.dynamicUnit(position: position, addFormats: additionalFormats, adPosition: adPos, bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
@@ -253,7 +253,7 @@ import NimbusMobileFuseKit
                     try await dynamicUnit.load()
                 }
             } catch {
-                Nimbus.Log.request.error(error.localizedDescription)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
         })
     }
@@ -386,7 +386,7 @@ import NimbusMobileFuseKit
                     try await rewardedAd.load()
                 }
             } catch {
-                Nimbus.Log.ad.error(error.localizedDescription)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
             }
         })
     }
@@ -405,7 +405,7 @@ import NimbusMobileFuseKit
                     try await inlineAd.show(in: contentView)
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
-                    Nimbus.Log.ad.error(error.localizedDescription)
+                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
             })
         }
@@ -415,7 +415,7 @@ import NimbusMobileFuseKit
                     try await fullscreenAd.show(from: self.unityViewController())
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
-                    Nimbus.Log.ad.error(error.localizedDescription)
+                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
                 }
             })
         } else {

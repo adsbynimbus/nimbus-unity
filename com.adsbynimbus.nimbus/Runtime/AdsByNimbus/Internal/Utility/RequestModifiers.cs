@@ -15,6 +15,8 @@ namespace AdsByNimbus.Internal.Utility
         public app? app;
         // A banner creative to be attached to the ad request.
         public banner? banner;
+        // content url for single ad
+        [CanBeNull] public content content;
         // Overrides the environment for a single ad.
         public environment? environment;
         // Adds device geolocation to the RTB request.

@@ -7,6 +7,7 @@ import com.adsbynimbus.NimbusResponse
 import com.adsbynimbus.rtb.App
 import com.adsbynimbus.rtb.UID
 import com.adsbynimbus.rtb.User
+import com.adsbynimbus.rtb.internal.EID
 import com.iab.omid.library.adsbynimbus.adsession.VerificationScriptResource
 import com.unity3d.player.UnityPlayer
 import kotlinx.serialization.json.Json
@@ -69,21 +70,20 @@ object NimbusHelper {
     }
     
     @JvmStatic
-    fun setExtendedIds(source: String, idStr: String) {
-        val ids = idStr.split(",").toSet()
-        val idSet = mutableListOf<UID>()
-        for (id in ids) {
-            idSet.add(UID(id))
-        }
-        Nimbus.configuration.identity.add(
-            source = source,
-            ids = idSet.toSet(),
-        )
+    fun setExtendedIds(extendedIdStr: String) {
+        val eid = Json.decodeFromString(EID.serializer(), extendedIdStr)
+        Nimbus.configuration.identity.add(eid.source, eid.uids)
     }
 
     @JvmStatic
-    fun clearExtendedIds() {
-        Nimbus.configuration.identity.clear()
+    fun clearExtendedIds(source: String) {
+        if (source == "")
+        {
+            Nimbus.configuration.identity.clear()
+        }
+        else {
+            Nimbus.configuration.identity.clear(source)
+        }
     }
 
     @JvmStatic
