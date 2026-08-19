@@ -5,6 +5,7 @@ import com.adsbynimbus.Nimbus
 import com.adsbynimbus.NimbusError
 import com.adsbynimbus.NimbusResponse
 import com.adsbynimbus.rtb.App
+import com.adsbynimbus.rtb.UID
 import com.adsbynimbus.rtb.User
 import com.iab.omid.library.adsbynimbus.adsession.VerificationScriptResource
 import com.unity3d.player.UnityPlayer
@@ -65,6 +66,24 @@ object NimbusHelper {
     @JvmStatic
     fun showMuteButton(showMuteButton: Boolean) {
         Nimbus.configuration.showMuteButton = showMuteButton
+    }
+    
+    @JvmStatic
+    fun setExtendedIds(source: String, idStr: String) {
+        val ids = idStr.split(",").toSet()
+        val idSet = mutableListOf<UID>()
+        for (id in ids) {
+            idSet.add(UID(id))
+        }
+        Nimbus.configuration.identity.add(
+            source = source,
+            ids = idSet.toSet(),
+        )
+    }
+
+    @JvmStatic
+    fun clearExtendedIds() {
+        Nimbus.configuration.identity.clear()
     }
 
     @JvmStatic

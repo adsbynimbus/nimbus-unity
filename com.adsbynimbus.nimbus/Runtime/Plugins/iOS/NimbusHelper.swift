@@ -108,6 +108,22 @@ import AppTrackingTransparency
         Nimbus.configuration.isSKOverlayEnabledForAllUnits = isEnabled
     }
     
+    @objc public class func setExtendedIds(source: String, idStr: String) {
+        let idArray = idStr.components(separatedBy: ",")
+        var uids: Set<NimbusKit.RTB.UID> = []
+        for id in idArray {
+            uids.insert(NimbusKit.RTB.UID(id: id))
+        }
+        Nimbus.configuration.identity.add(
+            source: source,
+            ids: uids
+        )
+    }
+    
+    @objc public class func clearExtendedIds() {
+        Nimbus.configuration.identity.clear()
+    }
+    
     final class VerificationProviderHelper: NimbusKit.Configuration.VerificationProvider {
         let index: Int
         
@@ -426,8 +442,9 @@ public struct Viewability: Codable, UnityRequestComponent, Sendable {
 public struct PerRequestApp: Codable, UnityRequestComponent, Sendable {
     let pageCat: Set<String>
     let sectionCat: Set<String>
+    let contentUrl: String?
     var requestComponent: any NimbusKit.RequestComponent {
-        app(pagecat: pageCat, sectioncat: sectionCat)
+        app(pagecat: pageCat, sectioncat: sectionCat, contentUrl: contentUrl)
     }
 }
 

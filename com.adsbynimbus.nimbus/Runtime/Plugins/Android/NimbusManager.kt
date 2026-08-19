@@ -343,8 +343,10 @@ object NimbusManager {
                 val appObj = requestModifiers.getJSONObject("app")
                 val pageCat = appObj.getJSONArray("pageCat")
                 val sectionCat = appObj.getJSONArray("sectionCat")
+                val contentUrl = appObj.getString("contentUrl")
                 app(Array(pageCat.length()) { pageCat.getString(it) }
                     , Array(sectionCat.length()) { sectionCat.getString(it) })
+                content(contentUrl)
             }
             if (!(requestModifiers.isNull("banner"))) {
                 val bannerObj = requestModifiers.getJSONObject("banner")

@@ -413,6 +413,30 @@ public static class Nimbus
 		{
 			set => ConfigHelpers.SetVerificationProviders(value);
 		}
+
+		/// <summary>
+		///		To attach an extended ID to Nimbus bid requests,
+		///		provide the identity provider's domain (source) and one or more ID values.
+		///		These will be included in the eids field of outgoing OpenRTB requests.
+		/// <param name="source">
+		///		Identity provider's domain
+		/// </param>
+		/// <param name="ids">
+		///		Array of one or more ID values to be included in eids field of OpenRTB requests
+		/// </param>
+		/// </summary>
+		public static class identity
+		{
+			public static void add(string source, string[] ids)
+			{
+				ConfigHelpers.addExtendedIds(source, ids);
+			}
+			public static void clear()
+			{
+				ConfigHelpers.clearExtendedIds();
+			}
+		}
+
 	}
 }
 

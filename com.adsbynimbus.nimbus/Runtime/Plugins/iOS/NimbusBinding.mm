@@ -151,6 +151,14 @@ extern "C" {
         [NimbusHelper enableSwipeProtectionWithEnable:enableSwipeProtection];
     }
 
+    void _setExtendedIds(const char* source, const char* ids) {
+        [NimbusHelper setExtendedIdsWithSource:GetStringParam(source) idStr:GetStringParam(ids)];
+    }
+
+    void _clearExtendedIds() {
+        [NimbusHelper clearExtendedIds];
+    }
+
     void _setIsSkOverlayEnabledForAllUnits(bool isEnabled) {
         [NimbusHelper setIsSKOverlayEnabledForAllUnitsWithIsEnabled:isEnabled];
     }
