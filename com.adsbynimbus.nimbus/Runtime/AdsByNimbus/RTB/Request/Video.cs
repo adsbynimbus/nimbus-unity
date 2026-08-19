@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 
 namespace AdsByNimbus.RTB.Request
@@ -14,10 +15,11 @@ namespace AdsByNimbus.RTB.Request
         public int? width; // Width of the video player in points
         public int? height; // Height of the video player in points
         public VideoPlacementType? placementType; // Placement type for this video impression
-        [CanBeNull] public PlaybackMethod[] playbackMethod; // Playback methods that may be in use. If none are specified, any method may be used
+        public PlaybackMethod[] playbackMethod; // Playback methods that may be in use. If none are specified, any method may be used
 
         public video(Position adPosition = Position.unknown, float? bidFloor = null, int? minDuration = null, 
-            int? maxDuration = null, int? width = null, int? height = null, VideoPlacementType? placementType = null, [CanBeNull] PlaybackMethod[] playbackMethod = null)
+            int? maxDuration = null, int? width = null, int? height = null, VideoPlacementType? placementType = null, 
+            [CanBeNull] PlaybackMethod[] playbackMethod = null)
         {
             this.adPosition = adPosition;
             this.bidFloor = bidFloor;
@@ -25,8 +27,15 @@ namespace AdsByNimbus.RTB.Request
             this.maxDuration = maxDuration;
             this.width = width;
             this.height = height;
+            if (playbackMethod != null)
+            {
+                this.playbackMethod = playbackMethod;
+            }
+            else
+            {
+                this.playbackMethod = Array.Empty<PlaybackMethod>();
+            }
             this.placementType = placementType;
-            this.playbackMethod = playbackMethod;
         }
     }
     

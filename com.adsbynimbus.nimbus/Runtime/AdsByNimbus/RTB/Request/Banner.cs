@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
@@ -8,19 +9,26 @@ namespace AdsByNimbus.RTB.Request
     /// </summary>
     public struct banner: RequestComponent
     {
-        public int? width; //  If omitted, size will be determined by context
-        public int? height; //  If omitted, size will be determined by context
-        [CanBeNull] public Format[] addFormats; // Set of additional formats
+        public int width; //  If omitted, size will be determined by context
+        public int height; //  If omitted, size will be determined by context
+        public Format[] addFormats; // Set of additional formats
         public Position? adPosition; // Ad position. Defaults to RTB.Position.unknown
         public float? bidFloor; // Minimum bid for this ad impression expressed in CPM
         [CanBeNull] public CreativeAttribute[] battr; // Set of blocked attributes
 
-        public banner(int? width = null, int? height = null, [CanBeNull] Format[] addFormats = null, 
+        public banner(int width = 0, int height = 0, [CanBeNull] Format[] addFormats = null, 
             Position? adPosition = null, float? bidFloor = null, [CanBeNull] CreativeAttribute[] battr = null)
         {
             this.width = width;
             this.height = height;
-            this.addFormats = addFormats;
+            if (addFormats == null)
+            {
+                this.addFormats = Array.Empty<Format>();
+            }
+            else
+            {
+                this.addFormats = addFormats;
+            }
             this.adPosition = adPosition;
             this.bidFloor = bidFloor;
             this.battr = battr;
@@ -37,51 +45,51 @@ namespace AdsByNimbus.RTB.Request
         audioAdAutoPlay = 1,
 
         // Audio Ad (User Initiated)
-        audioAdUserInitiated = 2,
+        audioAdUserInitiated,
 
         // Expandable (Automatic)
-        expandableAutomatic = 3,
+        expandableAutomatic,
 
         // Expandable (User Initiated - Click)
-        expandableUserInitiatedClick = 4,
+        expandableUserInitiatedClick,
 
         // Expandable (User Initiated - Rollover)
-        expandableUserInitiatedRollover = 5,
+        expandableUserInitiatedRollover,
 
         // In-Banner Video Ad (Auto-Play)
-        inBannerVideoAdAutoPlay = 6,
+        inBannerVideoAdAutoPlay,
     
         // In-Banner Video Ad (User Initiated)
-        inBannerVideoAdUserInitiated = 7,
+        inBannerVideoAdUserInitiated,
     
         // Pop (e.g., Over, Under, or Upon Exit)
-        hasPopup = 8,
+        hasPopup,
     
         //Provocative or Suggestive Imagery
-        provocativeOrSuggestiveImagery = 9,
+        provocativeOrSuggestiveImagery,
     
         // Shaky, Flashing, Flickering, Extreme Animation, Smileys
-        shakyFlashingFlickeringExtremeAnimationSmileys = 10,
+        shakyFlashingFlickeringExtremeAnimationSmileys,
     
         // Surveys
-        surveys = 11,
+        surveys,
     
         // Text Only
-        textOnly = 12,
+        textOnly,
     
         // User Interactive (e.g., Embedded Games)
-        userInteractive = 13,
+        userInteractive,
     
         // Windows Dialog or Alert Style
-        windowsDialogOrAlertStyle = 14,
+        windowsDialogOrAlertStyle,
     
         // Has Audio On/Off Button
-        hasAudioOnOffButton = 15,
+        hasAudioOnOffButton,
     
         // Ad Provides Skip Button (e.g. VPAID-rendered skip button on pre-roll video)
-        adProvidesSkipButton = 16,
+        adProvidesSkipButton,
     
         // Adobe Flash
-        adobeFlash = 17
+        adobeFlash
     }
 }

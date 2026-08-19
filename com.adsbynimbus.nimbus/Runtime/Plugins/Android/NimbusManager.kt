@@ -13,6 +13,7 @@ import androidx.core.view.updateLayoutParams
 import com.adsbynimbus.*
 import com.adsbynimbus.request.RequestBuilder
 import com.adsbynimbus.request.internal.AdUnitType
+import com.adsbynimbus.rtb.Content
 import com.adsbynimbus.rtb.CreativeAttribute
 import com.adsbynimbus.rtb.Format
 import com.adsbynimbus.rtb.Geo
@@ -51,6 +52,8 @@ object NimbusManager {
                  requestModifiersJson: String, showAd: Boolean) {
         var ad: Ad
         if (obj !is Activity) {
+            didReceiveNimbusError(-1, NimbusError(
+                "bannerAd: object sent for first param is not an Activity"))
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
@@ -92,11 +95,13 @@ object NimbusManager {
 
     @JvmStatic
     fun dynamicUnit(obj: Any?, instanceId: Int, position: String,
-                 addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
-                 bannerPosition: Int, respectSafeArea: Boolean, thirdPartyDemand: String,
-                 requestModifiersJson: String, showAd: Boolean) {
+                    addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
+                    bannerPosition: Int, respectSafeArea: Boolean, thirdPartyDemand: String,
+                    requestModifiersJson: String, showAd: Boolean) {
         var ad: Ad
         if (obj !is Activity) {
+            didReceiveNimbusError(-1, NimbusError(
+                "dynamicUnit: object sent for first param is not an Activity"))
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
@@ -139,6 +144,8 @@ object NimbusManager {
                        orientation: Int, bidFloor: Float, thirdPartyDemand: String,
                        requestModifiersJson: String, showAd: Boolean) {
         if (obj !is Activity) {
+            didReceiveNimbusError(-1, NimbusError(
+                "interstitialAd: object sent for first param is not an Activity"))
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
@@ -152,7 +159,7 @@ object NimbusManager {
                 addFormats = getAddFormatsFromString(obj, addFormats),
                 orientation = getOrientationFromInt(orientation),
                 bidFloor = bidFloor
-                ) {
+            ) {
                 demand {
                     demandBlock()
                 }
@@ -176,9 +183,11 @@ object NimbusManager {
 
     @JvmStatic
     fun fullScreenAd(obj: Any?, instanceId: Int, position: String,
-                       orientation: Int, thirdPartyDemand: String,
-                       requestModifiersJson: String, showAd: Boolean) {
+                     orientation: Int, thirdPartyDemand: String,
+                     requestModifiersJson: String, showAd: Boolean) {
         if (obj !is Activity) {
+            didReceiveNimbusError(-1, NimbusError(
+                "fullScreenAd: object sent for first param is not an Activity"))
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
@@ -216,6 +225,8 @@ object NimbusManager {
     fun rewardedAd(obj: Any?, instanceId: Int, position: String, orientation: Int, bidFloor: Float,
                    thirdPartyDemand: String, requestModifiersJson: String, showAd: Boolean) {
         if (obj !is Activity) {
+            didReceiveNimbusError(-1, NimbusError(
+                "rewardedAd: object sent for first param is not an Activity"))
             return
         }
         val extensions = NimbusHelper.jsonObjFromJsonString(thirdPartyDemand)
@@ -252,6 +263,8 @@ object NimbusManager {
     fun showAd(obj: Any?, instanceId: Int, adWidth: Int, adHeight: Int, respectSafeArea: Boolean, bannerPosition: Int) {
         val ad = adCache[instanceId] ?: return
         if (obj !is Activity) {
+            didReceiveNimbusError(-1, NimbusError(
+                "showAd: object sent for first param is not an Activity"))
             return
         }
         val scope = CoroutineScope(Dispatchers.Main)

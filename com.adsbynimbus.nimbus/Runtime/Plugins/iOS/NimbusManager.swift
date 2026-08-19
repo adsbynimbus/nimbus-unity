@@ -224,15 +224,11 @@ import NimbusMobileFuseKit
                 viewController.view.addSubview(contentView)
                 NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition, isDynamicAdUnit: true))
                 let instanceId = self.adUnitInstanceId
-                var adMobAdUnitId: String = ""
-                if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                    adMobAdUnitId = adUnitId ?? ""
-                }
                 let dynamicUnit = Nimbus.dynamicUnit(position: position, addFormats: additionalFormats, adPosition: adPos, bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
-                        if (!adMobAdUnitId.isEmpty) {
-                            admob(bannerAdUnitId: adMobAdUnitId)
+                        if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                            admob(bannerAdUnitId: adUnitId)
                         }
                         #endif
                         #if NIMBUS_ENABLE_APS
@@ -269,17 +265,12 @@ import NimbusMobileFuseKit
             #if NIMBUS_ENABLE_APS
                 let apsAds = await self.loadAPSAds(from: extensions)
             #endif
-            var adMobAdUnitId: String = ""
-            if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                adMobAdUnitId = adUnitId ?? ""
-            }
             let instanceId = self.adUnitInstanceId
-            
             let fullscreenAd = Nimbus.fullscreenAd(position: position, orientation: self.getOrientationFromInt(orientation: orientation)){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                    if (!adMobAdUnitId.isEmpty) {
-                        admob(interstitialAdUnitId: adMobAdUnitId)
+                    if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                        admob(interstitialAdUnitId: adUnitId)
                     }
                     #endif
                     #if NIMBUS_ENABLE_APS
@@ -319,18 +310,13 @@ import NimbusMobileFuseKit
             #if NIMBUS_ENABLE_APS
                 let apsAds = await self.loadAPSAds(from: extensions)
             #endif
-            var adMobAdUnitId: String = ""
-            if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                adMobAdUnitId = adUnitId ?? ""
-            }
             let additionalFormats = self.getAddFormatsFromString(addFormatStr: addFormats)
             let instanceId = self.adUnitInstanceId
-            
             let interstitialAd = Nimbus.interstitialAd(position: position, addFormats: additionalFormats, orientation: self.getOrientationFromInt(orientation: orientation), bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                    if (!adMobAdUnitId.isEmpty) {
-                        admob(interstitialAdUnitId: adMobAdUnitId)
+                    if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                        admob(interstitialAdUnitId: adUnitId)
                     }
                     #endif
                     #if NIMBUS_ENABLE_APS
@@ -369,16 +355,12 @@ import NimbusMobileFuseKit
             #if NIMBUS_ENABLE_APS
                 let apsAds = await self.loadAPSAds(from: extensions)
             #endif
-            var adMobAdUnitId: String = ""
-            if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                adMobAdUnitId = adUnitId ?? ""
-            }
             let instanceId = self.adUnitInstanceId
             let rewardedAd = Nimbus.rewardedAd(position: position, bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                    if (!adMobAdUnitId.isEmpty) {
-                        admob(rewardedAdUnitId: adMobAdUnitId)
+                    if let adUnitId = extensions?.adMob?.adUnitIds?.first {
+                        admob(rewardedAdUnitId: adUnitId)
                     }
                     #endif
                     #if NIMBUS_ENABLE_APS

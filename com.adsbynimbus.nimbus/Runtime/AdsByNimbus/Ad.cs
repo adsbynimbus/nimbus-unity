@@ -115,7 +115,7 @@ namespace AdsByNimbus {
 							AdMobAdUnitId = adm.adUnitId;
 							break;
 #endif
-#if NIMBUS_ENABLE_ADMOB
+#if NIMBUS_ENABLE_APS
 						case aps aps:
 							ApsAds = aps.apsAds;
 							break;
