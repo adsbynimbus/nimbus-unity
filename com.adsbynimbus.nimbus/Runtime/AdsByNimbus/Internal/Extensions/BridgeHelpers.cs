@@ -1,5 +1,7 @@
 using System;
+using AdsByNimbus.Extensions;
 using AdsByNimbus.Internal.Extensions.APS;
+using AdsByNimbus.RTB;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -36,7 +38,7 @@ namespace AdsByNimbus.Internal.Extensions
     }
     public struct Aps {
         public String appKey;
-        public ApsSlotData[] slotData;
+        public apsAd[] slotData;
     }
     public struct Admob
     {
@@ -82,7 +84,7 @@ namespace AdsByNimbus.Internal.Extensions
     public class Extensions
     {
         public String apsAppKey;
-        public ApsSlotData[] apsSlotData;
+        public apsAd[] apsSlotData;
         public String[] adMobAdUnitIds;
         public String inMobiAccountId;
         public String metaAppId;

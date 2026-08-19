@@ -2,9 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AdsByNimbus;
+using AdsByNimbus.RTB;
+using AdsByNimbus.RTB.Request;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using App = AdsByNimbus.RTB.App;
+using User = AdsByNimbus.RTB.User;
 
 namespace Example.Scripts {
 	/// <summary>
@@ -12,14 +16,13 @@ namespace Example.Scripts {
 	/// </summary>
 	public class GUIButtonTest : MonoBehaviour, IAdEventsExtended {
 		[SerializeField] private TextMeshProUGUI _loadedBannerButtonText;
-		[SerializeField] private TextMeshProUGUI _loadedLeaderboardButtonText;
+		[SerializeField] private TextMeshProUGUI _loadedDynamicUnitButtonText;
 		[SerializeField] private TextMeshProUGUI _errorText;
 		[SerializeField] private List<AdController> _interactableButtons;
-		private RequestModifiers _requestModifiers;
 
 		private InlineAd _loadAndShowBannerAdUnit;
-		private InlineAd _loadAndShowLeaderboardAdUnit;
-		private bool _shouldDestroyLeaderboard;
+		private InlineAd _loadAndShowDynamicUnitAdUnit;
+		private bool _shouldDestroyDynamicUnit;
 		private bool _shouldDestroyBanner;
 
 		private void Start()
@@ -30,34 +33,9 @@ namespace Example.Scripts {
 				true, true, new Publisher(Array.Empty<string>(), "nimbus.co", "nimbus"), 
 				Array.Empty<string>(), "www.nimbus.co", "3.0.0");
 			Nimbus.configuration.app = app;
-			var user = new User(30, "custom", Gender.male, "keywords");
-			Nimbus.configuration.user = user;
-			const string verificationUrl =
-				"https://adsbynimbus-public.s3.amazonaws.com/dev/omid_validation_verification_script_v1.js";
-			var vProvider = new VerificationProvider(response =>
-				{
-					return $"<script src=\"{verificationUrl}\" type=\"text/javascript\"></script>";
-				}, s =>
-				{
-					return new VerificationProvider.VerificationScriptResource(verificationUrl, "iabtechlab-Adsbynimbus", "iabtechlab.com-omid");
-				}
-			);
+			Nimbus.configuration.user = new User(30, "custom", Gender.male, "keywords");;
 			Nimbus.configuration.blockedAdvertisingDomains = new[] { "www.yahoo.com", "www.reddit.com"};
 			Nimbus.configuration.interceptorTimeout = 1000;
-			Nimbus.configuration.verificationProviders = new [] { vProvider };
-			var requestApp = new PerRequestApp(new [] { "pagecat1","pagecat2" }, 
-				new [] { "sectioncat1","sectioncat2" });
-			var bannerCreative = new BannerCreative(320, 50, new[]
-			{
-				Format.banner, Format.leaderboard, Format.mrec
-			}, adPosition: Position.footer, bidFloor: 0.0f, 
-				new [] { CreativeAttribute.hasPopup });
-			var videoCreative = new VideoCreative(adPosition: Position.fullScreen, 0.0f, 0, 30,
-				0, 0, VideoPlacementType.inArticle,
-				new[] { PlaybackMethod.clickWithSoundOn, PlaybackMethod.mouseOverWithSoundOn });
-			_requestModifiers = new RequestModifiers(app: requestApp, banner: bannerCreative, 
-				location: new Location(0.0, 0.0, LocationType.gps, 20), userKeywords: "smart,gaming", 
-				video:videoCreative, viewability: new Viewability("omid1", "omid2"));
 		}
 
 		private void Awake() {
@@ -111,7 +89,13 @@ namespace Example.Scripts {
 				_loadedBannerButtonText.text = "Destroy Banner";
 				_loadAndShowBannerAdUnit = 
 					Nimbus.bannerAd("unity_demo_banner_position", 
-							bannerFloor: 0.05f, requestModifiers: _requestModifiers);
+							bidFloor: 0.05f, components: new()
+				{
+					new app(new [] { "pagecat1","pagecat2" }, 
+						new [] { "sectioncat1","sectioncat2" }),
+					new location(0.0, 0.0, LocationType.gps, 20),
+					new user("gaming,puzzle")
+				});
 				_loadAndShowBannerAdUnit.Show();
 				return;
 			}
@@ -121,30 +105,29 @@ namespace Example.Scripts {
 			_loadedBannerButtonText.text = "Load And Show Banner";
 		}
 		
-		public void LoadAndShowLeaderboard() {
-			if (!_shouldDestroyLeaderboard) {
-				_shouldDestroyLeaderboard = true;
-				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
-				_loadAndShowLeaderboardAdUnit = 
-					Nimbus.bannerAd("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
-				_loadAndShowLeaderboardAdUnit.Show();
+		public void LoadAndShowDynamicUnit() {
+			if (!_shouldDestroyDynamicUnit) {
+				_shouldDestroyDynamicUnit = true;
+				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
+				_loadAndShowDynamicUnitAdUnit = 
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position");
+				_loadAndShowDynamicUnitAdUnit.Show();
 				return;
 			}
 
-			_loadAndShowLeaderboardAdUnit?.Destroy();
-			_loadAndShowLeaderboardAdUnit = null;
-			_shouldDestroyLeaderboard = false;
-			_loadedLeaderboardButtonText.text = "Load And Show Leaderboard";
+			_loadAndShowDynamicUnitAdUnit?.Destroy();
+			_loadAndShowDynamicUnitAdUnit = null;
+			_shouldDestroyDynamicUnit = false;
+			_loadedDynamicUnitButtonText.text = "Load And Show Dynamic Unit";
 		}
 
 		public void LoadAndShowInterstitial() {
-			Nimbus.fullscreenAd("unity_demo_interstitial_position", 
-				staticFloor: 0.05f, videoFloor: 0.03f, requestModifiers: _requestModifiers).Show();
+			Nimbus.interstitialAd("unity_demo_interstitial_position", new Format[] { Format.halfScreen }, 
+				AdOrientation.portrait, 0.10f).Show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			Nimbus.rewardedAd("unity_demo_video_position", videoFloor: 0.03f,
-				requestModifiers: _requestModifiers).Show();
+			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait, 0.05f).Show();
 		}
 
 		public void LoadAdController(int index) {

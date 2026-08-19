@@ -209,19 +209,19 @@ namespace AdsByNimbus.Editor
                         if (adMobAdUnitIds.isNotEmpty()) {
                             when (adType) {
                                 AdUnitType.Inline -> {
-                                    if (adMobAdUnitIds.first().isNullOrEmpty()) {
+                                    if (!adMobAdUnitIds.first().isNullOrEmpty()) {
                                         return { admobBanner(adMobAdUnitIds.first() ?: """") }
                                     }
                                 }
 
                                 AdUnitType.Interstitial -> {
-                                    if (adMobAdUnitIds.first().isNullOrEmpty()) {
+                                    if (!adMobAdUnitIds.first().isNullOrEmpty()) {
                                         return { admobInterstitial(adMobAdUnitIds.first() ?: """") }
                                     }
                                 }
 
                                 AdUnitType.Rewarded -> {
-                                    if (adMobAdUnitIds.first().isNullOrEmpty()) {
+                                    if (!adMobAdUnitIds.first().isNullOrEmpty()) {
                                         return { admobRewarded(adMobAdUnitIds.first() ?: """") }
                                     }
                                 }

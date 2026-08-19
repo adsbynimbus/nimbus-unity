@@ -18,44 +18,49 @@ MonoBehaviour:
   enableUnityLogs: 1
   enableManualInitialization: 0
   sdkInitialized: 0
-  androidAppID: a9_onboarding_app_id
+  androidApsAppKey: a9_onboarding_app_id
   androidApsSlotData:
-  - slotId: 
+  - slotId: 5ab6a4ae-4aa5-43f4-9da4-e30755f2b295
     adUnitType: 0
-  - slotId: 
-    adUnitType: 0
-  - slotId: 
-    adUnitType: 0
-  androidApsTimeoutInMilliseconds: 3000
-  iosAppID: a9_onboarding_app_id
+  - slotId: 4e918ac0-5c68-4fe1-8d26-4e76e8f74831
+    adUnitType: 3
+  - slotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
+    adUnitType: 5
+  iosApsAppKey: c5f20fe6e37146b08749d09bb2b6a4dd
   iosApsSlotData:
-  - slotId: 
+  - slotId: 88e6293b-0bf0-43fc-947b-925babe7bf3f
     adUnitType: 0
-  - slotId: 
-    adUnitType: 0
-  - slotId: 
-    adUnitType: 0
+  - slotId: 424c37b6-38e0-4076-94e6-0933a6213496
+    adUnitType: 3
+  - slotId: 4acc26e6-3ada-4ee8-bae0-753c1e0ad278
+    adUnitType: 5
   androidVungleAppID: 
   iosVungleAppID: 
   androidMetaAppID: 
   iosMetaAppID: 
-  androidAdMobAppID: ca-app-pub-1368919009399326~9625312345
-  androidAdMobAdUnitData: []
-  iosAdMobAppID: 
-  iosAdMobAdUnitData: []
+  androidAdMobAppID: ca-app-pub-1368919009399326~9625312498
+  androidAdMobAdUnitData:
+  - AdUnitId: ca-app-pub-3940256099942544/1034588957
+    AdUnitType: 0
+  - AdUnitId: ca-app-pub-3940256099942544/1601565169
+    AdUnitType: 1
+  - AdUnitId: ca-app-pub-3940256099942544/7720821778
+    AdUnitType: 2
+  iosAdMobAppID: ca-app-pub-1368919009399326~6999149154
+  iosAdMobAdUnitData:
+  - AdUnitId: ca-app-pub-3940256099942544/5666886961
+    AdUnitType: 0
+  - AdUnitId: ca-app-pub-3940256099942544/7468135367
+    AdUnitType: 1
+  - AdUnitId: ca-app-pub-3940256099942544/6407740107
+    AdUnitType: 2
   androidMintegralAppID: 
   androidMintegralAppKey: 
-  androidMintegralAdUnitData: []
   iosMintegralAppID: 
   iosMintegralAppKey: 
-  iosMintegralAdUnitData: []
   androidUnityAdsGameID: 
   iosUnityAdsGameID: 
   androidMolocoAppKey: 
-  androidMolocoAdUnitData: []
   iosMolocoAppKey: 
-  iosMolocoAdUnitData: []
   androidInMobiAccountId: 
-  androidInMobiAdUnitData: []
   iosInMobiAccountId: 
-  iosInMobiAdUnitData: []

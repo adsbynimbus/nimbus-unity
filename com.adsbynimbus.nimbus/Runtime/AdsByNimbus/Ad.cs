@@ -1,7 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AdsByNimbus.Extensions;
 using AdsByNimbus.Internal;
 using AdsByNimbus.Internal.Extensions;
+using AdsByNimbus.Internal.Utility;
+using AdsByNimbus.RTB;
+using AdsByNimbus.RTB.Request;
 using UnityEngine;
 
 namespace AdsByNimbus {
@@ -9,9 +14,10 @@ namespace AdsByNimbus {
 
 	public class Ad {
 		public readonly AdType AdType;
-		public string ErrResponse;
-		public string NimbusReportingPosition;
-		public NimbusAdUnitPosition AdPosition;
+		public string position;
+		public float BidFloor;
+		public AdOrientation Orientation;
+		public Format[] AddFormats;
 		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOT_LOADED; 
 		public readonly int InstanceID;
 		private bool _adCompleted;
@@ -19,20 +25,31 @@ namespace AdsByNimbus {
 		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
 		private bool _adPassedToNative;
 		private readonly AdEvents _adEvents;
-		internal bool AdWasRendered;
-		public RequestModifiers? RequestModifiers;
-
-		internal Task<string> Request = Task.FromResult("");
+		#if NIMBUS_ENABLE_APS
+			internal apsAd[] ApsAds;
+		#endif
+		#if NIMBUS_ENABLE_ADMOB
+			internal string AdMobAdUnitId;
+		#endif
 		
-		public Ad(AdType adType, in AdEvents adEvents, string nimbusReportingPosition, 
-			NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, RequestModifiers? modifiers = null)
+		public List<RequestComponent> components { get;} = new List<RequestComponent>();
+		
+		public List<DemandComponent> demand { get;} = new List<DemandComponent>();
+
+		internal Ad(AdType adType, in AdEvents adEvents, string strPosition, Format[] addFormats = null,
+			float bidFloor = 0f, AdOrientation orientation = AdOrientation.deviceOrientation, 
+			List<RequestComponent> components = null, List<DemandComponent> demand = null)
 		{
-			NimbusReportingPosition = nimbusReportingPosition;
 			AdType = adType;
-			InstanceID = GetHashCode();
 			_adEvents = adEvents;
-			AdPosition = adPosition;
-			RequestModifiers = modifiers;
+			position = strPosition;
+			AddFormats = addFormats ?? new Format[]{};
+			BidFloor = bidFloor;
+			Orientation = orientation;
+			InstanceID = GetHashCode();
+			this.components = components;
+			this.demand = demand;
+			SetupDemand();
 		}
 		
 		/// <summary>
@@ -42,7 +59,7 @@ namespace AdsByNimbus {
 		public void Load()
 		{
 			_adPassedToNative = true;
-			NimbusManager.Instance.StartCoroutine(LoadAd(false));
+			NimbusManager.Instance.StartCoroutine(LoadAd(showAd: false));
 		}
 		
 		/// <summary>
@@ -58,10 +75,24 @@ namespace AdsByNimbus {
 			else
 			{
 				// Ad needs to be passed over the bridge before show() is called
-				NimbusManager.Instance.StartCoroutine(LoadAd(true));
+				NimbusManager.Instance.StartCoroutine(LoadAd(showAd: true));
 			}
 		}
-
+		
+		/// <summary>
+		///     Destroys the ad at the mobile bridge level
+		/// </summary>
+		public void Destroy() {
+#if UNITY_ANDROID
+			var managerClass = new AndroidJavaObject("com.adsbynimbus.unity.NimbusManager");
+			var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+			instance.CallStatic("destroyAd", InstanceID);
+			_androidController = null;
+			_androidHelper = null;
+# elif UNITY_IOS
+			OnDestroyIOSAd?.Invoke(InstanceID);
+#endif
+		}
 		# region IOS specific
 
 #pragma warning disable 67
@@ -69,28 +100,72 @@ namespace AdsByNimbus {
 #pragma warning restore 67
 
 		#endregion
-		
-		/// <summary>
-		///     Destroys the ad at the mobile bridge level
-		/// </summary>
-		public void Destroy() {
-			#if UNITY_ANDROID
-			var managerClass = new AndroidJavaObject("com.adsbynimbus.unity.NimbusManager");
-			var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-			instance.CallStatic("destroyAd", InstanceID);
-			_androidController = null;
-			_androidHelper = null;
-			# elif UNITY_IOS
-			OnDestroyIOSAd?.Invoke(InstanceID);
-			#endif
-		}
 
-		/// <summary>
-		///     Returns returns true of the ad was rendered even if the ad has already been destroyed
-		/// </summary>
-		public bool WasAdRendered() {
-			return AdWasRendered;
+
+		private void SetupDemand()
+		{
+			if (demand != null)
+			{
+				foreach (var component in demand)
+				{
+					switch (component)
+					{
+#if NIMBUS_ENABLE_ADMOB
+						case adMob adm:
+							AdMobAdUnitId = adm.adUnitId;
+							break;
+#endif
+#if NIMBUS_ENABLE_APS
+						case aps aps:
+							ApsAds = aps.apsAds;
+							break;
+#endif
+						default:
+							break;
+					}
+				}
+			}
+
 		}
+		
+		internal RequestModifiers GetRequestModifiers()
+		{
+			var rm = new RequestModifiers();
+			if (components != null)
+			{
+				foreach (var component in components)
+				{
+					switch (component)
+					{
+						case app a:
+							rm.app = a;
+							break;
+						case banner b:
+							rm.banner = b;
+							break;
+						case environment e:
+							rm.environment = e;
+							break;
+						case location l:
+							rm.location = l;
+							break;
+						case user u:
+							rm.user = u;
+							break;
+						case video v:
+							rm.video = v;
+							break;
+						case viewability vb:
+							rm.viewability = vb;
+							break;
+						default:
+							break;
+					}
+				}
+			}
+			return rm;
+		}
+		
 
 		internal void FireMobileAdRenderedEvent() {
 			_adEvents.FireOnAdRenderedEvent(this);
@@ -181,5 +256,13 @@ namespace AdsByNimbus {
 		Fullscreen = 1,
 		Rewarded = 2
 	}
+
+	public enum AdOrientation : byte
+	{
+		portrait = 0,
+		landscape = 1,
+		deviceOrientation = 2
+	}
+
 
 }

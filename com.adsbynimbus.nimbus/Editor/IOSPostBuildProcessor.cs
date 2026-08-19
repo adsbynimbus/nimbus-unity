@@ -21,43 +21,43 @@ namespace AdsByNimbus.Editor {
 			if (target != BuildTarget.iOS) return;
 			
 			#if NIMBUS_ENABLE_LIVERAMP
-				Dependencies.Add("pod 'NimbusLiveRampKit'");
+				Dependencies.Add($"pod 'NimbusLiveRampKit', '{iOSExtensionVersionConstants.LiveRamp}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_APS
-				Dependencies.Add("pod 'NimbusAPSKit'");
+				Dependencies.Add($"pod 'NimbusAPSKit', '{iOSExtensionVersionConstants.Aps}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				Dependencies.Add("pod 'NimbusVungleKit'");
+				Dependencies.Add($"pod 'NimbusVungleKit', '{iOSExtensionVersionConstants.Vungle}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_ADMOB
-                Dependencies.Add("pod 'NimbusAdMobKit'");
+                Dependencies.Add($"pod 'NimbusAdMobKit', '{iOSExtensionVersionConstants.AdMob}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_META
-			    Dependencies.Add("pod 'NimbusMetaKit'");
+			    Dependencies.Add($"pod 'NimbusMetaKit', '{iOSExtensionVersionConstants.Meta}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
-				Dependencies.Add("pod 'NimbusMintegralKit'");
+				Dependencies.Add($"pod 'NimbusMintegralKit', '{iOSExtensionVersionConstants.Mintegral}'");
 			#endif
 
 			#if NIMBUS_ENABLE_UNITY_ADS
-				Dependencies.Add("pod 'NimbusUnityKit'");
+				Dependencies.Add($"pod 'NimbusUnityKit', '{iOSExtensionVersionConstants.UnityAds}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOBILEFUSE
-				Dependencies.Add("pod 'NimbusMobileFuseKit'");
+				Dependencies.Add($"pod 'NimbusMobileFuseKit', '{iOSExtensionVersionConstants.MobileFuse}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOLOCO
-				Dependencies.Add("pod 'NimbusMolocoKit'");
+				Dependencies.Add($"pod 'NimbusMolocoKit', '{iOSExtensionVersionConstants.Moloco}'");
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
-				Dependencies.Add("pod 'NimbusInMobiKit'");
+				Dependencies.Add($"pod 'NimbusInMobiKit', '{iOSExtensionVersionConstants.InMobi}'");
 			#endif
 			
 			var path = buildPath + "/Podfile";

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AdsByNimbus;
 using AdsByNimbus.Internal.Extensions.AdMob;
 using AdsByNimbus.Internal.Extensions.APS;
@@ -26,7 +27,6 @@ namespace AdsByNimbus.Internal {
 		private AndroidJavaClass _build;
 		private AndroidJavaClass _buildVersion;
 		private AndroidJavaObject _currentActivity;
-
 
 		private AndroidJavaObject _manager;
 		private AndroidJavaClass _unityPlayer;
@@ -89,30 +89,53 @@ namespace AdsByNimbus.Internal {
 				{
 					if (nimbusAdUnit is InlineAd inlineAd)
 					{
-						var size = inlineAd.BannerSize.ToWidthAndHeight();
+						var size = AdSize.banner.ToWidthAndHeight();
 						#if NIMBUS_ENABLE_APS_ANDROID && UNITY_ANDROID
 						extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Inline, size.Item1, size.Item2);
 						#endif
-						_manager.CallStatic("bannerAd", _currentActivity, 
-							inlineAd.InstanceID, inlineAd.NimbusReportingPosition, size.Item1,
-							size.Item2, inlineAd.BannerRefreshIntervalInSeconds, inlineAd.BannerBidFloor, inlineAd.RespectSafeArea, 
-							(int) inlineAd.AdPosition, showAd, JsonConvert.SerializeObject(extensions), 
-							JsonConvert.SerializeObject(inlineAd.RequestModifiers));
+						if (inlineAd.DynamicUnit)
+						{
+							_manager.CallStatic("dynamicUnit", _currentActivity, 
+								inlineAd.InstanceID, inlineAd.position, string.Join(",", inlineAd.AddFormats.Cast<byte>()), 
+								(int) inlineAd.AdPosition, inlineAd.BidFloor, inlineAd.RefreshInterval, 
+								(int) inlineAd.AdScreenPosition, inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
+								JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
+						}
+						else
+						{
+							_manager.CallStatic("bannerAd", _currentActivity, 
+								inlineAd.InstanceID, inlineAd.position, size.Item1,
+								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition, 
+								inlineAd.BidFloor, inlineAd.RefreshInterval, (int) inlineAd.AdScreenPosition, 
+								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
+								JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
+						}
 					}
 
 					break;
 				}
 				case AdType.Fullscreen:
 				{
-					if (nimbusAdUnit is FullscreenAd interstitialAd)
+					if (nimbusAdUnit is FullscreenAd fullscreenAd)
 					{
 						#if NIMBUS_ENABLE_APS_ANDROID && UNITY_ANDROID
 						extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Fullscreen, 0, 0);
 						#endif
-						_manager.CallStatic("interstitialAd", _currentActivity,
-							interstitialAd.InstanceID, interstitialAd.NimbusReportingPosition, interstitialAd.BannerBidFloor,
-							interstitialAd.VideoBidFloor, showAd, JsonConvert.SerializeObject(extensions),
-							JsonConvert.SerializeObject(interstitialAd.RequestModifiers));
+						if (fullscreenAd.Interstitial)
+						{
+							_manager.CallStatic("interstitialAd", _currentActivity,
+								fullscreenAd.InstanceID, fullscreenAd.position, string.Join(",", fullscreenAd.AddFormats.Cast<byte>()), 
+								(int) fullscreenAd.Orientation, fullscreenAd.BidFloor, JsonConvert.SerializeObject(extensions),
+								JsonConvert.SerializeObject(fullscreenAd.GetRequestModifiers()), showAd);
+						}
+						else
+						{
+							_manager.CallStatic("fullscreenAd", _currentActivity,
+								fullscreenAd.InstanceID, fullscreenAd.position, (int) fullscreenAd.Orientation, 
+								JsonConvert.SerializeObject(extensions),
+								JsonConvert.SerializeObject(fullscreenAd.GetRequestModifiers()), showAd);
+						}
+
 					}
 
 					break;
@@ -125,9 +148,9 @@ namespace AdsByNimbus.Internal {
 					extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Rewarded, 0, 0);
 					#endif
 						_manager.CallStatic("rewardedAd", _currentActivity,
-							rewardedAd.InstanceID, rewardedAd.NimbusReportingPosition, rewardedAd.VideoBidFloor,
-							showAd, JsonConvert.SerializeObject(extensions),
-							JsonConvert.SerializeObject(rewardedAd.RequestModifiers));
+							rewardedAd.InstanceID, rewardedAd.position, (int) rewardedAd.Orientation, rewardedAd.BidFloor,
+							JsonConvert.SerializeObject(extensions),
+							JsonConvert.SerializeObject(rewardedAd.GetRequestModifiers()), showAd);
 					}
 
 					break;
@@ -141,16 +164,18 @@ namespace AdsByNimbus.Internal {
 			_currentActivity = _unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 			var managerClass = new AndroidJavaObject(ManagerClass);
 			_manager = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-			var size = IabSupportedAdSizes.Banner.ToWidthAndHeight();
+			var size = AdSize.banner.ToWidthAndHeight();
 			var respectSafeArea = false;
+			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{  
-				size = inlineAd.BannerSize.ToWidthAndHeight();
+				size = inlineAd.AdSize.ToWidthAndHeight();
 				respectSafeArea = inlineAd.RespectSafeArea;
+				adScreenPosition = inlineAd.AdScreenPosition;
 			}
 			_manager.CallStatic("showAd", _currentActivity, 
 				nimbusAdUnit.InstanceID, size.Item1, size.Item2,
-				respectSafeArea, (int) nimbusAdUnit.AdPosition);
+				respectSafeArea, (int) adScreenPosition);
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

@@ -44,8 +44,6 @@ namespace AdsByNimbus.Internal {
 				Debug.unityLogger.LogError("NimbusError", "AdUnit not found: " + data.adUnitInstanceID);
 				return;
 			}
-
-			adUnit.AdWasRendered = true;
 			adUnit.FireMobileAdRenderedEvent();
 		}
 		

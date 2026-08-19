@@ -1,17 +1,15 @@
+using System.Collections.Generic;
 using AdsByNimbus;
-using AdsByNimbus.Internal;
-
+using AdsByNimbus.RTB;
 public class FullscreenAd: Ad
 {
-    public float BannerBidFloor;
-    public float VideoBidFloor;
+    internal bool Interstitial;
     
-    public FullscreenAd(in AdEvents adEvents, string nimbusReportingPosition,
-        NimbusAdUnitPosition adPosition = NimbusAdUnitPosition.BOTTOM_CENTER, RequestModifiers? modifiers = null,
-        float bannerBidFloor = 0f, float videoBidFloor = 0f) :
-        base(AdType.Fullscreen, adEvents, nimbusReportingPosition, adPosition, modifiers)
+    internal FullscreenAd(in AdEvents adEvents, string position, Format[] addFormats = null, 
+        AdOrientation orientation = AdOrientation.deviceOrientation, float bidFloor = 0f, bool interstitial = true,
+        List<RequestComponent> components = null, List<DemandComponent> demand = null) :
+        base(AdType.Fullscreen, adEvents, position, addFormats, bidFloor, orientation, components, demand)
     {
-        BannerBidFloor = bannerBidFloor;
-        VideoBidFloor = videoBidFloor;
+        Interstitial = interstitial;
     }
 }

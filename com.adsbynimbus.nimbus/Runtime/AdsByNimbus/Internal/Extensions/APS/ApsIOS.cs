@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using AdsByNimbus;
+using AdsByNimbus.Extensions;
 
 [assembly: InternalsVisibleTo("nimbus.test")]
 namespace AdsByNimbus.Internal.Extensions.APS {
@@ -8,31 +9,31 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 	internal class ApsIOS {
 		private readonly string _appID;
 		private readonly bool _enableTestMode;
-		private readonly ApsSlotData[] _slotData;
+		private readonly apsAd[] _slotData;
 
 
-		public ApsIOS(string appID, ApsSlotData[] slotData) {
+		public ApsIOS(string appID, apsAd[] slotData) {
 			_appID = appID;
 			_slotData = slotData;
 		}
 
 
-		public ApsIOS(string appID, ApsSlotData[] slotData, bool enableTestMode) {
+		public ApsIOS(string appID, apsAd[] slotData, bool enableTestMode) {
 			_appID = appID;
 			_slotData = slotData;
 			_enableTestMode = enableTestMode;
 		}
 		
-		public ApsSlotData[] GetAdUnitId(AdType type, int width, int height)
+		public apsAd[] GetAdUnitId(AdType type, int width, int height)
 		{
-			var slotData = new List<ApsSlotData>();
-			foreach (ApsSlotData slot in _slotData)
+			var slotData = new List<apsAd>();
+			foreach (apsAd slot in _slotData)
 			{
 				if (type == AdType.Inline)
 				{
 					switch (slot.adUnitType)
 					{
-						case APSAdUnitType.Display320X50:
+						case APSAdFormat.Display320X50:
 						{
 							if (width == 320 || height == 50)
 							{
@@ -40,7 +41,7 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 							}
 							break;
 						}
-						case APSAdUnitType.Display300X250:
+						case APSAdFormat.Display300X250:
 						{
 							if (width == 300 || height == 250)
 							{
@@ -48,7 +49,7 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 							}
 							break;
 						}
-						case APSAdUnitType.Display728X90:
+						case APSAdFormat.Display728X90:
 						{
 							if (width == 728 || height == 90)
 							{
@@ -62,12 +63,12 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 				{
 					switch (slot.adUnitType)
 					{
-						case APSAdUnitType.InterstitialDisplay:
+						case APSAdFormat.InterstitialDisplay:
 						{
 							slotData.Add(slot);
 							break;
 						}
-						case APSAdUnitType.InterstitialVideo:
+						case APSAdFormat.InterstitialVideo:
 						{
 							slotData.Add(slot);
 							break;
@@ -76,7 +77,7 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 				}
 				else
 				{
-					if (slot.adUnitType == APSAdUnitType.RewardedVideo)
+					if (slot.adUnitType == APSAdFormat.RewardedVideo)
 					{
 						slotData.Add(slot);
 					}

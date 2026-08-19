@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 [DisallowMultipleComponent]
 public class NimbusManager : MonoBehaviour
 {
-	[field: SerializeField] private NimbusSDKConfiguration _configuration;
+	[field: SerializeField] internal NimbusSDKConfiguration _configuration;
 
 	private bool _isTheApplicationBackgrounded;
 	public NimbusAPI NimbusPlatformAPI;
@@ -45,7 +45,7 @@ public class NimbusManager : MonoBehaviour
 			Instance = this;
 			if (!_configuration.enableManualInitialization)
 			{
-				InitializeNimbusSDK();
+				Nimbus.initialize(_configuration.publisherKey, _configuration.apiKey);
 			}
 
 			DontDestroyOnLoad(gameObject);
@@ -144,11 +144,13 @@ public class NimbusManager : MonoBehaviour
 		}
 	}
 
-	internal void InitializeNimbusSDK()
+	internal void InitializeNimbusSDK(string publisherKey, string apiKey)
 	{
 		if (!_configuration.sdkInitialized)
 		{
 			_configuration.sdkInitialized = true;
+			_configuration.publisherKey = publisherKey;
+			_configuration.apiKey = apiKey;
 			NimbusPlatformAPI.InitializeSDK(_configuration);
 		}
 	}
