@@ -1,5 +1,3 @@
-using System;
-using JetBrains.Annotations;
 
 namespace AdsByNimbus.RTB.Request
 {
