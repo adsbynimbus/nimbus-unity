@@ -98,7 +98,7 @@ namespace AdsByNimbus.Internal {
 							_manager.CallStatic("dynamicUnit", _currentActivity, 
 								inlineAd.InstanceID, inlineAd.position, string.Join(",", inlineAd.AddFormats.Cast<byte>()), 
 								(int) inlineAd.AdPosition, inlineAd.BidFloor, inlineAd.RefreshInterval, 
-								(int) inlineAd.AdScreenPosition, inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
+								(int) inlineAd.AdScreenPosition, inlineAd.XCoord, inlineAd.YCoord, inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
 								JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
 						else
@@ -107,6 +107,7 @@ namespace AdsByNimbus.Internal {
 								inlineAd.InstanceID, inlineAd.position, size.Item1,
 								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition, 
 								inlineAd.BidFloor, inlineAd.RefreshInterval, (int) inlineAd.AdScreenPosition, 
+								inlineAd.XCoord, inlineAd.YCoord, 
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
 								JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
@@ -167,15 +168,19 @@ namespace AdsByNimbus.Internal {
 			var size = AdSize.banner.ToWidthAndHeight();
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
+			int xCoord = -1;
+			int yCoord = -1;
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{  
 				size = inlineAd.AdSize.ToWidthAndHeight();
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;
+				xCoord = inlineAd.XCoord;
+				yCoord = inlineAd.YCoord;
 			}
 			_manager.CallStatic("showAd", _currentActivity, 
 				nimbusAdUnit.InstanceID, size.Item1, size.Item2,
-				respectSafeArea, (int) adScreenPosition);
+				respectSafeArea, (int) adScreenPosition, xCoord, yCoord);
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {

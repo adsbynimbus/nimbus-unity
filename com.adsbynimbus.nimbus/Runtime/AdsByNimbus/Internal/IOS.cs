@@ -37,12 +37,12 @@ namespace AdsByNimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, string addFormats,
-			int adPosition, float bidFloor, int refreshInterval, int bannerPosition, bool respectSafeArea, string demand, 
+			int adPosition, float bidFloor, int refreshInterval, int bannerPosition, int xCoord, int yCoord, bool respectSafeArea, string demand, 
 			string requestModifier, bool showAd);
 		
 		[DllImport("__Internal")]
 		private static extern void _dynamicUnit(int adUnitInstanceId, string position, string addFormats, int orientation,
-			int adPosition, float bidFloor, int refreshInterval, int bannerPosition, bool respectSafeArea, 
+			int adPosition, float bidFloor, int refreshInterval, int width, int height, int bannerPosition, int xCoord, int yCoord, bool respectSafeArea, 
 			string demand, string requestModifiers, bool showAd);
 		
 		[DllImport("__Internal")]
@@ -58,7 +58,8 @@ namespace AdsByNimbus.Internal {
 			string demand, string requestModifiers, bool showAd);
 		
 		[DllImport("__Internal")]
-		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
+		private static extern void _showAd(int adUnitInstanceId, int width, int height, bool respectSafeArea, int bannerPosition, int xCoord, 
+				int yCoord);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -139,7 +140,8 @@ namespace AdsByNimbus.Internal {
 							_dynamicUnit(inlineAd.InstanceID, inlineAd.position, 
 								string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.Orientation, 
 								(int) inlineAd.AdPosition,  inlineAd.BidFloor, 
-								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, 
+								inlineAd.RefreshInterval, inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight, 
+								(int)inlineAd.AdScreenPosition, inlineAd.XCoord, inlineAd.YCoord,
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions)
 								, JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
@@ -147,7 +149,7 @@ namespace AdsByNimbus.Internal {
 						{
 							_bannerAd(inlineAd.InstanceID, inlineAd.position, size.Item1,
 								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition,  inlineAd.BidFloor, 
-								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, 
+								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, inlineAd.XCoord, inlineAd.YCoord,
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions)
 								, JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
@@ -200,12 +202,20 @@ namespace AdsByNimbus.Internal {
 		{
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
+			int width = 0;
+			int height = 0;
+			int xCoord = -1;
+			int yCoord = -1;
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;
+				width = inlineAd.DynamicUnitWidth;
+				height = inlineAd.DynamicUnitHeight;
+				xCoord = inlineAd.XCoord;
+				yCoord = inlineAd.YCoord;
 			}
-			_showAd(nimbusAdUnit.InstanceID, respectSafeArea, (int) adScreenPosition);
+			_showAd(nimbusAdUnit.InstanceID, width, height, respectSafeArea, (int) adScreenPosition, xCoord, yCoord);
 		}
 	}
 #endif

@@ -40,13 +40,15 @@ extern "C" {
                    float bidFloor,                   
                    int refreshInterval,
                    int screenPosition,
+                   int xCoord,
+                   int yCoord,
                    bool respectSafeArea,
                    const char* thirdPartyDemand,
                    const char* requestModifiers,
                    bool showAd) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             bannerAdWithPosition:GetStringParam(position) width:width height:height addFormats:GetStringParam(addFormats) adPosition: adPosition
-                bidFloor: bidFloor refreshInterval:refreshInterval screenPosition:screenPosition respectSafeArea:respectSafeArea
+                bidFloor: bidFloor refreshInterval:refreshInterval screenPosition:screenPosition xCoord:xCoord yCoord:yCoord respectSafeArea:respectSafeArea
                 thirdPartyDemand:GetStringParam(thirdPartyDemand) requestModifiersJson:GetStringParam(requestModifiers) showAd:showAd];
     }
 
@@ -57,14 +59,18 @@ extern "C" {
                int adPosition,
                float bidFloor,
                int refreshInterval,
+               int width,
+               int height,
                int screenPosition,
+               int xCoord,
+               int yCoord,
                bool respectSafeArea,
                const char* thirdPartyDemand,
                const char* requestModifiers,
                bool showAd) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
             dynamicUnitWithPosition:GetStringParam(position) addFormats:GetStringParam(addFormats) orientation: orientation adPosition: adPosition
-                bidFloor: bidFloor refreshInterval:refreshInterval screenPosition:screenPosition respectSafeArea:respectSafeArea
+                bidFloor: bidFloor refreshInterval:refreshInterval width:width height:height screenPosition:screenPosition xCoord:xCoord yCoord:yCoord respectSafeArea:respectSafeArea
                 thirdPartyDemand:GetStringParam(thirdPartyDemand) requestModifiersJson:GetStringParam(requestModifiers) showAd:showAd];
     }
     void _fullscreenAd(int adUnitInstanceId,
@@ -102,9 +108,13 @@ extern "C" {
     
     void _showAd(int adUnitInstanceId,
                  bool respectSafeArea,
-                 int bannerPosition) {
+                 int width,
+                 int height,
+                 int bannerPosition,
+                 int xCoord,
+                 int yCoord) {
         [[NimbusManager nimbusManagerForAdUnityInstanceId:adUnitInstanceId]
-         showAdWithRespectSafeArea:respectSafeArea bannerPosition: bannerPosition];
+          showAdWithWidth:width height:height respectSafeArea:respectSafeArea bannerPosition:bannerPosition xCoord:xCoord yCoord:yCoord];
     }
 
     void _destroyAd(int adUnitInstanceId) {

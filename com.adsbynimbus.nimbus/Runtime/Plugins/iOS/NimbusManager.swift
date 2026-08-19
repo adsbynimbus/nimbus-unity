@@ -152,8 +152,7 @@ import NimbusMobileFuseKit
     
     // MARK: - Public Functions
     
-    @objc public func bannerAd(position: String, width: Int, height: Int, addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
-                               screenPosition: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool, ) {
+    @objc public func bannerAd(position: String, width: Int, height: Int, addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int, screenPosition: Int, xCoord: Int, yCoord: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool, ) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         let instanceId = self.adUnitInstanceId
@@ -168,7 +167,8 @@ import NimbusMobileFuseKit
                 let viewController = self.unityViewController() ?? UIViewController()
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
-                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition))
+                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, width: width, height: height, respectSafeArea: respectSafeArea, 
+                    adScreenPosition: screenPosition, xCoord: xCoord, yCoord: yCoord))
                 var adMobAdUnitId: String = ""
                 if let adUnitId = extensions?.adMob?.adUnitIds?.first {
                     adMobAdUnitId = adUnitId ?? ""
@@ -207,8 +207,8 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func dynamicUnit(position: String, addFormats: String, orientation: Int, adPosition: Int, bidFloor: Float, refreshInterval: Int,
-                               screenPosition: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool) {
+    @objc public func dynamicUnit(position: String, addFormats: String, orientation: Int, adPosition: Int, bidFloor: Float, 
+        refreshInterval: Int, width: Int, height: Int, screenPosition: Int, xCoord: Int, yCoord: Int, respectSafeArea: Bool, thirdPartyDemand: String, requestModifiersJson: String, showAd: Bool) {
         let extensions = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: thirdPartyDemand)
         let group = DispatchGroup()
         let instanceId = self.adUnitInstanceId
@@ -223,7 +223,8 @@ import NimbusMobileFuseKit
                 let viewController = self.unityViewController() ?? UIViewController()
                 contentView.translatesAutoresizingMaskIntoConstraints = false
                 viewController.view.addSubview(contentView)
-                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition, isDynamicAdUnit: true))
+                NSLayoutConstraint.activate(self.constraints(to: contentView, viewController: viewController, width: width, height: height, respectSafeArea: respectSafeArea, adScreenPosition: screenPosition,
+                    xCoord: xCoord, yCoord: yCoord, isDynamicAdUnit: true))
                 let dynamicUnit = Nimbus.dynamicUnit(position: position, addFormats: additionalFormats, adPosition: adPos, bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
@@ -391,7 +392,7 @@ import NimbusMobileFuseKit
         })
     }
     
-    @objc public func showAd(respectSafeArea: Bool, bannerPosition: Int) {
+    @objc public func showAd(width: Int, height: Int, respectSafeArea: Bool, bannerPosition: Int, xCoord: Int, yCoord: Int) {
         let group = DispatchGroup()
         let instanceId = self.adUnitInstanceId
         if let inlineAd = ad as? InlineAd {
@@ -401,7 +402,7 @@ import NimbusMobileFuseKit
                     let viewController = self.unityViewController() ?? UIViewController()
                     contentView.translatesAutoresizingMaskIntoConstraints = false
                     viewController.view.addSubview(contentView)
-                    NSLayoutConstraint.activate(self.constraints(to: contentView , viewController: viewController, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition))
+                    NSLayoutConstraint.activate(self.constraints(to: contentView , viewController: viewController, width: width, height: height, respectSafeArea: respectSafeArea, adScreenPosition: bannerPosition, xCoord: xCoord, yCoord: yCoord))
                     try await inlineAd.show(in: contentView)
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
@@ -566,65 +567,74 @@ import NimbusMobileFuseKit
         )
     }
     
-    private func constraints(to contentView: UIView, viewController: UIViewController, respectSafeArea: Bool, adScreenPosition: Int, isDynamicAdUnit: Bool = false) -> [NSLayoutConstraint] {
+    private func constraints(to contentView: UIView, viewController: UIViewController, width: Int, height: Int, respectSafeArea: Bool, adScreenPosition: Int, xCoord: Int , yCoord: Int, isDynamicAdUnit: Bool = false) -> [NSLayoutConstraint] {
         switch (adScreenPosition) {
             // Center Top
             case 1:
                 return [
                     contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                    contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
-                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea))
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             // Center
             case 2:
                 return [
                     contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.centerYAnchor.constraint(equalTo: viewController.view.centerYAnchor)
+                    contentView.centerYAnchor.constraint(equalTo: viewController.view.centerYAnchor),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             // Bottom Left
             case 3:
                 return [
                     contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             // Bottom Right
             case 4:
                 return [
                     contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             // Top Left
             case 5:
                 return [
                     contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea))
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             // Top Right
             case 6:
                 return [
                     contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
-                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea))
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
-            // Center Bottom (Case 0)
             default:
-                if (isDynamicAdUnit)
+                if (xCoord == -1 || yCoord == -1)
                 {
-                    // For DynamicAdUnit the constraints have no height set so it doesnt know how big the video should be (which breaks the video view)
+                    // Center Bottom (Case 0)
                     return [
-                        contentView.heightAnchor.constraint(equalToConstant: 480),
                         contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                        contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
-                        contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
+                        contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
+                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                     ]
                 }
                 else {
+                    //use xCoord / yCoord
                     return [
-                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                        contentView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor(respectSafeArea)),
-                        contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea))
+                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea), constant: CGFloat(xCoord)),
+                        contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea), constant: CGFloat(yCoord)),
+                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                     ]
                 }
         }
