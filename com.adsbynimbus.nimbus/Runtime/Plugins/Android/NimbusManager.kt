@@ -95,7 +95,7 @@ object NimbusManager {
 
     @JvmStatic
     fun dynamicUnit(obj: Any?, instanceId: Int, position: String,
-                    addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int,
+                    addFormats: String, adPosition: Int, bidFloor: Float, refreshInterval: Int, width: Int, height: Int,
                     bannerPosition: Int,  xCoord: Int, yCoord: Int, respectSafeArea: Boolean, thirdPartyDemand: String,
                     requestModifiersJson: String, showAd: Boolean) {
         var ad: Ad
@@ -131,7 +131,7 @@ object NimbusManager {
                 }
             adCache.put(instanceId, ad)
             if (showAd) {
-                showBannerAd(obj, ad, 0, 480, respectSafeArea, bannerPosition, xCoord, yCoord, true)
+                showBannerAd(obj, ad, width, height, respectSafeArea, bannerPosition, xCoord, yCoord, true)
                 sendRenderNimbusEvent(instanceId)
             } else {
                 ad.load()
@@ -272,7 +272,7 @@ object NimbusManager {
         scope.launch {
             when (ad) {
                 is InlineAd -> {
-                    showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition)
+                    showBannerAd(obj, ad, adWidth, adHeight, respectSafeArea, bannerPosition, xCoord, yCoord)
                 }
                 is InterstitialAd -> {
                     ad.show(obj)
@@ -293,28 +293,36 @@ object NimbusManager {
 
     @JvmStatic
     suspend fun showBannerAd(obj: Activity, ad: InlineAd, adWidth: Int, adHeight: Int,
-                             respectSafeArea: Boolean, bannerPosition: Int, xCoord: Int?, yCoord: Int,
+                             respectSafeArea: Boolean, bannerPosition: Int, xCoord: Int, yCoord: Int,
                              dynamicUnit: Boolean = false) {
         val adFrame = FrameLayout(obj)
+        if (xCoord != -1 && yCoord != -1)
+        {
+            adFrame.x = xCoord.toFloat()
+            adFrame.y = yCoord.toFloat()
+        }
         val width = if (adWidth == 0)  obj.resources.displayMetrics.widthPixels else dpToPx(adWidth, obj)
         val height = if (adHeight == 0) obj.resources.displayMetrics.heightPixels else dpToPx(adHeight, obj)
         obj.addContentView(
             adFrame, FrameLayout.LayoutParams(
                 width,
                 height))
-        var bannerGravity = 0
-        when (bannerPosition) {
-            0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            2 -> bannerGravity = Gravity.CENTER
-            3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
-            4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
-            5 -> bannerGravity = Gravity.TOP or Gravity.START
-            6 -> bannerGravity = Gravity.TOP or Gravity.END
-        }
         ad.show(adFrame).also {
-            adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
-                gravity = bannerGravity
+            if (xCoord == -1 && yCoord == -1)
+            {
+                var bannerGravity = 0
+                when (bannerPosition) {
+                    0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                    1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                    2 -> bannerGravity = Gravity.CENTER
+                    3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
+                    4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
+                    5 -> bannerGravity = Gravity.TOP or Gravity.START
+                    6 -> bannerGravity = Gravity.TOP or Gravity.END
+                }
+                adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
+                    gravity = bannerGravity
+                }
             }
             if (respectSafeArea) {
                 ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->

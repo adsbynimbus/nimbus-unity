@@ -202,20 +202,25 @@ namespace AdsByNimbus.Internal {
 		{
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
-			int width = 0;
-			int height = 0;
-			int xCoord = -1;
-			int yCoord = -1;
+			var size = new Tuple<int, int>(0, 0);
+			var xCoord = -1;
+			var yCoord = -1;
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{
+				if (inlineAd.DynamicUnit)
+				{
+					size = new Tuple<int, int>(inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight);
+				}
+				else
+				{
+					size = inlineAd.AdSize.ToWidthAndHeight();
+				}
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;
-				width = inlineAd.DynamicUnitWidth;
-				height = inlineAd.DynamicUnitHeight;
 				xCoord = inlineAd.XCoord;
 				yCoord = inlineAd.YCoord;
 			}
-			_showAd(nimbusAdUnit.InstanceID, width, height, respectSafeArea, (int) adScreenPosition, xCoord, yCoord);
+			_showAd(nimbusAdUnit.InstanceID, size.Item1, size.Item2, respectSafeArea, (int) adScreenPosition, xCoord, yCoord);
 		}
 	}
 #endif

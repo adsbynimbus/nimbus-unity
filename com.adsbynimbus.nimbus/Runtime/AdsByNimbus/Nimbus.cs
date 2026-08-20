@@ -68,12 +68,12 @@ public static class Nimbus
 	///		Default is AdScreenPosition.BOTTOM_CENTER.  This will be used if x and y position are not set.
 	/// </param>
 	/// <param name="xCoord">
-	///		The top-left corner of the banner view is positioned at the x and y values passed to the constructor,
-	///		where the origin is the top-left of the screen.  screenPosition will be used if this is not set.
+	///		The top-left corner of the banner view is positioned at the x value passed,
+	///		where the origin is the top-left of the screen.  screenPosition will be used if x and y position are not set.
 	/// </param>
 	/// <param name="yCoord">
-	///		The top-left corner of the banner view is positioned at the x and y values passed to the constructor,
-	///		where the origin is the top-left of the screen. screenPosition will be used if this is not set.
+	///		The top-left corner of the banner view is positioned at the y value passed,
+	///		where the origin is the top-left of the screen. screenPosition will be used if x and y position are not set.
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -144,12 +144,12 @@ public static class Nimbus
 	///		Default is AdScreenPosition.BOTTOM_CENTER.  This will be used if x and y position are not set.
 	/// </param>
 	/// <param name="xCoord">
-	///		The top-left corner of the banner view is positioned at the x and y values passed to the constructor,
-	///		where the origin is the top-left of the screen.  screenPosition will be used if this is not set.
+	///		The top-left corner of the banner view is positioned at the x value passed,
+	///		where the origin is the top-left of the screen.  screenPosition will be used if x and y position are not set.
 	/// </param>
 	/// <param name="yCoord">
-	///		The top-left corner of the banner view is positioned at the x and y values passed to the constructor,
-	///		where the origin is the top-left of the screen. screenPosition will be used if this is not set.
+	///		The top-left corner of the banner view is positioned at the y value passed,
+	///		where the origin is the top-left of the screen. screenPosition will be used if x and y position are not set.
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
