@@ -109,7 +109,7 @@ import AppTrackingTransparency
     }
     
     @objc public class func setExtendedIds(extendedIdStr: String) {
-        if (extendedIdStr != "" && !extendedIdStr.isEmpty) {
+        if (!extendedIdStr.isEmpty) {
             do {
                 if let dataFromString = extendedIdStr.data(using: .utf8) {
                     let eid = try JSONDecoder().decode(EID.self, from: dataFromString)
@@ -271,7 +271,7 @@ extension NimbusError {
     }
 }
 
-public struct EID: Codable {
+fileprivate struct EID: Codable {
     let source: String
     let uids: Set<RTB.UID>
 }
