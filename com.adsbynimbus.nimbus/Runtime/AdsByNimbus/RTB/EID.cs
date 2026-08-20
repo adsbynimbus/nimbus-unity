@@ -9,10 +9,10 @@ namespace AdsByNimbus.RTB
         public string source;
         public UID[] uids;
         
-        public EID(string source, UID[] ids)
+        public EID(string source, UID[] uids)
         {
             this.source = source;
-            uids = ids;
+            this.uids = uids;
         }
     }
 }
