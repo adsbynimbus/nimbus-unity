@@ -48,7 +48,13 @@ namespace AdsByNimbus.Internal
         [DllImport("__Internal")]
         private static extern void _setVerificationCallbacks(IntPtr markupCallbackFunctionPtr,  
             IntPtr resourceCallbackFunctionPtr, int numCallbacks);
+                
+        [DllImport("__Internal")]
+        private static extern void _setExtendedIds(string extendedIdObj);
         
+        [DllImport("__Internal")]
+        private static extern void _clearExtendedIds(string source);
+
         #elif UNITY_ANDROID
         
         private const string HelperClass = "com.adsbynimbus.unity.NimbusHelper";
@@ -159,7 +165,26 @@ namespace AdsByNimbus.Internal
             _setIsSkOverlayEnabledForAllUnits(isSkOverlayEnabledForAllUnits);
             #endif
         }
-
+        
+        internal static void addExtendedIds(string source, UID[] ids)
+        {
+            var extendedId = new EID(source, ids);
+#if UNITY_IOS
+            _setExtendedIds(JsonConvert.SerializeObject(extendedId));
+#elif UNITY_ANDROID
+            Helper.CallStatic("setExtendedIds", JsonConvert.SerializeObject(extendedId));
+#endif
+        }
+        
+        internal static void clearExtendedIds(string source)
+        {
+#if UNITY_IOS
+            _clearExtendedIds(source);
+#elif UNITY_ANDROID
+            Helper.CallStatic("clearExtendedIds", source);
+#endif
+        }
+        
         internal static void SetVerificationProviders(VerificationProvider[] providers)
         {
             _verificationProviders = providers;

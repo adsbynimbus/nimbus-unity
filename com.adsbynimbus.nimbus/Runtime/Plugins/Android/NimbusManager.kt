@@ -346,6 +346,11 @@ object NimbusManager {
                 app(Array(pageCat.length()) { pageCat.getString(it) }
                     , Array(sectionCat.length()) { sectionCat.getString(it) })
             }
+            if (!(requestModifiers.isNull("content"))) {
+                val contentObj = requestModifiers.getJSONObject("content")
+                val contentUrl = contentObj.getString("url")
+                content(contentUrl)
+            }
             if (!(requestModifiers.isNull("banner"))) {
                 val bannerObj = requestModifiers.getJSONObject("banner")
                 var creativeAdSize: AdSize = AdSize.Banner

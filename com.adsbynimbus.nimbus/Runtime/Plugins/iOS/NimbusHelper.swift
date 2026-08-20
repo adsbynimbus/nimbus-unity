@@ -108,6 +108,31 @@ import AppTrackingTransparency
         Nimbus.configuration.isSKOverlayEnabledForAllUnits = isEnabled
     }
     
+    @objc public class func setExtendedIds(extendedIdStr: String) {
+        if (!extendedIdStr.isEmpty) {
+            do {
+                if let dataFromString = extendedIdStr.data(using: .utf8) {
+                    let eid = try JSONDecoder().decode(EID.self, from: dataFromString)
+                    Nimbus.configuration.identity.add(source: eid.source, ids: eid.uids)
+                }
+            } catch {
+                didReceiveNimbusError(
+                    adUnitInstanceID: -1,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode Extended Id json: \(error)")
+                )
+            }
+        }
+    }
+    
+    @objc public class func clearExtendedIds(source: String) {
+        if (source == "") {
+           Nimbus.configuration.identity.clear()
+        }
+        else {
+            Nimbus.configuration.identity.clear(source: source)
+        }
+    }
+    
     final class VerificationProviderHelper: NimbusKit.Configuration.VerificationProvider {
         let index: Int
         
@@ -246,6 +271,10 @@ extension NimbusError {
     }
 }
 
+fileprivate struct EID: Codable {
+    let source: String
+    let uids: Set<RTB.UID>
+}
 
 public struct Extensions: Codable {
     let aps: Aps?
@@ -263,6 +292,7 @@ public struct Extensions: Codable {
 public struct RequestModifiers: Codable, Sendable {
     let app: PerRequestApp?
     let banner: BannerCreative?
+    let content: Content?
     let environment: Env?
     let location: Location?
     let userKeywords: String?
@@ -277,6 +307,9 @@ public struct RequestModifiers: Codable, Sendable {
         }
         if let bannerCreative = banner {
             requestComponents.append(bannerCreative.requestComponent)
+        }
+        if let contentUrl = content {
+            requestComponents.append(contentUrl.requestComponent)
         }
         if let env = environment {
             requestComponents.append(env.requestComponent)
@@ -420,6 +453,13 @@ public struct Viewability: Codable, UnityRequestComponent, Sendable {
     let omidPv: String
     var requestComponent: any NimbusKit.RequestComponent {
         viewability(omidpn: omidPn, omidpv: omidPv)
+    }
+}
+
+public struct Content: Codable, UnityRequestComponent, Sendable {
+    let url: String
+    var requestComponent: any NimbusKit.RequestComponent {
+        content(url: url)
     }
 }
 

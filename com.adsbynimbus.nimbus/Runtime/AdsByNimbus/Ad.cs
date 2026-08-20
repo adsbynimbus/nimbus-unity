@@ -143,6 +143,9 @@ namespace AdsByNimbus {
 						case banner b:
 							rm.banner = b;
 							break;
+						case content c:
+							rm.content = c;
+							break;
 						case environment e:
 							rm.environment = e;
 							break;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using AdsByNimbus;
 using AdsByNimbus.Internal;
 using AdsByNimbus.RTB;
-using AdsByNimbus.RTB.Request;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -413,6 +412,38 @@ public static class Nimbus
 		{
 			set => ConfigHelpers.SetVerificationProviders(value);
 		}
+
+		/// <summary>
+		///		To attach an extended ID to Nimbus bid requests,
+		///		provide the identity provider's domain (source) and one or more ID values.
+		///		These will be included in the eids field of outgoing OpenRTB requests.
+		/// <param name="source">
+		///		Identity provider's domain
+		/// </param>
+		/// <param name="ids">
+		///		Array of one or more ID values to be included in eids field of OpenRTB requests
+		/// </param>
+		/// </summary>
+		public static class identity
+		{
+			public static void add(string source, UID[] ids)
+			{
+				ConfigHelpers.addExtendedIds(source, ids);
+			}
+			
+			/// <summary>
+			///		Clear Extended Ids
+			/// </summary>
+			/// <param name="source">
+			///		If included, all extended Ids from source will be cleared.
+			///		If not included, extended ids from all sources will be cleared
+			/// </param>
+			public static void clear(string source = "")
+			{
+				ConfigHelpers.clearExtendedIds(source);
+			}
+		}
+
 	}
 }
 

@@ -5,7 +5,9 @@ import com.adsbynimbus.Nimbus
 import com.adsbynimbus.NimbusError
 import com.adsbynimbus.NimbusResponse
 import com.adsbynimbus.rtb.App
+import com.adsbynimbus.rtb.UID
 import com.adsbynimbus.rtb.User
+import com.adsbynimbus.rtb.internal.EID
 import com.iab.omid.library.adsbynimbus.adsession.VerificationScriptResource
 import com.unity3d.player.UnityPlayer
 import kotlinx.serialization.json.Json
@@ -65,6 +67,23 @@ object NimbusHelper {
     @JvmStatic
     fun showMuteButton(showMuteButton: Boolean) {
         Nimbus.configuration.showMuteButton = showMuteButton
+    }
+    
+    @JvmStatic
+    fun setExtendedIds(extendedIdStr: String) {
+        val eid = Json.decodeFromString(EID.serializer(), extendedIdStr)
+        Nimbus.configuration.identity.add(eid.source, eid.uids)
+    }
+
+    @JvmStatic
+    fun clearExtendedIds(source: String) {
+        if (source == "")
+        {
+            Nimbus.configuration.identity.clear()
+        }
+        else {
+            Nimbus.configuration.identity.clear(source)
+        }
     }
 
     @JvmStatic
