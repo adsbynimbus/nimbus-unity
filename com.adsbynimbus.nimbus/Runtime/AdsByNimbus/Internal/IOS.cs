@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using AdsByNimbus;
@@ -132,8 +133,8 @@ namespace AdsByNimbus.Internal {
 					{
 						var size = inlineAd.AdSize.ToWidthAndHeight();
 						#if NIMBUS_ENABLE_APS_IOS
-							extensions.aps.slotData = nimbusAdUnit.ApsAds == null ? _apsIOS.GetAdUnitId(AdType.Inline, size.Item1, size.Item2) :
-									nimbusAdUnit.ApsAds;
+							extensions.aps.slotData = nimbusAdUnit.ApsAds == null ? _apsIOS.GetAdUnitId(AdType.Inline, 
+								size.Width, size.Height) : nimbusAdUnit.ApsAds;
 						#endif
 						if (inlineAd.DynamicUnit)
 						{
@@ -147,8 +148,8 @@ namespace AdsByNimbus.Internal {
 						}
 						else
 						{
-							_bannerAd(inlineAd.InstanceID, inlineAd.position, size.Item1,
-								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition,  inlineAd.BidFloor, 
+							_bannerAd(inlineAd.InstanceID, inlineAd.position, size.Width,
+								size.Height, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition,  inlineAd.BidFloor, 
 								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, inlineAd.XCoord, inlineAd.YCoord,
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions)
 								, JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
@@ -202,25 +203,22 @@ namespace AdsByNimbus.Internal {
 		{
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
-			var size = new Tuple<int, int>(0, 0);
-			var xCoord = -1;
-			var yCoord = -1;
+			var rect = new Rectangle(-1, -1, 0, 0);
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{
 				if (inlineAd.DynamicUnit)
 				{
-					size = new Tuple<int, int>(inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight);
+					rect = new Rectangle(inlineAd.XCoord, inlineAd.YCoord, inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight);
 				}
 				else
 				{
-					size = inlineAd.AdSize.ToWidthAndHeight();
+					var wh = inlineAd.AdSize.ToWidthAndHeight();
+					rect = new Rectangle(inlineAd.XCoord, inlineAd.YCoord, wh.Width, wh.Height);
 				}
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;
-				xCoord = inlineAd.XCoord;
-				yCoord = inlineAd.YCoord;
 			}
-			_showAd(nimbusAdUnit.InstanceID, size.Item1, size.Item2, respectSafeArea, (int) adScreenPosition, xCoord, yCoord);
+			_showAd(nimbusAdUnit.InstanceID, rect.Width, rect.Height, respectSafeArea, (int) adScreenPosition, rect.X, rect.Y);
 		}
 	}
 #endif

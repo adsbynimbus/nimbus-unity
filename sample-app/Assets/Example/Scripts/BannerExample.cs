@@ -44,7 +44,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = Nimbus.bannerAd("unity_demo_banner_position");
+			_ad = Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER);
 			_alreadyTriggered = true;
 		}
 

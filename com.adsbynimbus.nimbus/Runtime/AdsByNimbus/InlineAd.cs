@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Drawing;
 using AdsByNimbus;
 using AdsByNimbus.RTB;
 
@@ -65,22 +65,22 @@ public enum AdSize : byte {
 }
 
 public static class AdSizesExtension {
-    public static Tuple<int, int> ToWidthAndHeight(this AdSize isa) {
+    public static Rectangle ToWidthAndHeight(this AdSize isa) {
         switch (isa) {
             case AdSize.banner:
-                return new Tuple<int, int>(320, 50);
+                return new Rectangle(0, 0, 320, 50);
             case AdSize.mrec:
-                return new Tuple<int, int>(300, 250);
+                return new Rectangle(0, 0, 300, 250);
             case AdSize.halfScreen:
-                return new Tuple<int, int>(300, 600);
+                return new Rectangle(0, 0, 300, 600);
             case AdSize.leaderboard:
-                return new Tuple<int, int>(728, 90);
+                return new Rectangle(0, 0, 728, 90);
             case AdSize.interstitialPortrait:
-                return new Tuple<int, int>(320, 480);
+                return new Rectangle(0, 0, 320, 480);
             case AdSize.interstitialLandscape:
-                return new Tuple<int, int>(480, 320);
+                return new Rectangle(0, 0, 480, 320);
             default:
-                return new Tuple<int, int>(0, 0);
+                return new Rectangle(0, 0, 0, 0);
         }
     }
 }

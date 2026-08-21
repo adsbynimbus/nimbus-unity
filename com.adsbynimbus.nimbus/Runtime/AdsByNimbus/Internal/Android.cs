@@ -1,4 +1,4 @@
-using System;
+using System.Drawing;
 using System.Linq;
 using AdsByNimbus;
 using AdsByNimbus.Internal.Extensions.AdMob;
@@ -91,7 +91,7 @@ namespace AdsByNimbus.Internal {
 					{
 						var size = inlineAd.AdSize.ToWidthAndHeight();
 						#if NIMBUS_ENABLE_APS_ANDROID && UNITY_ANDROID
-						extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Inline, size.Item1, size.Item2);
+						extensions.apsSlotData = _apsAndroid.GetAdUnitId(AdType.Inline, size.Width, size.Height);
 						#endif
 						if (inlineAd.DynamicUnit)
 						{
@@ -104,8 +104,8 @@ namespace AdsByNimbus.Internal {
 						else
 						{
 							_manager.CallStatic("bannerAd", _currentActivity, 
-								inlineAd.InstanceID, inlineAd.position, size.Item1,
-								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition, 
+								inlineAd.InstanceID, inlineAd.position, size.Width,
+								size.Height, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition, 
 								inlineAd.BidFloor, inlineAd.RefreshInterval, (int) inlineAd.AdScreenPosition, 
 								inlineAd.XCoord, inlineAd.YCoord, 
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions), 
@@ -165,29 +165,26 @@ namespace AdsByNimbus.Internal {
 			_currentActivity = _unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 			var managerClass = new AndroidJavaObject(ManagerClass);
 			_manager = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
-			var size = new Tuple<int, int>(0, 0);
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
-			var xCoord = -1;
-			var yCoord = -1;
+			var rect = new Rectangle(-1, -1, 0, 0);
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{
 				if (inlineAd.DynamicUnit)
 				{
-					size = new Tuple<int, int>(inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight);
+					rect = new Rectangle(inlineAd.XCoord, inlineAd.YCoord, inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight);
 				}
 				else
 				{
-					size = inlineAd.AdSize.ToWidthAndHeight();
+					var wh = inlineAd.AdSize.ToWidthAndHeight();
+					rect = new Rectangle(inlineAd.XCoord, inlineAd.YCoord, wh.Width, wh.Height);
 				}
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;
-				xCoord = inlineAd.XCoord;
-				yCoord = inlineAd.YCoord;
 			}
 			_manager.CallStatic("showAd", _currentActivity, 
-				nimbusAdUnit.InstanceID, size.Item1, size.Item2,
-				respectSafeArea, (int) adScreenPosition, xCoord, yCoord);
+				nimbusAdUnit.InstanceID, rect.Width, rect.Height, 
+				respectSafeArea, (int) adScreenPosition, rect.X, rect.Y);
 		}
 
 		private static AndroidJavaObject CastToJavaObject(AndroidJavaObject source, string className) {
