@@ -5,5 +5,5 @@ public interface IAdEvents {
 	void OnAdWasRendered(Ad nimbusAdUnit);
 	void OnAdClicked(Ad nimbusAdUnit);
 	void OnAdCompleted(Ad nimbusAdUnit, bool skipped);
-	void OnAdError(Ad nimbusAdUnit);
+	void OnAdError(Ad nimbusAdUnit,  NimbusError nimbusError);
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AdsByNimbus;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace AdsByNimbus.Internal {
@@ -65,16 +66,16 @@ namespace AdsByNimbus.Internal {
 		}
 
 		internal void OnError(string jsonParams) {
-			var data = NimbusCallbackParser.ParseMessage<NimbusErrorData>(jsonParams);
-			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
-
-			if (adUnit == null && data.adUnitInstanceID != -1) {
-				Debug.unityLogger.LogError("NimbusError", $"AdUnit not found: {data.adUnitInstanceID}");
+			var error = JsonConvert.DeserializeObject<NimbusError>(jsonParams);
+			var adUnit = AdUnitForInstanceID(error.adUnitInstanceID);
+			
+			if (adUnit == null && error.adUnitInstanceID != -1) {
+				Debug.unityLogger.LogError("NimbusError", $"{error.errorDescription}");
 				return;
 			}
 
-			Debug.unityLogger.LogError("NimbusError", $"Listener Ad error: {data.adUnitInstanceID}");
-			adUnit.FireMobileOnAdErrorEvent();
+			Debug.unityLogger.LogError("NimbusError", $"Listener Ad error: {error.adUnitInstanceID}");
+			adUnit.FireMobileOnAdErrorEvent(error);
 		}
 	}
 }

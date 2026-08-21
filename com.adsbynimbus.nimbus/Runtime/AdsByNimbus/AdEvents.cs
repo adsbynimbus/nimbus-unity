@@ -4,7 +4,7 @@ using AdsByNimbus;
 public class AdEvents {
 	public event Action<Ad> OnAdLoaded;
 	public event Action<Ad> OnAdRendered;
-	public event Action<Ad> OnAdError;
+	public event Action<Ad, NimbusError> OnAdError;
 	public event Action<Ad> OnAdImpression;
 	public event Action<Ad> OnAdClicked;
 	public event Action<Ad> OnAdDestroyed;
@@ -50,8 +50,8 @@ public class AdEvents {
 		OnAdRewardEarned?.Invoke(obj);
 	}
 	
-	internal void FireOnAdErrorEvent(Ad obj) {
-		OnAdError?.Invoke(obj);
+	internal void FireOnAdErrorEvent(Ad obj, NimbusError nimbusError) {
+		OnAdError?.Invoke(obj, nimbusError);
 	}
 }
 

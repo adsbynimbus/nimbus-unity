@@ -193,17 +193,11 @@ import AppTrackingTransparency
             methodName: "OnError",
             params: [
                 "adUnitInstanceID": adUnitInstanceID,
-                "errorMessage": error.localizedDescription
-            ]
-        )
-    }
-    
-    public static func didReceiveNimbusError(adUnitInstanceID: Int, error: Error) {
-        UnityBinding.sendMessage(
-            methodName: "OnError",
-            params: [
-                "adUnitInstanceID": adUnitInstanceID,
-                "errorMessage": error.localizedDescription
+                "reason": error.reason.rawValue,
+                "stage": error.stage.rawValue,
+                "domain": error.domain.rawValue,
+                "detail": error.detail ?? "",
+                "errorDescription": error.errorDescription ?? ""
             ]
         )
     }
