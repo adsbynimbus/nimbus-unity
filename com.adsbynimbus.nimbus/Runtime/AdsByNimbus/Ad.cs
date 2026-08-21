@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,6 +26,8 @@ namespace AdsByNimbus {
 		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
 		private bool _adPassedToNative;
 		private readonly AdEvents _adEvents;
+		private Action<AdEvent> _onAdEvent;
+		private Action<NimbusError> _onAdError;
 		#if NIMBUS_ENABLE_APS
 			internal apsAd[] ApsAds;
 		#endif
@@ -51,22 +54,35 @@ namespace AdsByNimbus {
 			this.demand = demand;
 			SetupDemand();
 		}
+
+		public Ad onEvent(Action<AdEvent> onEvent)
+		{
+			_onAdEvent = onEvent;
+			return this;
+		}
+
+		public Ad onError(Action<NimbusError> onError)
+		{
+			_onAdError = onError;
+			return this;
+		}
 		
 		/// <summary>
 		///   This method will preload and cache the ad to be shown later with the Show() method.
 		///   It is not necessary to call this method before the Show() method.
 		/// </summary>
-		public void Load()
+		public virtual Ad load()
 		{
 			_adPassedToNative = true;
 			NimbusManager.Instance.StartCoroutine(LoadAd(showAd: false));
+			return this;
 		}
 		
 		/// <summary>
 		///   This method will present the requested ad. The ad does not need the Load() method to be
 		///   called before it will be shown.
 		/// </summary>
-		public void Show()
+		public Ad show()
 		{
 			if (_adPassedToNative)
 			{
@@ -77,6 +93,8 @@ namespace AdsByNimbus {
 				// Ad needs to be passed over the bridge before show() is called
 				NimbusManager.Instance.StartCoroutine(LoadAd(showAd: true));
 			}
+
+			return this;
 		}
 		
 		/// <summary>
@@ -174,12 +192,14 @@ namespace AdsByNimbus {
 			_adEvents.FireOnAdRenderedEvent(this);
 		}
 
-		internal void FireMobileOnAdErrorEvent() {
-			_adEvents.FireOnAdErrorEvent(this);
+		internal void FireMobileOnAdErrorEvent(NimbusError nimbusError) {
+			_adEvents.FireOnAdErrorEvent(this, nimbusError);
+			_onAdError(nimbusError);
 		}
 		
 		internal void FireMobileAdEvents(AdEvent e) {
 			CurrentAdState = e;
+			_onAdEvent(e);
 			switch (e) {
 				case AdEvent.LOADED:
 					_adEvents.FireOnAdLoadedEvent(this);

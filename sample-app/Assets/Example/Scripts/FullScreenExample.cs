@@ -55,7 +55,7 @@ namespace Example.Scripts {
 			UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
 		}
 
-		private void LogError(Ad ad) {
+		private void LogError(Ad ad, NimbusError nimbusError) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
 			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +

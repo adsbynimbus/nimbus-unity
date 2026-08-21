@@ -202,7 +202,7 @@ import NimbusMobileFuseKit
                     try await bannerAd.load()
                 }
             } catch {
-                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: NimbusError(domain: NimbusError.Domain.unitysdk, stage: .request, detail: error.localizedDescription))
             }
         })
     }
@@ -254,7 +254,7 @@ import NimbusMobileFuseKit
                     try await dynamicUnit.load()
                 }
             } catch {
-                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: .unitysdk(stage: .request, detail: error.localizedDescription))
             }
         })
     }
@@ -298,7 +298,7 @@ import NimbusMobileFuseKit
                 }
             }
             catch {
-                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: .unitysdk(stage: .request, detail: error.localizedDescription))
             }
         })
     }
@@ -344,7 +344,7 @@ import NimbusMobileFuseKit
                 }
             }
             catch {
-                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: .unitysdk(stage: .request, detail: error.localizedDescription))
             }
         })
     }
@@ -387,7 +387,7 @@ import NimbusMobileFuseKit
                     try await rewardedAd.load()
                 }
             } catch {
-                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: .unitysdk(stage: .request, detail: error.localizedDescription))
             }
         })
     }
@@ -406,7 +406,7 @@ import NimbusMobileFuseKit
                     try await inlineAd.show(in: contentView)
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
-                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: .unitysdk(stage: .render, detail: error.localizedDescription))
                 }
             })
         }
@@ -416,7 +416,7 @@ import NimbusMobileFuseKit
                     try await fullscreenAd.show(from: self.unityViewController())
                     UnityBinding.sendMessage(methodName: "OnAdRendered", params: ["adUnitInstanceID": instanceId])
                 } catch {
-                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: error)
+                    NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId,  error: .unitysdk(stage: .request, detail: error.localizedDescription))
                 }
             })
         } else {

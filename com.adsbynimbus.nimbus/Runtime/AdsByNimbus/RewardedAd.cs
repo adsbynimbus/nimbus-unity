@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AdsByNimbus;
 public class RewardedAd: Ad
@@ -9,5 +10,30 @@ public class RewardedAd: Ad
             components: components, demand: demand)
     {
 
+    }
+    
+        
+    public new RewardedAd onEvent(Action<AdEvent> onEvent)
+    {
+        base.onEvent(onEvent);
+        return this;
+    }
+
+    public new RewardedAd onError(Action<NimbusError> onError)
+    {
+        base.onError(onError);
+        return this;
+    }
+
+    public new RewardedAd load()
+    {
+        base.load();
+        return this;
+    }
+
+    public new RewardedAd show()
+    {
+        base.show();
+        return this;
     }
 }
