@@ -296,7 +296,7 @@ object NimbusManager {
                              respectSafeArea: Boolean, bannerPosition: Int, xCoord: Int, yCoord: Int,
                              dynamicUnit: Boolean = false) {
         val adFrame = FrameLayout(obj)
-        if (xCoord != -1 && yCoord != -1)
+        if (xCoord != 0 || yCoord != 0)
         {
             adFrame.x = xCoord.toFloat()
             adFrame.y = yCoord.toFloat()
@@ -308,21 +308,18 @@ object NimbusManager {
                 width,
                 height))
         ad.show(adFrame).also {
-            if (xCoord == -1 && yCoord == -1)
-            {
-                var bannerGravity = 0
-                when (bannerPosition) {
-                    0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                    1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                    2 -> bannerGravity = Gravity.CENTER
-                    3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
-                    4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
-                    5 -> bannerGravity = Gravity.TOP or Gravity.START
-                    6 -> bannerGravity = Gravity.TOP or Gravity.END
-                }
-                adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
-                    gravity = bannerGravity
-                }
+            var bannerGravity = 0
+            when (bannerPosition) {
+                0 -> bannerGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                1 -> bannerGravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                2 -> bannerGravity = Gravity.CENTER
+                3 -> bannerGravity = Gravity.BOTTOM or Gravity.START
+                4 -> bannerGravity = Gravity.BOTTOM or Gravity.END
+                5 -> bannerGravity = Gravity.TOP or Gravity.START
+                6 -> bannerGravity = Gravity.TOP or Gravity.END
+            }
+            adFrame.updateLayoutParams<FrameLayout.LayoutParams> {
+                gravity = bannerGravity
             }
             if (respectSafeArea) {
                 ViewCompat.setOnApplyWindowInsetsListener(it.adView ?: View(obj)) { view, insets ->

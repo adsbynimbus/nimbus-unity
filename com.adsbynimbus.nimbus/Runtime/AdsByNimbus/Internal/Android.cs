@@ -168,17 +168,23 @@ namespace AdsByNimbus.Internal {
 			_manager = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
-			var rect = new Rectangle(-1, -1, 0, 0);
+			var rect = new Rectangle(0, 0, 0, 0);
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{
 				if (inlineAd.DynamicUnit)
 				{
-					rect = new Rectangle(inlineAd.XCoord, inlineAd.YCoord, inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight);
+					rect.X = inlineAd.XCoord;
+					rect.Y = inlineAd.YCoord;
+					rect.Width = inlineAd.DynamicUnitWidth;
+					rect.Height = inlineAd.DynamicUnitHeight;
 				}
 				else
 				{
 					var wh = inlineAd.AdSize.ToWidthAndHeight();
-					rect = new Rectangle(inlineAd.XCoord, inlineAd.YCoord, wh.Width, wh.Height);
+					rect.X = inlineAd.XCoord;
+					rect.Y = inlineAd.YCoord;
+					rect.Width = wh.Width;
+					rect.Height = wh.Height;
 				}
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;

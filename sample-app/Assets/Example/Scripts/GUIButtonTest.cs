@@ -110,7 +110,8 @@ namespace Example.Scripts {
 				_shouldDestroyDynamicUnit = true;
 				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
 				_loadAndShowDynamicUnitAdUnit = 
-					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", screenPosition: AdScreenPosition.BOTTOM_CENTER);
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", 
+						width: 400, height: 400);
 				_loadAndShowDynamicUnitAdUnit.Show();
 				return;
 			}

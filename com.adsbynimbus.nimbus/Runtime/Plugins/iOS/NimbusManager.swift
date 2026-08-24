@@ -603,12 +603,23 @@ import NimbusMobileFuseKit
                 ]
             // Top Left
             case 5:
-                return [
-                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea)),
-                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
-                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
-                ]
+                if (xCoord != 0 || yCoord != 0)
+                {
+                    //use xCoord / yCoord
+                    return [
+                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea), constant: CGFloat(xCoord)),
+                        contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea), constant: CGFloat(yCoord)),
+                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
+                    ]
+                } else {
+                    return [
+                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
+                        contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea)),
+                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
+                    ]
+                }
             // Top Right
             case 6:
                 return [
@@ -618,25 +629,13 @@ import NimbusMobileFuseKit
                     contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             default:
-                if (xCoord == -1 || yCoord == -1)
-                {
-                    // Center Bottom (Case 0)
-                    return [
-                        contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                        contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
-                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
-                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
-                    ]
-                }
-                else {
-                    //use xCoord / yCoord
-                    return [
-                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea), constant: CGFloat(xCoord)),
-                        contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea), constant: CGFloat(yCoord)),
-                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
-                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
-                    ]
-                }
+                // Center Bottom (Case 0)
+                return [
+                    contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
+                ]
         }
     }
     

@@ -90,10 +90,17 @@ public static class Nimbus
 	/// <returns>
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
-	public static InlineAd bannerAd(string position, AdSize size = AdSize.banner, Format[] addFormats = null, 
-		Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, 
-		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,bool respectSafeArea = false, 
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static InlineAd bannerAd(
+		string position, 
+		AdSize size = AdSize.banner, 
+		Format[] addFormats = null, 
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, size, addFormats, adPosition, bidFloor, 
 			refreshInterval, adScreenPosition: screenPosition, respectSafeArea:respectSafeArea, components: components, demand: demand);
@@ -108,6 +115,14 @@ public static class Nimbus
 	/// </summary>
 	/// <param name="position">
 	///     Position / identifier of the ad
+	/// </param>
+	/// <param name="xCoord">
+	///		The top-left corner of the banner view is positioned at the x value passed,
+	///		where the origin is the top-left of the screen.  
+	/// </param>
+	/// <param name="yCoord">
+	///		The top-left corner of the banner view is positioned at the y value passed,
+	///		where the origin is the top-left of the screen. 
 	/// </param>
 	/// <param name="size">
 	///		Ad size, default is `AdSize.banner`
@@ -124,14 +139,6 @@ public static class Nimbus
 	/// <param name="refreshInterval">
 	///     Expressed in seconds. 0 = no refresh, 10 is the lowest allowed refresh interval.
 	///		Values larger than zero and lower than 10 will be set to 10.
-	/// </param>
-	/// <param name="xCoord">
-	///		The top-left corner of the banner view is positioned at the x value passed,
-	///		where the origin is the top-left of the screen.  
-	/// </param>
-	/// <param name="yCoord">
-	///		The top-left corner of the banner view is positioned at the y value passed,
-	///		where the origin is the top-left of the screen. 
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -156,10 +163,18 @@ public static class Nimbus
 	/// <returns>
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
-	public static InlineAd bannerAd(string position, AdSize size = AdSize.banner, Format[] addFormats = null, 
-		Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, 
-		int xCoord = -1, int yCoord = -1, bool respectSafeArea = false, 
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static InlineAd bannerAd(
+		string position,
+		int xCoord, 
+		int yCoord,
+		AdSize size = AdSize.banner,
+		Format[] addFormats = null, 
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, size, addFormats, adPosition, bidFloor, 
 			refreshInterval, xCoord:xCoord, yCoord:yCoord, respectSafeArea:respectSafeArea, components: components, demand: demand);
@@ -225,10 +240,19 @@ public static class Nimbus
 	/// <returns>
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
-	public static InlineAd dynamicUnit(string position, Format[] addFormats = null, AdOrientation orientation = AdOrientation.deviceOrientation,
-		Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, int width = 0, int height = 0,
+	public static InlineAd dynamicUnit(
+		string position, 
+		Format[] addFormats = null, 
+		AdOrientation orientation = AdOrientation.deviceOrientation,
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		int width = 0, 
+		int height = 0,
 		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
-		bool respectSafeArea = false, List<RequestComponent> components = null, List<DemandComponent> demand = null)
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, addFormats: addFormats, adPosition:adPosition, bidFloor:bidFloor, 
 			refreshInterval:refreshInterval, dynamicUnitWidth:width, dynamicUnitHeight:height, adScreenPosition:screenPosition, 
@@ -244,6 +268,14 @@ public static class Nimbus
 	/// </summary>
 	/// <param name="position">
 	///     Position / identifier of the ad
+	/// </param>
+	/// <param name="xCoord">
+	///		The top-left corner of the banner view is positioned at the x value passed,
+	///		where the origin is the top-left of the screen. 
+	/// </param>
+	/// <param name="yCoord">
+	///		The top-left corner of the banner view is positioned at the y value passed,
+	///		where the origin is the top-left of the screen.
 	/// </param>
 	/// <param name="addFormats">
 	///		Set of additional formats, default is Format.mrec, Format.halfScreen
@@ -266,14 +298,6 @@ public static class Nimbus
 	/// </param>
 	/// <param name="height">
 	///		Height of the ad's container, defaults to screen height.
-	/// </param>
-	/// <param name="xCoord">
-	///		The top-left corner of the banner view is positioned at the x value passed,
-	///		where the origin is the top-left of the screen. 
-	/// </param>
-	/// <param name="yCoord">
-	///		The top-left corner of the banner view is positioned at the y value passed,
-	///		where the origin is the top-left of the screen.
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -299,10 +323,20 @@ public static class Nimbus
 	/// <returns>
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
-	public static InlineAd dynamicUnit(string position, Format[] addFormats = null, AdOrientation orientation = AdOrientation.deviceOrientation,
-		Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, int width = 0, int height = 0,
-		int xCoord = -1, int yCoord = -1, 
-		bool respectSafeArea = false, List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static InlineAd dynamicUnit(
+		string position, 
+		int xCoord,
+		int yCoord,
+		Format[] addFormats = null, 
+		AdOrientation orientation = AdOrientation.deviceOrientation,
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		int width = 0, 
+		int height = 0,
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, addFormats: addFormats, adPosition:adPosition, bidFloor:bidFloor, 
 			refreshInterval:refreshInterval, dynamicUnitWidth:width, dynamicUnitHeight:height, xCoord:xCoord, yCoord:yCoord, 
@@ -343,8 +377,11 @@ public static class Nimbus
 	/// <returns>
 	///		FullscreenAd that correlates to the Requested Ad
 	/// </returns>
-	public static FullscreenAd fullscreenAd(string position, AdOrientation orientation = AdOrientation.deviceOrientation,
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static FullscreenAd fullscreenAd(
+		string position, 
+		AdOrientation orientation = AdOrientation.deviceOrientation,
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new FullscreenAd(NimbusManager.Instance.NimbusEvents, position, orientation:  orientation, interstitial:false,
 			components: components, demand: demand);
@@ -389,9 +426,13 @@ public static class Nimbus
 	/// <returns>
 	///		FullscreenAd that correlates to the Requested Ad
 	/// </returns>
-	public static FullscreenAd interstitialAd(string position, Format[] addFormats = null, 
-		AdOrientation orientation = AdOrientation.deviceOrientation, float bidFloor = 0f,
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static FullscreenAd interstitialAd(
+		string position, 
+		Format[] addFormats = null, 
+		AdOrientation orientation = AdOrientation.deviceOrientation, 
+		float bidFloor = 0f,
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new FullscreenAd(NimbusManager.Instance.NimbusEvents, position, addFormats,
 			orientation, bidFloor, true, components, demand);
@@ -433,8 +474,12 @@ public static class Nimbus
 	/// <returns>
 	///		RewardedAd that correlates to the Requested Ad
 	/// </returns>
-	public static RewardedAd rewardedAd(string position, AdOrientation orientation = AdOrientation.deviceOrientation, 
-		float bidFloor = 0f, List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static RewardedAd rewardedAd(
+		string position, 
+		AdOrientation orientation = AdOrientation.deviceOrientation, 
+		float bidFloor = 0f, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new RewardedAd(NimbusManager.Instance.NimbusEvents, position, orientation, bidFloor, components, demand);
 	}

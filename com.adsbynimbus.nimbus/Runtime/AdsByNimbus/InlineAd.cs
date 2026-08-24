@@ -17,7 +17,7 @@ public class InlineAd: Ad
 
     internal InlineAd(in AdEvents adEvents, string position, AdSize adSize = AdSize.banner, Format[] addFormats = null,
         Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, int dynamicUnitWidth = 0, int dynamicUnitHeight = 0,
-        AdScreenPosition adScreenPosition = AdScreenPosition.BOTTOM_CENTER, int xCoord = -1, int yCoord = -1, 
+        AdScreenPosition adScreenPosition = AdScreenPosition.BOTTOM_CENTER, int xCoord = 0, int yCoord = 0, 
         bool respectSafeArea = false, AdOrientation orientation = AdOrientation.deviceOrientation, bool dynamicUnit = false,
         List<RequestComponent> components = null, List<DemandComponent> demand = null): 
         base(AdType.Inline, adEvents, position, addFormats, bidFloor, orientation,  components, demand)
@@ -30,9 +30,16 @@ public class InlineAd: Ad
         AdPosition = adPosition;
         RespectSafeArea = respectSafeArea;
         RefreshInterval = refreshInterval;
-        AdScreenPosition = adScreenPosition;
-        XCoord = xCoord;
-        YCoord = yCoord;
+        if (xCoord == 0 && yCoord == 0)
+        {
+            AdScreenPosition = adScreenPosition;
+        }
+        else
+        {
+            AdScreenPosition = AdScreenPosition.TOP_LEFT;
+            XCoord = xCoord;
+            YCoord = yCoord;
+        }
         DynamicUnitWidth = dynamicUnitWidth;
         DynamicUnitHeight = dynamicUnitHeight;
         DynamicUnit = dynamicUnit;
