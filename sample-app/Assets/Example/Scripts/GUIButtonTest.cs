@@ -97,10 +97,10 @@ namespace Example.Scripts {
 					new user("gaming,puzzle")
 				}).onEvent(nimbusEvent =>
 				{
-					
+					_loadedBannerButtonText.text = $"EVENT: {nimbusEvent.ToString()}";
 				}).onError(nimbusError =>
 				{
-					
+					_loadedBannerButtonText.text = $"ERROR: {nimbusError.reason.ToString()}";
 				}).show();
 				return;
 			}
@@ -115,7 +115,8 @@ namespace Example.Scripts {
 				_shouldDestroyDynamicUnit = true;
 				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
 				_loadAndShowDynamicUnitAdUnit = 
-					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", screenPosition: AdScreenPosition.BOTTOM_CENTER).show();
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", 
+						screenPosition: AdScreenPosition.BOTTOM_CENTER, width: 400, height: 400).show();
 				return;
 			}
 
