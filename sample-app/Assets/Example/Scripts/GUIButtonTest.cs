@@ -73,7 +73,7 @@ namespace Example.Scripts {
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was completed");
 		}
 
-		public void OnAdError(Ad nimbusAdUnit) {
+		public void OnAdError(Ad nimbusAdUnit, NimbusError nimbusError) {
 			Debug.unityLogger.Log(
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered.");
 		}
@@ -88,15 +88,20 @@ namespace Example.Scripts {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
 				_loadAndShowBannerAdUnit = 
-					Nimbus.bannerAd("unity_demo_banner_position", 
-							bidFloor: 0.05f, screenPosition: AdScreenPosition.BOTTOM_CENTER, components: new()
+					Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER,
+							bidFloor: 0.05f, components: new()
 				{
 					new app(new [] { "pagecat1","pagecat2" }, 
 						new [] { "sectioncat1","sectioncat2" }),
 					new location(0.0, 0.0, LocationType.gps, 20),
 					new user("gaming,puzzle")
-				});
-				_loadAndShowBannerAdUnit.Show();
+				}).onEvent(nimbusEvent =>
+				{
+					
+				}).onError(nimbusError =>
+				{
+					
+				}).show();
 				return;
 			}
 			_loadAndShowBannerAdUnit?.Destroy();
@@ -110,8 +115,7 @@ namespace Example.Scripts {
 				_shouldDestroyDynamicUnit = true;
 				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
 				_loadAndShowDynamicUnitAdUnit = 
-					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", screenPosition: AdScreenPosition.BOTTOM_CENTER);
-				_loadAndShowDynamicUnitAdUnit.Show();
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", screenPosition: AdScreenPosition.BOTTOM_CENTER).show();
 				return;
 			}
 
@@ -123,11 +127,11 @@ namespace Example.Scripts {
 
 		public void LoadAndShowInterstitial() {
 			Nimbus.interstitialAd("unity_demo_interstitial_position", new Format[] { Format.halfScreen }, 
-				AdOrientation.portrait, 0.10f).Show();
+				AdOrientation.portrait, 0.10f).show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait, 0.05f).Show();
+			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait, 0.05f).show();
 		}
 
 		public void LoadAdController(int index) {
@@ -138,7 +142,7 @@ namespace Example.Scripts {
 					break;
 				case AdState.Loaded:
 					var currentAd = _interactableButtons[index].CurrentAd;
-					currentAd.Show();
+					currentAd.show();
 					StartCoroutine(ResetState(_interactableButtons[index], currentAd));
 					break;
 				case AdState.Displayed:
@@ -153,9 +157,9 @@ namespace Example.Scripts {
 			var adType = _interactableButtons[index].adUnitType;
 			_interactableButtons[index].CurrentAd = adType switch {
 				AdType.Inline => Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER),
-				AdType.Fullscreen => Nimbus.interstitialAd(
-					"unity_demo_interstitial_position"),
-				AdType.Rewarded => Nimbus.rewardedAd("unity_demo_video_position"),
+				AdType.Fullscreen => Nimbus.fullscreenAd(
+					"unity_demo_interstitial_position").load(),
+				AdType.Rewarded => Nimbus.rewardedAd("unity_demo_video_position").load(),
 				_ => _interactableButtons[index].CurrentAd
 			};
 		}
