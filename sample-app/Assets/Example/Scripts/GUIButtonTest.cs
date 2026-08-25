@@ -97,10 +97,10 @@ namespace Example.Scripts {
 					new user("gaming,puzzle")
 				}).onEvent(nimbusEvent =>
 				{
-					_loadedBannerButtonText.text = $"EVENT: {nimbusEvent.ToString()}";
+					Debug.unityLogger.Log($"Nimbus Event from Banner Ad: {nimbusEvent.ToString()})");
 				}).onError(nimbusError =>
 				{
-					_loadedBannerButtonText.text = $"ERROR: {nimbusError.reason.ToString()}";
+					Debug.unityLogger.Log($"Nimbus Error from Banner Ad: {nimbusError.reason.ToString()}");
 				}).show();
 				return;
 			}
