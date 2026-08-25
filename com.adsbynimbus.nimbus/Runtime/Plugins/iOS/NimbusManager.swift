@@ -569,6 +569,14 @@ import NimbusMobileFuseKit
     
     private func constraints(to contentView: UIView, viewController: UIViewController, width: Int, height: Int, respectSafeArea: Bool, adScreenPosition: Int, xCoord: Int , yCoord: Int, isDynamicAdUnit: Bool = false) -> [NSLayoutConstraint] {
         switch (adScreenPosition) {
+            // Center Bottom
+            case 0:
+                return [
+                    contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
+                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
+                    contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
+                    contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
+                ]
             // Center Top
             case 1:
                 return [
@@ -601,25 +609,6 @@ import NimbusMobileFuseKit
                     contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
                     contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
-            // Top Left
-            case 5:
-                if (xCoord != 0 || yCoord != 0)
-                {
-                    //use xCoord / yCoord
-                    return [
-                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea), constant: CGFloat(xCoord)),
-                        contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea), constant: CGFloat(yCoord)),
-                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
-                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
-                    ]
-                } else {
-                    return [
-                        contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea)),
-                        contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea)),
-                        contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
-                        contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
-                    ]
-                }
             // Top Right
             case 6:
                 return [
@@ -629,10 +618,10 @@ import NimbusMobileFuseKit
                     contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
             default:
-                // Center Bottom (Case 0)
+                // Top Left / uses coordinates (case 5)
                 return [
-                    contentView.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor(respectSafeArea)),
+                    contentView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor(respectSafeArea), constant: CGFloat(xCoord)),
+                    contentView.topAnchor.constraint(equalTo: viewController.view.topAnchor(respectSafeArea), constant: CGFloat(yCoord)),
                     contentView.widthAnchor.constraint(equalToConstant: CGFloat(width)),
                     contentView.heightAnchor.constraint(equalToConstant: CGFloat(height))
                 ]
