@@ -47,6 +47,10 @@ public static class Nimbus
 	/// <param name="position">
 	///     Position / identifier of the ad
 	/// </param>
+	/// <param name="screenPosition">
+	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
+	///		Default is AdScreenPosition.BOTTOM_CENTER.
+	/// </param>
 	/// <param name="size">
 	///		Ad size, default is `AdSize.banner`
 	/// </param>\
@@ -62,10 +66,6 @@ public static class Nimbus
 	/// <param name="refreshInterval">
 	///     Expressed in seconds. 0 = no refresh, 10 is the lowest allowed refresh interval.
 	///		Values larger than zero and lower than 10 will be set to 10.
-	/// </param>
-	/// <param name="screenPosition">
-	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
-	///		Default is AdScreenPosition.BOTTOM_CENTER.
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -92,12 +92,12 @@ public static class Nimbus
 	/// </returns>
 	public static InlineAd bannerAd(
 		string position, 
+		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
 		AdSize size = AdSize.banner, 
 		Format[] addFormats = null, 
 		Position adPosition = Position.unknown, 
 		float bidFloor = 0f, 
 		int refreshInterval = 0, 
-		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
 		bool respectSafeArea = false, 
 		List<RequestComponent> components = null, 
 		List<DemandComponent> demand = null)
@@ -190,6 +190,10 @@ public static class Nimbus
 	/// <param name="position">
 	///     Position / identifier of the ad
 	/// </param>
+	/// <param name="screenPosition">
+	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
+	///		Default is AdScreenPosition.BOTTOM_CENTER.
+	/// </param>
 	/// <param name="addFormats">
 	///		Set of additional formats, default is Format.mrec, Format.halfScreen
 	/// </param>
@@ -211,10 +215,6 @@ public static class Nimbus
 	/// </param>
 	/// <param name="height">
 	///		Height of the ad's container, defaults to screen height.
-	/// </param>
-	/// <param name="screenPosition">
-	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
-	///		Default is AdScreenPosition.BOTTOM_CENTER.
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -242,6 +242,7 @@ public static class Nimbus
 	/// </returns>
 	public static InlineAd dynamicUnit(
 		string position, 
+		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
 		Format[] addFormats = null, 
 		AdOrientation orientation = AdOrientation.deviceOrientation,
 		Position adPosition = Position.unknown, 
@@ -249,7 +250,6 @@ public static class Nimbus
 		int refreshInterval = 0, 
 		int width = 0, 
 		int height = 0,
-		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
 		bool respectSafeArea = false, 
 		List<RequestComponent> components = null, 
 		List<DemandComponent> demand = null)
@@ -259,7 +259,7 @@ public static class Nimbus
 			respectSafeArea:respectSafeArea, orientation:orientation, dynamicUnit: true, components: components, demand: demand);
 	}
 	
-		/// <summary>
+	/// <summary>
 	///     This function creates a dynamic unit ad.
 	///		Dynamic unit ad is presented inline and includes banner and video creatives by default.
 	///		Other types and configuration may be done in request builder the closure.
