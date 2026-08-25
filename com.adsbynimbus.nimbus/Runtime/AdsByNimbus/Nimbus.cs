@@ -47,6 +47,10 @@ public static class Nimbus
 	/// <param name="position">
 	///     Position / identifier of the ad
 	/// </param>
+	/// <param name="screenPosition">
+	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
+	///		Default is AdScreenPosition.BOTTOM_CENTER.
+	/// </param>
 	/// <param name="size">
 	///		Ad size, default is `AdSize.banner`
 	/// </param>\
@@ -62,10 +66,6 @@ public static class Nimbus
 	/// <param name="refreshInterval">
 	///     Expressed in seconds. 0 = no refresh, 10 is the lowest allowed refresh interval.
 	///		Values larger than zero and lower than 10 will be set to 10.
-	/// </param>
-	/// <param name="screenPosition">
-	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
-	///		Default is AdScreenPosition.BOTTOM_CENTER
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -90,13 +90,94 @@ public static class Nimbus
 	/// <returns>
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
-	public static InlineAd bannerAd(string position, AdSize size = AdSize.banner, Format[] addFormats = null, 
-		Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, 
-		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER, bool respectSafeArea = false, 
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static InlineAd bannerAd(
+		string position, 
+		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
+		AdSize size = AdSize.banner, 
+		Format[] addFormats = null, 
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, size, addFormats, adPosition, bidFloor, 
-			refreshInterval, screenPosition, respectSafeArea, components: components, demand: demand);
+			refreshInterval, adScreenPosition: screenPosition, respectSafeArea:respectSafeArea, components: components, demand: demand);
+	}
+	
+		/// <summary>
+	///		This function creates a banner ad.
+	///		Banner ad is presented inline and includes a banner creative by default.
+	///		Other types and configuration may be done in request builder the closure.
+	/// 	Reminder: Load() should only be called if the ad needs to be cached beforehand.
+	///		Show() does not need Load() to be called first.
+	/// </summary>
+	/// <param name="position">
+	///     Position / identifier of the ad
+	/// </param>
+	/// <param name="xCoord">
+	///		The top-left corner of the banner view is positioned at the x value passed,
+	///		where the origin is the top-left of the screen.  
+	/// </param>
+	/// <param name="yCoord">
+	///		The top-left corner of the banner view is positioned at the y value passed,
+	///		where the origin is the top-left of the screen. 
+	/// </param>
+	/// <param name="size">
+	///		Ad size, default is `AdSize.banner`
+	/// </param>\
+	/// <param name="addFormats">
+	///		Set of additional formats
+	/// </param>
+	/// <param name="adPosition">
+	///		Ad position. Defaults to `RTB.Position.unknown`
+	/// </param>
+	/// <param name="bidFloor">
+	///		Minimum bid for this ad impression expressed in CPM
+	/// </param>
+	/// <param name="refreshInterval">
+	///     Expressed in seconds. 0 = no refresh, 10 is the lowest allowed refresh interval.
+	///		Values larger than zero and lower than 10 will be set to 10.
+	/// </param>
+	/// <param name="respectSafeArea">
+	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
+	///		that are set by the respective platforms.  Defaults to false.
+	/// </param>
+	/// <param name="components">
+	///		Parameter that allows the publisher to add modifiers on a per-request basis
+	///     example:
+	///			var ad = Nimbus.bannerAd(...,components: new() { new app(...), new user(...), etc.});
+	/// </param>
+	/// <param name="demand">
+	///		Parameter that allows the publisher to add demand elements (APS/AdMob) to the request
+	/// 	WARNING: Using this will override the demand configuration set in the Unity editor
+	///     example:
+	///			var ad = Nimbus.bannerAd(...,demand: new() {
+	///				new admob("adUnitId"),
+	///				new aps(new() {
+	///					new apsAd("slotId1", APSAdFormat.Display320X50)
+	///				})
+	///			});
+	/// </param>
+	/// <returns>
+	///		InlineAd object that correlates to the Requested Ad
+	/// </returns>
+	public static InlineAd bannerAd(
+		string position,
+		int xCoord, 
+		int yCoord,
+		AdSize size = AdSize.banner,
+		Format[] addFormats = null, 
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
+	{
+		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, size, addFormats, adPosition, bidFloor, 
+			refreshInterval, xCoord:xCoord, yCoord:yCoord, respectSafeArea:respectSafeArea, components: components, demand: demand);
 	}
 	
 	/// <summary>
@@ -108,6 +189,10 @@ public static class Nimbus
 	/// </summary>
 	/// <param name="position">
 	///     Position / identifier of the ad
+	/// </param>
+	/// <param name="screenPosition">
+	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
+	///		Default is AdScreenPosition.BOTTOM_CENTER.
 	/// </param>
 	/// <param name="addFormats">
 	///		Set of additional formats, default is Format.mrec, Format.halfScreen
@@ -125,9 +210,11 @@ public static class Nimbus
 	///     Expressed in seconds. 0 = no refresh, 10 is the lowest allowed refresh interval.
 	///		Values larger than zero and lower than 10 will be set to 10.
 	/// </param>
-	/// <param name="screenPosition">
-	///		Enum that allows the publisher to choose the position of the banner ad relative to the screen.
-	///		Default is AdScreenPosition.BOTTOM_CENTER
+	/// <param name="width">
+	///		Width of the ad's container, defaults to screen width.
+	/// </param>
+	/// <param name="height">
+	///		Height of the ad's container, defaults to screen height.
 	/// </param>
 	/// <param name="respectSafeArea">
 	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
@@ -153,13 +240,107 @@ public static class Nimbus
 	/// <returns>
 	///		InlineAd object that correlates to the Requested Ad
 	/// </returns>
-	public static InlineAd dynamicUnit(string position, Format[] addFormats = null, AdOrientation orientation = AdOrientation.deviceOrientation,
-		Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, 
-		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER, bool respectSafeArea = false,
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static InlineAd dynamicUnit(
+		string position, 
+		AdScreenPosition screenPosition = AdScreenPosition.BOTTOM_CENTER,
+		Format[] addFormats = null, 
+		AdOrientation orientation = AdOrientation.deviceOrientation,
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		int width = 0, 
+		int height = 0,
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, addFormats: addFormats, adPosition:adPosition, bidFloor:bidFloor, 
-			refreshInterval:refreshInterval, adScreenPosition:screenPosition, respectSafeArea:respectSafeArea, orientation:orientation, dynamicUnit: true);
+			refreshInterval:refreshInterval, dynamicUnitWidth:width, dynamicUnitHeight:height, adScreenPosition:screenPosition, 
+			respectSafeArea:respectSafeArea, orientation:orientation, dynamicUnit: true, components: components, demand: demand);
+	}
+	
+	/// <summary>
+	///     This function creates a dynamic unit ad.
+	///		Dynamic unit ad is presented inline and includes banner and video creatives by default.
+	///		Other types and configuration may be done in request builder the closure.
+	/// 	Reminder: Load() should only be called if the ad needs to be cached beforehand.
+	///		Show() does not need Load() to be called first.
+	/// </summary>
+	/// <param name="position">
+	///     Position / identifier of the ad
+	/// </param>
+	/// <param name="xCoord">
+	///		The top-left corner of the banner view is positioned at the x value passed,
+	///		where the origin is the top-left of the screen. 
+	/// </param>
+	/// <param name="yCoord">
+	///		The top-left corner of the banner view is positioned at the y value passed,
+	///		where the origin is the top-left of the screen.
+	/// </param>
+	/// <param name="addFormats">
+	///		Set of additional formats, default is Format.mrec, Format.halfScreen
+	/// </param>
+	/// <param name="orientation">
+	///		Preferred orientation of the ad, default is the current device orientation
+	/// </param>
+	/// <param name="adPosition">
+	///		Ad position. Defaults to `RTB.Position.unknown`
+	/// </param>
+	/// <param name="bidFloor">
+	///		Minimum bid for this ad impression expressed in CPM
+	/// </param>
+	/// <param name="refreshInterval">
+	///     Expressed in seconds. 0 = no refresh, 10 is the lowest allowed refresh interval.
+	///		Values larger than zero and lower than 10 will be set to 10.
+	/// </param>
+	/// <param name="width">
+	///		Width of the ad's container, defaults to screen width.
+	/// </param>
+	/// <param name="height">
+	///		Height of the ad's container, defaults to screen height.
+	/// </param>
+	/// <param name="respectSafeArea">
+	///		Boolean that allows the publisher to choose whether the screenPosition of the ad respects "safe area" bounds
+	///		that are set by the respective platforms.  Defaults to false.
+	/// </param>
+	/// <param name="components">
+	///		Parameter that allows the publisher to add modifiers on a per-request basis
+	///     example:
+	///			var ad = Nimbus.dynamicUnit(...,components: new() { new app(...), new user(...), etc.});
+	/// </param>
+	/// <param name="demand">
+	///		Parameter that allows the publisher to add demand elements (APS/AdMob) to the request
+	///		WARNING: Using this will override the demand configuration set in the Unity editor
+	///     example:
+	///			var ad = Nimbus.dynamicUnit(...,demand: new() {
+	///				new admob("adUnitId"),
+	///				new aps(new() {
+	///					new apsAd("slotId1", APSAdFormat.Display320X50),
+	///					new apsAd("slotId2", APSAdFormat.InterstitialVideo)
+	///				})
+	///			});
+	/// </param>
+	/// <returns>
+	///		InlineAd object that correlates to the Requested Ad
+	/// </returns>
+	public static InlineAd dynamicUnit(
+		string position, 
+		int xCoord,
+		int yCoord,
+		Format[] addFormats = null, 
+		AdOrientation orientation = AdOrientation.deviceOrientation,
+		Position adPosition = Position.unknown, 
+		float bidFloor = 0f, 
+		int refreshInterval = 0, 
+		int width = 0, 
+		int height = 0,
+		bool respectSafeArea = false, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
+	{
+		return new InlineAd(NimbusManager.Instance.NimbusEvents, position, addFormats: addFormats, adPosition:adPosition, bidFloor:bidFloor, 
+			refreshInterval:refreshInterval, dynamicUnitWidth:width, dynamicUnitHeight:height, xCoord:xCoord, yCoord:yCoord, 
+			respectSafeArea:respectSafeArea, orientation:orientation, dynamicUnit: true, components: components, demand: demand);
 	}
 
 	/// <summary>
@@ -196,8 +377,11 @@ public static class Nimbus
 	/// <returns>
 	///		FullscreenAd that correlates to the Requested Ad
 	/// </returns>
-	public static FullscreenAd fullscreenAd(string position, AdOrientation orientation = AdOrientation.deviceOrientation,
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static FullscreenAd fullscreenAd(
+		string position, 
+		AdOrientation orientation = AdOrientation.deviceOrientation,
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new FullscreenAd(NimbusManager.Instance.NimbusEvents, position, orientation:  orientation, interstitial:false,
 			components: components, demand: demand);
@@ -242,9 +426,13 @@ public static class Nimbus
 	/// <returns>
 	///		FullscreenAd that correlates to the Requested Ad
 	/// </returns>
-	public static FullscreenAd interstitialAd(string position, Format[] addFormats = null, 
-		AdOrientation orientation = AdOrientation.deviceOrientation, float bidFloor = 0f,
-		List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static FullscreenAd interstitialAd(
+		string position, 
+		Format[] addFormats = null, 
+		AdOrientation orientation = AdOrientation.deviceOrientation, 
+		float bidFloor = 0f,
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new FullscreenAd(NimbusManager.Instance.NimbusEvents, position, addFormats,
 			orientation, bidFloor, true, components, demand);
@@ -286,8 +474,12 @@ public static class Nimbus
 	/// <returns>
 	///		RewardedAd that correlates to the Requested Ad
 	/// </returns>
-	public static RewardedAd rewardedAd(string position, AdOrientation orientation = AdOrientation.deviceOrientation, 
-		float bidFloor = 0f, List<RequestComponent> components = null, List<DemandComponent> demand = null)
+	public static RewardedAd rewardedAd(
+		string position, 
+		AdOrientation orientation = AdOrientation.deviceOrientation, 
+		float bidFloor = 0f, 
+		List<RequestComponent> components = null, 
+		List<DemandComponent> demand = null)
 	{
 		return new RewardedAd(NimbusManager.Instance.NimbusEvents, position, orientation, bidFloor, components, demand);
 	}

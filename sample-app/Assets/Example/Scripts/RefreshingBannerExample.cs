@@ -13,7 +13,7 @@ namespace Example.Scripts {
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_adUnit = Nimbus.bannerAd("unity_demo_banner_position2");
+			_adUnit = Nimbus.bannerAd("unity_demo_banner_position2",  screenPosition: AdScreenPosition.TOP_CENTER);
 			_alreadyTriggered = true;
 		}
 

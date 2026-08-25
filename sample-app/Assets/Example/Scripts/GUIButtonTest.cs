@@ -89,7 +89,7 @@ namespace Example.Scripts {
 				_loadedBannerButtonText.text = "Destroy Banner";
 				_loadAndShowBannerAdUnit = 
 					Nimbus.bannerAd("unity_demo_banner_position", 
-							bidFloor: 0.05f, components: new()
+							bidFloor: 0.05f, screenPosition: AdScreenPosition.BOTTOM_CENTER, components: new()
 				{
 					new app(new [] { "pagecat1","pagecat2" }, 
 						new [] { "sectioncat1","sectioncat2" }),
@@ -110,7 +110,8 @@ namespace Example.Scripts {
 				_shouldDestroyDynamicUnit = true;
 				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
 				_loadAndShowDynamicUnitAdUnit = 
-					Nimbus.dynamicUnit("unity_demo_dynamicunit_position");
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", 
+						width: 400, height: 400);
 				_loadAndShowDynamicUnitAdUnit.Show();
 				return;
 			}
@@ -152,8 +153,8 @@ namespace Example.Scripts {
 		private void RequestForAd(int index) {
 			var adType = _interactableButtons[index].adUnitType;
 			_interactableButtons[index].CurrentAd = adType switch {
-				AdType.Inline => Nimbus.bannerAd("unity_demo_banner_position"),
-				AdType.Fullscreen => Nimbus.fullscreenAd(
+				AdType.Inline => Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER),
+				AdType.Fullscreen => Nimbus.interstitialAd(
 					"unity_demo_interstitial_position"),
 				AdType.Rewarded => Nimbus.rewardedAd("unity_demo_video_position"),
 				_ => _interactableButtons[index].CurrentAd

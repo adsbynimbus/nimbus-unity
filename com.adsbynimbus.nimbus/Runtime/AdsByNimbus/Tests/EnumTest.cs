@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 
 namespace Tests {
@@ -8,9 +7,9 @@ namespace Tests {
 		[TestCase(AdSize.mrec, 300, 250,
 			TestName = "Check that mrec returns a 300x250 tuple")]
 		public void TestIabEnumSizes(AdSize size, int expectedWidth, int expectedHeight) {
-			var (width, height) = size.ToWidthAndHeight();
-			Assert.AreEqual(expectedWidth, width);
-			Assert.AreEqual(expectedHeight, height);
+			var rect = size.ToWidthAndHeight();
+			Assert.AreEqual(expectedWidth, rect.Width);
+			Assert.AreEqual(expectedHeight, rect.Height);
 		}
 	}
 }

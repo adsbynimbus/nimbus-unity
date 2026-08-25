@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Drawing;
 using AdsByNimbus;
 using AdsByNimbus.RTB;
 
@@ -9,12 +9,15 @@ public class InlineAd: Ad
     public Position AdPosition;
     public int RefreshInterval;
     public AdScreenPosition AdScreenPosition;
+    public int XCoord, YCoord;
     public bool RespectSafeArea;
     internal bool DynamicUnit;
-    
+    public int DynamicUnitWidth;
+    public int DynamicUnitHeight;
 
     internal InlineAd(in AdEvents adEvents, string position, AdSize adSize = AdSize.banner, Format[] addFormats = null,
-        Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, AdScreenPosition adScreenPosition = AdScreenPosition.BOTTOM_CENTER, 
+        Position adPosition = Position.unknown, float bidFloor = 0f, int refreshInterval = 0, int dynamicUnitWidth = 0, int dynamicUnitHeight = 0,
+        AdScreenPosition adScreenPosition = AdScreenPosition.BOTTOM_CENTER, int xCoord = 0, int yCoord = 0, 
         bool respectSafeArea = false, AdOrientation orientation = AdOrientation.deviceOrientation, bool dynamicUnit = false,
         List<RequestComponent> components = null, List<DemandComponent> demand = null): 
         base(AdType.Inline, adEvents, position, addFormats, bidFloor, orientation,  components, demand)
@@ -27,7 +30,18 @@ public class InlineAd: Ad
         AdPosition = adPosition;
         RespectSafeArea = respectSafeArea;
         RefreshInterval = refreshInterval;
-        AdScreenPosition = adScreenPosition;
+        if (xCoord == 0 && yCoord == 0)
+        {
+            AdScreenPosition = adScreenPosition;
+        }
+        else
+        {
+            AdScreenPosition = AdScreenPosition.TOP_LEFT;
+            XCoord = xCoord;
+            YCoord = yCoord;
+        }
+        DynamicUnitWidth = dynamicUnitWidth;
+        DynamicUnitHeight = dynamicUnitHeight;
         DynamicUnit = dynamicUnit;
     }
 }
@@ -58,22 +72,22 @@ public enum AdSize : byte {
 }
 
 public static class AdSizesExtension {
-    public static Tuple<int, int> ToWidthAndHeight(this AdSize isa) {
+    public static Rectangle ToWidthAndHeight(this AdSize isa) {
         switch (isa) {
             case AdSize.banner:
-                return new Tuple<int, int>(320, 50);
+                return new Rectangle(0, 0, 320, 50);
             case AdSize.mrec:
-                return new Tuple<int, int>(300, 250);
+                return new Rectangle(0, 0, 300, 250);
             case AdSize.halfScreen:
-                return new Tuple<int, int>(300, 600);
+                return new Rectangle(0, 0, 300, 600);
             case AdSize.leaderboard:
-                return new Tuple<int, int>(728, 90);
+                return new Rectangle(0, 0, 728, 90);
             case AdSize.interstitialPortrait:
-                return new Tuple<int, int>(320, 480);
+                return new Rectangle(0, 0, 320, 480);
             case AdSize.interstitialLandscape:
-                return new Tuple<int, int>(480, 320);
+                return new Rectangle(0, 0, 480, 320);
             default:
-                return new Tuple<int, int>(0, 0);
+                return new Rectangle(0, 0, 0, 0);
         }
     }
 }

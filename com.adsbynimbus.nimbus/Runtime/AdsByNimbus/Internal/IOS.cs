@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using AdsByNimbus;
@@ -37,12 +38,12 @@ namespace AdsByNimbus.Internal {
 
 		[DllImport("__Internal")]
 		private static extern void _bannerAd(int adUnitInstanceId, string position, int width, int height, string addFormats,
-			int adPosition, float bidFloor, int refreshInterval, int bannerPosition, bool respectSafeArea, string demand, 
+			int adPosition, float bidFloor, int refreshInterval, int bannerPosition, int xCoord, int yCoord, bool respectSafeArea, string demand, 
 			string requestModifier, bool showAd);
 		
 		[DllImport("__Internal")]
 		private static extern void _dynamicUnit(int adUnitInstanceId, string position, string addFormats, int orientation,
-			int adPosition, float bidFloor, int refreshInterval, int bannerPosition, bool respectSafeArea, 
+			int adPosition, float bidFloor, int refreshInterval, int width, int height, int bannerPosition, int xCoord, int yCoord, bool respectSafeArea, 
 			string demand, string requestModifiers, bool showAd);
 		
 		[DllImport("__Internal")]
@@ -58,7 +59,8 @@ namespace AdsByNimbus.Internal {
 			string demand, string requestModifiers, bool showAd);
 		
 		[DllImport("__Internal")]
-		private static extern void _showAd(int adUnitInstanceId, bool respectSafeArea, int bannerPosition);
+		private static extern void _showAd(int adUnitInstanceId, int width, int height, bool respectSafeArea, int bannerPosition, int xCoord, 
+				int yCoord);
 
 		[DllImport("__Internal")]
 		private static extern void _destroyAd(int adUnitInstanceId);
@@ -131,23 +133,24 @@ namespace AdsByNimbus.Internal {
 					{
 						var size = inlineAd.AdSize.ToWidthAndHeight();
 						#if NIMBUS_ENABLE_APS_IOS
-							extensions.aps.slotData = nimbusAdUnit.ApsAds == null ? _apsIOS.GetAdUnitId(AdType.Inline, size.Item1, size.Item2) :
-									nimbusAdUnit.ApsAds;
+							extensions.aps.slotData = nimbusAdUnit.ApsAds == null ? _apsIOS.GetAdUnitId(AdType.Inline, 
+								size.Width, size.Height) : nimbusAdUnit.ApsAds;
 						#endif
 						if (inlineAd.DynamicUnit)
 						{
 							_dynamicUnit(inlineAd.InstanceID, inlineAd.position, 
 								string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.Orientation, 
 								(int) inlineAd.AdPosition,  inlineAd.BidFloor, 
-								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, 
+								inlineAd.RefreshInterval, inlineAd.DynamicUnitWidth, inlineAd.DynamicUnitHeight, 
+								(int)inlineAd.AdScreenPosition, inlineAd.XCoord, inlineAd.YCoord,
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions)
 								, JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
 						else
 						{
-							_bannerAd(inlineAd.InstanceID, inlineAd.position, size.Item1,
-								size.Item2, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition,  inlineAd.BidFloor, 
-								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, 
+							_bannerAd(inlineAd.InstanceID, inlineAd.position, size.Width,
+								size.Height, string.Join(",", inlineAd.AddFormats.Cast<byte>()), (int) inlineAd.AdPosition,  inlineAd.BidFloor, 
+								inlineAd.RefreshInterval, (int)inlineAd.AdScreenPosition, inlineAd.XCoord, inlineAd.YCoord,
 								inlineAd.RespectSafeArea, JsonConvert.SerializeObject(extensions)
 								, JsonConvert.SerializeObject(inlineAd.GetRequestModifiers()), showAd);
 						}
@@ -200,12 +203,28 @@ namespace AdsByNimbus.Internal {
 		{
 			var respectSafeArea = false;
 			var adScreenPosition = AdScreenPosition.BOTTOM_CENTER;
+			var rect = new Rectangle(0, 0, 0, 0);
 			if (nimbusAdUnit is InlineAd inlineAd)
 			{
+				if (inlineAd.DynamicUnit)
+				{
+					rect.X = inlineAd.XCoord;
+					rect.Y = inlineAd.YCoord;
+					rect.Width = inlineAd.DynamicUnitWidth;
+					rect.Height = inlineAd.DynamicUnitHeight;
+				}
+				else
+				{
+					var wh = inlineAd.AdSize.ToWidthAndHeight();
+					rect.X = inlineAd.XCoord;
+					rect.Y = inlineAd.YCoord;
+					rect.Width = wh.Width;
+					rect.Height = wh.Height;
+				}
 				respectSafeArea = inlineAd.RespectSafeArea;
 				adScreenPosition = inlineAd.AdScreenPosition;
 			}
-			_showAd(nimbusAdUnit.InstanceID, respectSafeArea, (int) adScreenPosition);
+			_showAd(nimbusAdUnit.InstanceID, rect.Width, rect.Height, respectSafeArea, (int) adScreenPosition, rect.X, rect.Y);
 		}
 	}
 #endif
