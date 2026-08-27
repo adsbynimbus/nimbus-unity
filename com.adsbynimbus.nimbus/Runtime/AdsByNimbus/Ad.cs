@@ -71,7 +71,7 @@ namespace AdsByNimbus {
 		///   This method will preload and cache the ad to be shown later with the Show() method.
 		///   It is not necessary to call this method before the Show() method.
 		/// </summary>
-		public virtual Ad load()
+		public Ad load()
 		{
 			_adPassedToNative = true;
 			NimbusManager.Instance.StartCoroutine(LoadAd(showAd: false));
