@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using AdsByNimbus;
@@ -43,6 +44,30 @@ public class InlineAd: Ad
         DynamicUnitWidth = dynamicUnitWidth;
         DynamicUnitHeight = dynamicUnitHeight;
         DynamicUnit = dynamicUnit;
+    }
+    
+    public new InlineAd onEvent(Action<AdEvent> onEvent)
+    {
+        base.onEvent(onEvent);
+        return this;
+    }
+
+    public new InlineAd onError(Action<NimbusError> onError)
+    {
+        base.onError(onError);
+        return this;
+    }
+
+    public new InlineAd load()
+    {
+        base.load();
+        return this;
+    }
+
+    public new InlineAd show()
+    {
+        base.show();
+        return this;
     }
 }
 public enum AdScreenPosition

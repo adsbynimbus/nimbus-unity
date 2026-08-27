@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using AdsByNimbus;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace AdsByNimbus.Internal {
 	internal class NimbusCallbackReceiver : MonoBehaviour {
@@ -36,6 +38,7 @@ namespace AdsByNimbus.Internal {
 			return adUnit;
 		}
 		
+		[Preserve]
 		internal void OnAdRendered(string jsonParams) {
 			var data = NimbusCallbackParser.ParseMessage<NimbusEventParams>(jsonParams);
 			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
@@ -47,6 +50,8 @@ namespace AdsByNimbus.Internal {
 			adUnit.FireMobileAdRenderedEvent();
 		}
 		
+		
+		[Preserve]
 		internal void OnAdEvent(string jsonParams) {
 			var data = NimbusCallbackParser.ParseMessage<NimbusAdEventData>(jsonParams);
 			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
@@ -64,17 +69,18 @@ namespace AdsByNimbus.Internal {
 			}
 		}
 
+		[Preserve]
 		internal void OnError(string jsonParams) {
-			var data = NimbusCallbackParser.ParseMessage<NimbusErrorData>(jsonParams);
-			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
-
-			if (adUnit == null && data.adUnitInstanceID != -1) {
-				Debug.unityLogger.LogError("NimbusError", $"AdUnit not found: {data.adUnitInstanceID}");
+			var error = JsonConvert.DeserializeObject<NimbusError>(jsonParams);
+			var adUnit = AdUnitForInstanceID(error.adUnitInstanceID);
+			
+			if (adUnit == null && error.adUnitInstanceID != -1) {
+				Debug.unityLogger.LogError("NimbusError", $"{error.errorDescription}");
 				return;
 			}
 
-			Debug.unityLogger.LogError("NimbusError", $"Listener Ad error: {data.adUnitInstanceID}");
-			adUnit.FireMobileOnAdErrorEvent();
+			Debug.unityLogger.LogError("NimbusError", $"Listener Ad error: {error.adUnitInstanceID}");
+			adUnit.FireMobileOnAdErrorEvent(error);
 		}
 	}
 }

@@ -128,7 +128,10 @@ object NimbusHelper {
     fun didReceiveNimbusError(adUnitInstanceID: Int, error: NimbusError) {
         val json = JSONObject()
         json.put("adUnitInstanceID", adUnitInstanceID)
-        json.put("errorMessage", error.message)
+        json.put("reason", error.reason.toString())
+        json.put("stage", "request")
+        json.put("domain", "unity.sdk")
+        json.put("errorDescription", error.message)
         sendMessageToUnity("OnError",json.toString())
     }
 

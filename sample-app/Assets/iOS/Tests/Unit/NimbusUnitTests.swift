@@ -15,7 +15,7 @@ struct NimbusUnitTests {
     
     @Test("Validates that setApp works correctly")
     func testSetApp() {
-        let appJson =    "{\"bundle\":\"com.test.nimbusUnity\",\"cat\":[],\"domain\":\"nimbus.co\",\"name\":\"testapp\",\"pagecat\":[],\"publisher\":{\"cat\":[],\"domain\":\"nimbus.co\",\"name\":\"nimbus\"},\"sectioncat\":[],\"storeurl\":\"www.nimbus.co\",\"ver\":\"3.0.0\",\"paid\":1,\"privacypolicy\":1}"
+        let appJson = "{\"bundle\":\"com.test.nimbusUnity\",\"cat\":[],\"domain\":\"nimbus.co\",\"name\":\"testapp\",\"pagecat\":[],\"publisher\":{\"cat\":[],\"domain\":\"nimbus.co\",\"name\":\"nimbus\"},\"sectioncat\":[],\"storeurl\":\"www.nimbus.co\",\"ver\":\"3.0.0\",\"paid\":1,\"privacypolicy\":1}"
         NimbusHelper.setApp(appJsonStr: appJson)
         #expect(Nimbus.configuration.app?.bundle == "com.test.nimbusUnity")
         #expect(Nimbus.configuration.app?.paid == true)

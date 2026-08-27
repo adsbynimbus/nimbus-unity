@@ -94,9 +94,22 @@ public class AddiOSNativeTests
             // Execute local OS file copy sequence
             File.Copy(file, destinationFile, true);
 
+            // Modification to change the binding file that's being copied for the tests to remove UnitySendMessage
+            // for unit tests ONLY
+            if (fileName == "UnityBinding.swift")
+            {
+                string lineToRemove = "UnitySendMessage";
+        
+                // Read all lines, filter out any line containing the target word, and write back
+                var lines = File.ReadAllLines(destinationFile);
+                var filteredLines = lines.Where(line => !line.Contains(lineToRemove));
+                File.WriteAllLines(destinationFile, filteredLines);
+            }
+            // ------------------------
+
             // FORCE FORWARD SLASHES: Xcode strictly drops paths with backslashes (\)
             string projectRelativePath = $"{testTargetName}/" + fileName;
-            
+    
             // Map file indexes and bind compilation flags explicitly
             string fileGuid = proj.AddFile(projectRelativePath, projectRelativePath, PBXSourceTree.Source);
             proj.AddFileToBuild(testTargetGuid, fileGuid);
