@@ -194,12 +194,11 @@ namespace AdsByNimbus {
 
 		internal void FireMobileOnAdErrorEvent(NimbusError nimbusError) {
 			_adEvents.FireOnAdErrorEvent(this, nimbusError);
-			_onAdError(nimbusError);
+			_onAdError?.Invoke(nimbusError);
 		}
 		
 		internal void FireMobileAdEvents(AdEvent e) {
 			CurrentAdState = e;
-			_onAdEvent(e);
 			switch (e) {
 				case AdEvent.LOADED:
 					_adEvents.FireOnAdLoadedEvent(this);
@@ -242,6 +241,7 @@ namespace AdsByNimbus {
 					Debug.unityLogger.LogWarning("Nimbus",$"uncaught mobile event {e}");
 					break;
 			}
+			_onAdEvent?.Invoke(e);
 		}
 
 		internal void SetAndroidController(AndroidJavaObject controller) {

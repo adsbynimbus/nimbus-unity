@@ -202,7 +202,7 @@ import NimbusMobileFuseKit
                     try await bannerAd.load()
                 }
             } catch {
-                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: NimbusError(domain: NimbusError.Domain.unitysdk, stage: .request, detail: error.localizedDescription))
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: instanceId, error: NimbusError.unitysdk(stage: .request, detail: error.localizedDescription))
             }
         })
     }
