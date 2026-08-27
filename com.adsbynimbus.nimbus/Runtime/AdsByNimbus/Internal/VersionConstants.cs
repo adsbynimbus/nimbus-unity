@@ -20,6 +20,7 @@ namespace AdsByNimbus.Internal
         public const string Meta = "6.0.0";
         public const string LiveRamp = "3.0.0-2.9.0";
         public const string InMobi = "10.0.0";
+        public const string DigitalTurbine = "8.0.0";
     }
 
     public static class iOSExtensionVersionConstants
@@ -34,5 +35,6 @@ namespace AdsByNimbus.Internal
         public const string Meta = "6.0.0";
         public const string LiveRamp = "3.0.0-2.9.0";
         public const string InMobi = "10.0.0";
+        public const string DigitalTurbine = "8.0.0";
     }
 }

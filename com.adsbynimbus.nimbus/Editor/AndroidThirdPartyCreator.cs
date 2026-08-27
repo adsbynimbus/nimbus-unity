@@ -42,6 +42,13 @@ namespace AdsByNimbus.Editor
             #if NIMBUS_ENABLE_ADMOB_ANDROID
                 builder.AppendLine(@"AdMobExtension()");
             #endif
+            #if NIMBUS_ENABLE_DIGITAL_TURBINE_ANDROID
+                builder.AppendLine(@"try {
+                    DigitalTurbineExtension(extensions.getString(""digitalTurbineAppId""))
+                } catch (e: JSONException) {
+                    NimbusHelper.didReceiveNimbusError(0, e)
+                }");
+            #endif
             #if NIMBUS_ENABLE_INMOBI_ANDROID
                 builder.AppendLine(@"try {
                     InMobiExtension(extensions.getString(""inMobiAccountId""))

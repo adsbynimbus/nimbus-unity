@@ -111,6 +111,11 @@ namespace AdsByNimbus.Internal {
 				extensions.inMobi.accountId = configuration.GetInMobiData();
 			#endif
 			
+			#if NIMBUS_ENABLE_DIGITAL_TURBINE
+				Debug.unityLogger.Log("Initializing iOS Digital Turbine SDK");
+				extensions.digitalTurbine.appId = configuration.GetDigitalTurbineData();
+			#endif
+			
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,
 				configuration.enableUnityLogs, configuration.enableSDKInTestMode, JsonConvert.SerializeObject(extensions));

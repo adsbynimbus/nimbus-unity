@@ -121,7 +121,7 @@ namespace AdsByNimbus.Editor {
 				}
 			#endif
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
@@ -154,6 +154,9 @@ namespace AdsByNimbus.Editor {
 				#endif
 				#if NIMBUS_ENABLE_INMOBI
 					builder.AppendLine(AndroidBuildDependencies.InMobiBuildDependency());
+				#endif
+				#if NIMBUS_ENABLE_DIGITAL_TURBINE
+					builder.AppendLine(AndroidBuildDependencies.DigitalTurbineBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");

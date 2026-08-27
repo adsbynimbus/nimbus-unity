@@ -55,6 +55,10 @@ namespace ScriptableObjects {
 		[HideInInspector] public string androidInMobiAccountId;
 		[HideInInspector] public string iosInMobiAccountId;
 		
+		//InMobi Data
+		[HideInInspector] public string androidDigitalTurbineAppId;
+		[HideInInspector] public string iosDigitalTurbineAppId;
+		
 		private void OnValidate() {
 			Sanitize();
 		}
@@ -130,9 +134,14 @@ namespace ScriptableObjects {
 			iosMolocoAppKey = iosMolocoAppKey?.Trim();
 			#endif
 			
-		#if NIMBUS_ENABLE_INMOBI
+			#if NIMBUS_ENABLE_INMOBI
 			androidInMobiAccountId = androidInMobiAccountId?.Trim();
 			iosInMobiAccountId = iosInMobiAccountId?.Trim();
+			#endif
+
+			#if NIMBUS_ENABLE_DIGITAL_TURBINE
+			androidDigitalTurbineAppId = androidDigitalTurbineAppId?.Trim();
+			iosDigitalTurbineAppId = iosDigitalTurbineAppId?.Trim();
 			#endif
 		}
 		
@@ -207,6 +216,14 @@ namespace ScriptableObjects {
 				appKey = iosInMobiAccountId;
 			#endif
 			return appKey;
+		}
+		
+		public string GetDigitalTurbineData() {
+			var appId = androidDigitalTurbineAppId;
+			#if UNITY_IOS
+				appId = iosDigitalTurbineAppId;
+			#endif
+			return appId;
 		}
 
 	}
