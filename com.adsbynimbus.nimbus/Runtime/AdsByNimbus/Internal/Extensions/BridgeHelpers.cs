@@ -100,6 +100,7 @@ namespace AdsByNimbus.Internal.Extensions
         public String molocoAppKey;
         public String unityAdsGameId;
         public String vungleAppId;
+        public String digitalTurbineAppId;
         public String[] appPageCat;
         public String[] appSectionCat;
         public String userKeywords;

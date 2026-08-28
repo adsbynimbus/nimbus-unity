@@ -273,6 +273,7 @@ fileprivate struct EID: Codable {
 public struct Extensions: Codable {
     let aps: Aps?
     let adMob: AdMob?
+    let digitalTurbine: DigitalTurbine?
     let inMobi: InMobi?
     let meta: Meta?
     let mintegral: Mintegral?
@@ -510,6 +511,10 @@ extension Extensions {
         case interstitialDisplay
         case interstitialVideo
         case rewardedVideo
+    }
+    
+    struct DigitalTurbine: Codable {
+        let appId: String?
     }
     
     struct InMobi: Codable {

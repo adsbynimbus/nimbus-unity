@@ -43,6 +43,9 @@ import NimbusInMobiKit
 #if NIMBUS_ENABLE_MOBILEFUSE
 import NimbusMobileFuseKit
 #endif
+#if NIMBUS_ENABLE_DIGITAL_TURBINE
+import NimbusDTKit
+#endif
 
 
 @objc public class NimbusManager: NSObject {
@@ -73,6 +76,9 @@ import NimbusMobileFuseKit
             #endif
             #if NIMBUS_ENABLE_ADMOB
             AdMobExtension()
+            #endif
+            #if NIMBUS_ENABLE_DIGITAL_TURBINE
+            DigitalTurbineExtension(appId: extensions.digitalTurbine?.appId ?? "")
             #endif
             #if NIMBUS_ENABLE_INMOBI
             InMobiExtension(accountId: extensions.inMobi?.accountId ?? "")
