@@ -66,6 +66,11 @@ namespace ScriptableObjects {
 		private SerializedProperty _androidInMobiAccountId;
 		
 		private SerializedProperty _iosInMobiAccountId;
+		
+		// Digital Turbine
+		private SerializedProperty _androidDigitalTurbineAppId;
+		
+		private SerializedProperty _iosDigitalTurbineAppId;
 
 		// Needed so error messages aren't spammed
 		private bool _errorLogged;
@@ -182,6 +187,13 @@ namespace ScriptableObjects {
 			
 			// IOS InMobi UI
 			_iosInMobiAccountId = serializedObject.FindProperty("iosInMobiAccountId");
+			
+			// Digital Turbine
+			// Android Digital Turbine UI
+			_androidDigitalTurbineAppId = serializedObject.FindProperty("androidDigitalTurbineAppId");
+			
+			// IOS Digital Turbine UI
+			_iosDigitalTurbineAppId = serializedObject.FindProperty("iosDigitalTurbineAppId");
 		}
 
 		private void OnDisable() {
@@ -309,7 +321,7 @@ namespace ScriptableObjects {
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -503,6 +515,25 @@ namespace ScriptableObjects {
 				#endif
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter InMobi data", MessageType.Warning);
+				#endif
+			#endif
+			
+			#if NIMBUS_ENABLE_DIGITAL_TURBINE_ANDROID || NIMBUS_ENABLE_DIGITAL_TURBINE_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Digital Turbine Configuration", headerStyle);
+				#if NIMBUS_ENABLE_DIGITAL_TURBINE_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_androidDigitalTurbineAppId);
+					GUILayout.Space(10);
+				#endif
+				#if NIMBUS_ENABLE_DIGITAL_TURBINE_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_iosDigitalTurbineAppId);
+					GUILayout.Space(10);
+				#endif
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Digital Turbine data", MessageType.Warning);
 				#endif
 			#endif
 			

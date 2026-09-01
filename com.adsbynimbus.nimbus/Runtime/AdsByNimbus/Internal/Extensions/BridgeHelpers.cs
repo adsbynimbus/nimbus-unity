@@ -28,6 +28,7 @@ namespace AdsByNimbus.Internal.Extensions
     {
         public Aps aps;
         public Admob adMob;
+        public DigitalTurbine digitalTurbine;
         public InMobi inMobi;
         public Meta meta;
         public Mintegral mintegral;
@@ -43,6 +44,11 @@ namespace AdsByNimbus.Internal.Extensions
     public struct Admob
     {
         public String[] adUnitIds;
+    }
+
+    public struct DigitalTurbine
+    {
+        public String appId;
     }
     
     public struct InMobi
@@ -94,6 +100,7 @@ namespace AdsByNimbus.Internal.Extensions
         public String molocoAppKey;
         public String unityAdsGameId;
         public String vungleAppId;
+        public String digitalTurbineAppId;
         public String[] appPageCat;
         public String[] appSectionCat;
         public String userKeywords;

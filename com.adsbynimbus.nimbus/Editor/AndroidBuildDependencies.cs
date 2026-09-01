@@ -63,5 +63,10 @@ namespace AdsByNimbus.Editor {
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-inmobi:{AndroidExtensionVersionConstants.InMobi}"")";
 		}
+		
+		public static string DigitalTurbineBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-digitalturbine:{AndroidExtensionVersionConstants.DigitalTurbine}"")";
+		}
 	}
 }

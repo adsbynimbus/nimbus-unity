@@ -72,6 +72,9 @@ namespace AdsByNimbus.Internal {
 			#if NIMBUS_ENABLE_INMOBI
 				extensions.inMobiAccountId = configuration.GetInMobiData();
 			#endif
+			#if NIMBUS_ENABLE_DIGITAL_TURBINE
+				extensions.digitalTurbineAppId = configuration.GetDigitalTurbineData();
+			#endif
 			
 			_manager.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim(), configuration.enableSDKInTestMode, JsonConvert.SerializeObject(extensions));

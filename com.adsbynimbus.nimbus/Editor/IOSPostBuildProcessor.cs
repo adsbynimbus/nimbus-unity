@@ -60,6 +60,10 @@ namespace AdsByNimbus.Editor {
 				Dependencies.Add($"pod 'NimbusInMobiKit', '{iOSExtensionVersionConstants.InMobi}'");
 			#endif
 			
+			#if NIMBUS_ENABLE_DIGITAL_TURBINE
+				Dependencies.Add($"pod 'NimbusDTKit', '{iOSExtensionVersionConstants.DigitalTurbine}'");
+			#endif
+			
 			var path = buildPath + "/Podfile";
 			if (!File.Exists(path)) {
 				CreatePodfile(buildPath);
@@ -196,6 +200,10 @@ end";
 			
 			#if NIMBUS_ENABLE_INMOBI
 				flags.Add("NIMBUS_ENABLE_INMOBI");
+			#endif
+			
+			#if NIMBUS_ENABLE_DIGITAL_TURBINE
+				flags.Add("NIMBUS_ENABLE_DIGITAL_TURBINE");
 			#endif
 			
 			if (flags.Count > 0)
