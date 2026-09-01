@@ -46,6 +46,9 @@ import NimbusMobileFuseKit
 #if NIMBUS_ENABLE_DIGITAL_TURBINE
 import NimbusDTKit
 #endif
+#if NIMBUS_ENABLE_DISPLAY_IO
+import NimbusDisplayIOKit
+#endif
 
 
 @objc public class NimbusManager: NSObject {
@@ -79,6 +82,9 @@ import NimbusDTKit
             #endif
             #if NIMBUS_ENABLE_DIGITAL_TURBINE
             DigitalTurbineExtension(appId: extensions.digitalTurbine?.appId ?? "")
+            #endif
+            #if NIMBUS_ENABLE_DISPLAY_IO
+            DisplayIOExtension(appId: extensions.displayIO?.appId ?? "", userId: extensions.displayIO?.userId ?? "")
             #endif
             #if NIMBUS_ENABLE_INMOBI
             InMobiExtension(accountId: extensions.inMobi?.accountId ?? "")

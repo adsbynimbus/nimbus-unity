@@ -274,6 +274,7 @@ public struct Extensions: Codable {
     let aps: Aps?
     let adMob: AdMob?
     let digitalTurbine: DigitalTurbine?
+    let displayIO: DisplayIO?
     let inMobi: InMobi?
     let meta: Meta?
     let mintegral: Mintegral?
@@ -515,6 +516,11 @@ extension Extensions {
     
     struct DigitalTurbine: Codable {
         let appId: String?
+    }
+    
+    struct DisplayIO: Codable {
+        let appId: String?
+        let userId: String?
     }
     
     struct InMobi: Codable {

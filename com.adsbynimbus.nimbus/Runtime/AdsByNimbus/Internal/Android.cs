@@ -75,6 +75,11 @@ namespace AdsByNimbus.Internal {
 			#if NIMBUS_ENABLE_DIGITAL_TURBINE
 				extensions.digitalTurbineAppId = configuration.GetDigitalTurbineData();
 			#endif
+			#if NIMBUS_ENABLE_DISPLAY_IO
+				var (displayIOAppID, displayIOUserId) = configuration.GetDisplayIOData();
+				extensions.displayIOAppId = displayIOAppID;
+				extensions.displayIOUserId = displayIOUserId;
+			#endif
 			
 			_manager.CallStatic("initNimbusAndThirdParties", _currentActivity, configuration.publisherKey.Trim(),
 				configuration.apiKey.Trim(), configuration.enableSDKInTestMode, JsonConvert.SerializeObject(extensions));

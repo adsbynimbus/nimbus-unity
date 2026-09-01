@@ -55,9 +55,15 @@ namespace ScriptableObjects {
 		[HideInInspector] public string androidInMobiAccountId;
 		[HideInInspector] public string iosInMobiAccountId;
 		
-		//InMobi Data
+		//Digital Turbine Data
 		[HideInInspector] public string androidDigitalTurbineAppId;
 		[HideInInspector] public string iosDigitalTurbineAppId;
+		
+		//Display IO Data
+		[HideInInspector] public string androidDisplayIOAppId;
+		[HideInInspector] public string androidDisplayIOUserId;
+		[HideInInspector] public string iosDisplayIOAppId;
+		[HideInInspector] public string iosDisplayIOUserId;
 		
 		private void OnValidate() {
 			Sanitize();
@@ -143,6 +149,13 @@ namespace ScriptableObjects {
 			androidDigitalTurbineAppId = androidDigitalTurbineAppId?.Trim();
 			iosDigitalTurbineAppId = iosDigitalTurbineAppId?.Trim();
 			#endif
+			
+			#if NIMBUS_ENABLE_DISPLAY_IO
+			androidDisplayIOAppId = androidDisplayIOAppId?.Trim();
+			androidDisplayIOUserId = androidDisplayIOUserId?.Trim();
+			iosDisplayIOAppId = iosDisplayIOAppId?.Trim();
+			iosDisplayIOUserId = iosDisplayIOUserId?.Trim();
+			#endif
 		}
 		
 
@@ -224,6 +237,16 @@ namespace ScriptableObjects {
 				appId = iosDigitalTurbineAppId;
 			#endif
 			return appId;
+		}
+		
+		public Tuple<string, string> GetDisplayIOData() {
+			var appID = androidDisplayIOAppId;
+			var userId = androidDisplayIOUserId;
+			#if UNITY_IOS
+				appID = iosDisplayIOAppId;
+				userId = iosDisplayIOUserId;
+			#endif
+			return new Tuple<string, string>(appID, userId);
 		}
 
 	}

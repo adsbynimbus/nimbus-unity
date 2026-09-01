@@ -49,6 +49,14 @@ namespace AdsByNimbus.Editor
                     NimbusHelper.didReceiveNimbusError(0, e)
                 }");
             #endif
+            #if NIMBUS_ENABLE_DISPLAY_IO_ANDROID
+                builder.AppendLine(@"try {
+                    DisplayIOExtension(extensions.getString(""displayIOAppId""), 
+                        if (extensions.isNull(""displayIOUserId"")) null else extensions.getString(""displayIOUserId""))
+                } catch (e: JSONException) {
+                    NimbusHelper.didReceiveNimbusError(0, e)
+                }");
+            #endif
             #if NIMBUS_ENABLE_INMOBI_ANDROID
                 builder.AppendLine(@"try {
                     InMobiExtension(extensions.getString(""inMobiAccountId""))

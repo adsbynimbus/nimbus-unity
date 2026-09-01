@@ -88,8 +88,8 @@ namespace Example.Scripts {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
 				_loadAndShowBannerAdUnit = 
-					Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER,
-							bidFloor: 0.05f, components: new()
+					Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER, 
+						components: new()
 				{
 					new app(new [] { "pagecat1","pagecat2" }, 
 						new [] { "sectioncat1","sectioncat2" }),
@@ -128,11 +128,11 @@ namespace Example.Scripts {
 
 		public void LoadAndShowInterstitial() {
 			Nimbus.interstitialAd("unity_demo_interstitial_position", new Format[] { Format.halfScreen }, 
-				AdOrientation.portrait, 0.10f).show();
+				AdOrientation.portrait).show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait, 0.05f).show();
+			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait).show();
 		}
 
 		public void LoadAdController(int index) {

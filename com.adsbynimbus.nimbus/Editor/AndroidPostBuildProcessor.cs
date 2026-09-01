@@ -49,6 +49,14 @@ namespace AdsByNimbus.Editor {
 							includeGroupByRegex("".*\\.liveramp.*"")
 							}}";
 			#endif
+			#if NIMBUS_ENABLE_DISPLAY_IO
+				extraRepositories += @" maven {
+					url ""https://maven.display.io/""
+					content {
+					includeGroupByRegex("".*\\.brandio.*"")
+					}
+				}";
+			#endif
 			string repoString = @"
 				dependencyResolutionManagement {
 				    repositories {
@@ -121,7 +129,7 @@ namespace AdsByNimbus.Editor {
 				}
 			#endif
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE || NIMBUS_ENABLE_DISPLAY_IO
 				var builder = new StringBuilder();
 				builder.AppendLine("");
 				builder.AppendLine("dependencies {");
@@ -157,6 +165,9 @@ namespace AdsByNimbus.Editor {
 				#endif
 				#if NIMBUS_ENABLE_DIGITAL_TURBINE
 					builder.AppendLine(AndroidBuildDependencies.DigitalTurbineBuildDependency());
+				#endif
+				#if NIMBUS_ENABLE_DISPLAY_IO
+					builder.AppendLine(AndroidBuildDependencies.DisplayIOBuildDependency());
 				#endif
 				builder.AppendLine("}");
 				var apsBuildWriter = File.AppendText(path + "/build.gradle");
