@@ -50,7 +50,8 @@ namespace AdsByNimbus.Editor {
 							}}";
 			#endif
 			#if NIMBUS_ENABLE_DISPLAY_IO
-				extraRepositories += @" maven {
+				extraRepositories += @" 
+					maven {
 					url ""https://maven.display.io/""
 					content {
 					includeGroupByRegex("".*\\.brandio.*"")
