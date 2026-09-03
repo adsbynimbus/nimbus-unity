@@ -49,6 +49,5 @@ namespace AdsByNimbus.Extensions
         Display728X90 = 2,
         InterstitialDisplay = 3,
         InterstitialVideo = 4,
-        RewardedVideo = 5
     }
 }

@@ -75,14 +75,6 @@ namespace AdsByNimbus.Internal.Extensions.APS {
 						}
 					}
 				}
-				else
-				{
-					if (slot.adUnitType == APSAdFormat.RewardedVideo)
-					{
-						slotData.Add(slot);
-					}
-				}
-
 			}
 			return slotData.ToArray();
 		}
