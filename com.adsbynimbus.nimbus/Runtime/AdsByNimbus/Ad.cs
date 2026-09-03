@@ -100,7 +100,7 @@ namespace AdsByNimbus {
 		/// <summary>
 		///     Destroys the ad at the mobile bridge level
 		/// </summary>
-		public void Destroy() {
+		public void destroy() {
 #if UNITY_ANDROID
 			var managerClass = new AndroidJavaObject("com.adsbynimbus.unity.NimbusManager");
 			var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
@@ -222,7 +222,7 @@ namespace AdsByNimbus {
 					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
 					if (AdType == AdType.Fullscreen) {
-						Destroy();
+						destroy();
 					}
 					break;
 				case AdEvent.DESTROYED:

@@ -188,7 +188,7 @@ namespace AdsByNimbus.Editor
                                         setSizes(DTBAdSize.DTBInterstitialAdSize(slot.getString(""slotId"")))
                                     })
 
-                                4, 5 -> apsRequests.add(
+                                4 -> apsRequests.add(
                                     DTBAdRequest(DTBAdNetworkInfo(DTBAdNetwork.NIMBUS)).apply {
                                         setSizes(
                                             DTBAdSize.DTBVideo(
