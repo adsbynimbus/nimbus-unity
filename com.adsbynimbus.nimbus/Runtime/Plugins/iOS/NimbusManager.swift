@@ -46,6 +46,9 @@ import NimbusMobileFuseKit
 #if NIMBUS_ENABLE_DIGITAL_TURBINE
 import NimbusDTKit
 #endif
+#if NIMBUS_ENABLE_DISPLAY_IO
+import NimbusDisplayIOKit
+#endif
 
 
 @objc public class NimbusManager: NSObject {
@@ -70,7 +73,7 @@ import NimbusDTKit
         }
         Nimbus.initialize(publisherKey: publisher, apiKey: apiKey)
         {
-            NimbusManager.initAPS(appKey: extensions.aps?.appKey ?? "")
+            NimbusManager.initAPS(appKey: extensions.aps?.appKey)
             #if NIMBUS_ENABLE_MOBILEFUSE
             MobileFuseExtension()
             #endif
@@ -78,42 +81,45 @@ import NimbusDTKit
             AdMobExtension()
             #endif
             #if NIMBUS_ENABLE_DIGITAL_TURBINE
-            DigitalTurbineExtension(appId: extensions.digitalTurbine?.appId ?? "")
+            DigitalTurbineExtension(appId: extensions.digitalTurbine?.appId)
+            #endif
+            #if NIMBUS_ENABLE_DISPLAY_IO
+            DisplayIOExtension(appId: extensions.displayIO?.appId, userId: extensions.displayIO?.userId)
             #endif
             #if NIMBUS_ENABLE_INMOBI
-            InMobiExtension(accountId: extensions.inMobi?.accountId ?? "")
+            InMobiExtension(accountId: extensions.inMobi?.accountId)
             #endif
             #if NIMBUS_ENABLE_META
-            MetaExtension(appId: extensions.meta?.appId ?? "", forceTestAd: extensions.meta?.forceTestAd ?? false)
+            MetaExtension(appId: extensions.meta?.appId, forceTestAd: extensions.meta?.forceTestAd ?? false)
             #endif
             #if NIMBUS_ENABLE_MINTEGRAL
-            let mintegral = extensions.mintegral
-            MintegralExtension(appId: mintegral?.appId ?? "",
-                                appKey: mintegral?.appKey ?? "")
+            MintegralExtension(appId: extensions.mintegral?.appId,
+                               appKey: extensions.mintegral?.appKey)
             #endif
             #if NIMBUS_ENABLE_MOLOCO
-            MolocoExtension(appKey: extensions.moloco?.appKey ?? "")
+            MolocoExtension(appKey: extensions.moloco?.appKey)
             #endif
             #if NIMBUS_ENABLE_UNITY_ADS
-            UnityExtension(gameId: extensions.unityAds?.gameId ?? "")
+            UnityExtension(gameId: extensions.unityAds?.gameId)
             #endif
             #if NIMBUS_ENABLE_VUNGLE
-            VungleExtension(appId: extensions.vungle?.appId ?? "")
+            VungleExtension(appId: extensions.vungle?.appId)
             #endif
         }
         Nimbus.configuration.testMode = enableSDKInTestMode
     }
     
-    @objc private class func initAPS(appKey: String) {
-        #if NIMBUS_ENABLE_APS
-        if (appKey != "") {
-            DTBAds.sharedInstance().setAppKey(appKey)
-            DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
-            DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
-            DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
-            DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
-            DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
+    @objc private class func initAPS(appKey: String?) {
+        guard let appKey = appKey, !appKey.isEmpty else {
+            return
         }
+        #if NIMBUS_ENABLE_APS
+        DTBAds.sharedInstance().setAppKey(appKey)
+        DTBAds.sharedInstance().mraidPolicy = CUSTOM_MRAID
+        DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
+        DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
+        DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
+        DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
         #endif
     }
     

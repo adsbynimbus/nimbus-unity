@@ -68,5 +68,10 @@ namespace AdsByNimbus.Editor {
 		{
 			return $@"implementation (""com.adsbynimbus.android:extension-digitalturbine:{AndroidExtensionVersionConstants.DigitalTurbine}"")";
 		}
+		
+		public static string DisplayIOBuildDependency()
+		{
+			return $@"implementation (""com.adsbynimbus.android:extension-displayio:{AndroidExtensionVersionConstants.DisplayIO}"")";
+		}
 	}
 }

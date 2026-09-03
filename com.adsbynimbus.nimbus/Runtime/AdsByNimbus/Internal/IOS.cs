@@ -115,6 +115,12 @@ namespace AdsByNimbus.Internal {
 				Debug.unityLogger.Log("Initializing iOS Digital Turbine SDK");
 				extensions.digitalTurbine.appId = configuration.GetDigitalTurbineData();
 			#endif
+
+			#if NIMBUS_ENABLE_DISPLAY_IO
+				var (displayIOAppId, displayIOUserId) = configuration.GetDisplayIOData();
+				extensions.displayIO.appId = displayIOAppId;
+				extensions.displayIO.userId = displayIOUserId;
+			#endif
 			
 			_initializeSDKWithPublisher(configuration.publisherKey,
 				configuration.apiKey,

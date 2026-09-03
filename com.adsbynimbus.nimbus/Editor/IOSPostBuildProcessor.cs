@@ -63,6 +63,10 @@ namespace AdsByNimbus.Editor {
 			#if NIMBUS_ENABLE_DIGITAL_TURBINE
 				Dependencies.Add($"pod 'NimbusDTKit', '{iOSExtensionVersionConstants.DigitalTurbine}'");
 			#endif
+
+			#if NIMBUS_ENABLE_DISPLAY_IO
+				Dependencies.Add($"pod 'NimbusDisplayIOKit', '{iOSExtensionVersionConstants.DisplayIO}'");
+			#endif
 			
 			var path = buildPath + "/Podfile";
 			if (!File.Exists(path)) {
@@ -204,6 +208,10 @@ end";
 			
 			#if NIMBUS_ENABLE_DIGITAL_TURBINE
 				flags.Add("NIMBUS_ENABLE_DIGITAL_TURBINE");
+			#endif
+
+			#if NIMBUS_ENABLE_DISPLAY_IO
+				flags.Add("NIMBUS_ENABLE_DISPLAY_IO");
 			#endif
 			
 			if (flags.Count > 0)

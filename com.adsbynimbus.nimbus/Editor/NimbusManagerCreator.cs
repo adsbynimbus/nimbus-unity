@@ -80,6 +80,14 @@ namespace AdsByNimbus.Editor {
 		
 		private SerializedProperty _iosDigitalTurbineAppId;
 		
+		//Display IO
+		private SerializedProperty _androidDisplayIOAppId;
+		private SerializedProperty _androidDisplayIOUserId;
+		
+		private SerializedProperty _iosDisplayIOAppId;
+		private SerializedProperty _iosDisplayIOUserId;
+
+		
 		[MenuItem("Nimbus/Create New NimbusAdsManager")]
 		public static void CreateNewNimbusGameManager() {
 			GetWindow<NimbusManagerCreator>("NimbusAdsManager Creator");
@@ -201,6 +209,15 @@ namespace AdsByNimbus.Editor {
 			
 			// IOS Digital Turbine UI
 			_iosDigitalTurbineAppId = serializedObject.FindProperty("iosDigitalTurbineAppId");
+			
+			// Display IO
+			// Android Display IO UI
+			_androidDisplayIOAppId = serializedObject.FindProperty("androidDisplayIOAppId");
+			_androidDisplayIOUserId= serializedObject.FindProperty("androidDisplayIOUserId");
+			
+			// IOS Display IO UI
+			_iosDisplayIOAppId = serializedObject.FindProperty("iosDisplayIOAppId");
+			_iosDisplayIOUserId= serializedObject.FindProperty("iosDisplayIOUserId");
 		}
 
 
@@ -304,7 +321,7 @@ namespace AdsByNimbus.Editor {
 			var headerStyle = EditorStyles.largeLabel;
 			headerStyle.fontStyle = FontStyle.Bold;
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE || NIMBUS_ENABLE_DISPLAY_IO
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -520,6 +537,28 @@ namespace AdsByNimbus.Editor {
 				#endif
 			#endif
 			
+			#if NIMBUS_ENABLE_DISPLAY_IO_ANDROID || NIMBUS_ENABLE_DISPLAY_IO_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Display IO Configuration", headerStyle);
+				#if NIMBUS_ENABLE_DISPLAY_IO_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_androidDisplayIOAppId);
+					EditorGUILayout.PropertyField(_androidDisplayIOUserId);
+					EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray);
+				#endif
+				#if NIMBUS_ENABLE_DISPLAY_IO_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_iosDisplayIOAppId);
+					EditorGUILayout.PropertyField(_iosDisplayIOUserId);
+					GUILayout.Space(10);
+				#endif
+
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Display IO data", MessageType.Warning);
+				#endif
+			#endif
+			
 			// ReSharper disable InvertIf
 			if (GUILayout.Button("Create")) {
 				_asset.publisherKey = _publisherKey;
@@ -630,6 +669,15 @@ namespace AdsByNimbus.Editor {
 				#endif
 				#if NIMBUS_ENABLE_DIGITAL_TURBINE_IOS
 					_asset.iosDigitalTurbineAppId = _iosDigitalTurbineAppId.stringValue;
+				#endif
+				
+				#if NIMBUS_ENABLE_DISPLAY_IO_ANDROID
+					_asset.androidDisplayIOAppId = _androidDisplayIOAppId.stringValue;
+					_asset.androidDisplayIOUserId = _androidDisplayIOAppId.stringValue;
+				#endif
+				#if NIMBUS_ENABLE_DISPLAY_IO_IOS
+					_asset.iosDisplayIOAppId = _iosDisplayIOAppId.stringValue;
+					_asset.iosDisplayIOUserId = _iosDisplayIOUserId.stringValue;
 				#endif
 
 				AssetDatabase.CreateAsset(_asset,

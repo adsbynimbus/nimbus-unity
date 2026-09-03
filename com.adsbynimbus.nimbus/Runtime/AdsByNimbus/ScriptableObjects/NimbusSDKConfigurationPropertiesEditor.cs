@@ -71,6 +71,13 @@ namespace ScriptableObjects {
 		private SerializedProperty _androidDigitalTurbineAppId;
 		
 		private SerializedProperty _iosDigitalTurbineAppId;
+		
+		// Display IO
+		private SerializedProperty _androidDisplayIOAppId;
+		private SerializedProperty _androidDisplayIOUserId;
+		
+		private SerializedProperty _iosDisplayIOAppId;
+		private SerializedProperty _iosDisplayIOUserId;
 
 		// Needed so error messages aren't spammed
 		private bool _errorLogged;
@@ -194,6 +201,15 @@ namespace ScriptableObjects {
 			
 			// IOS Digital Turbine UI
 			_iosDigitalTurbineAppId = serializedObject.FindProperty("iosDigitalTurbineAppId");
+			
+			// Display IO
+			// Android Display IO UI
+			_androidDisplayIOAppId = serializedObject.FindProperty("androidDisplayIOAppId");
+			_androidDisplayIOUserId = serializedObject.FindProperty("androidDisplayIOUserId");
+			
+			// IOS Display IO UI
+			_iosDisplayIOAppId = serializedObject.FindProperty("iosDisplayIOAppId");
+			_iosDisplayIOUserId = serializedObject.FindProperty("iosDisplayIOUserId");
 		}
 
 		private void OnDisable() {
@@ -321,7 +337,7 @@ namespace ScriptableObjects {
 			
 			EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 5);
 			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE
+			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE || NIMBUS_ENABLE_DISPLAY_IO
 				EditorGUILayout.LabelField("Third Party SDK Support", headerStyle);
 			#endif
 			
@@ -534,6 +550,27 @@ namespace ScriptableObjects {
 				#endif
 				#if !UNITY_ANDROID && !UNITY_IOS
 					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Digital Turbine data", MessageType.Warning);
+				#endif
+			#endif
+			
+			#if NIMBUS_ENABLE_DISPLAY_IO_ANDROID || NIMBUS_ENABLE_DISPLAY_IO_IOS
+				EditorDrawUtility.DrawEditorLayoutHorizontalLine(Color.gray, 2);
+				GUILayout.Space(10);
+				EditorGUILayout.LabelField("Display IO Configuration", headerStyle);
+				#if NIMBUS_ENABLE_DISPLAY_IO_ANDROID
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_androidDisplayIOAppId);
+					EditorGUILayout.PropertyField(_androidDisplayIOUserId);
+					GUILayout.Space(10);
+				#endif
+				#if NIMBUS_ENABLE_DISPLAY_IO_IOS
+					GUILayout.Space(10);
+					EditorGUILayout.PropertyField(_iosDisplayIOAppId);
+					EditorGUILayout.PropertyField(_iosDisplayIOUserId);
+					GUILayout.Space(10);
+				#endif
+				#if !UNITY_ANDROID && !UNITY_IOS
+					EditorGUILayout.HelpBox("In build settings select Android or IOS to enter Display IO data", MessageType.Warning);
 				#endif
 			#endif
 			
