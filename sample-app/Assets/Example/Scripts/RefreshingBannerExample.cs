@@ -18,7 +18,7 @@ namespace Example.Scripts {
 		}
 
 		public void StopBannerRefresh() {
-			_adUnit.Destroy();
+			_adUnit.destroy();
 		}
 	}
 }

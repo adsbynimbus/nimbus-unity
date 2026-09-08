@@ -25,7 +25,7 @@ namespace Example.Scripts {
 		private void OnDestroy() {
 			NimbusManager.Instance.NimbusEvents.OnAdCompleted -= RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError -= LogError;
-			_ad?.Destroy();
+			_ad?.destroy();
 		}
 
 		private void OnTriggerEnter2D(Collider2D other) {

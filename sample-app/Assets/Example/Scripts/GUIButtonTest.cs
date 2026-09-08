@@ -104,7 +104,7 @@ namespace Example.Scripts {
 				}).show();
 				return;
 			}
-			_loadAndShowBannerAdUnit?.Destroy();
+			_loadAndShowBannerAdUnit?.destroy();
 			_loadAndShowBannerAdUnit = null;
 			_shouldDestroyBanner = false;
 			_loadedBannerButtonText.text = "Load And Show Banner";
@@ -120,7 +120,7 @@ namespace Example.Scripts {
 				return;
 			}
 
-			_loadAndShowDynamicUnitAdUnit?.Destroy();
+			_loadAndShowDynamicUnitAdUnit?.destroy();
 			_loadAndShowDynamicUnitAdUnit = null;
 			_shouldDestroyDynamicUnit = false;
 			_loadedDynamicUnitButtonText.text = "Load And Show Dynamic Unit";
@@ -212,7 +212,7 @@ namespace Example.Scripts {
 
 		public void DestroyAd() {
 			if (state != AdState.Displayed) return;
-			CurrentAd?.Destroy();
+			CurrentAd?.destroy();
 			CurrentAd = null;
 		}
 	}

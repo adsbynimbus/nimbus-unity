@@ -22,7 +22,7 @@ namespace Example.Scripts {
 		}
 
 		private void OnDestroy() {
-			_ad?.Destroy();
+			_ad?.destroy();
 		}
 
 		private void OnTriggerEnter2D(Collider2D other) {

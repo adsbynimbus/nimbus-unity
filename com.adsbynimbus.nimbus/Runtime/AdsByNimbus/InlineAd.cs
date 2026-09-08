@@ -24,10 +24,6 @@ public class InlineAd: Ad
         base(AdType.Inline, adEvents, position, addFormats, bidFloor, orientation,  components, demand)
     {
         AdSize = adSize;
-        if (DynamicUnit)
-        {
-            AddFormats ??= new[] { Format.mrec, Format.halfScreen };
-        }
         AdPosition = adPosition;
         RespectSafeArea = respectSafeArea;
         RefreshInterval = refreshInterval;

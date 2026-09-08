@@ -32,13 +32,13 @@ namespace Example.Scripts {
 			else {
 				gameObject.SetActive(false);
 				fire.SetActive(false);
-				_ad?.Destroy();
+				_ad?.destroy();
 			}
 		}
 
 
 		private void OnDestroy() {
-			_ad?.Destroy();
+			_ad?.destroy();
 		}
 
 		private void OnTriggerEnter2D(Collider2D other) {
