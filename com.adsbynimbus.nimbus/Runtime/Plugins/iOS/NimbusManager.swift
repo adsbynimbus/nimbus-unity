@@ -480,6 +480,17 @@ import NimbusDisplayIOKit
                         } catch {
                             Nimbus.Log.request.error(error.localizedDescription)
                         }
+                    case .rewardedVideo:
+                        let rewardedAdRequest = APSAdRequest(
+                            slotUUID: uuid,
+                            adNetworkInfo: .init(networkName: .nimbus)
+                        )
+                        rewardedAdRequest.setAdFormat(.rewardedVideo)
+                        do {
+                            apsAds.append(try await rewardedAdRequest.loadAd())
+                        } catch {
+                            Nimbus.Log.request.error(error.localizedDescription)
+                        }
                     default:
                         continue
                     }

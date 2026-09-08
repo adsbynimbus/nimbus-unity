@@ -511,6 +511,7 @@ extension Extensions {
         case display728X90
         case interstitialDisplay
         case interstitialVideo
+        case rewardedVideo
     }
     
     struct DigitalTurbine: Codable {
