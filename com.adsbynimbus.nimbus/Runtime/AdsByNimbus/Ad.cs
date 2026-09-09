@@ -224,19 +224,9 @@ namespace AdsByNimbus {
 					if (AdType == AdType.Fullscreen || AdType == AdType.Rewarded) {
 						destroy();
 					}
+					_adEvents.FireOnAdCompletedEvent(this);
 					break;
 				case AdEvent.DESTROYED:
-					// ReSharper disable once ConvertIfStatementToSwitchStatement
-					if (AdType == AdType.Rewarded) {
-						_adEvents.FireOnAdCompletedEvent(this, !_adCompleted);
-						_onAdEvent.Invoke(AdEvent.COMPLETED);
-					} else if (AdType == AdType.Fullscreen) {
-						// fired the completed event for interstitial ads force skipped to false everytime, since you
-						// can skip after a set time
-						_adEvents.FireOnAdCompletedEvent(this, false);
-						_onAdEvent.Invoke(AdEvent.COMPLETED);
-					}
-					// always call destroyed the destroyed event
 					_adEvents.FireOnAdDestroyedEvent(this);
 					break;
 				default:

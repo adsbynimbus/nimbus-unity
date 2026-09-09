@@ -11,7 +11,7 @@ public class AdEvents {
 	public event Action<Ad> OnVideoAdPaused;
 	public event Action<Ad> OnVideoAdResume;
 	public event Action<Ad> OnAdRewardEarned;
-	public event Action<Ad, bool> OnAdCompleted;
+	public event Action<Ad> OnAdCompleted;
 	
 	internal void FireOnAdLoadedEvent(Ad obj) {
 		OnAdLoaded?.Invoke(obj);
@@ -41,8 +41,8 @@ public class AdEvents {
 		OnVideoAdResume?.Invoke(obj);
 	}
 
-	internal void FireOnAdCompletedEvent(Ad obj, bool skipped) {
-		OnAdCompleted?.Invoke(obj, skipped);
+	internal void FireOnAdCompletedEvent(Ad obj) {
+		OnAdCompleted?.Invoke(obj);
 	}
 
 	internal void FireOnAdRewardEarnedEvent(Ad obj)
@@ -71,7 +71,6 @@ public enum AdEvent {
 	// MIDPOINT,
 	// THIRD_QUARTILE,
 	COMPLETED,
-
 	// SKIPPED,
 	// VOLUME_CHANGED
 	DESTROYED

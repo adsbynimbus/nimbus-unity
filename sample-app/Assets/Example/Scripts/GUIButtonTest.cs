@@ -68,7 +68,7 @@ namespace Example.Scripts {
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was clicked");
 		}
 
-		public void OnAdCompleted(Ad nimbusAdUnit, bool skipped) {
+		public void OnAdCompleted(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was completed");
 		}
