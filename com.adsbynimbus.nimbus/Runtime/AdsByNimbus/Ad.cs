@@ -21,8 +21,6 @@ namespace AdsByNimbus {
 		public Format[] AddFormats;
 		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOT_LOADED; 
 		public readonly int InstanceID;
-		private bool _adCompleted;
-		private bool _adWasReturned;
 		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
 		private bool _adPassedToNative;
 		private readonly AdEvents _adEvents;
@@ -219,7 +217,6 @@ namespace AdsByNimbus {
 					_adEvents.FireOnAdRewardEarnedEvent(this);
 					break;
 				case AdEvent.COMPLETED:
-					_adCompleted = true;
 					// ensure that video ads auto close to avoid a black screen when the ad completes
 					if (AdType == AdType.Fullscreen || AdType == AdType.Rewarded) {
 						destroy();
