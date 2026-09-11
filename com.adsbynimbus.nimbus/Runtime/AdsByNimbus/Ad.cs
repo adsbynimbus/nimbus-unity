@@ -19,7 +19,7 @@ namespace AdsByNimbus {
 		public float BidFloor;
 		public AdOrientation Orientation;
 		public Format[] AddFormats;
-		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOT_LOADED; 
+		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOTLOADED; 
 		public readonly int InstanceID;
 		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
 		private bool _adPassedToNative;
