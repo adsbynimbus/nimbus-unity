@@ -70,6 +70,5 @@ public enum AdEvent {
 	MIDPOINT,
 	THIRDQUARTILE,
 	COMPLETED,
-	SKIPPED,
 	DESTROYED
 }
