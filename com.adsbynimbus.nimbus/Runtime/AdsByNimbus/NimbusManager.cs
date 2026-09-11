@@ -146,6 +146,7 @@ public class NimbusManager : MonoBehaviour
 
 	internal void InitializeNimbusSDK(string publisherKey, string apiKey)
 	{
+		#if !UNITY_EDITOR
 		if (!_configuration.sdkInitialized)
 		{
 			_configuration.sdkInitialized = true;
@@ -153,6 +154,7 @@ public class NimbusManager : MonoBehaviour
 			_configuration.apiKey = apiKey;
 			NimbusPlatformAPI.InitializeSDK(_configuration);
 		}
+		#endif
 	}
 
 	public void SetNimbusSDKConfiguration(NimbusSDKConfiguration configuration)

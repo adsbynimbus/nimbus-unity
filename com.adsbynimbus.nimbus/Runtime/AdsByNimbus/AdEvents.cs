@@ -11,7 +11,7 @@ public class AdEvents {
 	public event Action<Ad> OnVideoAdPaused;
 	public event Action<Ad> OnVideoAdResume;
 	public event Action<Ad> OnAdRewardEarned;
-	public event Action<Ad, bool> OnAdCompleted;
+	public event Action<Ad> OnAdCompleted;
 	
 	internal void FireOnAdLoadedEvent(Ad obj) {
 		OnAdLoaded?.Invoke(obj);
@@ -41,8 +41,8 @@ public class AdEvents {
 		OnVideoAdResume?.Invoke(obj);
 	}
 
-	internal void FireOnAdCompletedEvent(Ad obj, bool skipped) {
-		OnAdCompleted?.Invoke(obj, skipped);
+	internal void FireOnAdCompletedEvent(Ad obj) {
+		OnAdCompleted?.Invoke(obj);
 	}
 
 	internal void FireOnAdRewardEarnedEvent(Ad obj)
@@ -59,20 +59,16 @@ public class AdEvents {
 // ReSharper disable InconsistentNaming
 // Events as named by the Nimbus Android SDK
 public enum AdEvent {
-	NOT_LOADED,
-
+	NOTLOADED,
 	LOADED,
 	IMPRESSION,
 	CLICKED,
 	PAUSED,
 	RESUMED,
 	REWARDEARNED,
-	// FIRST_QUARTILE,
-	// MIDPOINT,
-	// THIRD_QUARTILE,
+	FIRSTQUARTILE,
+	MIDPOINT,
+	THIRDQUARTILE,
 	COMPLETED,
-
-	// SKIPPED,
-	// VOLUME_CHANGED
 	DESTROYED
 }

@@ -62,9 +62,8 @@ namespace Example.Scripts {
 				"RewardedVideoExample Ad was destroyed/removed from the scene");
 		}
 
-		public void OnAdCompleted(Ad nimbusAdUnit, bool skipped) {
+		public void OnAdCompleted(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
-			if (skipped) return;
 			Debug.unityLogger.Log(
 				"RewardedVideoExample Ad was completed");
 		}
