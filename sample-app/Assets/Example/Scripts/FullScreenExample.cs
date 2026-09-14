@@ -17,7 +17,7 @@ namespace Example.Scripts {
 		}
 
 		private void Start() {
-			NimbusManager.Instance.NimbusEvents.OnAdCompleted += RewardUser;
+			NimbusManager.Instance.NimbusEvents.OnAdRewardEarned += RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError += LogError;
 		}
 
@@ -41,9 +41,8 @@ namespace Example.Scripts {
 			ScoreUI.Instance.UpdateScore(100);
 		}
 
-		private void RewardUser(Ad ad, bool skipped) {
+		private void RewardUser(Ad ad) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
-			if (skipped) return;
 			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad was rendered for ad instance {ad.InstanceID}, " +
 				$"bid value: {ad.BidResponse.BidRaw}, " +

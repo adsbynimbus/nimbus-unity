@@ -19,10 +19,8 @@ namespace AdsByNimbus {
 		public float BidFloor;
 		public AdOrientation Orientation;
 		public Format[] AddFormats;
-		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOT_LOADED; 
+		public AdEvent LastAdEvent { get; private set; } = AdEvent.LOADING; 
 		public readonly int InstanceID;
-		private bool _adCompleted;
-		private bool _adWasReturned;
 		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
 		private bool _adPassedToNative;
 		private readonly AdEvents _adEvents;
@@ -198,7 +196,7 @@ namespace AdsByNimbus {
 		}
 		
 		internal void FireMobileAdEvents(AdEvent e) {
-			CurrentAdState = e;
+			LastAdEvent = e;
 			switch (e) {
 				case AdEvent.LOADED:
 					_adEvents.FireOnAdLoadedEvent(this);
@@ -219,22 +217,9 @@ namespace AdsByNimbus {
 					_adEvents.FireOnAdRewardEarnedEvent(this);
 					break;
 				case AdEvent.COMPLETED:
-					_adCompleted = true;
-					// ensure that video ads auto close to avoid a black screen when the ad completes
-					if (AdType == AdType.Fullscreen) {
-						destroy();
-					}
+					_adEvents.FireOnAdCompletedEvent(this);
 					break;
 				case AdEvent.DESTROYED:
-					// ReSharper disable once ConvertIfStatementToSwitchStatement
-					if (AdType == AdType.Rewarded) {
-						_adEvents.FireOnAdCompletedEvent(this, !_adCompleted);
-					} else if (AdType == AdType.Fullscreen) {
-						// fired the completed event for interstitial ads force skipped to false everytime, since you
-						// can skip after a set time
-						_adEvents.FireOnAdCompletedEvent(this, false);
-					}
-					// always call destroyed the destroyed event
 					_adEvents.FireOnAdDestroyedEvent(this);
 					break;
 				default:

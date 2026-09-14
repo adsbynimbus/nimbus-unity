@@ -68,7 +68,7 @@ namespace Example.Scripts {
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was clicked");
 		}
 
-		public void OnAdCompleted(Ad nimbusAdUnit, bool skipped) {
+		public void OnAdCompleted(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
 				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was completed");
 		}
@@ -174,8 +174,8 @@ namespace Example.Scripts {
 		
 		private static IEnumerator ResetState(AdController controller, Ad adUnit) {
 			if (adUnit.AdType != AdType.Fullscreen && adUnit.AdType != AdType.Rewarded) yield break;
-			while (adUnit.CurrentAdState != AdEvent.COMPLETED ||
-			       adUnit.CurrentAdState != AdEvent.DESTROYED) {
+			while (adUnit.LastAdEvent != AdEvent.COMPLETED ||
+			       adUnit.LastAdEvent != AdEvent.DESTROYED) {
 				yield return null;
 			}
 			controller.ResetState();
