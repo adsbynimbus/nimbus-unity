@@ -119,27 +119,28 @@ import NimbusDisplayIOKit
         DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
         DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
         DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
+        DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
         DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
         #endif
     }
     
     #if NIMBUS_ENABLE_LIVERAMP
-    @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true, testMode: Bool = false) {
-        let liveRamp = LiveRamp(
-            configId: configId,
-            email: email,
-            hasConsentForNoLegislation: hasConsentForNoLegislation
-        )
-
-        // Applies LiveRamp to all future Nimbus requests
+    @objc public class func initializeLiveRamp(placementId: String, identifiersJson: String, appId: String, testMode: Bool = false) {
+        var identifiers: [LiveRamp.Identifier]
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
-                try await liveRamp.fetchEnvelope(isTestMode: testMode).applyToNimbus()
-            } catch {
-                Nimbus.Log.lifecycle.error(error.localizedDescription)
+                // Applies LiveRamp to all future Nimbus requests
+                //try await LiveRamp.initialize(placementId: placementId, identifiers: identifiers, appId: appId)
+            } catch let err as LiveRampError{
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: -1, error: .unitysdk(stage: .request, detail: err.errorDescription))
             }
         })
+    }
+    
+    @objc public class func clearLiveRamp() {
+        LiveRamp.clear()
+        Nimbus.configuration.identity.clear()
     }
     #endif
     
