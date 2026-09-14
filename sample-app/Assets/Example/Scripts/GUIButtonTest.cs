@@ -174,8 +174,8 @@ namespace Example.Scripts {
 		
 		private static IEnumerator ResetState(AdController controller, Ad adUnit) {
 			if (adUnit.AdType != AdType.Fullscreen && adUnit.AdType != AdType.Rewarded) yield break;
-			while (adUnit.CurrentAdState != AdEvent.COMPLETED ||
-			       adUnit.CurrentAdState != AdEvent.DESTROYED) {
+			while (adUnit.LastAdEvent != AdEvent.COMPLETED ||
+			       adUnit.LastAdEvent != AdEvent.DESTROYED) {
 				yield return null;
 			}
 			controller.ResetState();
