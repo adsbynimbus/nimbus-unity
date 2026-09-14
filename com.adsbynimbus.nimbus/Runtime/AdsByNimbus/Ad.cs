@@ -19,7 +19,7 @@ namespace AdsByNimbus {
 		public float BidFloor;
 		public AdOrientation Orientation;
 		public Format[] AddFormats;
-		public AdEvent CurrentAdState { get; private set; } = AdEvent.NOTLOADED; 
+		public AdEvent LastAdEvent { get; private set; } = AdEvent.LOADING; 
 		public readonly int InstanceID;
 		//this boolean exists because the bridge isn't invoked until .load() or .show() is called
 		private bool _adPassedToNative;
@@ -196,7 +196,7 @@ namespace AdsByNimbus {
 		}
 		
 		internal void FireMobileAdEvents(AdEvent e) {
-			CurrentAdState = e;
+			LastAdEvent = e;
 			switch (e) {
 				case AdEvent.LOADED:
 					_adEvents.FireOnAdLoadedEvent(this);
@@ -217,10 +217,6 @@ namespace AdsByNimbus {
 					_adEvents.FireOnAdRewardEarnedEvent(this);
 					break;
 				case AdEvent.COMPLETED:
-					// ensure that video ads auto close to avoid a black screen when the ad completes
-					if (AdType == AdType.Fullscreen || AdType == AdType.Rewarded) {
-						destroy();
-					}
 					_adEvents.FireOnAdCompletedEvent(this);
 					break;
 				case AdEvent.DESTROYED:

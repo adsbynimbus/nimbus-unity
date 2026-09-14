@@ -59,7 +59,7 @@ public class AdEvents {
 // ReSharper disable InconsistentNaming
 // Events as named by the Nimbus Android SDK
 public enum AdEvent {
-	NOTLOADED,
+	LOADING,
 	LOADED,
 	IMPRESSION,
 	CLICKED,
