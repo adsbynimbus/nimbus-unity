@@ -126,12 +126,12 @@ import NimbusDisplayIOKit
     
     #if NIMBUS_ENABLE_LIVERAMP
     @objc public class func initializeLiveRamp(placementId: String, identifiersJson: String, appId: String, testMode: Bool = false) {
-        var identifiers: [LiveRamp.Identifier]
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
                 // Applies LiveRamp to all future Nimbus requests
-                //try await LiveRamp.initialize(placementId: placementId, identifiers: identifiers, appId: appId)
+                try await LiveRamp.initialize(placementId: placementId, identifiers: NimbusHelper.liveRampIdentifiersFromJsonString(identifiersJson: identifiersJson),
+                                              appId: appId)
             } catch let err as LiveRampError{
                 NimbusHelper.didReceiveNimbusError(adUnitInstanceID: -1, error: .unitysdk(stage: .request, detail: err.errorDescription))
             }
