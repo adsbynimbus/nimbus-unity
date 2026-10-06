@@ -9,6 +9,7 @@ namespace AdsByNimbus.Internal.Extensions
     #if NIMBUS_ENABLE_LIVERAMP
     internal class NimbusLiveRampHelpers
     {
+        private const string ManagerClass = "com.adsbynimbus.unity.NimbusManager";
         #if UNITY_IOS
             [DllImport("__Internal")]
             private static extern void _initializeLiveRamp(String placementId, String identifiers, String appId, bool isTestMode);
@@ -25,9 +26,9 @@ namespace AdsByNimbus.Internal.Extensions
                 _initializeLiveRamp(placementId, JsonConvert.SerializeObject(identifiers), appId, isTestMode);
             #endif
             #if UNITY_ANDROID
-                var internalHelper = new AndroidJavaObject("com.adsbynimbus.unity.nimbusunityinternal");
-                var instance = internalHelper.GetStatic<AndroidJavaObject> ("INSTANCE");
-                instance.CallStatic("initLiveRamp", placementId, appId, JsonConvert.SerializeObject(identifiers), isTestMode);
+                var managerClass = new AndroidJavaObject(ManagerClass);
+                var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+                instance.CallStatic("initLiveRamp", placementId, appId, JsonConvert.SerializeObject(identifiers));
             #endif
         }
 
@@ -37,8 +38,8 @@ namespace AdsByNimbus.Internal.Extensions
                 _clearLiveRamp();
             #endif
             #if UNITY_ANDROID
-                var internalHelper = new AndroidJavaObject("com.adsbynimbus.unity.nimbusunityinternal");
-                var instance = internalHelper.GetStatic<AndroidJavaObject> ("INSTANCE");
+                var managerClass = new AndroidJavaObject(ManagerClass);
+                var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
                 instance.CallStatic("clearLiveRamp");
             #endif
         }
