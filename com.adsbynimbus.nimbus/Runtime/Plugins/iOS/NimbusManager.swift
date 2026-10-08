@@ -119,7 +119,6 @@ import NimbusDisplayIOKit
         DTBAds.sharedInstance().mraidCustomVersions = ["1.0", "2.0", "3.0"]
         DTBAds.sharedInstance().testMode = Nimbus.configuration.testMode
         DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
-        DTBAds.sharedInstance().setLogLevel(DTBLogLevelDebug)
         DTBAds.sharedInstance().setAPSPublisherExtendedIdFeatureEnabled(true)
         #endif
     }
@@ -140,7 +139,6 @@ import NimbusDisplayIOKit
     
     @objc public class func clearLiveRamp() {
         LiveRamp.clear()
-        Nimbus.configuration.identity.clear()
     }
     #endif
     
