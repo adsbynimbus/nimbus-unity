@@ -263,7 +263,7 @@ namespace AdsByNimbus.Editor
                @JvmStatic
                 fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {
                     val scope = CoroutineScope(Dispatchers.Main)
-                    if (identifiersJson != """" && !identifiersJson.isEmpty()) {
+                    if (identifiersJson.isNotEmpty()) {
                         try {
                             val identifiersArr = JSONArray(identifiersJson)
                             val identifiersList = ArrayList<Identifier>()
