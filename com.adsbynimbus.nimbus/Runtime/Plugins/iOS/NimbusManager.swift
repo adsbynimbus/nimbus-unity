@@ -124,22 +124,21 @@ import NimbusDisplayIOKit
     }
     
     #if NIMBUS_ENABLE_LIVERAMP
-    @objc public class func initializeLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Bool = true, testMode: Bool = false) {
-        let liveRamp = LiveRamp(
-            configId: configId,
-            email: email,
-            hasConsentForNoLegislation: hasConsentForNoLegislation
-        )
-
-        // Applies LiveRamp to all future Nimbus requests
+    @objc public class func initializeLiveRamp(placementId: String, identifiersJson: String, appId: String, testMode: Bool = false) {
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {
-                try await liveRamp.fetchEnvelope(isTestMode: testMode).applyToNimbus()
-            } catch {
-                Nimbus.Log.lifecycle.error(error.localizedDescription)
+                // Applies LiveRamp to all future Nimbus requests
+                try await LiveRamp.initialize(placementId: placementId, identifiers: NimbusHelper.liveRampIdentifiersFromJsonString(identifiersJson: identifiersJson),
+                                              appId: appId)
+            } catch let err as LiveRampError{
+                NimbusHelper.didReceiveNimbusError(adUnitInstanceID: -1, error: .unitysdk(stage: .request, detail: err.errorDescription))
             }
         })
+    }
+    
+    @objc public class func clearLiveRamp() {
+        LiveRamp.clear()
     }
     #endif
     

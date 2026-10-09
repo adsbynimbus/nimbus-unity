@@ -10,6 +10,9 @@ import Foundation
 import NimbusKit
 import AdSupport
 import AppTrackingTransparency
+#if NIMBUS_ENABLE_LIVERAMP
+import NimbusLiveRampKit
+#endif
 
 @objc public class NimbusHelper: NSObject {
     
@@ -253,6 +256,45 @@ import AppTrackingTransparency
         }
         return modifiers
     }
+    
+    #if NIMBUS_ENABLE_LIVERAMP
+    
+    public static func liveRampIdentifiersFromJsonString(identifiersJson: String) -> [LiveRamp.Identifier] {
+        var identifiers: [LiveRamp.Identifier] = []
+        var unityIdentifiers: [LiveRampIdentifier] = []
+        if (identifiersJson != "" && !identifiersJson.isEmpty) {
+            do {
+                if let dataFromString = identifiersJson.data(using: .utf8) {
+                    unityIdentifiers = try JSONDecoder().decode([LiveRampIdentifier].self, from: dataFromString)
+                }
+            } catch {
+                NimbusHelper.didReceiveNimbusError(
+                    adUnitInstanceID: -1,
+                    error: .unitysdk(stage: .request, detail: "Failed to decode LiveRamp json: \(error)")
+                )
+            }
+        }
+        for identifier in unityIdentifiers {
+            switch(identifier.type) {
+            case .email:
+                if let email = identifier.email {
+                    identifiers.append(.email(email))
+                }
+            case .phone:
+                if let phoneNumber = identifier.phoneNumber {
+                    identifiers.append(.phone(phoneNumber))
+                }
+            case .custom:
+                if let accountId = identifier.accountId, let id = identifier.id {
+                    identifiers.append(.custom(accountId: accountId, id: id))
+                }
+            }
+        }
+        return identifiers
+    }
+    
+    #endif
+    
 }
 
 extension NimbusError.Domain {
@@ -552,4 +594,20 @@ extension Extensions {
         let appId: String?
     }
 }
+
+#if NIMBUS_ENABLE_LIVERAMP
+public struct LiveRampIdentifier: Codable {
+    let type: IdentifierType
+    let email: String?
+    let phoneNumber: String?
+    let accountId: String?
+    let id: String?
+}
+
+public enum IdentifierType: Int, Codable {
+    case email = 0
+    case phone = 1
+    case custom = 2
+}
+#endif
 

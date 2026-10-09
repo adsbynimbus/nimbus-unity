@@ -13,7 +13,9 @@ namespace AdsByNimbus.Editor
         import com.adsbynimbus.extension.*
         import com.adsbynimbus.request.internal.AdUnitType
         import org.json.JSONException
-        import org.json.JSONObject";
+        import org.json.JSONObject
+        import org.json.JSONArray
+        import com.adsbynimbus.unity.NimbusHelper.didReceiveNimbusError";
         private const string BeginningOfClass = @"
         object NimbusUnityInternal {
         @JvmStatic
@@ -254,20 +256,53 @@ namespace AdsByNimbus.Editor
             }");
             #endif
             
-            //LiveRamp Init Function
+            // The LiveRamp Stub Methods still need to included regardless of LiveRamp being included
+            // because NimbusUnityInternal.kt is created dynamically 
             #if NIMBUS_ENABLE_LIVERAMP_ANDROID
             builder.AppendLine(@"
-                @JvmStatic
-                fun initLiveRamp(configId: String, email: String, hasConsentForNoLegislation: Boolean, isTestMode: Boolean) {
+               @JvmStatic
+                fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {
                     val scope = CoroutineScope(Dispatchers.Main)
-                    scope.launch {
-                        LiveRamp(
-                            configId = configId,
-                            email = email,
-                            hasConsentForNoLegislation = hasConsentForNoLegislation
-                        ).fetchEnvelope(isTestMode)?.applyToNimbus()
+                    if (identifiersJson.isNotEmpty()) {
+                        try {
+                            val identifiersArr = JSONArray(identifiersJson)
+                            val identifiersList = ArrayList<Identifier>()
+                            for (i in 0 until identifiersArr.length()) {
+                                val identifier = identifiersArr.getJSONObject(i)
+                                when(identifier.getInt(""type"")) {
+                                    0 -> {
+                                        identifiersList.add(Identifier.Email(identifier.getString(""email"")))
+                                    }
+                                    1 -> {
+                                        identifiersList.add(Identifier.PhoneNumber(identifier.getString(""phoneNumber"")))
+                                    }
+                                    2 -> {
+                                        identifiersList.add(Identifier.CustomId(identifier.getString(""id""),
+                                            identifier.getString(""accountId"")))
+                                    }
+                                }
+                            }
+                            scope.launch {
+                                LiveRamp.initialize(placementId, identifiersList, appId)
+                            }
+                        } catch(e: Exception) {
+                            didReceiveNimbusError(-1, e)
+                        }
                     }
-                }");
+
+                }
+                @JvmStatic
+                fun clearLiveRamp(){
+                    LiveRamp.clear()
+                }
+            ");
+            #else
+            builder.AppendLine(@"
+                @JvmStatic
+                fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {}
+                @JvmStatic
+                fun clearLiveRamp(){}
+            ");
             #endif
             builder.AppendLine("}");
             File.WriteAllText(path, builder.ToString());

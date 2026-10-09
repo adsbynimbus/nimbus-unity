@@ -645,4 +645,16 @@ object NimbusManager {
         json.put("eventName", eventName)
         sendMessageToUnity("OnAdEvent",json.toString())
     }
+    
+    // The LiveRamp Stub Methods still need to included regardless of LiveRamp being included
+    // because NimbusUnityInternal.kt is created dynamically 
+    @JvmStatic
+    fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {
+        NimbusUnityInternal.initLiveRamp(placementId, appId, identifiersJson)
+    }
+
+    @JvmStatic
+    fun clearLiveRamp() {
+        NimbusUnityInternal.clearLiveRamp();
+    }
 }
