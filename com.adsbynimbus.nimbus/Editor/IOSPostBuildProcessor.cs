@@ -20,88 +20,89 @@ namespace AdsByNimbus.Editor {
 			var pbxPath = PBXProject.GetPBXProjectPath(path);
 			pbx.ReadFromFile(pbxPath);
 			string unityTargetGuid = pbx.GetUnityFrameworkTargetGuid();
+			const string nimbusSpm = "https://github.com/adsbynimbus/nimbus-ios-";
 
 			var flags = new List<string>();
 			
 			#if NIMBUS_ENABLE_LIVERAMP
-				string lrPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-liveramp.git", 
+				string lrPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}liveramp.git", 
 					iOSExtensionVersionConstants.LiveRamp);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusLiveRampKit", lrPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_LIVERAMP");    
 			#endif
 			
 			#if NIMBUS_ENABLE_APS
-				string apsPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-aps.git", 
+				string apsPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}aps.git", 
 					iOSExtensionVersionConstants.Aps);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusAPSKit", apsPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_APS");    
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
-				string vunglePackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-vungle.git", 
+				string vunglePackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}vungle.git", 
 					iOSExtensionVersionConstants.Vungle);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusVungleKit", vunglePackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_VUNGLE");
 			#endif
 			
 			#if NIMBUS_ENABLE_META
-				string metaPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-meta.git", 
+				string metaPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}meta.git", 
 					iOSExtensionVersionConstants.Meta);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMetaKit", metaPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_META");
 			#endif
 			
 			#if NIMBUS_ENABLE_ADMOB
-				string adMobPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-admob.git", 
+				string adMobPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}admob.git", 
 					iOSExtensionVersionConstants.AdMob);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusAdMobKit", adMobPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_ADMOB");
 			#endif
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
-				string mintegralPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-mintegral.git", 
+				string mintegralPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}mintegral.git", 
 					iOSExtensionVersionConstants.Mintegral);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMintegralKit", mintegralPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_MINTEGRAL");
 			#endif
 
 			#if NIMBUS_ENABLE_UNITY_ADS
-				string unityPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-unity.git", 
+				string unityPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}unity.git", 
 					iOSExtensionVersionConstants.UnityAds);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusUnityKit", unityPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_UNITY_ADS");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOBILEFUSE
-				string mobileFusePackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-mobilefuse.git", 
+				string mobileFusePackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}mobilefuse.git", 
 					iOSExtensionVersionConstants.MobileFuse);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMobileFuseKit", mobileFusePackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_MOBILEFUSE");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOLOCO
-				string molocoPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-moloco.git", 
+				string molocoPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}moloco.git", 
 					iOSExtensionVersionConstants.Moloco);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMolocoKit", molocoPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_MOLOCO");
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
-				string inMobiPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-inmobi.git", 
+				string inMobiPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}inmobi.git", 
 					iOSExtensionVersionConstants.InMobi);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusInMobiKit", inMobiPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_INMOBI");
 			#endif
 			
 			#if NIMBUS_ENABLE_DIGITAL_TURBINE
-				string dtPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-dt.git", 
+				string dtPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}dt.git", 
 					iOSExtensionVersionConstants.DigitalTurbine);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusDTKit", dtPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_DIGITAL_TURBINE");
 			#endif
 
 			#if NIMBUS_ENABLE_DISPLAY_IO
-				string displayIOPackageGuid = pbx.AddRemotePackageReferenceAtVersion("https://github.com/adsbynimbus/nimbus-ios-displayio.git", 
+				string displayIOPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}displayio.git", 
 					iOSExtensionVersionConstants.DisplayIO);
 				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusDisplayIOKit", displayIOPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_DISPLAY_IO");
