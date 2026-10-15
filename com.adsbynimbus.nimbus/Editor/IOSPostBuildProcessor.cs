@@ -10,150 +10,6 @@ using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 namespace AdsByNimbus.Editor {
-	public class PostProcessIOS : MonoBehaviour
-	{
-		private const string SdkVersion = VersionConstants.IosSdkVersion;
-		private static readonly List<string> Dependencies = new List<string>();
-		[PostProcessBuild(45)]
-		private static void PostProcessBuild_iOS(BuildTarget target, string buildPath)
-		{
-			Dependencies.Clear();
-			if (target != BuildTarget.iOS) return;
-			
-			#if NIMBUS_ENABLE_LIVERAMP
-				Dependencies.Add($"pod 'NimbusLiveRampKit', '{iOSExtensionVersionConstants.LiveRamp}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_APS
-				Dependencies.Add($"pod 'NimbusAPSKit', '{iOSExtensionVersionConstants.Aps}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_VUNGLE
-				Dependencies.Add($"pod 'NimbusVungleKit', '{iOSExtensionVersionConstants.Vungle}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_ADMOB
-                Dependencies.Add($"pod 'NimbusAdMobKit', '{iOSExtensionVersionConstants.AdMob}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_META
-			    Dependencies.Add($"pod 'NimbusMetaKit', '{iOSExtensionVersionConstants.Meta}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_MINTEGRAL
-				Dependencies.Add($"pod 'NimbusMintegralKit', '{iOSExtensionVersionConstants.Mintegral}'");
-			#endif
-
-			#if NIMBUS_ENABLE_UNITY_ADS
-				Dependencies.Add($"pod 'NimbusUnityKit', '{iOSExtensionVersionConstants.UnityAds}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_MOBILEFUSE
-				Dependencies.Add($"pod 'NimbusMobileFuseKit', '{iOSExtensionVersionConstants.MobileFuse}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_MOLOCO
-				Dependencies.Add($"pod 'NimbusMolocoKit', '{iOSExtensionVersionConstants.Moloco}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_INMOBI
-				Dependencies.Add($"pod 'NimbusInMobiKit', '{iOSExtensionVersionConstants.InMobi}'");
-			#endif
-			
-			#if NIMBUS_ENABLE_DIGITAL_TURBINE
-				Dependencies.Add($"pod 'NimbusDTKit', '{iOSExtensionVersionConstants.DigitalTurbine}'");
-			#endif
-
-			#if NIMBUS_ENABLE_DISPLAY_IO
-				Dependencies.Add($"pod 'NimbusDisplayIOKit', '{iOSExtensionVersionConstants.DisplayIO}'");
-			#endif
-			
-			var path = buildPath + "/Podfile";
-			if (!File.Exists(path)) {
-				CreatePodfile(buildPath);
-				Debug.unityLogger.Log($"Copying generating pod file to {path}");
-			}
-			else {
-				Debug.unityLogger.Log("Podfile already exists");
-			}
-			var lines = File.ReadAllLines(path).ToList();
-			var index = lines.FindIndex(a => a.Contains("NimbusSDK")); 
-			if (index != -1)
-			{
-				lines.InsertRange(index,  Dependencies);
-			}
-			File.WriteAllLines(path, lines);
-
-			var postInstallScript = @"
-post_install do |installer|
-  dynamic_frameworks = []
-  
-  installer.pod_targets.each do |pod_target|
-    pod_target.file_accessors.each do |fa|
-      (fa.vendored_frameworks || []).each do |fw|
-        slice = fw.extname == '.xcframework' ?
-          Dir.glob(""#{fw}/ios-arm64*"").reject { |d| d.include?('simulator') }.first : fw
-        next unless slice
-        inner = fw.extname == '.xcframework' ? Dir.glob(""#{slice}/*.framework"").first : fw.to_s
-        next unless inner
-        name = File.basename(inner, '.framework')
-        binary = ""#{inner}/#{name}""
-        next unless File.exist?(binary)
-        next if `file ""#{binary}""`.match?(/ar archive|Mach-O object/)
-        dynamic_frameworks << fw.to_s
-      end
-    end
-  end
-  
-  project = installer.aggregate_targets.first.user_project
-  target = project.targets.find { |t| t.name == 'Unity-iPhone' }
-  embed = target.copy_files_build_phases.find { |p| p.symbol_dst_subfolder_spec == :frameworks } ||
-          target.new_copy_files_build_phase('Embed Frameworks').tap { |p| p.symbol_dst_subfolder_spec = :frameworks }
-  
-  dynamic_frameworks.each do |path|
-    ref = project.frameworks_group.new_file(path)
-    target.frameworks_build_phase.add_file_reference(ref)
-    embed.add_file_reference(ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy'] }
-  end
-  
-  project.save
-end";
-			File.AppendAllText(path, postInstallScript);
-		}
-		
-		private static void CreatePodfile(string pathToBuiltProject)
-		{
-			var fullDependencies = BuildDependencies();
-			var destPodfilePath = pathToBuiltProject + "/Podfile"; 
-			File.WriteAllText(destPodfilePath, fullDependencies); 
-			Debug.unityLogger.Log($"Copying generating pod file to {destPodfilePath}");
-		}
-
-		
-		private static string BuildDependencies() {
-			var builder = new StringBuilder();
-			
-			builder.AppendLine(@"platform :ios, '13.0'
-				use_frameworks!
-				source 'https://cdn.cocoapods.org/'
-				");
-			if (SdkVersion.Contains("internal")) {
-				builder.AppendLine("source 'git@github.com:adsbynimbus/Specs.git'");
-			}
-
-			builder.AppendLine("def sdk_dependencies");
-			builder.AppendLine($"  pod 'NimbusSDK', '{SdkVersion}'");
-			builder.AppendLine("end");
-			
-			builder.AppendLine(@"
-			target 'UnityFramework' do
-			  sdk_dependencies
-			end
-			");
-			
-			return builder.ToString();
-		}
-	}
 
 	public class IOSPostBuildProcessor {
 		[PostProcessBuild]
@@ -163,54 +19,92 @@ end";
 			var pbx = new PBXProject();
 			var pbxPath = PBXProject.GetPBXProjectPath(path);
 			pbx.ReadFromFile(pbxPath);
+			string unityTargetGuid = pbx.GetUnityFrameworkTargetGuid();
+			const string nimbusSpm = "https://github.com/adsbynimbus/nimbus-ios-";
 
 			var flags = new List<string>();
 			
 			#if NIMBUS_ENABLE_LIVERAMP
+				string lrPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}liveramp.git", 
+					iOSExtensionVersionConstants.LiveRamp);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusLiveRampKit", lrPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_LIVERAMP");    
 			#endif
 			
 			#if NIMBUS_ENABLE_APS
+				string apsPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}aps.git", 
+					iOSExtensionVersionConstants.Aps);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusAPSKit", apsPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_APS");    
 			#endif
 			
 			#if NIMBUS_ENABLE_VUNGLE
+				string vunglePackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}vungle.git", 
+					iOSExtensionVersionConstants.Vungle);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusVungleKit", vunglePackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_VUNGLE");
 			#endif
 			
 			#if NIMBUS_ENABLE_META
+				string metaPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}meta.git", 
+					iOSExtensionVersionConstants.Meta);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMetaKit", metaPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_META");
 			#endif
 			
 			#if NIMBUS_ENABLE_ADMOB
+				string adMobPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}admob.git", 
+					iOSExtensionVersionConstants.AdMob);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusAdMobKit", adMobPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_ADMOB");
 			#endif
 			
 			#if NIMBUS_ENABLE_MINTEGRAL
+				string mintegralPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}mintegral.git", 
+					iOSExtensionVersionConstants.Mintegral);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMintegralKit", mintegralPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_MINTEGRAL");
 			#endif
 
 			#if NIMBUS_ENABLE_UNITY_ADS
+				string unityPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}unity.git", 
+					iOSExtensionVersionConstants.UnityAds);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusUnityKit", unityPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_UNITY_ADS");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOBILEFUSE
+				string mobileFusePackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}mobilefuse.git", 
+					iOSExtensionVersionConstants.MobileFuse);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMobileFuseKit", mobileFusePackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_MOBILEFUSE");
 			#endif
 			
 			#if NIMBUS_ENABLE_MOLOCO
+				string molocoPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}moloco.git", 
+					iOSExtensionVersionConstants.Moloco);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusMolocoKit", molocoPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_MOLOCO");
 			#endif
 			
 			#if NIMBUS_ENABLE_INMOBI
+				string inMobiPackageGuid = pbx.AddRemotePackageReferenceAtVersion($"{nimbusSpm}inmobi.git", 
+					iOSExtensionVersionConstants.InMobi);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusInMobiKit", inMobiPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_INMOBI");
 			#endif
 			
 			#if NIMBUS_ENABLE_DIGITAL_TURBINE
+				string dtPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}dt.git", 
+					iOSExtensionVersionConstants.DigitalTurbine);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusDTKit", dtPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_DIGITAL_TURBINE");
 			#endif
 
 			#if NIMBUS_ENABLE_DISPLAY_IO
+				string displayIOPackageGuid = pbx.AddRemotePackageReferenceAtVersion("{nimbusSpm}displayio.git", 
+					iOSExtensionVersionConstants.DisplayIO);
+				pbx.AddRemotePackageFrameworkToProject(unityTargetGuid, "NimbusDisplayIOKit", displayIOPackageGuid, false); 
 				flags.Add("NIMBUS_ENABLE_DISPLAY_IO");
 			#endif
 			
@@ -228,11 +122,13 @@ end";
 
 			// Unity-IPhone
 			var targetGuid = pbx.GetUnityMainTargetGuid();
+			pbx.AddBuildProperty(targetGuid, "OTHER_LDFLAGS", "-ObjC");
 			pbx.AddBuildProperty(targetGuid, "SWIFT_VERSION", "5.0");
 			pbx.SetBuildProperty(targetGuid, "SDKROOT", "iphoneos");
 			pbx.SetBuildProperty(targetGuid, "SUPPORTED_PLATFORMS", "iphonesimulator iphoneos");
 			
 			// UnityFramework
+			pbx.AddBuildProperty(unityTargetGuid, "OTHER_LDFLAGS", "-ObjC");
 			var unityFrameworkGuid = pbx.GetUnityFrameworkTargetGuid();
 			var unityInterfaceHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityInterface.h");
 			var unityForwardDeclsHeaderFile = pbx.FindFileGuidByProjectPath("Classes/Unity/UnityForwardDecls.h");

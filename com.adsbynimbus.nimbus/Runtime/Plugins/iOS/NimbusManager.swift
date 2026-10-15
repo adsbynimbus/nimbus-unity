@@ -90,7 +90,9 @@ import NimbusDisplayIOKit
             InMobiExtension(accountId: extensions.inMobi?.accountId)
             #endif
             #if NIMBUS_ENABLE_META
-            MetaExtension(appId: extensions.meta?.appId, forceTestAd: extensions.meta?.forceTestAd ?? false)
+            if let appId = extensions.meta?.appId {
+                MetaExtension(appId: appId, forceTestAd: extensions.meta?.forceTestAd ?? false)
+            }
             #endif
             #if NIMBUS_ENABLE_MINTEGRAL
             MintegralExtension(appId: extensions.mintegral?.appId,
@@ -138,7 +140,10 @@ import NimbusDisplayIOKit
     }
     
     @objc public class func clearLiveRamp() {
-        LiveRamp.clear()
+        let group = DispatchGroup()
+        group.wait(for: { @MainActor in
+            LiveRamp.clear()
+        })
     }
     #endif
     
@@ -239,8 +244,10 @@ import NimbusDisplayIOKit
                 let dynamicUnit = Nimbus.dynamicUnit(position: position, addFormats: additionalFormats, adPosition: adPos, bidFloor: bidFloor, refreshInterval: refreshInterval){
                     demand {
                         #if NIMBUS_ENABLE_ADMOB
-                        if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                            admob(bannerAdUnitId: adUnitId)
+                        if let adUnit = extensions?.adMob?.adUnitIds?.first {
+                            if let adUnitId = adUnit {
+                                admob(bannerAdUnitId: adUnitId)
+                            }
                         }
                         #endif
                         #if NIMBUS_ENABLE_APS
@@ -281,8 +288,10 @@ import NimbusDisplayIOKit
             let fullscreenAd = Nimbus.fullscreenAd(position: position, orientation: self.getOrientationFromInt(orientation: orientation)){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                    if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                        admob(interstitialAdUnitId: adUnitId)
+                    if let adUnit = extensions?.adMob?.adUnitIds?.first {
+                        if let adUnitId = adUnit {
+                            admob(interstitialAdUnitId: adUnitId)
+                        }
                     }
                     #endif
                     #if NIMBUS_ENABLE_APS
@@ -327,8 +336,10 @@ import NimbusDisplayIOKit
             let interstitialAd = Nimbus.interstitialAd(position: position, addFormats: additionalFormats, orientation: self.getOrientationFromInt(orientation: orientation), bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                    if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                        admob(interstitialAdUnitId: adUnitId)
+                    if let adUnit = extensions?.adMob?.adUnitIds?.first {
+                        if let adUnitId = adUnit {
+                            admob(interstitialAdUnitId: adUnitId)
+                        }
                     }
                     #endif
                     #if NIMBUS_ENABLE_APS
@@ -371,8 +382,10 @@ import NimbusDisplayIOKit
             let rewardedAd = Nimbus.rewardedAd(position: position, bidFloor: bidFloor){
                 demand {
                     #if NIMBUS_ENABLE_ADMOB
-                    if let adUnitId = extensions?.adMob?.adUnitIds?.first {
-                        admob(rewardedAdUnitId: adUnitId)
+                    if let adUnit = extensions?.adMob?.adUnitIds?.first {
+                        if let adUnitId = adUnit {
+                            admob(rewardedAdUnitId: adUnitId)
+                        }
                     }
                     #endif
                     #if NIMBUS_ENABLE_APS
@@ -455,7 +468,10 @@ import NimbusDisplayIOKit
                         do {
                             apsAds.append(try await bannerAdRequest.loadAd())
                         } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
+                            NimbusHelper.didReceiveNimbusError(
+                                adUnitInstanceID: -1,
+                                error: .unitysdk(stage: .request, detail: "APS Banner Ad Request failed")
+                            )
                         }
                     case .interstitialDisplay:
                         let interstitialStaticAdRequest = APSAdRequest(
@@ -466,7 +482,10 @@ import NimbusDisplayIOKit
                         do {
                             apsAds.append(try await interstitialStaticAdRequest.loadAd())
                         } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
+                            NimbusHelper.didReceiveNimbusError(
+                                adUnitInstanceID: -1,
+                                error: .unitysdk(stage: .request, detail: "APS Interstitial Ad Request failed")
+                            )
                         }
                     case .interstitialVideo:
                         let interstitialVideoAdRequest = APSAdRequest(
@@ -477,7 +496,10 @@ import NimbusDisplayIOKit
                         do {
                             apsAds.append(try await interstitialVideoAdRequest.loadAd())
                         } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
+                            NimbusHelper.didReceiveNimbusError(
+                                adUnitInstanceID: -1,
+                                error: .unitysdk(stage: .request, detail: "APS Interstitial Ad Request failed")
+                            )
                         }
                     case .rewardedVideo:
                         let rewardedAdRequest = APSAdRequest(
@@ -488,7 +510,10 @@ import NimbusDisplayIOKit
                         do {
                             apsAds.append(try await rewardedAdRequest.loadAd())
                         } catch {
-                            Nimbus.Log.request.error(error.localizedDescription)
+                            NimbusHelper.didReceiveNimbusError(
+                                adUnitInstanceID: -1,
+                                error: .unitysdk(stage: .request, detail: "APS Rewarded Ad Request failed")
+                            )
                         }
                     default:
                         continue

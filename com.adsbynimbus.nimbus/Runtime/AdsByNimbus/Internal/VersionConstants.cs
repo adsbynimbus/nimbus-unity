@@ -26,17 +26,17 @@ namespace AdsByNimbus.Internal
 
     public static class iOSExtensionVersionConstants
     {
-        public const string Aps = "10.0.0";
-        public const string AdMob = "23.0.0";
-        public const string Vungle = "7.0.0";
-        public const string UnityAds = "4.0.0";
-        public const string Moloco = "4.0.0";
-        public const string MobileFuse = "3.0.0-1.9.0";
-        public const string Mintegral = "16.0.0";
-        public const string Meta = "6.0.0";
-        public const string LiveRamp = "3.0.0-2.9.0";
-        public const string InMobi = "10.0.0";
-        public const string DigitalTurbine = "8.0.0";
-        public const string DisplayIO = "4.0.0";
+        public const string Aps = "5.0.0-rc.5";
+        public const string AdMob = "13.0.0-rc.5";
+        public const string Vungle = "7.0.0-rc.5";
+        public const string UnityAds = "4.0.0-rc.5";
+        public const string Moloco = "4.0.0-rc.5";
+        public const string MobileFuse = "1.0.0-rc.5";
+        public const string Mintegral = "8.0.0-rc.5";
+        public const string Meta = "6.0.0-rc.5";
+        public const string LiveRamp = "4.0.0-rc.5";
+        public const string InMobi = "10.0.0-rc.5";
+        public const string DigitalTurbine = "8.0.0-rc.5";
+        public const string DisplayIO = "4.0.0-rc.5";
     }
 }
