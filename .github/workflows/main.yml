@@ -152,9 +152,10 @@ jobs:
             
             # Run tests (Requires a custom Unity PostProcess script to create the test target)
             xcodebuild test \
-              -workspace Unity-iPhone.xcworkspace \
-              -scheme UnityPluginTests \
+              -project Unity-iPhone.xcodeproj \
+              -scheme Unity-iPhone \
               -destination 'platform=iOS Simulator,name=iPhone 16' \
+              -only-testing:UnityPluginTests \
               clean test
   export-and-test-android:
     name: Build & Test Android
