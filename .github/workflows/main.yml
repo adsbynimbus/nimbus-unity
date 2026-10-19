@@ -154,7 +154,7 @@ jobs:
             xcodebuild test \
               -project Unity-iPhone.xcodeproj \
               -scheme Unity-iPhone \
-              -destination 'platform=iOS Simulator,name=iPhone 16' \
+              -destination 'platform=iOS Simulator,name=iPhone 17' \
               -only-testing:UnityPluginTests \
               clean test
   export-and-test-android:
