@@ -78,10 +78,10 @@ struct NimbusUnitTests {
     
     @Test("Testing Request Third Party Demand JSON")
     func testRequestThirdPartyDemandJSON() {
-        let demandJson = "{\"aps\":{\"appKey\":null,\"slotData\":[{\"slotId\":\"883etest-0bf1-83fc-947c-925babbf3f\",\"adUnitType\":0}]},\"adMob\":{\"adUnitIds\":[\"ca-app-pub-332345679942544/111111107\"]},\"inMobi\":{\"accountId\":null},\"meta\":{\"appId\":null,\"forceTestAd\":false},\"mintegral\":{\"appId\":null,\"appKey\":null},\"mobileFuse\":{},\"moloco\":{\"appKey\":null},\"unityAds\":{\"gameId\":null},\"vungle\":{\"appId\":null}}"
+        let demandJson = "{\"aps\":{\"appKey\":null,\"slotData\":[{\"slotId\":\"883etest-0bf1-83fc-947c-925babbf3f\",\"adUnitType\":0}]},\"adMob\":{\"adUnitIds\":[\"ca-app-pub-332345679942544/111111107\", \"ca-app-pub-33234569942544/1111111089\"]},\"inMobi\":{\"accountId\":null},\"meta\":{\"appId\":null,\"forceTestAd\":false},\"mintegral\":{\"appId\":null,\"appKey\":null},\"mobileFuse\":{},\"moloco\":{\"appKey\":null},\"unityAds\":{\"gameId\":null},\"vungle\":{\"appId\":null}}"
         let thirdPartyDemand = NimbusHelper.extensionsFromJsonString(thirdPartyDemand: demandJson)
         #expect(thirdPartyDemand?.aps?.slotData?[0]?.slotId == "883etest-0bf1-83fc-947c-925babbf3f")
-        #expect(thirdPartyDemand?.adMob?.adUnitIds?[1] == "ca-app-pub-332345679942544/111111107")
+        #expect(thirdPartyDemand?.adMob?.adUnitIds?[1] == "ca-app-pub-33234569942544/1111111089")
     }
     
     @Test("Testing Request Modifiers JSON")

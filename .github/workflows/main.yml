@@ -132,31 +132,30 @@ jobs:
           name: Xcode-Project
           path: builds/iOS/iOS-Build
           retention-days: 1
-#  commenting out this part of the run until 3.0 goes live
-#  test-ios:
-#      name: Run iOS Native Tests
-#      needs: build-unity
-#      runs-on: macos-latest
-#      steps:
-#        - name: Download Xcode Project
-#          uses: actions/download-artifact@v4
-#          with:
-#            name: Xcode-Project
-#            path: builds/iOS-Build
-#  
-#        - name: Run iOS Native Tests (XCTest/XCUITest)
-#          run: |
-#            cd builds/iOS-Build
-#            
-#            # Force pod repo to update so dependencies resolve correctly
-#            pod install --repo-update
-#            
-#            # Run tests (Requires a custom Unity PostProcess script to create the test target)
-#            xcodebuild test \
-#              -workspace Unity-iPhone.xcworkspace \
-#              -scheme UnityPluginTests \
-#              -destination 'platform=iOS Simulator,name=iPhone 16' \
-#              clean test
+  test-ios:
+      name: Run iOS Native Tests
+      needs: build-unity
+      runs-on: macos-latest
+      steps:
+        - name: Download Xcode Project
+          uses: actions/download-artifact@v4
+          with:
+            name: Xcode-Project
+            path: builds/iOS-Build
+  
+        - name: Run iOS Native Tests (XCTest/XCUITest)
+          run: |
+            cd builds/iOS-Build
+            
+            # Force pod repo to update so dependencies resolve correctly
+            pod install --repo-update
+            
+            # Run tests (Requires a custom Unity PostProcess script to create the test target)
+            xcodebuild test \
+              -workspace Unity-iPhone.xcworkspace \
+              -scheme UnityPluginTests \
+              -destination 'platform=iOS Simulator,name=iPhone 16' \
+              clean test
   export-and-test-android:
     name: Build & Test Android
     runs-on: ubuntu-latest
