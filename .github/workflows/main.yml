@@ -147,9 +147,6 @@ jobs:
           run: |
             cd builds/iOS-Build
             
-            # Force pod repo to update so dependencies resolve correctly
-            pod install --repo-update
-            
             # Run tests (Requires a custom Unity PostProcess script to create the test target)
             xcodebuild test \
               -project Unity-iPhone.xcodeproj \
