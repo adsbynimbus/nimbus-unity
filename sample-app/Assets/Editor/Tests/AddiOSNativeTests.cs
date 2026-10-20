@@ -37,7 +37,7 @@ public class AddiOSNativeTests
 
         // Configure Info.plist generation and bundle tracking flags
         proj.SetBuildProperty(testTargetGuid, "GENERATE_INFOPLIST_FILE", "YES");
-        proj.SetBuildProperty(testTargetGuid, "PRODUCT_BUNDLE_IDENTIFIER", "com.mycompany.UnityPluginTests");
+        proj.SetBuildProperty(testTargetGuid, "PRODUCT_BUNDLE_IDENTIFIER", "com.nimbus.UnityPluginTests");
         proj.SetBuildProperty(testTargetGuid, "PRODUCT_NAME", testTargetName);
         proj.SetBuildProperty(testTargetGuid, "EXECUTABLE_NAME", testTargetName);
 
