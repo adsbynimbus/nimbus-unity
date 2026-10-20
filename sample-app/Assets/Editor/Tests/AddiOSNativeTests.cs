@@ -46,11 +46,8 @@ public class AddiOSNativeTests
         proj.SetBuildProperty(testTargetGuid, "BUNDLE_LOADER", "$(TEST_HOST)");
 
         // Map header tracking criteria for core compilation support
-        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", "$(SRCROOT)/Classes/**");
-        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", "$(SRCROOT)/Libraries/**");
-        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", $"$(SRCROOT)/{testTargetName}/**");
         proj.SetBuildProperty(mainTargetGuid, "ENABLE_TESTABILITY", "YES");
-
+        proj.AddBuildProperty(mainTargetGuid, "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES", "YES");
 
         // Establish core target dependency sequence rules
         proj.AddTargetDependency(testTargetGuid, mainTargetGuid);
