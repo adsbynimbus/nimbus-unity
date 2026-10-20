@@ -47,7 +47,6 @@ public class AddiOSNativeTests
 
         // Map header tracking criteria for core compilation support
         proj.SetBuildProperty(mainTargetGuid, "ENABLE_TESTABILITY", "YES");
-        proj.AddBuildProperty(mainTargetGuid, "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES", "YES");
 
         // Establish core target dependency sequence rules
         proj.AddTargetDependency(testTargetGuid, mainTargetGuid);
