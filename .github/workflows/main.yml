@@ -155,6 +155,7 @@ jobs:
               -workspace Unity-iPhone.xcworkspace \
               -scheme Unity-iPhone \
               -destination 'platform=iOS Simulator,name=iPhone 17' \
+              CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES=YES \
               -only-testing:UnityPluginTests
   export-and-test-android:
     name: Build & Test Android
