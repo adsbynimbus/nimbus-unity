@@ -15,6 +15,7 @@
     "url": "https://www.adsbynimbus.com"
   },
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "3.0.2"
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.unity.external-dependency-manager": "2.1.1"
   }
 }
