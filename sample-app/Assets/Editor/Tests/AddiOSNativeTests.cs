@@ -37,7 +37,7 @@ public class AddiOSNativeTests
 
         // Configure Info.plist generation and bundle tracking flags
         proj.SetBuildProperty(testTargetGuid, "GENERATE_INFOPLIST_FILE", "YES");
-        proj.SetBuildProperty(testTargetGuid, "PRODUCT_BUNDLE_IDENTIFIER", "com.mycompany.UnityPluginTests");
+        proj.SetBuildProperty(testTargetGuid, "PRODUCT_BUNDLE_IDENTIFIER", "com.adsbynimbus.UnityPluginTests");
         proj.SetBuildProperty(testTargetGuid, "PRODUCT_NAME", testTargetName);
         proj.SetBuildProperty(testTargetGuid, "EXECUTABLE_NAME", testTargetName);
 
@@ -46,11 +46,7 @@ public class AddiOSNativeTests
         proj.SetBuildProperty(testTargetGuid, "BUNDLE_LOADER", "$(TEST_HOST)");
 
         // Map header tracking criteria for core compilation support
-        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", "$(SRCROOT)/Classes/**");
-        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", "$(SRCROOT)/Libraries/**");
-        proj.AddBuildProperty(testTargetGuid, "HEADER_SEARCH_PATHS", $"$(SRCROOT)/{testTargetName}/**");
         proj.SetBuildProperty(mainTargetGuid, "ENABLE_TESTABILITY", "YES");
-
 
         // Establish core target dependency sequence rules
         proj.AddTargetDependency(testTargetGuid, mainTargetGuid);
