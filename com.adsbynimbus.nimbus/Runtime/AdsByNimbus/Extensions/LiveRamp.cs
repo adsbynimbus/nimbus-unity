@@ -22,12 +22,12 @@ namespace AdsByNimbus.Extensions
         ///		One or more user identifiers.
         /// </param>
         /// <param name="appId">
-        ///		The bundle ID registered on the ATS placement. Defaults to
+        ///		(Optional) The bundle ID registered on the ATS placement. Defaults to
         ///     `Bundle.main.bundleIdentifier` on iOS and INCLUDE_BIT_ABOUT_ANDROID.
         ///     Pass this explicitly when the runtime bundle ID differs from the registered one,
         ///     as in build configurations that append a suffix, or in app extensions.
         /// </param>
-        public static void initialize(String placementId, Identifier[] identifiers, String appId)
+        public static void initialize(String placementId, Identifier[] identifiers, String appId = "")
         {
             NimbusLiveRampHelpers.InitializeLiveRamp(placementId, identifiers, appId);
         }

@@ -132,7 +132,7 @@ import NimbusDisplayIOKit
             do {
                 // Applies LiveRamp to all future Nimbus requests
                 try await LiveRamp.initialize(placementId: placementId, identifiers: NimbusHelper.liveRampIdentifiersFromJsonString(identifiersJson: identifiersJson),
-                                              appId: appId)
+                                              appId: appId.isEmpty ? nil : appId)
             } catch let err as LiveRampError{
                 NimbusHelper.didReceiveNimbusError(adUnitInstanceID: -1, error: .unitysdk(stage: .request, detail: err.errorDescription))
             }
