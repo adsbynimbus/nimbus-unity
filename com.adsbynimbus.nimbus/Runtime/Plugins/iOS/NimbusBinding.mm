@@ -180,7 +180,7 @@ extern "C" {
 
 #if NIMBUS_ENABLE_LIVERAMP
     void _initializeLiveRamp(const char* placementId, const char* identifiersJson, const char* appId, bool testMode) {
-        [NimbusManager initializeLiveRampWithPlacementId:GetStringParam(placementId) identifiersJson:GetStringParam(identifiersJson) appId:GetStringParam(appId) testMode:testMode];
+        [NimbusManager initializeLiveRampWithPlacementId:GetStringParam(placementId) identifiersJson:GetStringParam(identifiersJson) appId:GetNullableStringParam(appId) testMode:testMode];
     }
 
     void _clearLiveRamp() {

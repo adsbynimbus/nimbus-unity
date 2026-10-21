@@ -261,7 +261,7 @@ namespace AdsByNimbus.Editor
             #if NIMBUS_ENABLE_LIVERAMP_ANDROID
             builder.AppendLine(@"
                @JvmStatic
-                fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {
+                fun initLiveRamp(placementId: String, appId: String?, identifiersJson: String) {
                     val scope = CoroutineScope(Dispatchers.Main)
                     if (identifiersJson.isNotEmpty()) {
                         try {
@@ -283,11 +283,7 @@ namespace AdsByNimbus.Editor
                                 }
                             }
                             scope.launch {
-                                if (appId.isEmpty()) {
-                                    LiveRamp.initialize(placementId, identifiersList)
-                                } else {
-                                    LiveRamp.initialize(placementId, identifiersList, appId)
-                                }
+                                LiveRamp.initialize(placementId, identifiersList, appId)
                             }
                         } catch(e: Exception) {
                             didReceiveNimbusError(-1, e)

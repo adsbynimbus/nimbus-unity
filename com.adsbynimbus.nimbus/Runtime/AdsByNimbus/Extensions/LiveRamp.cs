@@ -27,7 +27,7 @@ namespace AdsByNimbus.Extensions
         ///     Pass this explicitly when the runtime bundle ID differs from the registered one,
         ///     as in build configurations that append a suffix, or in app extensions.
         /// </param>
-        public static void initialize(String placementId, Identifier[] identifiers, String appId = "")
+        public static void initialize(String placementId, Identifier[] identifiers, String appId = null)
         {
             NimbusLiveRampHelpers.InitializeLiveRamp(placementId, identifiers, appId);
         }
