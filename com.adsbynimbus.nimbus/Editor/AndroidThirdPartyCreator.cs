@@ -283,7 +283,12 @@ namespace AdsByNimbus.Editor
                                 }
                             }
                             scope.launch {
-                                LiveRamp.initialize(placementId, identifiersList, appId)
+                                if (appId.isNullOrEmpty()) {
+                                    LiveRamp.initialize(placementId, identifiersList)
+                                }
+                                else {
+                                    LiveRamp.initialize(placementId, identifiersList, appId)
+                                }
                             }
                         } catch(e: Exception) {
                             didReceiveNimbusError(-1, e)
