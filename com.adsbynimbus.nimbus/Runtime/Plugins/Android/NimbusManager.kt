@@ -649,7 +649,7 @@ object NimbusManager {
     // The LiveRamp Stub Methods still need to included regardless of LiveRamp being included
     // because NimbusUnityInternal.kt is created dynamically 
     @JvmStatic
-    fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {
+    fun initLiveRamp(placementId: String, appId: String?, identifiersJson: String) {
         NimbusUnityInternal.initLiveRamp(placementId, appId, identifiersJson)
     }
 
