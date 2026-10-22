@@ -126,7 +126,7 @@ import NimbusDisplayIOKit
     }
     
     #if NIMBUS_ENABLE_LIVERAMP
-    @objc public class func initializeLiveRamp(placementId: String, identifiersJson: String, appId: String?, testMode: Bool = false) {
+    @objc public class func initializeLiveRamp(placementId: String, identifiersJson: String, appId: String?) {
         let group = DispatchGroup()
         group.wait(for: { @MainActor in
             do {

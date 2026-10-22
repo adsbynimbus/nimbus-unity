@@ -12,7 +12,7 @@ namespace AdsByNimbus.Internal.Extensions
         private const string ManagerClass = "com.adsbynimbus.unity.NimbusManager";
         #if UNITY_IOS
             [DllImport("__Internal")]
-            private static extern void _initializeLiveRamp(String placementId, String identifiers, String appId, bool isTestMode);
+            private static extern void _initializeLiveRamp(String placementId, String identifiers, String appId);
 
             [DllImport("__Internal")]
             private static extern void _clearLiveRamp();
@@ -23,7 +23,7 @@ namespace AdsByNimbus.Internal.Extensions
         {
             var isTestMode = NimbusManager.Instance._configuration.enableSDKInTestMode;
             #if UNITY_IOS
-                _initializeLiveRamp(placementId, JsonConvert.SerializeObject(identifiers), appId, isTestMode);
+                _initializeLiveRamp(placementId, JsonConvert.SerializeObject(identifiers), appId);
             #endif
             #if UNITY_ANDROID
                 var managerClass = new AndroidJavaObject(ManagerClass);
