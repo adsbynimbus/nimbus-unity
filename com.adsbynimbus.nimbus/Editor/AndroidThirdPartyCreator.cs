@@ -304,7 +304,7 @@ namespace AdsByNimbus.Editor
             #else
             builder.AppendLine(@"
                 @JvmStatic
-                fun initLiveRamp(placementId: String, appId: String, identifiersJson: String) {}
+                fun initLiveRamp(placementId: String, appId: String?, identifiersJson: String) {}
                 @JvmStatic
                 fun clearLiveRamp(){}
             ");
