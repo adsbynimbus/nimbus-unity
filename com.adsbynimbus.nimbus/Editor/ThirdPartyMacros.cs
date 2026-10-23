@@ -1,4 +1,6 @@
 #if UNITY_EDITOR
+using AdsByNimbus.Editor.Dependencies;
+using AdsByNimbus.Internal;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
@@ -373,10 +375,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidLiveRampIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, LiveRampMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(LiveRampAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.LiveRampPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, LiveRampMacro); 
 					MacroHelpers.SetBuildMacroForBothPlatforms(LiveRampAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.LiveRampPackage);
 					FocusOnGameManager(LiveRampPartnerStr);
 				}
 			}
@@ -386,17 +390,21 @@ namespace AdsByNimbus.Editor {
 			var liveRampIosStatus = _iosLiveRampIsEnabled ? Enabled : Disabled;
 			EditorGUILayout.LabelField($"Macro is set for Ios is: {liveRampIosStatus}", buttonLabelStyle);
 			GUILayout.Space(2);
-			var liveRampAndroidbuttonText = _iosLiveRampIsEnabled
+			var liveRampIOSbuttonText = _iosLiveRampIsEnabled
 				? string.Format(ButtonMessageTemplate, "Remove", "LiveRamp", "Ios")
 				: string.Format(ButtonMessageTemplate, "Enable", "LiveRamp", "Ios");
-			if (GUILayout.Button(liveRampAndroidbuttonText)) {
+			if (GUILayout.Button(liveRampIOSbuttonText)) {
 				if (_iosLiveRampIsEnabled) { 
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, LiveRampMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(LiveRampIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage("NimbusLiveRampKit");
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, LiveRampMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(LiveRampIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.LiveRampPackage, 
+						iOSExtensionVersionConstants.LiveRamp, "NimbusLiveRampKit", 
+						IOSDependencyConstants.LiveRampPod);
 					FocusOnGameManager(LiveRampPartnerStr);
 				}
 			}
