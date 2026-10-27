@@ -53,10 +53,6 @@ namespace AdsByNimbus.Editor.Dependencies
 
                     // Commit the baseline file to disk
                     newDoc.Save(xmlPath);
-
-                    #if UNITY_EDITOR
-                    UnityEditor.AssetDatabase.Refresh();
-                    #endif
                 }
                 catch (Exception e)
                 {
@@ -112,10 +108,6 @@ namespace AdsByNimbus.Editor.Dependencies
                 androidPackagesNode.AppendChild(newPackage);
 
                 xmlDoc.Save(absolutePath);
-
-                #if UNITY_EDITOR
-                UnityEditor.AssetDatabase.Refresh();
-                #endif
             }
             catch (Exception e)
             {
@@ -180,10 +172,6 @@ namespace AdsByNimbus.Editor.Dependencies
                 }
                 
                 xmlDoc.Save(absolutePath);
-
-                #if UNITY_EDITOR
-                UnityEditor.AssetDatabase.Refresh();
-                #endif
             }
             catch (Exception e)
             {
@@ -209,10 +197,6 @@ namespace AdsByNimbus.Editor.Dependencies
                 {
                     targetNode.ParentNode.RemoveChild(targetNode);
                     xmlDoc.Save(absolutePath);
-
-#if UNITY_EDITOR
-                    UnityEditor.AssetDatabase.Refresh();
-#endif
                 }
             }
             catch (Exception e)
@@ -255,12 +239,11 @@ namespace AdsByNimbus.Editor.Dependencies
                 if (isModified)
                 {
                     xmlDoc.Save(absolutePath);
-                    UnityEditor.AssetDatabase.Refresh();
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError($"[SpecialFolderXml] Error deleting dependencies: {e.Message}");
+                Debug.LogError($"[NimbusXml] Error deleting dependencies: {e.Message}");
             }
         }
     }

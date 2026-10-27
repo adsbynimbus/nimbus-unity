@@ -4,7 +4,7 @@ namespace AdsByNimbus.Editor.Dependencies
 {
     public static class AndroidDependencyConstants
     {
-        public const string NimbusExtensionPrefix = "com.adsbynimbus.android:extension-";
+        private const string NimbusExtensionPrefix = "com.adsbynimbus.android:extension-";
         public static string AdMobPackage =
             $"{NimbusExtensionPrefix}admob:{AndroidExtensionVersionConstants.AdMob}";
         public static string ApsPackage = $"{NimbusExtensionPrefix}aps:{AndroidExtensionVersionConstants.Aps}";
@@ -27,32 +27,34 @@ namespace AdsByNimbus.Editor.Dependencies
         public static string VunglePackage = $"{NimbusExtensionPrefix}vungle:{AndroidExtensionVersionConstants.Vungle}";
     }
 
+    //Pod name and SPM Names are identical
     public static class IOSDependencyConstants
     {
         public static string NimbusSpm = "https://github.com/adsbynimbus/nimbus-ios-";
         public static string AdMobPackage =
             $"{NimbusSpm}admob.git";
+        public static string AdMobSpmName = "NimbusAdMobKit";
         public static string ApsPackage = $"{NimbusSpm}aps.git";
-        public static string ApsPod = "NimbusAPSKit";
+        public static string ApsSpmName = "NimbusAPSKit";
         public static string DigitalTurbinePackage = $"{NimbusSpm}dt.git";
-        public static string DigitalTurbinePod = "NimbusDTKit";
+        public static string DigitalTurbineSpmName = "NimbusDTKit";
         public static string DisplayIOPackage = $"{NimbusSpm}displayio.git";
-        public static string DisplayIOPod = "NimbusDisplayIOKit";
+        public static string DisplayIOSpmName = "NimbusDisplayIOKit";
         public static string InMobiPackage = $"{NimbusSpm}inmobi.git";
-        public static string InMobiPod = "NimbusInMobiKit";
+        public static string InMobiSpmName = "NimbusInMobiKit";
         public static string LiveRampPackage = $"{NimbusSpm}liveramp.git";
-        public static string LiveRampPod = "NimbusLiveRampKit";
+        public static string LiveRampSpmName = "NimbusLiveRampKit";
         public static string MetaPackage = $"{NimbusSpm}meta.git";
-        public static string MetaPod = "NimbusMetaKit";
+        public static string MetaSpmName = "NimbusMetaKit";
         public static string MintegralPackage = $"{NimbusSpm}mintegral.git";
-        public static string MintegralPod = "NimbusMintegralKit";
+        public static string MintegralSpmName = "NimbusMintegralKit";
         public static string MobileFusePackage = $"{NimbusSpm}mobilefuse.git";
-        public static string MobileFusePod = "NimbusMobileFuseKit";
+        public static string MobileFuseSpmName = "NimbusMobileFuseKit";
         public static string MolocoPackage = $"{NimbusSpm}moloco.git";
-        public static string MolocoPod = "NimbusMolocoKit";
+        public static string MolocoSpmName = "NimbusMolocoKit";
         public static string UnityAdsPackage = $"{NimbusSpm}unity.git";
-        public static string UnityAdsPod = "NimbusUnityKit";
+        public static string UnityAdsSpmName = "NimbusUnityKit";
         public static string VunglePackage = $"{NimbusSpm}vungle.git";
-        public static string VunglePod = "NimbusVungleKit";
+        public static string VungleSpmName = "NimbusVungleKit";
     }
 }
