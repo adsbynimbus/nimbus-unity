@@ -31,33 +31,6 @@ namespace AdsByNimbus.Editor {
 		public void OnPostGenerateGradleAndroidProject(string path)
 		{
 			var extraRepositories = "";
-			#if NIMBUS_ENABLE_MINTEGRAL
-				extraRepositories =
-					@"
-					maven {
-					url ""https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea""  
-											content {
-												includeGroupByRegex("".*\\.mbridge.*"")
-											}}";
-			#endif
-			#if NIMBUS_ENABLE_LIVERAMP
-				extraRepositories +=
-					@"        
-						maven {
-						url = uri(""https://sdk-android-prod.launch.liveramp.com"")
-							content {
-							includeGroupByRegex("".*\\.liveramp.*"")
-							}}";
-			#endif
-			#if NIMBUS_ENABLE_DISPLAY_IO
-				extraRepositories += @" 
-					maven {
-					url ""https://maven.display.io/""
-					content {
-					includeGroupByRegex("".*\\.brandio.*"")
-					}
-				}";
-			#endif
 			string repoString = @"
 				dependencyResolutionManagement {
 				    repositories {
@@ -128,53 +101,6 @@ namespace AdsByNimbus.Editor {
 				{
 					Debug.unityLogger.Log($"AdMob App Id is null or blank, it has not been added to the Android manifest.");
 				}
-			#endif
-			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI || NIMBUS_ENABLE_DIGITAL_TURBINE || NIMBUS_ENABLE_DISPLAY_IO
-				var builder = new StringBuilder();
-				builder.AppendLine("");
-				builder.AppendLine("dependencies {");
-				#if NIMBUS_ENABLE_LIVERAMP
-					builder.AppendLine(AndroidBuildDependencies.LiveRampBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_APS
-					builder.AppendLine(AndroidBuildDependencies.ApsBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_VUNGLE
-					builder.AppendLine(AndroidBuildDependencies.VungleBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_META
-					builder.AppendLine(AndroidBuildDependencies.MetaBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_ADMOB
-					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_MINTEGRAL
-					builder.AppendLine(AndroidBuildDependencies.MintegralBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_UNITY_ADS
-					builder.AppendLine(AndroidBuildDependencies.UnityAdsBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_MOBILEFUSE
-					builder.AppendLine(AndroidBuildDependencies.MobileFuseBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_MOLOCO
-					builder.AppendLine(AndroidBuildDependencies.MolocoBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_INMOBI
-					builder.AppendLine(AndroidBuildDependencies.InMobiBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_DIGITAL_TURBINE
-					builder.AppendLine(AndroidBuildDependencies.DigitalTurbineBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_DISPLAY_IO
-					builder.AppendLine(AndroidBuildDependencies.DisplayIOBuildDependency());
-				#endif
-				builder.AppendLine("}");
-				var apsBuildWriter = File.AppendText(path + "/build.gradle");
-				apsBuildWriter.WriteLine(builder.ToString());
-				apsBuildWriter.Flush();
-				apsBuildWriter.Close();
 			#endif
 		}
 		private static void WriteGradleProps(string gradleFile)

@@ -1,4 +1,6 @@
 #if UNITY_EDITOR
+using AdsByNimbus.Editor.Dependencies;
+using AdsByNimbus.Internal;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
@@ -120,10 +122,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidAdMobIsEnabled) { 
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, AdMobMacro); 
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(AdMobAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.AdMobPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, AdMobMacro); 
 					MacroHelpers.SetBuildMacroForBothPlatforms(AdMobAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.AdMobPackage);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android AdMob App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(AdMobPartnerStr);
@@ -142,12 +146,15 @@ namespace AdsByNimbus.Editor {
 				if (_iosAdMobIsEnabled) { 
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, AdMobMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(AdMobIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.AdMobSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, AdMobMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(AdMobIOSMacro);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS AdMob App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.AdMobPackage, iOSExtensionVersionConstants.AdMob, 
+						IOSDependencyConstants.AdMobSpmName, IOSDependencyConstants.AdMobSpmName);
 					FocusOnGameManager(AdMobPartnerStr);
 				}
 			}
@@ -171,11 +178,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidApsIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, ApsMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(ApsAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.ApsPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, ApsMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(ApsAndroidMacro);
-
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.ApsPackage);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android APS App Key and APS Slot Ids to the " +
 					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(ApsPartnerStr);
@@ -194,10 +202,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosApsIsEnabled) { 
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, ApsMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(ApsIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.ApsSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, ApsMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(ApsIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.ApsPackage, iOSExtensionVersionConstants.Aps, 
+						IOSDependencyConstants.ApsSpmName, IOSDependencyConstants.ApsSpmName);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS APS App Key and APS Slot Ids to the " +
 					                         "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(ApsPartnerStr);
@@ -223,10 +234,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidDigitalTurbineIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, DigitalTurbineMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(DigitalTurbineAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.DigitalTurbinePackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, DigitalTurbineMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(DigitalTurbineAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.DigitalTurbinePackage);
 					EditorUtil.LogWithHelpBox($"Don't forget to add your Android {DigitalTurbinePartnerStr} App Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(DigitalTurbinePartnerStr);
 				}
@@ -244,10 +257,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosDigitalTurbineIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, DigitalTurbineMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(DigitalTurbineIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.DigitalTurbineSpmName);
 				}
 				else { 
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, DigitalTurbineMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(DigitalTurbineIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.DigitalTurbinePackage, iOSExtensionVersionConstants.DigitalTurbine, 
+						IOSDependencyConstants.DigitalTurbineSpmName, IOSDependencyConstants.DigitalTurbineSpmName);
 					EditorUtil.LogWithHelpBox(
 						$"Don't forget to add your iOS {DigitalTurbinePartnerStr} App Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(DigitalTurbinePartnerStr);
@@ -273,10 +289,13 @@ namespace AdsByNimbus.Editor {
 				if (_androidDisplayIOIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, DisplayIOMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(DisplayIOAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.DisplayIOPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, DisplayIOMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(DisplayIOAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.DisplayIOPackage, 
+						AndroidDependencyConstants.DisplayIORepository);
 					EditorUtil.LogWithHelpBox($"Don't forget to add your Android {DisplayIOPartnerStr} App Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(DisplayIOPartnerStr);
 				}
@@ -294,10 +313,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosDisplayIOIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, DisplayIOMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(DisplayIOIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.DisplayIOSpmName);
 				}
 				else { 
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, DisplayIOMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(DisplayIOIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.DisplayIOPackage, iOSExtensionVersionConstants.DisplayIO, 
+						IOSDependencyConstants.DisplayIOSpmName, IOSDependencyConstants.DisplayIOSpmName);
 					EditorUtil.LogWithHelpBox(
 						$"Don't forget to add your iOS {DisplayIOPartnerStr} App Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(DisplayIOPartnerStr);
@@ -323,10 +345,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidInMobiIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, InMobiMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(InMobiAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.InMobiPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, InMobiMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(InMobiAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.InMobiPackage);
 					EditorUtil.LogWithHelpBox($"Don't forget to add your Android {InMobiPartnerStr} Account Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(InMobiPartnerStr);
 				}
@@ -344,10 +368,14 @@ namespace AdsByNimbus.Editor {
 				if (_iosInMobiIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, InMobiMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(InMobiIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.InMobiSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS,InMobiMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(InMobiIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.InMobiPackage, 
+						iOSExtensionVersionConstants.InMobi, IOSDependencyConstants.InMobiSpmName, 
+						IOSDependencyConstants.InMobiSpmName);
 					EditorUtil.LogWithHelpBox(
 						$"Don't forget to add your iOS {InMobiPartnerStr} Account Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(InMobiPartnerStr);
@@ -373,10 +401,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidLiveRampIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, LiveRampMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(LiveRampAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.LiveRampPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, LiveRampMacro); 
 					MacroHelpers.SetBuildMacroForBothPlatforms(LiveRampAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.LiveRampPackage);
 					FocusOnGameManager(LiveRampPartnerStr);
 				}
 			}
@@ -386,17 +416,21 @@ namespace AdsByNimbus.Editor {
 			var liveRampIosStatus = _iosLiveRampIsEnabled ? Enabled : Disabled;
 			EditorGUILayout.LabelField($"Macro is set for Ios is: {liveRampIosStatus}", buttonLabelStyle);
 			GUILayout.Space(2);
-			var liveRampAndroidbuttonText = _iosLiveRampIsEnabled
+			var liveRampIOSbuttonText = _iosLiveRampIsEnabled
 				? string.Format(ButtonMessageTemplate, "Remove", "LiveRamp", "Ios")
 				: string.Format(ButtonMessageTemplate, "Enable", "LiveRamp", "Ios");
-			if (GUILayout.Button(liveRampAndroidbuttonText)) {
+			if (GUILayout.Button(liveRampIOSbuttonText)) {
 				if (_iosLiveRampIsEnabled) { 
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, LiveRampMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(LiveRampIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.LiveRampSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, LiveRampMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(LiveRampIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.LiveRampPackage, 
+						iOSExtensionVersionConstants.LiveRamp, IOSDependencyConstants.LiveRampSpmName, 
+						IOSDependencyConstants.LiveRampSpmName);
 					FocusOnGameManager(LiveRampPartnerStr);
 				}
 			}
@@ -420,10 +454,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidMetaIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, MetaMacro); 
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MetaAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.MetaPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, MetaMacro); 
 					MacroHelpers.SetBuildMacroForBothPlatforms(MetaAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.MetaPackage);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Meta App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(MetaPartnerStr);
@@ -442,10 +478,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosMetaIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MetaMacro); 
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MetaIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.MetaSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, MetaMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MetaIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.MetaPackage, iOSExtensionVersionConstants.Meta,
+						IOSDependencyConstants.MetaSpmName, IOSDependencyConstants.MetaSpmName);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Meta App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(MetaPartnerStr);
@@ -471,10 +510,13 @@ namespace AdsByNimbus.Editor {
 				if (_androidMintegralIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MintegralAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.MintegralPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, MintegralMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MintegralAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.MintegralPackage, 
+						AndroidDependencyConstants.MintegralRepository);
 					EditorUtil.LogWithHelpBox("Don't forget to add your Android Mintegral App Id and App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(MintegralPartnerStr);
 				}
@@ -492,10 +534,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosMintegralIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MintegralMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MintegralIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.MintegralSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, MintegralMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MintegralIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.MintegralPackage, iOSExtensionVersionConstants.Mintegral, 
+						IOSDependencyConstants.MintegralSpmName, IOSDependencyConstants.MintegralSpmName);
 					EditorUtil.LogWithHelpBox(
 						"Don't forget to add your iOS Mintegral App Id and App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(MintegralPartnerStr);
@@ -521,10 +566,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidMobileFuseIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, MobileFuseMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MobileFuseAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.MobileFusePackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, MobileFuseMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MobileFuseAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.MobileFusePackage);
 					FocusOnGameManager(MobileFusePartnerStr);
 				}
 			}
@@ -541,10 +588,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosMobileFuseIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MobileFuseMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MobileFuseIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.MobileFuseSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, MobileFuseMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MobileFuseIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.MobileFusePackage, iOSExtensionVersionConstants.MobileFuse,
+						IOSDependencyConstants.MobileFuseSpmName, IOSDependencyConstants.MobileFuseSpmName);
 					FocusOnGameManager(MobileFusePartnerStr);
 				}
 			}
@@ -568,10 +618,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidMolocoIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, MolocoMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MolocoAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.MolocoPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, MolocoMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MolocoAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.MolocoPackage);
 					EditorUtil.LogWithHelpBox("Don't forget to add your Android Moloco App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(MolocoPartnerStr);
 				}
@@ -589,10 +641,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosMolocoIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, MolocoMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(MolocoIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.MolocoSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS,MolocoMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(MolocoIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.MolocoPackage, iOSExtensionVersionConstants.Moloco, 
+						IOSDependencyConstants.MolocoSpmName, IOSDependencyConstants.MolocoSpmName);
 					EditorUtil.LogWithHelpBox(
 						"Don't forget to add your iOS Moloco App Key to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(MolocoPartnerStr);
@@ -618,10 +673,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidUnityAdsIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, UnityAdsMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(UnityAdsAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.UnityAdsPackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, UnityAdsMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(UnityAdsAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.UnityAdsPackage);
 					EditorUtil.LogWithHelpBox("Don't forget to add your Android Unity Ads Game Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(UnityAdsPartnerStr);
 				}
@@ -639,10 +696,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosUnityAdsIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, UnityAdsMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(UnityAdsIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.UnityAdsSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, UnityAdsMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(UnityAdsIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.UnityAdsPackage, iOSExtensionVersionConstants.UnityAds, 
+						IOSDependencyConstants.UnityAdsSpmName, IOSDependencyConstants.UnityAdsSpmName);
 					EditorUtil.LogWithHelpBox(
 						"Don't forget to add your iOS Unity Ads Game Id to the NimbusSDKConfiguration scriptable object attached to your NimbusAdManager game object.", MessageType.Warning);
 					FocusOnGameManager(UnityAdsPartnerStr);
@@ -668,10 +728,12 @@ namespace AdsByNimbus.Editor {
 				if (_androidVungleIsEnabled) {
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(VungleAndroidMacro);
+					DependencyHelpers.RemoveAndroidPackage(AndroidDependencyConstants.VunglePackage);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.Android, VungleMacro); 
 					MacroHelpers.SetBuildMacroForBothPlatforms(VungleAndroidMacro);
+					DependencyHelpers.AddAndroidPackage(AndroidDependencyConstants.VunglePackage);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your Android Vungle App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(VunglePartnerStr);
@@ -690,10 +752,13 @@ namespace AdsByNimbus.Editor {
 				if (_iosVungleIsEnabled) { 
 					MacroHelpers.RemoveBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
 					MacroHelpers.RemoveBuildMacroForBothPlatforms(VungleIOSMacro);
+					DependencyHelpers.RemoveSwiftPackage(IOSDependencyConstants.VungleSpmName);
 				}
 				else {
 					MacroHelpers.SetBuildMacroForGroup(BuildTargetGroup.iOS, VungleMacro);
 					MacroHelpers.SetBuildMacroForBothPlatforms(VungleIOSMacro);
+					DependencyHelpers.AddSwiftPackage(IOSDependencyConstants.VunglePackage, iOSExtensionVersionConstants.Vungle, 
+						IOSDependencyConstants.VungleSpmName, IOSDependencyConstants.VungleSpmName);
 					EditorUtil.LogWithHelpBox("Don't Forget To Add your IOS Vungle App Id to the " +
 					                          "NimbusSDKConfiguration Scriptable object attached to your NimbusAdManager game object", MessageType.Warning);
 					FocusOnGameManager(VunglePartnerStr);
