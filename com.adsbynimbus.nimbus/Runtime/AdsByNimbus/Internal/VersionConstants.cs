@@ -10,18 +10,18 @@ namespace AdsByNimbus.Internal
 
     public static class AndroidExtensionVersionConstants
     {
-        public const string Aps = "10.0.2";
-        public const string AdMob = "23.0.4";
-        public const string Vungle = "7.0.5";
-        public const string UnityAds = "4.0.2";
-        public const string Moloco = "4.0.3";
-        public const string MobileFuse = "3.0.0-1.9.2";
-        public const string Mintegral = "16.0.3";
-        public const string Meta = "6.0.4";
+        public const string Aps = "12.0.0";
+        public const string AdMob = "25.0.0";
+        public const string Vungle = "7.1.0";
+        public const string UnityAds = "4.1.0";
+        public const string Moloco = "4.1.0";
+        public const string MobileFuse = "3.0.0-1.12.0";
+        public const string Mintegral = "17.0.0";
+        public const string Meta = "6.1.0";
         public const string LiveRamp = "4.0.0";
-        public const string InMobi = "10.0.2";
-        public const string DigitalTurbine = "8.0.3";
-        public const string DisplayIO = "5.0.2";
+        public const string InMobi = "11.0.0";
+        public const string DigitalTurbine = "8.1.0";
+        public const string DisplayIO = "5.1.0";
     }
 
     public static class iOSExtensionVersionConstants
@@ -35,7 +35,7 @@ namespace AdsByNimbus.Internal
         public const string Mintegral = "8.0.0";
         public const string Meta = "6.0.0";
         public const string LiveRamp = "4.0.0";
-        public const string InMobi = "10.0.0";
+        public const string InMobi = "11.0.0";
         public const string DigitalTurbine = "8.0.0";
         public const string DisplayIO = "4.0.0";
     }
