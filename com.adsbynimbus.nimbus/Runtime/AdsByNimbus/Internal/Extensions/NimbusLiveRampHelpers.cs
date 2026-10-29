@@ -1,0 +1,50 @@
+using System;
+using System.Runtime.InteropServices;
+using AdsByNimbus.Extensions;
+using Newtonsoft.Json;
+using UnityEngine;
+
+namespace AdsByNimbus.Internal.Extensions
+{
+    #if NIMBUS_ENABLE_LIVERAMP
+    internal class NimbusLiveRampHelpers
+    {
+        private const string ManagerClass = "com.adsbynimbus.unity.NimbusManager";
+        #if UNITY_IOS
+            [DllImport("__Internal")]
+            private static extern void _initializeLiveRamp(String placementId, String identifiers, String appId);
+
+            [DllImport("__Internal")]
+            private static extern void _clearLiveRamp();
+        #endif
+
+        internal static void InitializeLiveRamp(String placementId, 
+            LiveRamp.Identifier[] identifiers, String appId)
+        {
+            var isTestMode = NimbusManager.Instance._configuration.enableSDKInTestMode;
+            #if UNITY_IOS
+                _initializeLiveRamp(placementId, JsonConvert.SerializeObject(identifiers), appId);
+            #endif
+            #if UNITY_ANDROID
+                var managerClass = new AndroidJavaObject(ManagerClass);
+                var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+                instance.CallStatic("initLiveRamp", placementId, appId, JsonConvert.SerializeObject(identifiers));
+            #endif
+        }
+
+        internal static void Clear()
+        {
+            #if UNITY_IOS
+                _clearLiveRamp();
+            #endif
+            #if UNITY_ANDROID
+                var managerClass = new AndroidJavaObject(ManagerClass);
+                var instance = managerClass.GetStatic<AndroidJavaObject> ("INSTANCE");
+                instance.CallStatic("clearLiveRamp");
+            #endif
+        }
+    }
+    #endif
+}
+        
+        

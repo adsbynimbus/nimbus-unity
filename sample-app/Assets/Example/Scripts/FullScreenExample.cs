@@ -1,7 +1,6 @@
 using System.Collections;
+using AdsByNimbus;
 using Example.Scripts.NotAdRelated;
-using Nimbus.Internal;
-using Nimbus.Runtime.Scripts;
 using UnityEngine;
 
 namespace Example.Scripts {
@@ -10,7 +9,7 @@ namespace Example.Scripts {
 	/// </summary>
 	public class FullScreenExample : MonoBehaviour {
 		public GameObject cloud;
-		private NimbusAdUnit _ad;
+		private RewardedAd _ad;
 		private bool _alreadyTriggered;
 
 		private void Awake() {
@@ -18,7 +17,7 @@ namespace Example.Scripts {
 		}
 
 		private void Start() {
-			NimbusManager.Instance.NimbusEvents.OnAdCompleted += RewardUser;
+			NimbusManager.Instance.NimbusEvents.OnAdRewardEarned += RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError += LogError;
 		}
 
@@ -26,13 +25,13 @@ namespace Example.Scripts {
 		private void OnDestroy() {
 			NimbusManager.Instance.NimbusEvents.OnAdCompleted -= RewardUser;
 			NimbusManager.Instance.NimbusEvents.OnAdError -= LogError;
-			_ad?.Destroy();
+			_ad?.destroy();
 		}
 
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_rewarded_fullscreen_position");
+			Nimbus.rewardedAd("unity_demo_rewarded_fullscreen_position");
 			_alreadyTriggered = true;
 		}
 
@@ -42,26 +41,25 @@ namespace Example.Scripts {
 			ScoreUI.Instance.UpdateScore(100);
 		}
 
-		private void RewardUser(NimbusAdUnit ad, bool skipped) {
+		private void RewardUser(Ad ad) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
-			if (skipped) return;
-			Debug.unityLogger.Log(
+			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad was rendered for ad instance {ad.InstanceID}, " +
 				$"bid value: {ad.BidResponse.BidRaw}, " +
 				$"bid value in cents: {ad.BidResponse.BidInCents}, " +
 				$"network: {ad.BidResponse.Network}, " +
 				$"placement_id: {ad.BidResponse.PlacementId}, " +
-				$"auction_id: {ad.BidResponse.AuctionId}");
+				$"auction_id: {ad.BidResponse.AuctionId}");*/
 			// ensures that this coroutine starts on the Unity Main thread since this is called within an event callback
 			UnityThread.ExecuteInUpdate(() => StartCoroutine(MakeItRain()));
 		}
 
-		private void LogError(NimbusAdUnit ad) {
+		private void LogError(Ad ad, NimbusError nimbusError) {
 			if (_ad?.InstanceID != ad.InstanceID) return;
-			Debug.unityLogger.Log(
+			/*Debug.unityLogger.Log(
 				$"NimbusEventListenerExample Ad failed to load {ad.InstanceID}, " +
 				$"Error Message Ad failed to load {ad.ErrResponse.Message}, " +
-				$"auction_id: {ad.BidResponse.AuctionId}");
+				$"auction_id: {ad.BidResponse.AuctionId}");*/
 		}
 	}
 }

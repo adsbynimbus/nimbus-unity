@@ -1,0 +1,25 @@
+{
+  "name": "test",
+  "rootNamespace": "Test",
+  "references": [
+    "Unity.nimbus",
+    "UnityEditor.TestRunner",
+    "UnityEngine.TestRunner",
+    "Unity"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "OpenRTB.dll",
+    "Newtonsoft.Json.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -3,12 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEditor.Android;
+using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public class AndroidPostBuildProcessor : IPostGenerateGradleAndroidProject {
 
 		private const string KeepRules = @"
--keep class com.nimbus.demo.UnityHelper { *; }
 -keep class com.adsbynimbus.** { *; }";
 
 		private const string PackagingOptions = @"
@@ -31,24 +31,6 @@ namespace Nimbus.Editor {
 		public void OnPostGenerateGradleAndroidProject(string path)
 		{
 			var extraRepositories = "";
-			#if NIMBUS_ENABLE_MINTEGRAL
-				extraRepositories =
-					@"
-					maven {
-					url ""https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea""  
-											content {
-												includeGroupByRegex("".*\\.mbridge.*"")
-											}}";
-			#endif
-			#if NIMBUS_ENABLE_LIVERAMP
-				extraRepositories +=
-					@"        
-						maven {
-						url = uri(""https://sdk-android-prod.launch.liveramp.com"")
-							content {
-							includeGroupByRegex("".*\\.liveramp.*"")
-							}}";
-			#endif
 			string repoString = @"
 				dependencyResolutionManagement {
 				    repositories {
@@ -74,77 +56,51 @@ namespace Nimbus.Editor {
 			packagingWriter.Flush();
 			packagingWriter.Close();
 			
+			AndroidThirdPartyCreator.WriteDemandFile(path + "/../unityLibrary/src/main/java/com/adsbynimbus/unity/NimbusUnityInternal.kt");
+			
 			#if NIMBUS_ENABLE_ADMOB
 				//pull saved appId from file
-				var trimmedID = "";
-				foreach (var id in File.ReadLines("Assets/Editor/AdMobIds")) {
-					trimmedID = id.Trim();
-					if (trimmedID.Contains("android"))
+				try
+				{
+					var trimmedID = "";
+					foreach (var id in File.ReadLines("Assets/Editor/AdMobIds"))
 					{
-						trimmedID = trimmedID.Remove(0, 8);
-						break;
+						trimmedID = id.Trim();
+						if (trimmedID.Contains("android"))
+						{
+							trimmedID = trimmedID.Remove(0, 8);
+							break;
+						}
+					}
+
+					//put saved appId in AndroidManifest
+					var sb = new StringBuilder();
+					var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
+					var metaData =
+						$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
+					using (var sr = new StreamReader(manifestPath))
+					{
+						string line;
+						do
+						{
+							line = sr.ReadLine();
+							sb.AppendLine(line);
+						} while (line != null && !line.ToLower().Contains("<application"));
+
+						sb.Append(metaData);
+						sb.AppendLine();
+						sb.Append(sr.ReadToEnd());
+					}
+
+					using (var sr = new StreamWriter(manifestPath))
+					{
+						sr.Write(sb.ToString());
 					}
 				}
-				//put saved appId in AndroidManifest
-				var sb = new StringBuilder();
-				var manifestPath = path + "/../unityLibrary/src/main/AndroidManifest.xml";
-				var metaData =
-					$"<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{trimmedID}\"/>";
-				using (var sr = new StreamReader(manifestPath)) {
-					string line;
-					do {
-						line = sr.ReadLine();
-						sb.AppendLine(line);
-					} while (line != null && !line.ToLower().Contains("<application"));
-					
-					sb.Append(metaData);
-					sb.AppendLine();
-					sb.Append(sr.ReadToEnd());
+				catch (FileNotFoundException)
+				{
+					Debug.unityLogger.Log($"AdMob App Id is null or blank, it has not been added to the Android manifest.");
 				}
-				using (var sr = new StreamWriter(manifestPath)) {
-					sr.Write(sb.ToString());
-				}
-			#endif
-			
-			#if NIMBUS_ENABLE_APS || NIMBUS_ENABLE_VUNGLE || NIMBUS_ENABLE_META || NIMBUS_ENABLE_ADMOB || NIMBUS_ENABLE_MINTEGRAL || NIMBUS_ENABLE_UNITY_ADS || NIMBUS_ENABLE_MOBILEFUSE || NIMBUS_ENABLE_LIVERAMP || NIMBUS_ENABLE_MOLOCO || NIMBUS_ENABLE_INMOBI
-				var builder = new StringBuilder();
-				builder.AppendLine("");
-				builder.AppendLine("dependencies {");
-				#if NIMBUS_ENABLE_LIVERAMP
-					builder.AppendLine(AndroidBuildDependencies.LiveRampBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_APS
-					builder.AppendLine(AndroidBuildDependencies.APSBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_VUNGLE
-					builder.AppendLine(AndroidBuildDependencies.VungleBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_META
-					builder.AppendLine(AndroidBuildDependencies.MetaBuildDependencies());
-				#endif
-				#if NIMBUS_ENABLE_ADMOB
-					builder.AppendLine(AndroidBuildDependencies.AdMobNimbusBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_MINTEGRAL
-					builder.AppendLine(AndroidBuildDependencies.MintegralBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_UNITY_ADS
-					builder.AppendLine(AndroidBuildDependencies.UnityAdsBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_MOBILEFUSE
-					builder.AppendLine(AndroidBuildDependencies.MobileFuseBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_MOLOCO
-					builder.AppendLine(AndroidBuildDependencies.MolocoBuildDependency());
-				#endif
-				#if NIMBUS_ENABLE_INMOBI
-					builder.AppendLine(AndroidBuildDependencies.InMobiBuildDependency());
-				#endif
-				builder.AppendLine("}");
-				var apsBuildWriter = File.AppendText(path + "/build.gradle");
-				apsBuildWriter.WriteLine(builder.ToString());
-				apsBuildWriter.Flush();
-				apsBuildWriter.Close();
 			#endif
 		}
 		private static void WriteGradleProps(string gradleFile)

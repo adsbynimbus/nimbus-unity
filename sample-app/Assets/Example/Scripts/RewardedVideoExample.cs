@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using AdsByNimbus;
 using Example.Scripts.NotAdRelated;
-using Nimbus.Internal;
-using Nimbus.Runtime.Scripts;
+using AdsByNimbus.Internal;
 using UnityEngine;
 
 namespace Example.Scripts {
@@ -14,7 +14,7 @@ namespace Example.Scripts {
 		public GameObject cloud;
 
 		// keep a reference of the returned ad so that it can be safely cleaned up
-		private NimbusAdUnit _ad;
+		private RewardedAd _ad;
 		private bool _alreadyTriggered;
 
 		private void Awake() {
@@ -22,79 +22,63 @@ namespace Example.Scripts {
 		}
 
 		private void OnDestroy() {
-			_ad?.Destroy();
+			_ad?.destroy();
 		}
 
 		private void OnTriggerEnter2D(Collider2D other) {
 			var player = other.gameObject.GetComponent<NimbusPlayerController>();
 			if (player == null || _alreadyTriggered) return;
-			_ad = NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_rewarded_video_position");
+			Nimbus.rewardedAd("unity_demo_rewarded_video_position").show();
 			_alreadyTriggered = true;
 		}
 
-		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdLoaded(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad was returned and loaded into memory ad instance {nimbusAdUnit.InstanceID}, " +
-				$"bid value: {nimbusAdUnit.BidResponse.BidRaw}, " +
-				$"bid value in cents: {nimbusAdUnit.BidResponse.BidInCents}, " +
-				$"network: {nimbusAdUnit.BidResponse.Network}, " +
-				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
-				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");
+				$"RewardedVideoExample Ad was returned and loaded into memory");
 		}
 
-		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdWasRendered(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad was rendered for ad instance {nimbusAdUnit.InstanceID}, " +
-				$"bid value: {nimbusAdUnit.BidResponse.BidRaw}, " +
-				$"bid value in cents: {nimbusAdUnit.BidResponse.BidInCents}, " +
-				$"network: {nimbusAdUnit.BidResponse.Network}, " +
-				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
-				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");
+				"RewardedVideoExample Ad was rendered");
 		}
 
-		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdImpression(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad impression was fired {nimbusAdUnit.InstanceID}, " +
-				$"network: {nimbusAdUnit.BidResponse.Network}, " +
-				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
-				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");
+				"RewardedVideoExample Ad impression was fired");
 		}
 
-		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdClicked(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad was clicked {nimbusAdUnit.InstanceID}, " +
-				$"network: {nimbusAdUnit.BidResponse.Network}, " +
-				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
-				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");
+				"RewardedVideoExample Ad was clicked");
 		}
 
-		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdDestroyed(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad was destroyed/removed from the scene {nimbusAdUnit.InstanceID}, " +
-				$"network: {nimbusAdUnit.BidResponse.Network}, " +
-				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
-				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");
+				"RewardedVideoExample Ad was destroyed/removed from the scene");
 		}
 
-		public void OnAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
+		public void OnAdCompleted(Ad nimbusAdUnit) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
-			if (skipped) return;
 			Debug.unityLogger.Log(
-				$"RewardedVideoExample Ad was completed and the use can be rewarded {nimbusAdUnit.InstanceID}, " +
-				$"network: {nimbusAdUnit.BidResponse.Network}, " +
-				$"placement_id: {nimbusAdUnit.BidResponse.PlacementId}, " +
-				$"auction_id: {nimbusAdUnit.BidResponse.AuctionId}");
+				"RewardedVideoExample Ad was completed");
+		}
+
+		public void OnAdRewardEarned(Ad nimbusAdUnit)
+		{
+			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
+			Debug.unityLogger.Log(
+				"RewardedVideoExample Ad reward was earned and the user can be rewarded");
 			UnityThread.ExecuteInUpdate(RewardUser);
 		}
-
-		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
+		
+		public void OnAdError(Ad nimbusAdUnit, NimbusError nimbusError) {
 			if (_ad?.InstanceID != nimbusAdUnit.InstanceID) return;
-			Debug.unityLogger.Log($"RewardedVideoExample Err {nimbusAdUnit.ErrResponse.Message}");
+			Debug.unityLogger.Log($"RewardedVideoExample Error");
 		}
 
 		private IEnumerator MakeItRain() {

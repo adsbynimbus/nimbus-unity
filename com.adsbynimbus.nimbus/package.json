@@ -1,6 +1,6 @@
 {
   "name": "com.adsbynimbus.nimbus",
-  "version": "1.18.0",
+  "version": "3.0.0",
   "displayName": "Ads By Nimbus",
   "description": "This package allows for Unity games to access ads driven by Nimbus",
   "unity": "2020.3",
@@ -15,6 +15,7 @@
     "url": "https://www.adsbynimbus.com"
   },
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "3.0.2"
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.unity.external-dependency-manager": "2.1.1"
   }
 }

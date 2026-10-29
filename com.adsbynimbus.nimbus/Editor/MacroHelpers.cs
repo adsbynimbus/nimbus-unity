@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEditor;
 
-namespace Nimbus.Editor
+namespace AdsByNimbus.Editor
 {
     public static class MacroHelpers
     {

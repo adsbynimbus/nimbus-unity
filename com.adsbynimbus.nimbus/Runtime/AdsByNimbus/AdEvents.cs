@@ -1,0 +1,74 @@
+using System;
+using AdsByNimbus;
+
+public class AdEvents {
+	public event Action<Ad> OnAdLoaded;
+	public event Action<Ad> OnAdRendered;
+	public event Action<Ad, NimbusError> OnAdError;
+	public event Action<Ad> OnAdImpression;
+	public event Action<Ad> OnAdClicked;
+	public event Action<Ad> OnAdDestroyed;
+	public event Action<Ad> OnVideoAdPaused;
+	public event Action<Ad> OnVideoAdResume;
+	public event Action<Ad> OnAdRewardEarned;
+	public event Action<Ad> OnAdCompleted;
+	
+	internal void FireOnAdLoadedEvent(Ad obj) {
+		OnAdLoaded?.Invoke(obj);
+	}
+
+	internal void FireOnAdRenderedEvent(Ad obj) {
+		OnAdRendered?.Invoke(obj);
+	}
+
+	internal void FireOnAdImpressionEvent(Ad obj) {
+		OnAdImpression?.Invoke(obj);
+	}
+
+	internal void FireOnAdClickedEvent(Ad obj) {
+		OnAdClicked?.Invoke(obj);
+	}
+
+	internal void FireOnAdDestroyedEvent(Ad obj) {
+		OnAdDestroyed?.Invoke(obj);
+	}
+
+	internal void FireOnVideoAdPausedEvent(Ad obj) {
+		OnVideoAdPaused?.Invoke(obj);
+	}
+
+	internal void FireOnVideoAdResumeEvent(Ad obj) {
+		OnVideoAdResume?.Invoke(obj);
+	}
+
+	internal void FireOnAdCompletedEvent(Ad obj) {
+		OnAdCompleted?.Invoke(obj);
+	}
+
+	internal void FireOnAdRewardEarnedEvent(Ad obj)
+	{
+		OnAdRewardEarned?.Invoke(obj);
+	}
+	
+	internal void FireOnAdErrorEvent(Ad obj, NimbusError nimbusError) {
+		OnAdError?.Invoke(obj, nimbusError);
+	}
+}
+
+
+// ReSharper disable InconsistentNaming
+// Events as named by the Nimbus Android SDK
+public enum AdEvent {
+	LOADING,
+	LOADED,
+	IMPRESSION,
+	CLICKED,
+	PAUSED,
+	RESUMED,
+	REWARDEARNED,
+	FIRSTQUARTILE,
+	MIDPOINT,
+	THIRDQUARTILE,
+	COMPLETED,
+	DESTROYED
+}

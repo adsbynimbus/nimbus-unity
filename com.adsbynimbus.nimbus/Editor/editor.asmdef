@@ -1,6 +1,6 @@
 {
-    "name": "Unity.nimbus.Editor",
-    "rootNamespace": "",
+    "name": "AdsByNimbus.Editor",
+    "rootNamespace": "AdsByNimbus.Editor",
     "references": [
         "GUID:5d625f7ef6cde4021b80a4da1989f63c"
     ],

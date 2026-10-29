@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nimbus.Internal;
-using Nimbus.Internal.RequestBuilder;
-using Nimbus.Runtime.Scripts;
+using AdsByNimbus;
+using AdsByNimbus.RTB;
+using AdsByNimbus.RTB.Request;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using App = AdsByNimbus.RTB.App;
+using User = AdsByNimbus.RTB.User;
 
 namespace Example.Scripts {
 	/// <summary>
@@ -14,89 +16,123 @@ namespace Example.Scripts {
 	/// </summary>
 	public class GUIButtonTest : MonoBehaviour, IAdEventsExtended {
 		[SerializeField] private TextMeshProUGUI _loadedBannerButtonText;
-		[SerializeField] private TextMeshProUGUI _loadedLeaderboardButtonText;
+		[SerializeField] private TextMeshProUGUI _loadedDynamicUnitButtonText;
 		[SerializeField] private TextMeshProUGUI _errorText;
 		[SerializeField] private List<AdController> _interactableButtons;
 
-		private NimbusAdUnit _loadAndShowBannerAdUnit;
-		private NimbusAdUnit _loadAndShowLeaderboardAdUnit;
-		private bool _shouldDestroyLeaderboard;
+		private InlineAd _loadAndShowBannerAdUnit;
+		private InlineAd _loadAndShowDynamicUnitAdUnit;
+		private bool _shouldDestroyDynamicUnit;
 		private bool _shouldDestroyBanner;
+
+		private void Start()
+		{
+			Nimbus.configuration.sessionId = ("session_test");
+			Nimbus.configuration.coppa = true;
+			var app = new App("com.test.nimbusUnity", Array.Empty<string>(), "nimbus.co", "testapp", Array.Empty<string>(),
+				true, true, new Publisher(Array.Empty<string>(), "nimbus.co", "nimbus"), 
+				Array.Empty<string>(), "www.nimbus.co", "3.0.0");
+			Nimbus.configuration.app = app;
+			Nimbus.configuration.user = new User(30, "custom", Gender.male, "keywords");;
+			Nimbus.configuration.blockedAdvertisingDomains = new[] { "www.yahoo.com", "www.reddit.com"};
+			Nimbus.configuration.interceptorTimeout = 1000;
+		}
 
 		private void Awake() {
 			Screen.orientation = ScreenOrientation.Portrait;
 			_errorText.text = "";
 		}
 
-		public void OnAdLoaded(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdLoaded(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was loaded");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was loaded");
 		}
 
-		public void OnAdWasRendered(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdWasRendered(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was rendered");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was rendered");
 		}
 
-		public void OnAdImpression(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdImpression(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} fired it's impression pixel");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} fired it's impression pixel");
 		}
 
-		public void OnAdDestroyed(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdDestroyed(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} ad was destroyed");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} ad was destroyed");
 		}
 
-		public void OnAdClicked(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdClicked(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was clicked");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was clicked");
 		}
 
-		public void OnAdCompleted(NimbusAdUnit nimbusAdUnit, bool skipped) {
+		public void OnAdCompleted(Ad nimbusAdUnit) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} for auction id {nimbusAdUnit.BidResponse.AuctionId} was completed");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} was completed");
 		}
 
-		public void OnAdError(NimbusAdUnit nimbusAdUnit) {
+		public void OnAdError(Ad nimbusAdUnit, NimbusError nimbusError) {
 			Debug.unityLogger.Log(
-				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered {nimbusAdUnit.ErrResponse.Message}");
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} could not be rendered.");
+		}
+		
+		public void OnAdRewardEarned(Ad nimbusAdUnit) {
+			Debug.unityLogger.Log(
+				$"Ad unit of {nimbusAdUnit.InstanceID} type {nimbusAdUnit.AdType} has given a reward.");
 		}
 
 		public void LoadAndShowBanner() {
 			if (!_shouldDestroyBanner) {
 				_shouldDestroyBanner = true;
 				_loadedBannerButtonText.text = "Destroy Banner";
-				_loadAndShowBannerAdUnit = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_banner_position");
+				_loadAndShowBannerAdUnit = 
+					Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER, 
+						components: new()
+				{
+					new app(new [] { "pagecat1","pagecat2" }, 
+						new [] { "sectioncat1","sectioncat2" }),
+					new location(0.0, 0.0, LocationType.gps, 20),
+					new user("gaming,puzzle")
+				}).onEvent(nimbusEvent =>
+				{
+					Debug.unityLogger.Log($"Nimbus Event from Banner Ad: {nimbusEvent.ToString()})");
+				}).onError(nimbusError =>
+				{
+					Debug.unityLogger.Log($"Nimbus Error from Banner Ad: {nimbusError.reason.ToString()}");
+				}).show();
 				return;
 			}
-
-			_loadAndShowBannerAdUnit?.Destroy();
+			_loadAndShowBannerAdUnit?.destroy();
 			_loadAndShowBannerAdUnit = null;
 			_shouldDestroyBanner = false;
 			_loadedBannerButtonText.text = "Load And Show Banner";
 		}
 		
-		public void LoadAndShowLeaderboard() {
-			if (!_shouldDestroyLeaderboard) {
-				_shouldDestroyLeaderboard = true;
-				_loadedLeaderboardButtonText.text = "Destroy Leaderboard";
-				_loadAndShowLeaderboardAdUnit = NimbusManager.Instance.RequestBannerAdAndLoad("unity_demo_leaderboard_position", adSize: IabSupportedAdSizes.LeaderBoard);
+		public void LoadAndShowDynamicUnit() {
+			if (!_shouldDestroyDynamicUnit) {
+				_shouldDestroyDynamicUnit = true;
+				_loadedDynamicUnitButtonText.text = "Destroy Dynamic Unit";
+				_loadAndShowDynamicUnitAdUnit = 
+					Nimbus.dynamicUnit("unity_demo_dynamicunit_position", 
+						screenPosition: AdScreenPosition.BOTTOM_CENTER, width: 400, height: 400).show();
 				return;
 			}
 
-			_loadAndShowLeaderboardAdUnit?.Destroy();
-			_loadAndShowLeaderboardAdUnit = null;
-			_shouldDestroyLeaderboard = false;
-			_loadedLeaderboardButtonText.text = "Load And Show Leaderboard";
+			_loadAndShowDynamicUnitAdUnit?.destroy();
+			_loadAndShowDynamicUnitAdUnit = null;
+			_shouldDestroyDynamicUnit = false;
+			_loadedDynamicUnitButtonText.text = "Load And Show Dynamic Unit";
 		}
 
 		public void LoadAndShowInterstitial() {
-			_ = NimbusManager.Instance.RequestHybridFullScreenAndLoad("unity_demo_interstitial_position");
+			Nimbus.interstitialAd("unity_demo_interstitial_position", new Format[] { Format.halfScreen }, 
+				AdOrientation.portrait).show();
 		}
 
 		public void LoadAndShowRewardedVideoAd() {
-			_ = NimbusManager.Instance.RequestRewardVideoAdAndLoad("unity_demo_video_position");
+			Nimbus.rewardedAd("unity_demo_video_position", AdOrientation.portrait).show();
 		}
 
 		public void LoadAdController(int index) {
@@ -106,16 +142,8 @@ namespace Example.Scripts {
 					RequestForAd(index);
 					break;
 				case AdState.Loaded:
-					// check to see if there was an error retrieving the ad such as no bid, which in itself is not an error
-					// it simply means demand partners did not want to bid on this inventory
-					if (_interactableButtons[index].CurrentAd.ErrResponse.Message != null) {
-						var message = _interactableButtons[index].CurrentAd.ErrResponse.Message;
-						Debug.unityLogger.LogWarning("AdError", message);
-						StartCoroutine(SetErrorText(message, _interactableButtons[index]));
-						break;
-					}
 					var currentAd = _interactableButtons[index].CurrentAd;
-					NimbusManager.Instance.ShowLoadedAd(currentAd);
+					currentAd.show();
 					StartCoroutine(ResetState(_interactableButtons[index], currentAd));
 					break;
 				case AdState.Displayed:
@@ -129,10 +157,10 @@ namespace Example.Scripts {
 		private void RequestForAd(int index) {
 			var adType = _interactableButtons[index].adUnitType;
 			_interactableButtons[index].CurrentAd = adType switch {
-				AdUnitType.Banner => NimbusManager.Instance.RequestBannerAd("unity_demo_banner_position"),
-				AdUnitType.Interstitial => NimbusManager.Instance.RequestHybridFullScreenAd(
-					"unity_demo_interstitial_position"),
-				AdUnitType.Rewarded => NimbusManager.Instance.RequestRewardVideoAd("unity_demo_video_position"),
+				AdType.Inline => Nimbus.bannerAd("unity_demo_banner_position", screenPosition: AdScreenPosition.BOTTOM_CENTER),
+				AdType.Fullscreen => Nimbus.fullscreenAd(
+					"unity_demo_interstitial_position").load(),
+				AdType.Rewarded => Nimbus.rewardedAd("unity_demo_video_position").load(),
 				_ => _interactableButtons[index].CurrentAd
 			};
 		}
@@ -144,10 +172,10 @@ namespace Example.Scripts {
 			controller.ResetState();
 		}
 		
-		private static IEnumerator ResetState(AdController controller, NimbusAdUnit adUnit) {
-			if (adUnit.AdType != AdUnitType.Interstitial && adUnit.AdType != AdUnitType.Rewarded) yield break;
-			while (adUnit.CurrentAdState != AdEventTypes.COMPLETED ||
-			       adUnit.CurrentAdState != AdEventTypes.DESTROYED) {
+		private static IEnumerator ResetState(AdController controller, Ad adUnit) {
+			if (adUnit.AdType != AdType.Fullscreen && adUnit.AdType != AdType.Rewarded) yield break;
+			while (adUnit.LastAdEvent != AdEvent.COMPLETED ||
+			       adUnit.LastAdEvent != AdEvent.DESTROYED) {
 				yield return null;
 			}
 			controller.ResetState();
@@ -164,8 +192,8 @@ namespace Example.Scripts {
 	public class AdController {
 		[HideInInspector] public AdState state;
 		public TextMeshProUGUI button;
-		public AdUnitType adUnitType;
-		public NimbusAdUnit CurrentAd;
+		public AdType adUnitType;
+		public Ad CurrentAd;
 
 		public void NextState() {
 			state = (AdState)(((int)state + 1) % 3);
@@ -184,7 +212,7 @@ namespace Example.Scripts {
 
 		public void DestroyAd() {
 			if (state != AdState.Displayed) return;
-			CurrentAd?.Destroy();
+			CurrentAd?.destroy();
 			CurrentAd = null;
 		}
 	}

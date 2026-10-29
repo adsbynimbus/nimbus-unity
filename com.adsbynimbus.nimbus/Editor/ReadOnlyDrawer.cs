@@ -1,8 +1,8 @@
 #if UNITY_EDITOR
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	/// <summary>
 	/// This class contain custom drawer for ReadOnly attribute.
 	/// </summary>

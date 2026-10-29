@@ -9,7 +9,7 @@ import Foundation
 
 class UnityBinding {
     
-    private static let kCallbackTarget = "NimbusIOSAdManager"
+    private static let kCallbackTarget = "NimbusCallbackReceiver"
 
     class func sendMessage(methodName: String, params: [String: Any]) {
         do {

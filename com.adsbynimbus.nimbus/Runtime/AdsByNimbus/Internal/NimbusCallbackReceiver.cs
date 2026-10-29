@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using AdsByNimbus;
+using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.Scripting;
+
+namespace AdsByNimbus.Internal {
+	internal class NimbusCallbackReceiver : MonoBehaviour {
+		private static NimbusCallbackReceiver _instance;
+
+		private readonly Dictionary<int, Ad> _adUnitDictionary = new Dictionary<int, Ad>();
+
+		internal static NimbusCallbackReceiver Instance {
+			get {
+				if (_instance != null) return _instance;
+				
+				var obj = new GameObject("NimbusCallbackReceiver");
+				_instance = (NimbusCallbackReceiver)obj.AddComponent(typeof(NimbusCallbackReceiver));
+				return _instance;
+			}
+		}
+
+		private void Awake() {
+			if (_instance != null) {
+				Destroy(gameObject);
+				return;
+			}
+			DontDestroyOnLoad(gameObject);
+		}
+
+		internal void AddAdUnit(Ad adUnit) { 
+			_adUnitDictionary.Add(adUnit.InstanceID, adUnit);
+		}
+		
+		internal Ad AdUnitForInstanceID(int instanceID) {
+			_adUnitDictionary.TryGetValue(instanceID, out var adUnit);
+			return adUnit;
+		}
+		
+		[Preserve]
+		internal void OnAdRendered(string jsonParams) {
+			var data = NimbusCallbackParser.ParseMessage<NimbusEventParams>(jsonParams);
+			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
+
+			if (adUnit == null && data.adUnitInstanceID != -1) {
+				Debug.unityLogger.LogError("NimbusError", "AdUnit not found: " + data.adUnitInstanceID);
+				return;
+			}
+			adUnit.FireMobileAdRenderedEvent();
+		}
+		
+		
+		[Preserve]
+		internal void OnAdEvent(string jsonParams) {
+			var data = NimbusCallbackParser.ParseMessage<NimbusAdEventData>(jsonParams);
+			var adUnit = AdUnitForInstanceID(data.adUnitInstanceID);
+
+			if (adUnit == null && data.adUnitInstanceID != -1) {
+				Debug.unityLogger.LogError("NimbusError", $"AdUnit not found: {data.adUnitInstanceID}");
+				return;
+			}
+
+			if (!Enum.TryParse(data.eventName, out AdEvent state)) return;
+			adUnit.FireMobileAdEvents(state);
+			// clean up internal map
+			if (state == AdEvent.DESTROYED) {
+				_adUnitDictionary.Remove(data.adUnitInstanceID);
+			}
+		}
+
+		[Preserve]
+		internal void OnError(string jsonParams) {
+			var error = JsonConvert.DeserializeObject<NimbusError>(jsonParams);
+			var adUnit = AdUnitForInstanceID(error.adUnitInstanceID);
+			
+			if (adUnit == null && error.adUnitInstanceID != -1) {
+				Debug.unityLogger.LogError("NimbusError", $"{error.errorDescription}");
+				return;
+			}
+
+			Debug.unityLogger.LogError("NimbusError", $"Listener Ad error: {error.adUnitInstanceID}");
+			adUnit.FireMobileOnAdErrorEvent(error);
+		}
+	}
+}

@@ -1,6 +1,6 @@
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.adsbynimbus.android:nimbus:2.35.1">
+    <androidPackage spec="com.adsbynimbus.android:nimbus:3.0.0">
       <repositories>
         <repository>https://adsbynimbus-public.s3.amazonaws.com/android/sdks</repository>
       </repositories>
@@ -8,10 +8,8 @@
     <!--The below package is needed to resolve gradle issues with APS-->
     <androidPackage spec="com.google.android.material:material:1.12.0"/>
   </androidPackages>
-
-  <iosPods>
-    <!--The below pod does not include subspecs because those are added dynamically in IOSPostBuildProcessor.cs-->
-    <iosPod name="NimbusSDK" version="2.32.4" bitcodeEnabled="false" 
-            addToAllTargets="false"/>
-  </iosPods>
+  
+  <remoteSwiftPackage url="https://github.com/adsbynimbus/nimbus-ios-sdk.git" version="3.0.0" target="Unity-iPhone">
+    <swiftPackage name="NimbusKit" replacesPod="NimbusSDK"/>
+  </remoteSwiftPackage>
 </dependencies>

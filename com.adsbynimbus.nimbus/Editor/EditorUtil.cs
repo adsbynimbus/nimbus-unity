@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Nimbus.Editor {
+namespace AdsByNimbus.Editor {
 	public static class EditorUtil {
 		public static void LogWithHelpBox(string message, MessageType type) {
 			GUILayout.Space(5);
